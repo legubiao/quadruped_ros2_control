@@ -1,0 +1,8 @@
+<library path="quadruped_ros2_control">
+    <class name="quadruped_ros2_control/QuadrupedController" type="quadruped_ros2_control::QuadrupedController"
+           base_class_type="controller_interface::ControllerInterface">
+        <description>
+            Basic Quadruped Controller based on Unitree Guide.
+        </description>
+    </class>
+</library>

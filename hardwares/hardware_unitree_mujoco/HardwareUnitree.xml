@@ -1,0 +1,9 @@
+<library path="hardware_unitree_mujoco">
+  <class name="hardware_unitree_mujoco/HardwareUnitree"
+         type="HardwareUnitree"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Robot System for unitree quadruped robot.
+    </description>
+  </class>
+</library>
