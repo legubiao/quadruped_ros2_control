@@ -96,6 +96,7 @@ std::vector<hardware_interface::CommandInterface> HardwareUnitree::export_comman
         command_interfaces.emplace_back(joint_name, "effort", &joint_effort_command_[ind]);
         command_interfaces.emplace_back(joint_name, "kp", &joint_kp_command_[ind]);
         command_interfaces.emplace_back(joint_name, "kd", &joint_kd_command_[ind]);
+        ind++;
     }
     return command_interfaces;
 }

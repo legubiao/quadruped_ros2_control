@@ -9,7 +9,7 @@
 
 class StatePassive final : public FSMState {
 public:
-    explicit StatePassive();
+    explicit StatePassive(CtrlComponent ctrlComp);
 
     void enter() override;
 

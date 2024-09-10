@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(quadruped_ros2_control)
+project(unitree_guide_controller)
 
 if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -Wextra -Wpedantic)
@@ -23,9 +23,9 @@ foreach (Dependency IN ITEMS ${CONTROLLER_INCLUDE_DEPENDS})
 endforeach ()
 
 add_library(${PROJECT_NAME} SHARED
-        src/QuadrupedController.cpp
-        src/FSM/FSMState.cpp
+        src/UnitreeGuideController.cpp
         src/FSM/StatePassive.cpp
+        src/FSM/StateFixedStand.cpp
 )
 target_include_directories(${PROJECT_NAME}
         PUBLIC
@@ -36,7 +36,7 @@ ament_target_dependencies(
         ${CONTROLLER_INCLUDE_DEPENDS}
 )
 
-pluginlib_export_plugin_description_file(controller_interface quadruped_ros2_control.xml)
+pluginlib_export_plugin_description_file(controller_interface unitree_guide_controller.xml)
 
 install(
         DIRECTORY include/

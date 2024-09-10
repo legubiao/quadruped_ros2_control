@@ -5,14 +5,25 @@
 #ifndef QUADRUPEDCONTROLLER_H
 #define QUADRUPEDCONTROLLER_H
 
-#include "controller_interface/controller_interface.hpp"
+#include <controller_interface/controller_interface.hpp>
 #include <std_msgs/msg/string.hpp>
+#include <unitree_guide_controller/FSM/FSMState.h>
+#include <unitree_guide_controller/common/enumClass.h>
 
-namespace quadruped_ros2_control {
-    class QuadrupedController final : public controller_interface::ControllerInterface {
+#include "FSM/StateFixedStand.h"
+#include "FSM/StatePassive.h"
+
+namespace unitree_guide_controller {
+    struct FSMStateList {
+        std::shared_ptr<FSMState> invalid;
+        std::shared_ptr<StatePassive> passive;
+        std::shared_ptr<StateFixedStand> fixedStand;
+    };
+
+    class UnitreeGuideController final : public controller_interface::ControllerInterface {
     public:
         CONTROLLER_INTERFACE_PUBLIC
-        QuadrupedController() = default;
+        UnitreeGuideController() = default;
 
         CONTROLLER_INTERFACE_PUBLIC
         controller_interface::InterfaceConfiguration command_interface_configuration() const override;
@@ -51,6 +62,8 @@ namespace quadruped_ros2_control {
         controller_interface::CallbackReturn on_shutdown(
             const rclcpp_lifecycle::State &previous_state) override;
 
+        CtrlComponent ctrl_comp_;
+
     protected:
         std::vector<std::string> joint_names_;
         std::vector<std::string> command_interface_types_;
@@ -58,29 +71,29 @@ namespace quadruped_ros2_control {
 
         rclcpp::Subscription<std_msgs::msg::String>::SharedPtr state_command_subscriber_;
 
-        std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> >
-        joint_effort_command_interface_;
-        std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> >
-        joint_effort_state_interface_;
-        std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> >
-        joint_position_state_interface_;
-        std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> >
-        joint_velocity_state_interface_;
-
         std::unordered_map<
             std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> > *>
         command_interface_map_ = {
-            {"effort", &joint_effort_command_interface_}
+            {"effort", &ctrl_comp_.joint_effort_command_interface_},
+            {"position", &ctrl_comp_.joint_position_command_interface_},
+            {"velocity", &ctrl_comp_.joint_velocity_command_interface_},
+            {"kp", &ctrl_comp_.joint_kp_command_interface_},
+            {"kd", &ctrl_comp_.joint_kd_command_interface_}
         };
 
-        bool stand_ = false;
+        FSMMode mode_ = FSMMode::NORMAL;
+        std::string state_name_;
+        FSMStateName next_state_name_ = FSMStateName::INVALID;
+        FSMStateList state_list_;
+        std::shared_ptr<FSMState> current_state_;
+        std::shared_ptr<FSMState> next_state_;
 
         std::unordered_map<
             std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> > *>
         state_interface_map_ = {
-            {"position", &joint_position_state_interface_},
-            {"effort", &joint_effort_state_interface_},
-            {"velocity", &joint_velocity_state_interface_}
+            {"position", &ctrl_comp_.joint_position_state_interface_},
+            {"effort", &ctrl_comp_.joint_effort_state_interface_},
+            {"velocity", &ctrl_comp_.joint_velocity_state_interface_}
         };
     };
 }

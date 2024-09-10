@@ -15,6 +15,12 @@ source ~/ros2_ws/install/setup.bash
 ros2 launch go2_description visualize.launch.py
 ```
 
+## Launch Hardware Interface
+```bash
+source ~/ros2_ws/install/setup.bash
+ros2 launch go2_description hardware.launch.py
+```
+
 ## When used for isaac gym or other similiar engine 
 
 Collision parameters in urdf can be amended to better train the robot:

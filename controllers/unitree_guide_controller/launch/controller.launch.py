@@ -24,16 +24,16 @@ def generate_launch_description():
 
     robot_controllers = PathJoinSubstitution(
         [
-            FindPackageShare("quadruped_ros2_control"),
+            FindPackageShare("unitree_guide_controller"),
             "config",
-            "quadruped_controller.yaml",
+            "controller.yaml",
         ]
     )
 
     robot_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["quadruped_controller", "--param-file", robot_controllers],
+        arguments=["unitree_guide_controller", "--param-file", robot_controllers],
     )
 
     nodes = [

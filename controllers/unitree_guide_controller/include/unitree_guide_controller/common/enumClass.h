@@ -15,7 +15,11 @@ enum class FSMStateName {
 
     SWINGTEST,
     BALANCETEST,
-  };
+};
 
+enum class FSMMode {
+    NORMAL,
+    CHANGE
+};
 
 #endif //ENUMCLASS_H
