@@ -36,10 +36,10 @@ def launch_setup(context, *args, **kwargs):
             name='robot_state_publisher',
             parameters=[
                 {
-                    'use_sim_time': True,
                     'publish_frequency': 100.0,
                     'use_tf_static': True,
-                    'robot_description': robot_description
+                    'robot_description': robot_description,
+                    'ignore_timestamp': True
                 }
             ],
         ),
@@ -47,6 +47,9 @@ def launch_setup(context, *args, **kwargs):
             package="controller_manager",
             executable="ros2_control_node",
             parameters=[robot_controllers],
+            remappings=[
+                ("~/robot_description", "/robot_description"),
+            ],
             output="both",
         ),
         Node(
@@ -55,12 +58,12 @@ def launch_setup(context, *args, **kwargs):
             arguments=["joint_state_broadcaster",
                        "--controller-manager", "/controller_manager"],
         ),
-        Node(
-            package="controller_manager",
-            executable="spawner",
-            arguments=["imu_sensor_broadcaster",
-                       "--controller-manager", "/controller_manager"],
-        ),
+        # Node(
+        #     package="controller_manager",
+        #     executable="spawner",
+        #     arguments=["imu_sensor_broadcaster",
+        #                "--controller-manager", "/controller_manager"],
+        # ),
     ]
 
 
