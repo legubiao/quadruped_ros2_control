@@ -12,7 +12,7 @@ source ~/ros2_ws/install/setup.bash
 ros2 run keyboard_input keyboard_input
 ```
 
-## 1. Running Instructions
+## 1. Use Instructions
 ### 1.1 Control Mode
 * Passive Mode: Keyboard 1
 * Fixed Stand: Keyboard 2

@@ -25,6 +25,7 @@ endforeach ()
 add_library(${PROJECT_NAME} SHARED
         src/UnitreeGuideController.cpp
         src/FSM/StatePassive.cpp
+        src/FSM/StateFixedDown.cpp
         src/FSM/StateFixedStand.cpp
 )
 target_include_directories(${PROJECT_NAME}

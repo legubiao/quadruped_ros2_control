@@ -10,6 +10,7 @@
 #include <unitree_guide_controller/FSM/FSMState.h>
 #include <unitree_guide_controller/common/enumClass.h>
 
+#include "FSM/StateFixedDown.h"
 #include "FSM/StateFixedStand.h"
 #include "FSM/StatePassive.h"
 
@@ -17,6 +18,7 @@ namespace unitree_guide_controller {
     struct FSMStateList {
         std::shared_ptr<FSMState> invalid;
         std::shared_ptr<StatePassive> passive;
+        std::shared_ptr<StateFixedDown> fixedDown;
         std::shared_ptr<StateFixedStand> fixedStand;
     };
 

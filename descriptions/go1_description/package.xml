@@ -7,6 +7,7 @@
     <maintainer email="laikago@unitree.cc">unitree</maintainer>
     <license>TODO</license>
 
+    <exec_depend>xacro</exec_depend>
     <exec_depend>joint_state_publisher</exec_depend>
     <exec_depend>robot_state_publisher</exec_depend>
     <exec_depend>imu_sensor_broadcaster</exec_depend>

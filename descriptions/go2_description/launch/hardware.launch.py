@@ -36,7 +36,7 @@ def launch_setup(context, *args, **kwargs):
             name='robot_state_publisher',
             parameters=[
                 {
-                    'publish_frequency': 100.0,
+                    'publish_frequency': 20.0,
                     'use_tf_static': True,
                     'robot_description': robot_description,
                     'ignore_timestamp': True

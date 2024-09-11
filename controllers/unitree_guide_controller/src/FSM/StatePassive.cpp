@@ -3,7 +3,6 @@
 //
 
 #include <iostream>
-#include <ostream>
 #include <unitree_guide_controller/FSM/StatePassive.h>
 
 #include <utility>
@@ -26,7 +25,7 @@ void StatePassive::enter() {
         i.get().set_value(0);
     }
     for (auto i: ctrlComp_.joint_kd_command_interface_) {
-        i.get().set_value(3.5);
+        i.get().set_value(1);
     }
 }
 
@@ -38,7 +37,7 @@ void StatePassive::exit() {
 
 FSMStateName StatePassive::checkChange() {
     if (ctrlComp_.control_inputs_.get().command == 2) {
-        return FSMStateName::FIXEDSTAND;
+        return FSMStateName::FIXEDDOWN;
     }
     return FSMStateName::PASSIVE;
 }

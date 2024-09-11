@@ -21,11 +21,11 @@ T1 min(const T1 a, const T2 b) {
 }
 
 
-class Keyboardinput final : public rclcpp::Node {
+class KeyboardInput final : public rclcpp::Node {
 public:
-    Keyboardinput();
+    KeyboardInput();
 
-    ~Keyboardinput() override {
+    ~KeyboardInput() override {
         tcsetattr(STDIN_FILENO, TCSANOW, &old_tio_);
     }
 

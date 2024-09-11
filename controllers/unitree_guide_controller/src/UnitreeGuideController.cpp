@@ -51,7 +51,6 @@ namespace unitree_guide_controller {
 
             current_state_->enter();
             mode_ = FSMMode::NORMAL;
-            current_state_->run();
         }
 
         return controller_interface::return_type::OK;
@@ -85,6 +84,10 @@ namespace unitree_guide_controller {
                 ctrl_comp_.control_inputs_.get().rx = msg->rx;
                 ctrl_comp_.control_inputs_.get().ry = msg->ry;
             });
+
+        get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);
+        RCLCPP_INFO(get_node()->get_logger(), "Controller Manager Update Rate: %d Hz", ctrl_comp_.frequency_);
+
         return CallbackReturn::SUCCESS;
     }
 
@@ -104,6 +107,7 @@ namespace unitree_guide_controller {
         }
 
         state_list_.passive = std::make_shared<StatePassive>(ctrl_comp_);
+        state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_comp_);
         state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_comp_);
 
         // Initialize FSM
@@ -143,6 +147,8 @@ namespace unitree_guide_controller {
                 return state_list_.invalid;
             case FSMStateName::PASSIVE:
                 return state_list_.passive;
+            case FSMStateName::FIXEDDOWN:
+                return state_list_.fixedDown;
             case FSMStateName::FIXEDSTAND:
                 return state_list_.fixedStand;
             // case FSMStateName::FREESTAND:

@@ -32,8 +32,10 @@ struct CtrlComponent {
 
     control_input_msgs::msg::Inputs default_inputs_;
     std::reference_wrapper<control_input_msgs::msg::Inputs> control_inputs_;
+    int frequency_{};
 
-    CtrlComponent() : control_inputs_(default_inputs_) {}
+    CtrlComponent() : control_inputs_(default_inputs_) {
+    }
 
     void clear() {
         joint_effort_command_interface_.clear();

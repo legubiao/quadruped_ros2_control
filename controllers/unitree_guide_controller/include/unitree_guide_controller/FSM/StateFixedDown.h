@@ -1,15 +1,15 @@
 //
-// Created by biao on 24-9-10.
+// Created by tlab-uav on 24-9-11.
 //
 
-#ifndef STATEFIXEDSTAND_H
-#define STATEFIXEDSTAND_H
+#ifndef STATEFIXEDDOWN_H
+#define STATEFIXEDDOWN_H
 
 #include "FSMState.h"
 
-class StateFixedStand final : public FSMState {
+class StateFixedDown final : public FSMState {
 public:
-    explicit StateFixedStand(CtrlComponent ctrlComp);
+    explicit StateFixedDown(CtrlComponent ctrlComp);
 
     void enter() override;
 
@@ -18,12 +18,11 @@ public:
     void exit() override;
 
     FSMStateName checkChange() override;
-
 private:
     double target_pos_[12] = {
-        0.00571868, 0.608813, -1.21763, -0.00571868,
-        0.608813, -1.21763, 0.00571868, 0.608813,
-        -1.21763, -0.00571868, 0.608813, -1.21763
+        0.0473455, 1.22187, -2.44375, -0.0473455,
+        1.22187, -2.44375, 0.0473455, 1.22187,
+        -2.44375, -0.0473455, 1.22187, -2.44375
     };
 
     double start_pos_[12] = {};
@@ -35,4 +34,4 @@ private:
 };
 
 
-#endif //STATEFIXEDSTAND_H
+#endif //STATEFIXEDDOWN_H

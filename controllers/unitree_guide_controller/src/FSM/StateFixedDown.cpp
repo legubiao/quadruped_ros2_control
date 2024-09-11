@@ -1,22 +1,22 @@
 //
-// Created by biao on 24-9-10.
+// Created by tlab-uav on 24-9-11.
 //
 
 #include <cmath>
-#include <iostream>
-#include <unitree_guide_controller/FSM/StateFixedStand.h>
+#include <unitree_guide_controller/FSM/StateFixedDown.h>
 
-StateFixedStand::StateFixedStand(CtrlComponent ctrlComp): FSMState(
-    FSMStateName::FIXEDSTAND, "fixed stand", std::move(ctrlComp)) {
+StateFixedDown::StateFixedDown(CtrlComponent ctrlComp): FSMState(
+    FSMStateName::FIXEDDOWN, "fixed down", std::move(ctrlComp)) {
+    // duration_ = ctrlComp_.frequency_ * 15;
 }
 
-void StateFixedStand::enter() {
+void StateFixedDown::enter() {
     for (int i = 0; i < 12; i++) {
         start_pos_[i] = ctrlComp_.joint_position_state_interface_[i].get().get_value();
     }
 }
 
-void StateFixedStand::run() {
+void StateFixedDown::run() {
     percent_ += 1 / duration_;
     phase = std::tanh(percent_);
     for (int i = 0; i < 12; i++) {
@@ -26,20 +26,24 @@ void StateFixedStand::run() {
         ctrlComp_.joint_effort_command_interface_[i].get().set_value(0);
         ctrlComp_.joint_kp_command_interface_[i].get().set_value(
             phase * 50.0 + (1 - phase) * 20.0);
-        ctrlComp_.joint_kd_command_interface_[i].get().set_value(8);
+        ctrlComp_.joint_kd_command_interface_[i].get().set_value(3.5);
     }
 }
 
-void StateFixedStand::exit() {
+void StateFixedDown::exit() {
     percent_ = 0;
 }
 
-FSMStateName StateFixedStand::checkChange() {
+FSMStateName StateFixedDown::checkChange() {
     if (percent_ < 1) {
-        return FSMStateName::FIXEDSTAND;
-    }
-    if (ctrlComp_.control_inputs_.get().command == 1) {
         return FSMStateName::FIXEDDOWN;
     }
-    return FSMStateName::FIXEDSTAND;
+    switch (ctrlComp_.control_inputs_.get().command) {
+        case 1:
+            return FSMStateName::PASSIVE;
+        case 2:
+            return FSMStateName::FIXEDSTAND;
+        default:
+            return FSMStateName::FIXEDDOWN;
+    }
 }

@@ -4,9 +4,9 @@
 
 #include <keyboard_input/KeyboardInput.h>
 
-Keyboardinput::Keyboardinput() : Node("keyboard_input_node") {
+KeyboardInput::KeyboardInput() : Node("keyboard_input_node") {
     publisher_ = create_publisher<control_input_msgs::msg::Inputs>("control_input", 10);
-    timer_ = create_wall_timer(std::chrono::microseconds(100), std::bind(&Keyboardinput::timer_callback, this));
+    timer_ = create_wall_timer(std::chrono::microseconds(100), std::bind(&KeyboardInput::timer_callback, this));
     inputs_ = control_input_msgs::msg::Inputs();
 
     tcgetattr(STDIN_FILENO, &old_tio_);
@@ -16,7 +16,7 @@ Keyboardinput::Keyboardinput() : Node("keyboard_input_node") {
     RCLCPP_INFO(get_logger(), "Node initialized. Please input keys, press Ctrl+C to quit.");
 }
 
-void Keyboardinput::timer_callback() {
+void KeyboardInput::timer_callback() {
     if (kbhit()) {
         char key = getchar();
         check_command(key);
@@ -25,7 +25,7 @@ void Keyboardinput::timer_callback() {
     }
 }
 
-void Keyboardinput::check_command(const char key) {
+void KeyboardInput::check_command(const char key) {
     switch (key) {
         case '1':
             inputs_.command = 1; // L2_B
@@ -61,7 +61,7 @@ void Keyboardinput::check_command(const char key) {
     }
 }
 
-void Keyboardinput::check_value(char key) {
+void KeyboardInput::check_value(char key) {
     switch (key) {
         case 'w':
         case 'W':
@@ -101,7 +101,7 @@ void Keyboardinput::check_value(char key) {
     }
 }
 
-bool Keyboardinput::kbhit() {
+bool KeyboardInput::kbhit() {
     timeval tv = {0L, 0L};
     fd_set fds;
     FD_ZERO(&fds);
@@ -113,7 +113,7 @@ bool Keyboardinput::kbhit() {
 int main(int argc, char *argv[])
 {
     rclcpp::init(argc, argv);
-    auto node = std::make_shared<Keyboardinput>();
+    auto node = std::make_shared<KeyboardInput>();
     spin(node);
     rclcpp::shutdown();
     return 0;
