@@ -34,7 +34,6 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Hardwa
         }
     }
 
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Initializing Unitree SDK2 Channel");
     ChannelFactory::Instance()->Init(1, "lo");
     lowcmd_publisher =
             std::make_shared<ChannelPublisher<unitree_go::msg::dds_::LowCmd_> >(
@@ -51,7 +50,6 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Hardwa
         },
         1);
     init_low_cmd();
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Initialized Unitree SDK2 Channel");
 
 
     return SystemInterface::on_init(info);

@@ -2,14 +2,13 @@
 // Created by biao on 24-9-10.
 //
 
-#include "FSMState.h"
-
 #ifndef STATEFIXEDSTAND_H
 #define STATEFIXEDSTAND_H
 
-
+#include "FSMState.h"
 
 class StateFixedStand : public FSMState {
+public:
     explicit StateFixedStand(CtrlComponent ctrlComp);
 
     void enter() override;
@@ -20,7 +19,6 @@ class StateFixedStand : public FSMState {
 
     FSMStateName checkChange() override;
 };
-
 
 
 #endif //STATEFIXEDSTAND_H
