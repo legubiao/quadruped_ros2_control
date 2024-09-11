@@ -13,11 +13,11 @@ set(CONTROLLER_INCLUDE_DEPENDS
         controller_interface
         realtime_tools
         std_msgs
+        control_input_msgs
 )
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(controller_manager 4.0.0)
 foreach (Dependency IN ITEMS ${CONTROLLER_INCLUDE_DEPENDS})
     find_package(${Dependency} REQUIRED)
 endforeach ()

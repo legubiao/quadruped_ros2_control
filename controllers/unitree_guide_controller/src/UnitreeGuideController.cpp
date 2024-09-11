@@ -38,6 +38,20 @@ namespace unitree_guide_controller {
     update(const rclcpp::Time &time, const rclcpp::Duration &period) {
         if (mode_ == FSMMode::NORMAL) {
             current_state_->run();
+            next_state_name_ = current_state_->checkChange();
+            if (next_state_name_ != current_state_->state_name) {
+                mode_ = FSMMode::CHANGE;
+                next_state_ = getNextState(next_state_name_);
+                RCLCPP_INFO(get_node()->get_logger(), "Switched from %s to %s",
+                            current_state_->state_name_string.c_str(), next_state_->state_name_string.c_str());
+            }
+        } else if (mode_ == FSMMode::CHANGE) {
+            current_state_->exit();
+            current_state_ = next_state_;
+
+            current_state_->enter();
+            mode_ = FSMMode::NORMAL;
+            current_state_->run();
         }
 
         return controller_interface::return_type::OK;
@@ -62,11 +76,14 @@ namespace unitree_guide_controller {
 
     controller_interface::CallbackReturn UnitreeGuideController::on_configure(
         const rclcpp_lifecycle::State &previous_state) {
-        state_command_subscriber_ = get_node()->create_subscription<std_msgs::msg::String>(
-            "state_command", 10, [this](const std_msgs::msg::String::SharedPtr msg) {
+        control_input_subscription_ = get_node()->create_subscription<control_input_msgs::msg::Inputs>(
+            "/control_input", 10, [this](const control_input_msgs::msg::Inputs::SharedPtr msg) {
                 // Handle message
-                RCLCPP_INFO(get_node()->get_logger(), "Switch State: %s", msg->data.c_str());
-                state_name_ = msg->data;
+                ctrl_comp_.control_inputs_.get().command = msg->command;
+                ctrl_comp_.control_inputs_.get().lx = msg->lx;
+                ctrl_comp_.control_inputs_.get().ly = msg->ly;
+                ctrl_comp_.control_inputs_.get().rx = msg->rx;
+                ctrl_comp_.control_inputs_.get().ry = msg->ry;
             });
         return CallbackReturn::SUCCESS;
     }
@@ -118,6 +135,27 @@ namespace unitree_guide_controller {
     controller_interface::CallbackReturn
     UnitreeGuideController::on_shutdown(const rclcpp_lifecycle::State &previous_state) {
         return CallbackReturn::SUCCESS;
+    }
+
+    std::shared_ptr<FSMState> UnitreeGuideController::getNextState(FSMStateName stateName) const {
+        switch (stateName) {
+            case FSMStateName::INVALID:
+                return state_list_.invalid;
+            case FSMStateName::PASSIVE:
+                return state_list_.passive;
+            case FSMStateName::FIXEDSTAND:
+                return state_list_.fixedStand;
+            // case FSMStateName::FREESTAND:
+            //     return state_list_.freeStand;
+            // case FSMStateName::TROTTING:
+            //     return state_list_.trotting;
+            // case FSMStateName::SWINGTEST:
+            //     return state_list_.swingTest;
+            // case FSMStateName::BALANCETEST:
+            //     return state_list_.balanceTest;
+            default:
+                return state_list_.invalid;
+        }
     }
 }
 

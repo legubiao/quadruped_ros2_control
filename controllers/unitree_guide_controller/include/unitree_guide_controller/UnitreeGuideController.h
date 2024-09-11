@@ -69,7 +69,7 @@ namespace unitree_guide_controller {
         std::vector<std::string> command_interface_types_;
         std::vector<std::string> state_interface_types_;
 
-        rclcpp::Subscription<std_msgs::msg::String>::SharedPtr state_command_subscriber_;
+        rclcpp::Subscription<control_input_msgs::msg::Inputs>::SharedPtr control_input_subscription_;
 
         std::unordered_map<
             std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> > *>
@@ -87,6 +87,7 @@ namespace unitree_guide_controller {
         FSMStateList state_list_;
         std::shared_ptr<FSMState> current_state_;
         std::shared_ptr<FSMState> next_state_;
+        std::shared_ptr<FSMState> getNextState(FSMStateName stateName) const;
 
         std::unordered_map<
             std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> > *>

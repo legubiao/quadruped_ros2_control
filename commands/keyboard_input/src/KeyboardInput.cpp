@@ -20,7 +20,7 @@ void Keyboardinput::timer_callback() {
     if (kbhit()) {
         char key = getchar();
         check_command(key);
-        if (inputs_.command == -1) check_value(key);
+        if (inputs_.command == 0) check_value(key);
         publisher_->publish(inputs_);
     }
 }
@@ -40,7 +40,7 @@ void Keyboardinput::check_command(const char key) {
             inputs_.command = 4; // START
             break;
         case '0':
-            inputs_.command = 0; // L1_X
+            inputs_.command = 10; // L1_X
             break;
         case '9':
             inputs_.command = 9; // L1_A
@@ -53,10 +53,10 @@ void Keyboardinput::check_command(const char key) {
             inputs_.ly = 0;
             inputs_.rx = 0;
             inputs_.ry = 0;
-            inputs_.command = -1;
+            inputs_.command = 0;
             break;
         default:
-            inputs_.command = -1;
+            inputs_.command = 0;
             break;
     }
 }

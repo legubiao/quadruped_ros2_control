@@ -28,7 +28,6 @@ void StatePassive::enter() {
     for (auto i: ctrlComp_.joint_kd_command_interface_) {
         i.get().set_value(3.5);
     }
-    std::cout<<"passive"<<std::endl;
 }
 
 void StatePassive::run() {
@@ -38,8 +37,8 @@ void StatePassive::exit() {
 }
 
 FSMStateName StatePassive::checkChange() {
-    // if (controller_->state_name_ == "fixed_stand") {
-    //     return FSMStateName::FIXEDSTAND;
-    // }
+    if (ctrlComp_.control_inputs_.get().command == 2) {
+        return FSMStateName::FIXEDSTAND;
+    }
     return FSMStateName::PASSIVE;
 }

@@ -2,6 +2,16 @@
 
 This node will read the keyboard input and publish a control_input_msgs/Input message.
 
+```bash
+cd ~/ros2_ws
+colcon build --packages-up-to keyboard_input
+```
+
+```bash
+source ~/ros2_ws/install/setup.bash
+ros2 run keyboard_input keyboard_input
+```
+
 ## 1. Running Instructions
 ### 1.1 Control Mode
 * Passive Mode: Keyboard 1
