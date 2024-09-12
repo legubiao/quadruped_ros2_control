@@ -9,6 +9,7 @@
 #include <hardware_interface/loaned_command_interface.hpp>
 #include <hardware_interface/loaned_state_interface.hpp>
 #include <control_input_msgs/msg/inputs.hpp>
+#include <unitree_guide_controller/robotics/QuadrupedRobot.h>
 
 struct CtrlComponent {
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> >
@@ -33,6 +34,7 @@ struct CtrlComponent {
     control_input_msgs::msg::Inputs default_inputs_;
     std::reference_wrapper<control_input_msgs::msg::Inputs> control_inputs_;
     int frequency_{};
+    std::shared_ptr<QuadrupedRobot> robot_model_;
 
     CtrlComponent() : control_inputs_(default_inputs_) {
     }

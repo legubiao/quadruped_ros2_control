@@ -14,6 +14,7 @@ set(CONTROLLER_INCLUDE_DEPENDS
         realtime_tools
         std_msgs
         control_input_msgs
+        kdl_parser
 )
 
 # find dependencies
@@ -27,6 +28,9 @@ add_library(${PROJECT_NAME} SHARED
         src/FSM/StatePassive.cpp
         src/FSM/StateFixedDown.cpp
         src/FSM/StateFixedStand.cpp
+        src/FSM/StateSwingTest.cpp
+        src/robotics/QuadrupedRobot.cpp
+        src/robotics/RobotLeg.cpp
 )
 target_include_directories(${PROJECT_NAME}
         PUBLIC

@@ -4,6 +4,8 @@
 
 #include <unitree_guide_controller/UnitreeGuideController.h>
 #include <unitree_guide_controller/FSM/StatePassive.h>
+#include <kdl_parser/kdl_parser/kdl_parser.hpp>
+#include <unitree_guide_controller/robotics/QuadrupedRobot.h>
 
 namespace unitree_guide_controller {
     using config_type = controller_interface::interface_configuration_type;
@@ -85,6 +87,13 @@ namespace unitree_guide_controller {
                 ctrl_comp_.control_inputs_.get().ry = msg->ry;
             });
 
+        robot_description_subscription_ = get_node()->create_subscription<std_msgs::msg::String>(
+            "~/robot_description", rclcpp::QoS(rclcpp::KeepLast(1)).transient_local(),
+            [this](const std_msgs::msg::String::SharedPtr msg) {
+                // Handle message
+                ctrl_comp_.robot_model_ = std::make_shared<QuadrupedRobot>(msg->data);
+            });
+
         get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);
         RCLCPP_INFO(get_node()->get_logger(), "Controller Manager Update Rate: %d Hz", ctrl_comp_.frequency_);
 
@@ -109,6 +118,7 @@ namespace unitree_guide_controller {
         state_list_.passive = std::make_shared<StatePassive>(ctrl_comp_);
         state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_comp_);
         state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_comp_);
+        state_list_.swingTest = std::make_shared<StateSwingTest>(ctrl_comp_);
 
         // Initialize FSM
         current_state_ = state_list_.passive;
@@ -155,8 +165,8 @@ namespace unitree_guide_controller {
             //     return state_list_.freeStand;
             // case FSMStateName::TROTTING:
             //     return state_list_.trotting;
-            // case FSMStateName::SWINGTEST:
-            //     return state_list_.swingTest;
+            case FSMStateName::SWINGTEST:
+                return state_list_.swingTest;
             // case FSMStateName::BALANCETEST:
             //     return state_list_.balanceTest;
             default:

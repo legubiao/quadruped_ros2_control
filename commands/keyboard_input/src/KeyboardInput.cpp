@@ -46,7 +46,7 @@ void KeyboardInput::check_command(const char key) {
             inputs_.command = 9; // L1_A
             break;
         case '8':
-            inputs_.command = 3; // L1_Y
+            inputs_.command = 8; // L1_Y
             break;
         case ' ':
             inputs_.lx = 0;

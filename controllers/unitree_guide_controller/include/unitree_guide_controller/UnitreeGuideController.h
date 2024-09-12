@@ -13,6 +13,7 @@
 #include "FSM/StateFixedDown.h"
 #include "FSM/StateFixedStand.h"
 #include "FSM/StatePassive.h"
+#include "FSM/StateSwingTest.h"
 
 namespace unitree_guide_controller {
     struct FSMStateList {
@@ -20,6 +21,8 @@ namespace unitree_guide_controller {
         std::shared_ptr<StatePassive> passive;
         std::shared_ptr<StateFixedDown> fixedDown;
         std::shared_ptr<StateFixedStand> fixedStand;
+
+        std::shared_ptr<StateSwingTest> swingTest;
     };
 
     class UnitreeGuideController final : public controller_interface::ControllerInterface {
@@ -72,6 +75,7 @@ namespace unitree_guide_controller {
         std::vector<std::string> state_interface_types_;
 
         rclcpp::Subscription<control_input_msgs::msg::Inputs>::SharedPtr control_input_subscription_;
+        rclcpp::Subscription<std_msgs::msg::String>::SharedPtr robot_description_subscription_;
 
         std::unordered_map<
             std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> > *>
@@ -89,6 +93,7 @@ namespace unitree_guide_controller {
         FSMStateList state_list_;
         std::shared_ptr<FSMState> current_state_;
         std::shared_ptr<FSMState> next_state_;
+
         std::shared_ptr<FSMState> getNextState(FSMStateName stateName) const;
 
         std::unordered_map<

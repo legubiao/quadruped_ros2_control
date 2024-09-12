@@ -23,4 +23,10 @@ enum class FSMMode {
     CHANGE
 };
 
+enum class FrameType{
+    BODY,
+    HIP,
+    GLOBAL
+};
+
 #endif //ENUMCLASS_H

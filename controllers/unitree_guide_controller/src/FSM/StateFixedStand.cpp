@@ -38,8 +38,12 @@ FSMStateName StateFixedStand::checkChange() {
     if (percent_ < 1) {
         return FSMStateName::FIXEDSTAND;
     }
-    if (ctrlComp_.control_inputs_.get().command == 1) {
-        return FSMStateName::FIXEDDOWN;
+    switch (ctrlComp_.control_inputs_.get().command) {
+        case 1:
+            return FSMStateName::FIXEDDOWN;
+        case 8:
+            return FSMStateName::SWINGTEST;
+        default:
+            return FSMStateName::FIXEDSTAND;
     }
-    return FSMStateName::FIXEDSTAND;
 }
