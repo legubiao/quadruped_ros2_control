@@ -25,8 +25,8 @@ void StateFixedStand::run() {
         ctrlComp_.joint_velocity_command_interface_[i].get().set_value(0);
         ctrlComp_.joint_effort_command_interface_[i].get().set_value(0);
         ctrlComp_.joint_kp_command_interface_[i].get().set_value(
-            phase * 50.0 + (1 - phase) * 20.0);
-        ctrlComp_.joint_kd_command_interface_[i].get().set_value(8);
+            phase * 60.0 + (1 - phase) * 20.0);
+        ctrlComp_.joint_kd_command_interface_[i].get().set_value(3.5);
     }
 }
 
@@ -35,7 +35,7 @@ void StateFixedStand::exit() {
 }
 
 FSMStateName StateFixedStand::checkChange() {
-    if (percent_ < 1) {
+    if (percent_ < 2) {
         return FSMStateName::FIXEDSTAND;
     }
     switch (ctrlComp_.control_inputs_.get().command) {

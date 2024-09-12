@@ -24,8 +24,7 @@ void StateFixedDown::run() {
             phase * target_pos_[i] + (1 - phase) * start_pos_[i]);
         ctrlComp_.joint_velocity_command_interface_[i].get().set_value(0);
         ctrlComp_.joint_effort_command_interface_[i].get().set_value(0);
-        ctrlComp_.joint_kp_command_interface_[i].get().set_value(
-            phase * 50.0 + (1 - phase) * 20.0);
+        ctrlComp_.joint_kp_command_interface_[i].get().set_value(50.0);
         ctrlComp_.joint_kd_command_interface_[i].get().set_value(3.5);
     }
 }
@@ -35,7 +34,7 @@ void StateFixedDown::exit() {
 }
 
 FSMStateName StateFixedDown::checkChange() {
-    if (percent_ < 1) {
+    if (percent_ < 2) {
         return FSMStateName::FIXEDDOWN;
     }
     switch (ctrlComp_.control_inputs_.get().command) {

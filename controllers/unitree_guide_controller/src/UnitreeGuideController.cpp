@@ -4,7 +4,6 @@
 
 #include <unitree_guide_controller/UnitreeGuideController.h>
 #include <unitree_guide_controller/FSM/StatePassive.h>
-#include <kdl_parser/kdl_parser/kdl_parser.hpp>
 #include <unitree_guide_controller/robotics/QuadrupedRobot.h>
 
 namespace unitree_guide_controller {
@@ -91,7 +90,7 @@ namespace unitree_guide_controller {
             "~/robot_description", rclcpp::QoS(rclcpp::KeepLast(1)).transient_local(),
             [this](const std_msgs::msg::String::SharedPtr msg) {
                 // Handle message
-                ctrl_comp_.robot_model_ = std::make_shared<QuadrupedRobot>(msg->data);
+                ctrl_comp_.robot_model_.get().init(msg->data);
             });
 
         get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);

@@ -6,14 +6,18 @@
 #ifndef QUADRUPEDROBOT_H
 #define QUADRUPEDROBOT_H
 #include <string>
-#include <kdl_parser/kdl_parser/kdl_parser.hpp>
+#include <kdl_parser/kdl_parser.hpp>
 
 #include "RobotLeg.h"
 
 
 class QuadrupedRobot {
 public:
-    explicit QuadrupedRobot(const std::string &robot_description);
+    explicit QuadrupedRobot() = default;
+
+    ~QuadrupedRobot() = default;
+
+    void init(const std::string &robot_description);
 
     /**
      * Calculate the joint positions based on the foot end position
@@ -31,10 +35,18 @@ public:
      */
     [[nodiscard]] std::vector<KDL::Frame> getFeet2BPositions(const std::vector<KDL::JntArray> &joint_positions) const;
 
-protected:
+    [[nodiscard]] KDL::Frame getFeet2BPositions(const KDL::JntArray &joint_positions, int index) const;
+
+    [[nodiscard]] KDL::Jacobian getJacobian(const KDL::JntArray &joint_positions, int index) const;
+
+    [[nodiscard]] KDL::JntArray getTorque(const KDL::JntArray &joint_positions,
+                                          const KDL::JntArray &joint_velocities,
+                                          const KDL::Wrenches &force, int index) const;
+
+private:
     double mass_;
 
-    std::vector<Robotleg> robot_legs_;
+    std::vector<std::shared_ptr<RobotLeg> > robot_legs_;
 
     KDL::Chain fr_chain_;
     KDL::Chain fl_chain_;

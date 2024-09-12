@@ -21,9 +21,29 @@ public:
     FSMStateName checkChange() override;
 
 private:
+
+    void currentJointPos();
+    void positionCtrl();
+
+    void torqueCtrl();
+
     float _xMin, _xMax;
     float _yMin, _yMax;
     float _zMin, _zMax;
+
+    KDL::Vector Kp, Kd;
+
+    std::vector<KDL::JntArray> init_joint_pos_;
+    std::vector<KDL::JntArray> target_joint_pos_;
+
+    std::vector<KDL::JntArray> current_joint_pos_;
+    std::vector<KDL::JntArray> current_joint_vel_;
+
+    std::vector<KDL::Frame> init_foot_pos_;
+    std::vector<KDL::Frame> target_foot_pos_;
+
+    KDL::Frame fr_init_pos_;
+    KDL::Frame fr_goal_pos_;
 };
 
 

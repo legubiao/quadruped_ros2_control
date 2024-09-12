@@ -34,9 +34,11 @@ struct CtrlComponent {
     control_input_msgs::msg::Inputs default_inputs_;
     std::reference_wrapper<control_input_msgs::msg::Inputs> control_inputs_;
     int frequency_{};
-    std::shared_ptr<QuadrupedRobot> robot_model_;
 
-    CtrlComponent() : control_inputs_(default_inputs_) {
+    QuadrupedRobot default_robot_model_;
+    std::reference_wrapper<QuadrupedRobot> robot_model_;
+
+    CtrlComponent() : control_inputs_(default_inputs_), default_robot_model_(), robot_model_(default_robot_model_) {
     }
 
     void clear() {
