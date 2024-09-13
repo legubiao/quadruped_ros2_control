@@ -41,7 +41,9 @@ FSMStateName StateFixedStand::checkChange() {
     switch (ctrlComp_.control_inputs_.get().command) {
         case 1:
             return FSMStateName::FIXEDDOWN;
-        case 8:
+        case 3:
+            return FSMStateName::FREESTAND;
+        case 9:
             return FSMStateName::SWINGTEST;
         default:
             return FSMStateName::FIXEDSTAND;

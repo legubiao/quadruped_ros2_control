@@ -21,6 +21,12 @@ void KeyboardInput::timer_callback() {
         char key = getchar();
         check_command(key);
         if (inputs_.command == 0) check_value(key);
+        else {
+            inputs_.lx = 0;
+            inputs_.ly = 0;
+            inputs_.rx = 0;
+            inputs_.ry = 0;
+        }
         publisher_->publish(inputs_);
     }
 }
@@ -110,8 +116,7 @@ bool KeyboardInput::kbhit() {
 }
 
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     rclcpp::init(argc, argv);
     auto node = std::make_shared<KeyboardInput>();
     spin(node);

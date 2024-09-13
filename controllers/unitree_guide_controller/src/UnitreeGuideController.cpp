@@ -118,6 +118,7 @@ namespace unitree_guide_controller {
         state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_comp_);
         state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_comp_);
         state_list_.swingTest = std::make_shared<StateSwingTest>(ctrl_comp_);
+        state_list_.freeStand = std::make_shared<StateFreeStand>(ctrl_comp_);
 
         // Initialize FSM
         current_state_ = state_list_.passive;
@@ -160,8 +161,8 @@ namespace unitree_guide_controller {
                 return state_list_.fixedDown;
             case FSMStateName::FIXEDSTAND:
                 return state_list_.fixedStand;
-            // case FSMStateName::FREESTAND:
-            //     return state_list_.freeStand;
+            case FSMStateName::FREESTAND:
+                return state_list_.freeStand;
             // case FSMStateName::TROTTING:
             //     return state_list_.trotting;
             case FSMStateName::SWINGTEST:

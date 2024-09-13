@@ -11,6 +11,8 @@
 #include "RobotLeg.h"
 
 
+struct CtrlComponent;
+
 class QuadrupedRobot {
 public:
     explicit QuadrupedRobot() = default;
@@ -22,29 +24,47 @@ public:
     /**
      * Calculate the joint positions based on the foot end position
      * @param pEe_list vector of foot-end position
-     * @param q_init vector of current joint positions
      * @return
      */
-    [[nodiscard]] std::vector<KDL::JntArray> getQ(const std::vector<KDL::Frame> &pEe_list,
-                                                  const std::vector<KDL::JntArray> &q_init) const;
+    [[nodiscard]] std::vector<KDL::JntArray> getQ(const std::vector<KDL::Frame> &pEe_list) const;
 
     /**
      * Calculate the foot end position based on joint positions
-     * @param joint_positions vector of current joint positions
+     * @param joint_positions vector of joint positions
      * @return vector of foot-end position
      */
     [[nodiscard]] std::vector<KDL::Frame> getFeet2BPositions(const std::vector<KDL::JntArray> &joint_positions) const;
 
-    [[nodiscard]] KDL::Frame getFeet2BPositions(const KDL::JntArray &joint_positions, int index) const;
+    /**
+     * Calculate the foot end position based on joint positions
+     * @param index leg index
+     * @return foot-end position
+     */
+    [[nodiscard]] KDL::Frame getFeet2BPositions(int index) const;
 
-    [[nodiscard]] KDL::Jacobian getJacobian(const KDL::JntArray &joint_positions, int index) const;
+    /**
+     * Calculate the Jacobian matrix based on joint positions
+     * @param index leg index
+     * @return Jacobian matrix
+     */
+    [[nodiscard]] KDL::Jacobian getJacobian(int index) const;
 
-    [[nodiscard]] KDL::JntArray getTorque(const KDL::JntArray &joint_positions,
-                                          const KDL::JntArray &joint_velocities,
-                                          const KDL::Wrenches &force, int index) const;
+    /**
+     * Calculate the torque based on joint positions, joint velocities and external force
+     * @param force external force
+     * @param index leg index
+     * @return torque
+     */
+    [[nodiscard]] KDL::JntArray getTorque(
+        const KDL::Wrenches &force, int index) const;
+
+    std::vector<KDL::JntArray> current_joint_pos_;
+    std::vector<KDL::JntArray> current_joint_vel_;
+
+    void update(const CtrlComponent &ctrlComp);
 
 private:
-    double mass_;
+    double mass_ = 0;
 
     std::vector<std::shared_ptr<RobotLeg> > robot_legs_;
 

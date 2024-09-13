@@ -22,10 +22,9 @@ public:
 
 private:
 
-    void currentJointPos();
     void positionCtrl();
 
-    void torqueCtrl();
+    void torqueCtrl() const;
 
     float _xMin, _xMax;
     float _yMin, _yMax;
@@ -35,9 +34,6 @@ private:
 
     std::vector<KDL::JntArray> init_joint_pos_;
     std::vector<KDL::JntArray> target_joint_pos_;
-
-    std::vector<KDL::JntArray> current_joint_pos_;
-    std::vector<KDL::JntArray> current_joint_vel_;
 
     std::vector<KDL::Frame> init_foot_pos_;
     std::vector<KDL::Frame> target_foot_pos_;

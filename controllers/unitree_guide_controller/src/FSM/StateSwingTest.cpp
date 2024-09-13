@@ -29,11 +29,8 @@ void StateSwingTest::enter() {
     Kp = KDL::Vector(20, 20, 50);
     Kd = KDL::Vector(5, 5, 20);
 
-    current_joint_pos_.resize(4);
-    current_joint_vel_.resize(4);
-
-    currentJointPos();
-    init_joint_pos_ = current_joint_pos_;
+    ctrlComp_.robot_model_.get().update(ctrlComp_);
+    init_joint_pos_ = ctrlComp_.robot_model_.get().current_joint_pos_;
 
     init_foot_pos_ = ctrlComp_.robot_model_.get().getFeet2BPositions(init_joint_pos_);
     target_foot_pos_ = init_foot_pos_;
@@ -63,6 +60,8 @@ void StateSwingTest::run() {
         fr_goal_pos_.p.z(invNormalize(ctrlComp_.control_inputs_.get().ry, fr_init_pos_.p.z() + _zMin,
                                       fr_init_pos_.p.z(), -1, 0));
     }
+
+    ctrlComp_.robot_model_.get().update(ctrlComp_);
     positionCtrl();
     torqueCtrl();
 }
@@ -81,25 +80,9 @@ FSMStateName StateSwingTest::checkChange() {
     }
 }
 
-void StateSwingTest::currentJointPos() {
-    for (int i = 0; i < 4; i++) {
-        KDL::JntArray pos_array(3);
-        pos_array(0) = ctrlComp_.joint_position_state_interface_[i * 3].get().get_value();
-        pos_array(1) = ctrlComp_.joint_position_state_interface_[i * 3 + 1].get().get_value();
-        pos_array(2) = ctrlComp_.joint_position_state_interface_[i * 3 + 2].get().get_value();
-        current_joint_pos_[i] = pos_array;
-
-        KDL::JntArray vel_array(3);
-        vel_array(0) = ctrlComp_.joint_velocity_state_interface_[i * 3].get().get_value();
-        vel_array(1) = ctrlComp_.joint_velocity_state_interface_[i * 3 + 1].get().get_value();
-        vel_array(2) = ctrlComp_.joint_velocity_state_interface_[i * 3 + 2].get().get_value();
-        current_joint_vel_[i] = vel_array;
-    }
-}
-
 void StateSwingTest::positionCtrl() {
     target_foot_pos_[0] = fr_goal_pos_;
-    target_joint_pos_ = ctrlComp_.robot_model_.get().getQ(target_foot_pos_, init_joint_pos_);
+    target_joint_pos_ = ctrlComp_.robot_model_.get().getQ(target_foot_pos_);
     for (int i = 0; i < 4; i++) {
         ctrlComp_.joint_position_command_interface_[i * 3].get().set_value(target_joint_pos_[i](0));
         ctrlComp_.joint_position_command_interface_[i * 3 + 1].get().set_value(target_joint_pos_[i](1));
@@ -107,22 +90,21 @@ void StateSwingTest::positionCtrl() {
     }
 }
 
-void StateSwingTest::torqueCtrl() {
-    const KDL::Frame fr_current_pos = ctrlComp_.robot_model_.get().getFeet2BPositions(current_joint_pos_[0], 0);
-    KDL::Jacobian fr_jaco = ctrlComp_.robot_model_.get().getJacobian(current_joint_pos_[0], 0);
+void StateSwingTest::torqueCtrl() const {
+    const KDL::Frame fr_current_pos = ctrlComp_.robot_model_.get().getFeet2BPositions(0);
+    KDL::Jacobian fr_jaco = ctrlComp_.robot_model_.get().getJacobian(0);
 
     const KDL::Vector pos_goal = fr_goal_pos_.p;
     const KDL::Vector pos0 = fr_current_pos.p;
     const Eigen::Matrix<double, 3, Eigen::Dynamic> linear_jacobian = fr_jaco.data.topRows(3);
     Eigen::Product<Eigen::Matrix<double, 3, -1>, Eigen::Matrix<double, -1, 1> > vel_eigen =
-            linear_jacobian * current_joint_vel_[0].data;
+            linear_jacobian * ctrlComp_.robot_model_.get().current_joint_vel_[0].data;
     const KDL::Vector vel0(vel_eigen(0), vel_eigen(1), vel_eigen(2));
 
     const KDL::Vector force0 = Kp * (pos_goal - pos0) + Kd * (-vel0);
     const KDL::Wrench wrench0(force0, KDL::Vector::Zero()); // 假设力矩为零
     const KDL::Wrenches wrenches(1, wrench0); // 创建一个包含 wrench0 的容器
-    KDL::JntArray torque0 = ctrlComp_.robot_model_.get().getTorque(current_joint_pos_[0], current_joint_vel_[0],
-                                                                   wrenches, 0);
+    KDL::JntArray torque0 = ctrlComp_.robot_model_.get().getTorque(wrenches, 0);
 
     for (int i = 0; i < 3; i++) {
         ctrlComp_.joint_effort_command_interface_[i].get().set_value(torque0(i));

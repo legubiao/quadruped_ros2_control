@@ -29,6 +29,7 @@ add_library(${PROJECT_NAME} SHARED
         src/FSM/StateFixedDown.cpp
         src/FSM/StateFixedStand.cpp
         src/FSM/StateSwingTest.cpp
+        src/FSM/StateFreeStand.cpp
         src/robotics/QuadrupedRobot.cpp
         src/robotics/RobotLeg.cpp
 )
