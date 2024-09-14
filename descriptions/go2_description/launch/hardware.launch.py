@@ -58,12 +58,12 @@ def launch_setup(context, *args, **kwargs):
             arguments=["joint_state_broadcaster",
                        "--controller-manager", "/controller_manager"],
         ),
-        # Node(
-        #     package="controller_manager",
-        #     executable="spawner",
-        #     arguments=["imu_sensor_broadcaster",
-        #                "--controller-manager", "/controller_manager"],
-        # ),
+        Node(
+            package="controller_manager",
+            executable="spawner",
+            arguments=["imu_sensor_broadcaster",
+                       "--controller-manager", "/controller_manager"],
+        ),
     ]
 
 

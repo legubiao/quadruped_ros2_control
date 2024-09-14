@@ -36,6 +36,8 @@ protected:
     std::vector<double> joint_velocities_;
     std::vector<double> joint_effort_;
 
+    std::vector<double> imu_states_;
+
     std::unordered_map<std::string, std::vector<std::string> > joint_interfaces = {
         {"position", {}},
         {"velocity", {}},

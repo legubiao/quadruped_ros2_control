@@ -27,8 +27,10 @@ void KeyboardInput::timer_callback() {
             inputs_.rx = 0;
             inputs_.ry = 0;
         }
-        publisher_->publish(inputs_);
+    } else {
+        inputs_.command = 0;
     }
+    publisher_->publish(inputs_);
 }
 
 void KeyboardInput::check_command(const char key) {

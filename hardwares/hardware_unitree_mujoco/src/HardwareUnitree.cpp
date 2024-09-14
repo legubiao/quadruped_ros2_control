@@ -28,6 +28,8 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Hardwa
     joint_velocities_.assign(12, 0);
     joint_effort_.assign(12, 0);
 
+    imu_states_.assign(10, 0);
+
     for (const auto &joint: info_.joints) {
         for (const auto &interface: joint.state_interfaces) {
             joint_interfaces[interface.name].push_back(joint.name);
@@ -73,6 +75,13 @@ std::vector<hardware_interface::StateInterface> HardwareUnitree::export_state_in
         state_interfaces.emplace_back(joint_name, "effort", &joint_velocities_[ind++]);
     }
 
+    // export imu sensor state interface
+    for (uint i = 0; i < info_.sensors[0].state_interfaces.size(); i++) {
+        state_interfaces.emplace_back(
+            info_.sensors[0].name, info_.sensors[0].state_interfaces[i].name, &imu_states_[i]);
+    }
+
+
     return state_interfaces;
 }
 
@@ -100,11 +109,26 @@ std::vector<hardware_interface::CommandInterface> HardwareUnitree::export_comman
 }
 
 return_type HardwareUnitree::read(const rclcpp::Time &time, const rclcpp::Duration &period) {
+
+    // joint states
     for (int i(0); i < 12; ++i) {
         joint_position_[i] = _lowState.motor_state()[i].q();
         joint_velocities_[i] = _lowState.motor_state()[i].dq();
         joint_effort_[i] = _lowState.motor_state()[i].tau_est();
     }
+
+    // imu states
+    imu_states_[0] = _lowState.imu_state().quaternion()[0];
+    imu_states_[1] = _lowState.imu_state().quaternion()[1];
+    imu_states_[2] = _lowState.imu_state().quaternion()[2];
+    imu_states_[3] = _lowState.imu_state().quaternion()[3];
+    imu_states_[4] = _lowState.imu_state().gyroscope()[0];
+    imu_states_[5] = _lowState.imu_state().gyroscope()[1];
+    imu_states_[6] = _lowState.imu_state().gyroscope()[2];
+    imu_states_[7] = _lowState.imu_state().accelerometer()[0];
+    imu_states_[8] = _lowState.imu_state().accelerometer()[1];
+    imu_states_[9] = _lowState.imu_state().accelerometer()[2];
+
     return return_type::OK;
 }
 
