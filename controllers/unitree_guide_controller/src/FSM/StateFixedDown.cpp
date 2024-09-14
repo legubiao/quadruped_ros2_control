@@ -2,12 +2,13 @@
 // Created by tlab-uav on 24-9-11.
 //
 
+#include "unitree_guide_controller/FSM/StateFixedDown.h"
+
 #include <cmath>
-#include <unitree_guide_controller/FSM/StateFixedDown.h>
 
 StateFixedDown::StateFixedDown(CtrlComponent ctrlComp): FSMState(
     FSMStateName::FIXEDDOWN, "fixed down", std::move(ctrlComp)) {
-    // duration_ = ctrlComp_.frequency_ * 15;
+    duration_ = ctrlComp_.frequency_ * 1.2;
 }
 
 void StateFixedDown::enter() {
@@ -34,7 +35,7 @@ void StateFixedDown::exit() {
 }
 
 FSMStateName StateFixedDown::checkChange() {
-    if (percent_ < 2) {
+    if (percent_ < 1.5) {
         return FSMStateName::FIXEDDOWN;
     }
     switch (ctrlComp_.control_inputs_.get().command) {

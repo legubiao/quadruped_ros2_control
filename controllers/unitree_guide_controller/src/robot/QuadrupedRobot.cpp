@@ -3,8 +3,8 @@
 //
 
 #include <iostream>
-#include <unitree_guide_controller/common/interface.h>
-#include <unitree_guide_controller/robotics/QuadrupedRobot.h>
+#include "unitree_guide_controller/control/CtrlComponent.h"
+#include "unitree_guide_controller/robot/QuadrupedRobot.h"
 
 void QuadrupedRobot::init(const std::string &robot_description) {
     KDL::Tree robot_tree;

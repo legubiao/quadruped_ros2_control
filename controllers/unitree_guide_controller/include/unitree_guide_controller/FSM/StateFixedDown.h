@@ -28,7 +28,7 @@ private:
     double start_pos_[12] = {};
     rclcpp::Time start_time_;
 
-    double duration_ = 6000; // steps
+    double duration_ = 600; // steps
     double percent_ = 0; //%
     double phase = 0.0;
 };

@@ -9,7 +9,7 @@
 #include <hardware_interface/loaned_command_interface.hpp>
 #include <hardware_interface/loaned_state_interface.hpp>
 #include <control_input_msgs/msg/inputs.hpp>
-#include <unitree_guide_controller/robotics/QuadrupedRobot.h>
+#include <unitree_guide_controller/robot/QuadrupedRobot.h>
 
 struct CtrlComponent {
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> >
@@ -38,7 +38,7 @@ struct CtrlComponent {
     QuadrupedRobot default_robot_model_;
     std::reference_wrapper<QuadrupedRobot> robot_model_;
 
-    CtrlComponent() : control_inputs_(default_inputs_), default_robot_model_(), robot_model_(default_robot_model_) {
+    CtrlComponent() : control_inputs_(default_inputs_), robot_model_(default_robot_model_) {
     }
 
     void clear() {

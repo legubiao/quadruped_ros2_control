@@ -9,7 +9,7 @@
 #include <utility>
 #include <rclcpp/time.hpp>
 #include <unitree_guide_controller/common/enumClass.h>
-#include <unitree_guide_controller/common/interface.h>
+#include <unitree_guide_controller/control/CtrlComponent.h>
 
 class FSMState {
 public:

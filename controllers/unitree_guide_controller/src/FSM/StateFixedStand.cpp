@@ -2,12 +2,13 @@
 // Created by biao on 24-9-10.
 //
 
+#include "unitree_guide_controller/FSM/StateFixedStand.h"
+
 #include <cmath>
-#include <iostream>
-#include <unitree_guide_controller/FSM/StateFixedStand.h>
 
 StateFixedStand::StateFixedStand(CtrlComponent ctrlComp): FSMState(
     FSMStateName::FIXEDSTAND, "fixed stand", std::move(ctrlComp)) {
+    duration_ = ctrlComp_.frequency_ * 1.2;
 }
 
 void StateFixedStand::enter() {
@@ -35,7 +36,7 @@ void StateFixedStand::exit() {
 }
 
 FSMStateName StateFixedStand::checkChange() {
-    if (percent_ < 2) {
+    if (percent_ < 1.5) {
         return FSMStateName::FIXEDSTAND;
     }
     switch (ctrlComp_.control_inputs_.get().command) {

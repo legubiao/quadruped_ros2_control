@@ -3,8 +3,8 @@
 //
 
 #include <iostream>
-#include <unitree_guide_controller/FSM/StateSwingTest.h>
-#include <unitree_guide_controller/common/mathTools.h>
+#include "unitree_guide_controller/FSM/StateSwingTest.h"
+#include "unitree_guide_controller/common/mathTools.h"
 
 StateSwingTest::StateSwingTest(CtrlComponent ctrlComp): FSMState(
     FSMStateName::SWINGTEST, "swing test", std::move(ctrlComp)) {

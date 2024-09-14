@@ -1,7 +1,6 @@
 unitree_guide_controller:
   ros__parameters:
     type: unitree_guide_controller/UnitreeGuideController
-    update_rate: 200  # Hz
     joints:
       - FR_hip_joint
       - FR_thigh_joint

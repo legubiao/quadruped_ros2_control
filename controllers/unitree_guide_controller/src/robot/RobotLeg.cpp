@@ -3,7 +3,7 @@
 //
 
 #include <memory>
-#include <unitree_guide_controller/robotics/RobotLeg.h>
+#include "unitree_guide_controller/robot/RobotLeg.h"
 
 RobotLeg::RobotLeg(const KDL::Chain &chain) {
     chain_ = chain;
@@ -36,6 +36,6 @@ KDL::JntArray RobotLeg::calcTorque(const KDL::JntArray &joint_positions, const K
                                    const KDL::Wrenches &force) const {
     KDL::JntArray torque(chain_.getNrOfJoints());
     id_solver_->CartToJnt(joint_positions, joint_velocities, KDL::JntArray(chain_.getNrOfJoints()), force,
-                              torque);
+                          torque);
     return torque;
 }

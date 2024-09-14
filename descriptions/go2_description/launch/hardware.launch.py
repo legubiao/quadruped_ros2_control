@@ -3,8 +3,8 @@ import os
 import xacro
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription, RegisterEventHandler
+from launch.event_handlers import OnProcessExit
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -29,40 +29,66 @@ def launch_setup(context, *args, **kwargs):
             "robot_control.yaml",
         ]
     )
+
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_state_publisher',
+        parameters=[
+            {
+                'publish_frequency': 20.0,
+                'use_tf_static': True,
+                'robot_description': robot_description,
+                'ignore_timestamp': True
+            }
+        ],
+    )
+
+    controller_manager = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[robot_controllers],
+        remappings=[
+            ("~/robot_description", "/robot_description"),
+        ],
+        output="both",
+    )
+
+    joint_state_publisher = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_state_broadcaster",
+                   "--controller-manager", "/controller_manager"],
+    )
+
+    imu_sensor_broadcaster = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["imu_sensor_broadcaster",
+                   "--controller-manager", "/controller_manager"],
+    )
+
+    unitree_guide_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["unitree_guide_controller", "--controller-manager", "/controller_manager"],
+    )
+
     return [
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            parameters=[
-                {
-                    'publish_frequency': 20.0,
-                    'use_tf_static': True,
-                    'robot_description': robot_description,
-                    'ignore_timestamp': True
-                }
-            ],
+        robot_state_publisher,
+        controller_manager,
+        joint_state_publisher,
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=joint_state_publisher,
+                on_exit=[imu_sensor_broadcaster],
+            )
         ),
-        Node(
-            package="controller_manager",
-            executable="ros2_control_node",
-            parameters=[robot_controllers],
-            remappings=[
-                ("~/robot_description", "/robot_description"),
-            ],
-            output="both",
-        ),
-        Node(
-            package="controller_manager",
-            executable="spawner",
-            arguments=["joint_state_broadcaster",
-                       "--controller-manager", "/controller_manager"],
-        ),
-        Node(
-            package="controller_manager",
-            executable="spawner",
-            arguments=["imu_sensor_broadcaster",
-                       "--controller-manager", "/controller_manager"],
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=imu_sensor_broadcaster,
+                on_exit=[unitree_guide_controller],
+            )
         ),
     ]
 

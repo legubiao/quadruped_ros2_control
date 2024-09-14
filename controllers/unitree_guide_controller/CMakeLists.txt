@@ -24,14 +24,23 @@ foreach (Dependency IN ITEMS ${CONTROLLER_INCLUDE_DEPENDS})
 endforeach ()
 
 add_library(${PROJECT_NAME} SHARED
+
         src/UnitreeGuideController.cpp
+
         src/FSM/StatePassive.cpp
         src/FSM/StateFixedDown.cpp
         src/FSM/StateFixedStand.cpp
         src/FSM/StateSwingTest.cpp
         src/FSM/StateFreeStand.cpp
-        src/robotics/QuadrupedRobot.cpp
-        src/robotics/RobotLeg.cpp
+
+        src/robot/QuadrupedRobot.cpp
+        src/robot/RobotLeg.cpp
+
+        src/control/Estimator.cpp
+
+        src/quadProgpp/Array.cc
+        src/quadProgpp/QuadProg++.cc
+
 )
 target_include_directories(${PROJECT_NAME}
         PUBLIC

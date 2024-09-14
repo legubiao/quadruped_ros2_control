@@ -96,6 +96,9 @@ namespace unitree_guide_controller {
         std::shared_ptr<FSMState> current_state_;
         std::shared_ptr<FSMState> next_state_;
 
+        std::chrono::time_point<std::chrono::steady_clock> last_update_time_;
+        double update_frequency_;
+
         std::shared_ptr<FSMState> getNextState(FSMStateName stateName) const;
 
         std::unordered_map<
