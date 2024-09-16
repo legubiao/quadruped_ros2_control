@@ -58,6 +58,19 @@ public:
     [[nodiscard]] KDL::JntArray getTorque(
         const KDL::Wrenches &force, int index) const;
 
+    /**
+     * Calculate the foot end velocity
+     * @param index leg index
+     * @return velocity vector
+     */
+    [[nodiscard]] KDL::Vector getFeet2BVelocities (int index) const;
+
+    /**
+     * Calculate all foot end velocity
+     * @return list of foot end velocity
+     */
+    [[nodiscard]] std::vector<KDL::Vector> getFeet2BVelocities () const;
+
     std::vector<KDL::JntArray> current_joint_pos_;
     std::vector<KDL::JntArray> current_joint_vel_;
 

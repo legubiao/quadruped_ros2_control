@@ -31,6 +31,9 @@ struct CtrlComponent {
     std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> >
     joint_velocity_state_interface_;
 
+    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> >
+    imu_state_interface_;
+
     control_input_msgs::msg::Inputs default_inputs_;
     std::reference_wrapper<control_input_msgs::msg::Inputs> control_inputs_;
     int frequency_{};
@@ -51,6 +54,8 @@ struct CtrlComponent {
         joint_effort_state_interface_.clear();
         joint_position_state_interface_.clear();
         joint_velocity_state_interface_.clear();
+
+        imu_state_interface_.clear();
     }
 };
 

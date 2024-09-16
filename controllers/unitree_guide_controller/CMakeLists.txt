@@ -37,6 +37,7 @@ add_library(${PROJECT_NAME} SHARED
         src/robot/RobotLeg.cpp
 
         src/control/Estimator.cpp
+        src/control/LowPassFilter.cpp
 
         src/quadProgpp/Array.cc
         src/quadProgpp/QuadProg++.cc

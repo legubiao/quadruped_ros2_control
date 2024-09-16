@@ -92,14 +92,10 @@ void StateSwingTest::positionCtrl() {
 
 void StateSwingTest::torqueCtrl() const {
     const KDL::Frame fr_current_pos = ctrlComp_.robot_model_.get().getFeet2BPositions(0);
-    KDL::Jacobian fr_jaco = ctrlComp_.robot_model_.get().getJacobian(0);
 
     const KDL::Vector pos_goal = fr_goal_pos_.p;
     const KDL::Vector pos0 = fr_current_pos.p;
-    const Eigen::Matrix<double, 3, Eigen::Dynamic> linear_jacobian = fr_jaco.data.topRows(3);
-    Eigen::Product<Eigen::Matrix<double, 3, -1>, Eigen::Matrix<double, -1, 1> > vel_eigen =
-            linear_jacobian * ctrlComp_.robot_model_.get().current_joint_vel_[0].data;
-    const KDL::Vector vel0(vel_eigen(0), vel_eigen(1), vel_eigen(2));
+    const KDL::Vector vel0 = ctrlComp_.robot_model_.get().getFeet2BVelocities(0);
 
     const KDL::Vector force0 = Kp * (pos_goal - pos0) + Kd * (-vel0);
     const KDL::Wrench wrench0(force0, KDL::Vector::Zero()); // 假设力矩为零

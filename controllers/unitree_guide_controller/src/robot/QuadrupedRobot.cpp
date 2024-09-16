@@ -64,6 +64,21 @@ KDL::JntArray QuadrupedRobot::getTorque(
     return robot_legs_[index]->calcTorque(current_joint_pos_[index], current_joint_vel_[index], force);
 }
 
+KDL::Vector QuadrupedRobot::getFeet2BVelocities(const int index) const {
+    const Eigen::Matrix<double, 3, Eigen::Dynamic> jacobian = getJacobian(index).data.topRows(3);
+    Eigen::VectorXd foot_velocity = jacobian * current_joint_vel_[index].data;
+    return {foot_velocity(0), foot_velocity(1), foot_velocity(2)};
+}
+
+std::vector<KDL::Vector> QuadrupedRobot::getFeet2BVelocities() const {
+    std::vector<KDL::Vector> result;
+    result.resize(4);
+    for (int i = 0; i < 4; i++) {
+        result[i] = getFeet2BVelocities(i);
+    }
+    return result;
+}
+
 void QuadrupedRobot::update(const CtrlComponent &ctrlComp) {
     for (int i = 0; i < 4; i++) {
         KDL::JntArray pos_array(3);

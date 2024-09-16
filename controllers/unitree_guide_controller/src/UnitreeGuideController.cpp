@@ -32,6 +32,10 @@ namespace unitree_guide_controller {
             }
         }
 
+        for (const auto &interface_type: imu_interface_types_) {
+            conf.names.push_back(imu_name_ + "/" += interface_type);
+        }
+
         return conf;
     }
 
@@ -65,7 +69,10 @@ namespace unitree_guide_controller {
             state_interface_types_ =
                     auto_declare<std::vector<std::string> >("state_interfaces", state_interface_types_);
 
-            // Initialize variables and pointers
+            // imu sensor
+            imu_name_ = auto_declare<std::string>("imu_name", imu_name_);
+            imu_interface_types_ = auto_declare<std::vector<std::string> >("imu_interfaces", state_interface_types_);
+
         } catch (const std::exception &e) {
             fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
             return controller_interface::CallbackReturn::ERROR;
@@ -111,7 +118,11 @@ namespace unitree_guide_controller {
 
         // assign state interfaces
         for (auto &interface: state_interfaces_) {
-            state_interface_map_[interface.get_interface_name()]->push_back(interface);
+            if (interface.get_prefix_name() == imu_name_) {
+                ctrl_comp_.imu_state_interface_.emplace_back(interface);
+            } else {
+                state_interface_map_[interface.get_interface_name()]->push_back(interface);
+            }
         }
 
         state_list_.passive = std::make_shared<StatePassive>(ctrl_comp_);
