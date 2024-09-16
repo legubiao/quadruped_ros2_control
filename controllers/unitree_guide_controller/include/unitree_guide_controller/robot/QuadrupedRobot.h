@@ -30,10 +30,9 @@ public:
 
     /**
      * Calculate the foot end position based on joint positions
-     * @param joint_positions vector of joint positions
      * @return vector of foot-end position
      */
-    [[nodiscard]] std::vector<KDL::Frame> getFeet2BPositions(const std::vector<KDL::JntArray> &joint_positions) const;
+    [[nodiscard]] std::vector<KDL::Frame> getFeet2BPositions() const;
 
     /**
      * Calculate the foot end position based on joint positions
@@ -63,22 +62,21 @@ public:
      * @param index leg index
      * @return velocity vector
      */
-    [[nodiscard]] KDL::Vector getFeet2BVelocities (int index) const;
+    [[nodiscard]] KDL::Vector getFeet2BVelocities(int index) const;
 
     /**
      * Calculate all foot end velocity
      * @return list of foot end velocity
      */
-    [[nodiscard]] std::vector<KDL::Vector> getFeet2BVelocities () const;
+    [[nodiscard]] std::vector<KDL::Vector> getFeet2BVelocities() const;
 
+    double mass_ = 0;
     std::vector<KDL::JntArray> current_joint_pos_;
     std::vector<KDL::JntArray> current_joint_vel_;
 
     void update(const CtrlComponent &ctrlComp);
 
 private:
-    double mass_ = 0;
-
     std::vector<std::shared_ptr<RobotLeg> > robot_legs_;
 
     KDL::Chain fr_chain_;

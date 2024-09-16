@@ -10,6 +10,7 @@
 #include <unitree_guide_controller/FSM/FSMState.h>
 #include <unitree_guide_controller/common/enumClass.h>
 
+#include "FSM/StateBalanceTest.h"
 #include "FSM/StateFixedDown.h"
 #include "FSM/StateFixedStand.h"
 #include "FSM/StateFreeStand.h"
@@ -25,6 +26,7 @@ namespace unitree_guide_controller {
         std::shared_ptr<StateFreeStand> freeStand;
 
         std::shared_ptr<StateSwingTest> swingTest;
+        std::shared_ptr<StateBalanceTest> balanceTest;
     };
 
     class UnitreeGuideController final : public controller_interface::ControllerInterface {

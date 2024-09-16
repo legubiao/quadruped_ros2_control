@@ -11,6 +11,9 @@
 #include <control_input_msgs/msg/inputs.hpp>
 #include <unitree_guide_controller/robot/QuadrupedRobot.h>
 
+#include "BalanceCtrl.h"
+#include "Estimator.h"
+
 struct CtrlComponent {
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> >
     joint_effort_command_interface_;
@@ -41,7 +44,14 @@ struct CtrlComponent {
     QuadrupedRobot default_robot_model_;
     std::reference_wrapper<QuadrupedRobot> robot_model_;
 
-    CtrlComponent() : control_inputs_(default_inputs_), robot_model_(default_robot_model_) {
+    Estimator default_estimator_;
+    std::reference_wrapper<Estimator> estimator_;
+
+    BalanceCtrl default_balance_ctrl_;
+    std::reference_wrapper<BalanceCtrl> balance_ctrl_;
+
+    CtrlComponent() : control_inputs_(default_inputs_), robot_model_(default_robot_model_),
+                      estimator_(default_estimator_), balance_ctrl_(default_balance_ctrl_) {
     }
 
     void clear() {

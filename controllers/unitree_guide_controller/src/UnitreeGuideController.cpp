@@ -41,6 +41,19 @@ namespace unitree_guide_controller {
 
     controller_interface::return_type UnitreeGuideController::
     update(const rclcpp::Time &time, const rclcpp::Duration &period) {
+
+        // auto now = std::chrono::steady_clock::now();
+        // std::chrono::duration<double> time_diff = now - last_update_time_;
+        // last_update_time_ = now;
+        //
+        // // Calculate the frequency
+        // update_frequency_ = 1.0 / time_diff.count();
+        // RCLCPP_INFO(get_node()->get_logger(), "Update frequency: %f Hz", update_frequency_);
+
+
+        ctrl_comp_.robot_model_.get().update(ctrl_comp_);
+        ctrl_comp_.estimator_.get().update(ctrl_comp_);
+
         if (mode_ == FSMMode::NORMAL) {
             current_state_->run();
             next_state_name_ = current_state_->checkChange();
@@ -72,7 +85,6 @@ namespace unitree_guide_controller {
             // imu sensor
             imu_name_ = auto_declare<std::string>("imu_name", imu_name_);
             imu_interface_types_ = auto_declare<std::vector<std::string> >("imu_interfaces", state_interface_types_);
-
         } catch (const std::exception &e) {
             fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
             return controller_interface::CallbackReturn::ERROR;
@@ -96,8 +108,8 @@ namespace unitree_guide_controller {
         robot_description_subscription_ = get_node()->create_subscription<std_msgs::msg::String>(
             "~/robot_description", rclcpp::QoS(rclcpp::KeepLast(1)).transient_local(),
             [this](const std_msgs::msg::String::SharedPtr msg) {
-                // Handle message
                 ctrl_comp_.robot_model_.get().init(msg->data);
+                ctrl_comp_.balance_ctrl_.get().init(ctrl_comp_.robot_model_.get());
             });
 
         get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);
@@ -130,6 +142,7 @@ namespace unitree_guide_controller {
         state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_comp_);
         state_list_.swingTest = std::make_shared<StateSwingTest>(ctrl_comp_);
         state_list_.freeStand = std::make_shared<StateFreeStand>(ctrl_comp_);
+        state_list_.balanceTest = std::make_shared<StateBalanceTest>(ctrl_comp_);
 
         // Initialize FSM
         current_state_ = state_list_.passive;
@@ -178,8 +191,8 @@ namespace unitree_guide_controller {
             //     return state_list_.trotting;
             case FSMStateName::SWINGTEST:
                 return state_list_.swingTest;
-            // case FSMStateName::BALANCETEST:
-            //     return state_list_.balanceTest;
+            case FSMStateName::BALANCETEST:
+                return state_list_.balanceTest;
             default:
                 return state_list_.invalid;
         }

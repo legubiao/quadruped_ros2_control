@@ -22,10 +22,9 @@ void StateFreeStand::enter() {
         ctrlComp_.joint_kp_command_interface_[i].get().set_value(180);
         ctrlComp_.joint_kd_command_interface_[i].get().set_value(5);
     }
-    ctrlComp_.robot_model_.get().update(ctrlComp_);
 
     init_joint_pos_ = ctrlComp_.robot_model_.get().current_joint_pos_;
-    init_foot_pos_ = ctrlComp_.robot_model_.get().getFeet2BPositions(init_joint_pos_);
+    init_foot_pos_ = ctrlComp_.robot_model_.get().getFeet2BPositions();
 
 
     fr_init_pos_ = init_foot_pos_[0];

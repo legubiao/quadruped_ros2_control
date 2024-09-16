@@ -1,6 +1,6 @@
 # Unitree Guide Controller
 
-This is a ros2-control controller based on unitree guide.
+This is a ros2-control controller based on unitree guide. The original unitree guide project could be found [here](https://github.com/unitreerobotics/unitree_guide)
 
 ```bash
 cd ~/ros2_ws

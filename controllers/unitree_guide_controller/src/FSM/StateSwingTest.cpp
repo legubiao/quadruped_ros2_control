@@ -29,10 +29,9 @@ void StateSwingTest::enter() {
     Kp = KDL::Vector(20, 20, 50);
     Kd = KDL::Vector(5, 5, 20);
 
-    ctrlComp_.robot_model_.get().update(ctrlComp_);
     init_joint_pos_ = ctrlComp_.robot_model_.get().current_joint_pos_;
+    init_foot_pos_ = ctrlComp_.robot_model_.get().getFeet2BPositions();
 
-    init_foot_pos_ = ctrlComp_.robot_model_.get().getFeet2BPositions(init_joint_pos_);
     target_foot_pos_ = init_foot_pos_;
     fr_init_pos_ = init_foot_pos_[0];
     fr_goal_pos_ = fr_init_pos_;

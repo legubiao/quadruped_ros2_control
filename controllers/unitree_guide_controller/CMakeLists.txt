@@ -5,6 +5,7 @@ if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif ()
 
+set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CONTROLLER_INCLUDE_DEPENDS
@@ -32,12 +33,14 @@ add_library(${PROJECT_NAME} SHARED
         src/FSM/StateFixedStand.cpp
         src/FSM/StateSwingTest.cpp
         src/FSM/StateFreeStand.cpp
+        src/FSM/StateBalanceTest.cpp
 
         src/robot/QuadrupedRobot.cpp
         src/robot/RobotLeg.cpp
 
         src/control/Estimator.cpp
         src/control/LowPassFilter.cpp
+        src/control/BalanceCtrl.cpp
 
         src/quadProgpp/Array.cc
         src/quadProgpp/QuadProg++.cc

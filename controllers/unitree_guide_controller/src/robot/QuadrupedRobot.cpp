@@ -42,11 +42,11 @@ std::vector<KDL::JntArray> QuadrupedRobot::getQ(const std::vector<KDL::Frame> &p
     return result;
 }
 
-std::vector<KDL::Frame> QuadrupedRobot::getFeet2BPositions(const std::vector<KDL::JntArray> &joint_positions) const {
+std::vector<KDL::Frame> QuadrupedRobot::getFeet2BPositions() const {
     std::vector<KDL::Frame> result;
     result.resize(4);
     for (int i = 0; i < 4; i++) {
-        result[i] = robot_legs_[i]->calcPEe2B(joint_positions[i]);
+        result[i] = robot_legs_[i]->calcPEe2B(current_joint_pos_[i]);
     }
     return result;
 }
@@ -80,6 +80,7 @@ std::vector<KDL::Vector> QuadrupedRobot::getFeet2BVelocities() const {
 }
 
 void QuadrupedRobot::update(const CtrlComponent &ctrlComp) {
+    if (mass_ == 0) return;
     for (int i = 0; i < 4; i++) {
         KDL::JntArray pos_array(3);
         pos_array(0) = ctrlComp.joint_position_state_interface_[i * 3].get().get_value();

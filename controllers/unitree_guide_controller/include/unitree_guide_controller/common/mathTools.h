@@ -33,5 +33,37 @@ T windowFunc(const T x, const T windowRatio, const T xRange = 1.0,
     return yRange;
 }
 
+inline Eigen::Matrix3d skew(const KDL::Vector &vec) {
+    Eigen::Matrix3d skewMat;
+    skewMat << 0, -vec.z(), vec.y(),
+            vec.z(), 0, -vec.x(),
+            -vec.y(), vec.x(), 0;
+    return skewMat;
+}
+
+
+inline Vec3 rotationToExp(const KDL::Rotation &rotation) {
+    auto rm = Eigen::Matrix3d(rotation.data);
+    double cosValue = rm.trace() / 2.0 - 1 / 2.0;
+    if (cosValue > 1.0f) {
+        cosValue = 1.0f;
+    } else if (cosValue < -1.0f) {
+        cosValue = -1.0f;
+    }
+
+    double angle = acos(cosValue);
+    Vec3 exp;
+    if (fabs(angle) < 1e-5) {
+        exp = Vec3(0, 0, 0);
+    } else if (fabs(angle - M_PI) < 1e-5) {
+        exp = angle * Vec3(rm(0, 0) + 1, rm(0, 1), rm(0, 2)) /
+              sqrt(2 * (1 + rm(0, 0)));
+    } else {
+        exp = angle / (2.0f * sin(angle)) *
+              Vec3(rm(2, 1) - rm(1, 2), rm(0, 2) - rm(2, 0), rm(1, 0) - rm(0, 1));
+    }
+    return exp;
+}
+
 
 #endif //MATHTOOLS_H

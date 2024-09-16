@@ -10,58 +10,58 @@
 /******** Vector ********/
 /************************/
 // 2x1 Vector
-using Vec2 = typename Eigen::Matrix<double, 2, 1>;
+using Vec2 = Eigen::Matrix<double, 2, 1>;
 
 // 3x1 Vector
-using Vec3 = typename Eigen::Matrix<double, 3, 1>;
+using Vec3 = Eigen::Matrix<double, 3, 1>;
 
 // 4x1 Vector
-using Vec4 = typename Eigen::Matrix<double, 4, 1>;
+using Vec4 = Eigen::Matrix<double, 4, 1>;
 
 // 6x1 Vector
-using Vec6 = typename Eigen::Matrix<double, 6, 1>;
+using Vec6 = Eigen::Matrix<double, 6, 1>;
 
 // Quaternion
-using Quat = typename Eigen::Matrix<double, 4, 1>;
+using Quat = Eigen::Matrix<double, 4, 1>;
 
 // 4x1 Integer Vector
-using VecInt4 = typename Eigen::Matrix<int, 4, 1>;
+using VecInt4 = Eigen::Matrix<int, 4, 1>;
 
 // 12x1 Vector
-using Vec12 = typename Eigen::Matrix<double, 12, 1>;
+using Vec12 = Eigen::Matrix<double, 12, 1>;
 
 // 18x1 Vector
-using Vec18 = typename Eigen::Matrix<double, 18, 1>;
+using Vec18 = Eigen::Matrix<double, 18, 1>;
 
 // Dynamic Length Vector
-using VecX = typename Eigen::Matrix<double, Eigen::Dynamic, 1>;
+using VecX = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
 /************************/
 /******** Matrix ********/
 /************************/
 // Rotation Matrix
-using RotMat = typename Eigen::Matrix<double, 3, 3>;
+using RotMat = Eigen::Matrix<double, 3, 3>;
 
 // Homogenous Matrix
-using HomoMat = typename Eigen::Matrix<double, 4, 4>;
+using HomoMat = Eigen::Matrix<double, 4, 4>;
 
 // 2x2 Matrix
-using Mat2 = typename Eigen::Matrix<double, 2, 2>;
+using Mat2 = Eigen::Matrix<double, 2, 2>;
 
 // 3x3 Matrix
-using Mat3 = typename Eigen::Matrix<double, 3, 3>;
+using Mat3 = Eigen::Matrix<double, 3, 3>;
 
 // 3x3 Identity Matrix
 #define I3 Eigen::MatrixXd::Identity(3, 3)
 
 // 3x4 Matrix, each column is a 3x1 vector
-using Vec34 = typename Eigen::Matrix<double, 3, 4>;
+using Vec34 = Eigen::Matrix<double, 3, 4>;
 
 // 6x6 Matrix
-using Mat6 = typename Eigen::Matrix<double, 6, 6>;
+using Mat6 = Eigen::Matrix<double, 6, 6>;
 
 // 12x12 Matrix
-using Mat12 = typename Eigen::Matrix<double, 12, 12>;
+using Mat12 = Eigen::Matrix<double, 12, 12>;
 
 // 12x12 Identity Matrix
 #define I12 Eigen::MatrixXd::Identity(12, 12)
@@ -70,7 +70,7 @@ using Mat12 = typename Eigen::Matrix<double, 12, 12>;
 #define I18 Eigen::MatrixXd::Identity(18, 18)
 
 // Dynamic Size Matrix
-using MatX = typename Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
+using MatX = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
 
 /************************/
 /****** Functions *******/
