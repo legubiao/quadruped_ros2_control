@@ -27,7 +27,7 @@ StateBalanceTest::StateBalanceTest(CtrlComponent ctrlComp) : FSMState(FSMStateNa
 void StateBalanceTest::enter() {
     pcdInit_ = ctrl_comp_.estimator_.get().getPosition();
     pcd_ = pcdInit_;
-    init_rotation_ = Eigen::Matrix3d(ctrl_comp_.estimator_.get().getRotation().data);
+    init_rotation_ = ctrl_comp_.estimator_.get().getRotation();
 }
 
 void StateBalanceTest::run() {
@@ -35,7 +35,7 @@ void StateBalanceTest::run() {
     pcd_(1) = pcdInit_(1) - invNormalize(ctrl_comp_.control_inputs_.get().lx, _yMin, _yMax);
     pcd_(2) = pcdInit_(2) + invNormalize(ctrl_comp_.control_inputs_.get().ry, _zMin, _zMax);
     const float yaw = invNormalize(ctrl_comp_.control_inputs_.get().rx, _yawMin, _yawMax);
-    Rd_ = rpyToRotMat(0, 0, yaw) * init_rotation_;
+    Rd_ = Mat3((KDL::Rotation::RPY(0, 0, yaw).Inverse() * init_rotation_).data);
 
     pose_body_ = ctrl_comp_.estimator_.get().getPosition();
     vel_body_ = ctrl_comp_.estimator_.get().getVelocity();
@@ -71,7 +71,7 @@ void StateBalanceTest::calcTorque() {
 
     // expected body angular acceleration
     d_wbd_ = kp_w_ * rotMatToExp(Rd_ * G2B_Rotation) +
-             Kd_w_ * (Vec3(0,0,0) - Vec3((-ctrl_comp_.estimator_.get().getGlobalGyro()).data));
+             Kd_w_ * (Vec3(0, 0, 0) - Vec3((-ctrl_comp_.estimator_.get().getGlobalGyro()).data));
 
     // calculate foot force
     const std::vector contact(4, 1);

@@ -28,7 +28,6 @@ void BalanceCtrl::init(const QuadrupedRobot &robot) {
     Vec12 w, u;
     w << 10, 10, 4, 10, 10, 4, 10, 10, 4, 10, 10, 4;
     u << 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3;
-
     s << 20, 20, 50, 450, 450, 450;
 
     S_ = s.asDiagonal();
@@ -40,9 +39,6 @@ void BalanceCtrl::init(const QuadrupedRobot &robot) {
 
 Vec34 BalanceCtrl::calF(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rotM,
                         const std::vector<KDL::Vector> &feetPos2B, const std::vector<int> &contact) {
-    std::cout << "ddPcd: " << ddPcd.transpose() << std::endl;
-    std::cout << "dWbd: " << dWbd.transpose() << std::endl;
-
     calMatrixA(feetPos2B, rotM);
     calVectorBd(ddPcd, dWbd, rotM);
     calConstraints(contact);

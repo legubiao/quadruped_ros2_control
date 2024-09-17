@@ -25,7 +25,7 @@ private:
     KDL::Vector pcd_;
     KDL::Vector pcdInit_;
     RotMat Rd_;
-    RotMat init_rotation_;
+    KDL::Rotation init_rotation_;
 
     KDL::Vector pose_body_, vel_body_;
 

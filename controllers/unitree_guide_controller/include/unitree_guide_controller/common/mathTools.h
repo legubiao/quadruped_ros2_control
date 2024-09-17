@@ -61,39 +61,5 @@ inline Vec3 rotMatToExp(const RotMat &rm) {
     return exp;
 }
 
-inline RotMat rotx(const double &theta) {
-    double s = std::sin(theta);
-    double c = std::cos(theta);
-
-    RotMat R;
-    R << 1, 0, 0, 0, c, -s, 0, s, c;
-    return R;
-}
-
-inline RotMat roty(const double &theta) {
-    double s = std::sin(theta);
-    double c = std::cos(theta);
-
-    RotMat R;
-    R << c, 0, s, 0, 1, 0, -s, 0, c;
-    return R;
-}
-
-inline RotMat rotz(const double &theta) {
-    double s = std::sin(theta);
-    double c = std::cos(theta);
-
-    RotMat R;
-    R << c, -s, 0, s, c, 0, 0, 0, 1;
-    return R;
-}
-
-inline RotMat rpyToRotMat(const double &row, const double &pitch,
-                          const double &yaw) {
-    RotMat m = rotz(yaw) * roty(pitch) * rotx(row);
-    return m;
-}
-
-
 
 #endif //MATHTOOLS_H
