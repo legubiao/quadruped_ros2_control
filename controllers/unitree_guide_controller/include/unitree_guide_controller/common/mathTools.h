@@ -33,17 +33,13 @@ T windowFunc(const T x, const T windowRatio, const T xRange = 1.0,
     return yRange;
 }
 
-inline Eigen::Matrix3d skew(const KDL::Vector &vec) {
-    Eigen::Matrix3d skewMat;
-    skewMat << 0, -vec.z(), vec.y(),
-            vec.z(), 0, -vec.x(),
-            -vec.y(), vec.x(), 0;
-    return skewMat;
+inline Mat3 skew(const Vec3 &v) {
+    Mat3 m;
+    m << 0, -v(2), v(1), v(2), 0, -v(0), -v(1), v(0), 0;
+    return m;
 }
 
-
-inline Vec3 rotationToExp(const KDL::Rotation &rotation) {
-    auto rm = Eigen::Matrix3d(rotation.data);
+inline Vec3 rotMatToExp(const RotMat &rm) {
     double cosValue = rm.trace() / 2.0 - 1 / 2.0;
     if (cosValue > 1.0f) {
         cosValue = 1.0f;
@@ -51,7 +47,7 @@ inline Vec3 rotationToExp(const KDL::Rotation &rotation) {
         cosValue = -1.0f;
     }
 
-    double angle = acos(cosValue);
+    const double angle = acos(cosValue);
     Vec3 exp;
     if (fabs(angle) < 1e-5) {
         exp = Vec3(0, 0, 0);
@@ -64,6 +60,40 @@ inline Vec3 rotationToExp(const KDL::Rotation &rotation) {
     }
     return exp;
 }
+
+inline RotMat rotx(const double &theta) {
+    double s = std::sin(theta);
+    double c = std::cos(theta);
+
+    RotMat R;
+    R << 1, 0, 0, 0, c, -s, 0, s, c;
+    return R;
+}
+
+inline RotMat roty(const double &theta) {
+    double s = std::sin(theta);
+    double c = std::cos(theta);
+
+    RotMat R;
+    R << c, 0, s, 0, 1, 0, -s, 0, c;
+    return R;
+}
+
+inline RotMat rotz(const double &theta) {
+    double s = std::sin(theta);
+    double c = std::cos(theta);
+
+    RotMat R;
+    R << c, -s, 0, s, c, 0, 0, 0, 1;
+    return R;
+}
+
+inline RotMat rpyToRotMat(const double &row, const double &pitch,
+                          const double &yaw) {
+    RotMat m = rotz(yaw) * roty(pitch) * rotx(row);
+    return m;
+}
+
 
 
 #endif //MATHTOOLS_H

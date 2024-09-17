@@ -18,30 +18,29 @@ public:
 
     void init(const QuadrupedRobot &robot);
 
-    std::vector<KDL::Vector> calF(const Vec3 &ddPcd, const Vec3 &dWbd, const KDL::Rotation &rotM,
-                                  const std::vector<KDL::Vector> &feetPos2B, const std::vector<int> &contact);
+    Vec34 calF(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rotM,
+               const std::vector<KDL::Vector> &feetPos2B, const std::vector<int> &contact);
 
 private:
-    void calMatrixA(const std::vector<KDL::Vector> &feetPos2B, const KDL::Rotation &rotM);
+    void calMatrixA(const std::vector<KDL::Vector> &feetPos2B, const RotMat &rotM);
 
-    void calVectorBd(const Vec3 &ddPcd, const Vec3 &dWbd, const KDL::Rotation &rotM);
+    void calVectorBd(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rotM);
 
     void calConstraints(const std::vector<int> &contact);
 
     void solveQP();
 
-    Mat12 _G, _W, _U;
-    Mat6 _S;
-    Mat3 _Ib;
-    Vec6 _bd;
-    KDL::Vector _pcb;
-    Vec3 _g;
-    Vec12 _F, _Fprev, _g0T;
-    double _mass, _alpha, _beta, _fricRatio;
-    Eigen::MatrixXd _CE, _CI;
-    Eigen::VectorXd _ce0, _ci0;
-    Eigen::Matrix<double, 6, 12> _A;
-    Eigen::Matrix<double, 5, 3> _fricMat;
+    Mat12 G_, W_, U_;
+    Mat6 S_;
+    Mat3 Ib_;
+    Vec6 bd_;
+    Vec3 _g, _pcb;
+    Vec12 F_, F_prev_, g0T_;
+    double mass_, alpha_, beta_, friction_ratio_;
+    Eigen::MatrixXd CE_, CI_;
+    Eigen::VectorXd ce0_, ci0_;
+    Eigen::Matrix<double, 6, 12> A_;
+    Eigen::Matrix<double, 5, 3> friction_mat_;
 };
 
 

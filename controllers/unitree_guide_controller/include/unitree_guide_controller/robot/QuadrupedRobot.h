@@ -7,6 +7,7 @@
 #define QUADRUPEDROBOT_H
 #include <string>
 #include <kdl_parser/kdl_parser.hpp>
+#include <unitree_guide_controller/common/mathTypes.h>
 
 #include "RobotLeg.h"
 
@@ -54,6 +55,15 @@ public:
      * @param index leg index
      * @return torque
      */
+    [[nodiscard]] KDL::JntArray getTorque(
+        const Vec3 &force, int index) const;
+
+    /**
+    * Calculate the torque based on joint positions, joint velocities and external force
+    * @param force external force
+    * @param index leg index
+    * @return torque
+    */
     [[nodiscard]] KDL::JntArray getTorque(
         const KDL::Vector &force, int index) const;
 

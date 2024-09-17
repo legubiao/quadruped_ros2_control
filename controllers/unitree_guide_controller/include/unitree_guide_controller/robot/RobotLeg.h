@@ -11,6 +11,7 @@
 #include <kdl/chainjnttojacsolver.hpp>
 #include <kdl_parser/kdl_parser.hpp>
 #include <kdl/chainidsolver_recursive_newton_euler.hpp>
+#include <unitree_guide_controller/common/mathTypes.h>
 
 class RobotLeg {
 public:
@@ -46,7 +47,7 @@ public:
      * @param force foot end force
      * @return joint torque
      */
-    [[nodiscard]] KDL::JntArray calcTorque(const KDL::JntArray &joint_positions, const KDL::Vector &force) const;
+    [[nodiscard]] KDL::JntArray calcTorque(const KDL::JntArray &joint_positions, const Vec3 &force) const;
 
 protected:
     KDL::Chain chain_;

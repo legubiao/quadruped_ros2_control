@@ -24,14 +24,14 @@ private:
 
     KDL::Vector pcd_;
     KDL::Vector pcdInit_;
-    KDL::Rotation Rd_;
-    KDL::Rotation RdInit_;
+    RotMat Rd_;
+    RotMat init_rotation_;
 
     KDL::Vector pose_body_, vel_body_;
 
     double kp_w_;
     Mat3 Kp_p_, Kd_p_, Kd_w_;
-    Vec3 _ddPcd, _dWbd;
+    Vec3 dd_pcd_, d_wbd_;
 
     float _xMax, _xMin;
     float _yMax, _yMin;

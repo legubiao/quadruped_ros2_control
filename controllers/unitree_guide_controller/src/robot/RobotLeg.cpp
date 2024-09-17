@@ -33,9 +33,9 @@ KDL::Jacobian RobotLeg::calcJaco(const KDL::JntArray &joint_positions) const {
     return jacobian;
 }
 
-KDL::JntArray RobotLeg::calcTorque(const KDL::JntArray &joint_positions, const KDL::Vector &force) const {
+KDL::JntArray RobotLeg::calcTorque(const KDL::JntArray &joint_positions, const Vec3 &force) const {
     const Eigen::Matrix<double, 3, Eigen::Dynamic> jacobian = calcJaco(joint_positions).data.topRows(3);
-    Eigen::VectorXd torque_eigen = jacobian.transpose() * Vec3(force.data);
+    Eigen::VectorXd torque_eigen = jacobian.transpose() * force;
     KDL::JntArray torque(chain_.getNrOfJoints());
     for (unsigned int i = 0; i < chain_.getNrOfJoints(); ++i) {
         torque(i) = torque_eigen(i);

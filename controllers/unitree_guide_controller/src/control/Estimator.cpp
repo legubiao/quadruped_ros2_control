@@ -6,14 +6,6 @@
 #include "unitree_guide_controller/control/CtrlComponent.h"
 #include "unitree_guide_controller/common/mathTools.h"
 
-#define I3 Eigen::MatrixXd::Identity(3, 3)
-
-// 12x12 Identity Matrix
-#define I12 Eigen::MatrixXd::Identity(12, 12)
-
-// 18x18 Identity Matrix
-#define I18 Eigen::MatrixXd::Identity(18, 18)
-
 Estimator::Estimator() {
     g_ = KDL::Vector(0, 0, -9.81);
     _dt = 0.002;
@@ -22,7 +14,7 @@ Estimator::Estimator() {
         Qdig(i) = i < 6 ? 0.0003 : 0.01;
     }
 
-    _xhat.setZero();
+    x_hat_.setZero();
     _u.setZero();
 
     A.setZero();
@@ -197,8 +189,8 @@ void Estimator::update(const CtrlComponent &ctrlComp) {
                                 ctrlComp.imu_state_interface_[9].get().get_value());
 
     _u = Vec3((rotation_ * acceleration_ + g_).data);
-    _xhat = A * _xhat + B * _u;
-    _yhat = C * _xhat;
+    x_hat_ = A * x_hat_ + B * _u;
+    y_hat_ = C * x_hat_;
 
     // Update the measurement value
     _y << _feetPos2Body, _feetVel2Body, _feetH;
@@ -207,22 +199,22 @@ void Estimator::update(const CtrlComponent &ctrlComp) {
     Ppriori = A * P * A.transpose() + Q;
     S = R + C * Ppriori * C.transpose();
     Slu = S.lu();
-    Sy = Slu.solve(_y - _yhat);
+    Sy = Slu.solve(_y - y_hat_);
     Sc = Slu.solve(C);
     SR = Slu.solve(R);
     STC = S.transpose().lu().solve(C);
     IKC = Eigen::MatrixXd::Identity(18, 18) - Ppriori * C.transpose() * Sc;
 
     // Update the state and covariance matrix
-    _xhat += Ppriori * C.transpose() * Sy;
+    x_hat_ += Ppriori * C.transpose() * Sy;
     P = IKC * Ppriori * IKC.transpose() +
         Ppriori * C.transpose() * SR * STC * Ppriori.transpose();
 
     // Using low pass filter to smooth the velocity
-    low_pass_filters_[0]->addValue(_xhat(3));
-    low_pass_filters_[1]->addValue(_xhat(4));
-    low_pass_filters_[2]->addValue(_xhat(5));
-    _xhat(3) = low_pass_filters_[0]->getValue();
-    _xhat(4) = low_pass_filters_[1]->getValue();
-    _xhat(5) = low_pass_filters_[2]->getValue();
+    low_pass_filters_[0]->addValue(x_hat_(3));
+    low_pass_filters_[1]->addValue(x_hat_(4));
+    low_pass_filters_[2]->addValue(x_hat_(5));
+    x_hat_(3) = low_pass_filters_[0]->getValue();
+    x_hat_(4) = low_pass_filters_[1]->getValue();
+    x_hat_(5) = low_pass_filters_[2]->getValue();
 }
