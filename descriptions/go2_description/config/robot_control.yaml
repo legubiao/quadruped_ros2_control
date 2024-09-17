@@ -50,10 +50,10 @@ unitree_guide_controller:
     imu_name: "imu_sensor"
 
     imu_interfaces:
+      - orientation.w
       - orientation.x
       - orientation.y
       - orientation.z
-      - orientation.w
       - angular_velocity.x
       - angular_velocity.y
       - angular_velocity.z

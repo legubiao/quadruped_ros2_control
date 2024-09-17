@@ -18,16 +18,22 @@ Estimator::Estimator() {
     g_ = KDL::Vector(0, 0, -9.81);
     _dt = 0.002;
     _largeVariance = 100;
+    for (int i(0); i < Qdig.rows(); ++i) {
+        Qdig(i) = i < 6 ? 0.0003 : 0.01;
+    }
 
     _xhat.setZero();
     _u.setZero();
+
     A.setZero();
     A.block(0, 0, 3, 3) = I3;
     A.block(0, 3, 3, 3) = I3 * _dt;
     A.block(3, 3, 3, 3) = I3;
     A.block(6, 6, 12, 12) = I12;
+
     B.setZero();
     B.block(3, 0, 3, 3) = I3 * _dt;
+
     C.setZero();
     C.block(0, 0, 3, 3) = -I3;
     C.block(3, 0, 3, 3) = -I3;
@@ -42,10 +48,11 @@ Estimator::Estimator() {
     C(25, 11) = 1;
     C(26, 14) = 1;
     C(27, 17) = 1;
+
     P.setIdentity();
     P = _largeVariance * P;
 
-    RInit << 0.008, 0.012, -0.000, -0.009, 0.012, 0.000, 0.009, -0.009, -0.000,
+    RInit_ << 0.008, 0.012, -0.000, -0.009, 0.012, 0.000, 0.009, -0.009, -0.000,
             -0.009, -0.009, 0.000, -0.000, 0.000, -0.000, 0.000, -0.000, -0.001,
             -0.002, 0.000, -0.000, -0.003, -0.000, -0.001, 0.000, 0.000, 0.000, 0.000,
             0.012, 0.019, -0.001, -0.014, 0.018, -0.000, 0.014, -0.013, -0.000,
@@ -129,8 +136,8 @@ Estimator::Estimator() {
     Cu << 268.573, -43.819, -147.211, -43.819, 92.949, 58.082, -147.211, 58.082,
             302.120;
 
-    QInit = Qdig.asDiagonal();
-    QInit += B * Cu * B.transpose();
+    QInit_ = Qdig.asDiagonal();
+    QInit_ += B * Cu * B.transpose();
 
 
     low_pass_filters_.resize(3);
@@ -142,8 +149,8 @@ Estimator::Estimator() {
 void Estimator::update(const CtrlComponent &ctrlComp) {
     if (ctrlComp.robot_model_.get().mass_ == 0) return;
 
-    Q = QInit;
-    R = RInit;
+    Q = QInit_;
+    R = RInit_;
 
     foot_poses_ = ctrlComp.robot_model_.get().getFeet2BPositions();
     foot_vels_ = ctrlComp.robot_model_.get().getFeet2BVelocities();
@@ -164,22 +171,22 @@ void Estimator::update(const CtrlComponent &ctrlComp) {
             const double trust = windowFunc(phase[i], 0.2);
             Q.block(6 + 3 * i, 6 + 3 * i, 3, 3) =
                     (1 + (1 - trust) * _largeVariance) *
-                    QInit.block(6 + 3 * i, 6 + 3 * i, 3, 3);
+                    QInit_.block(6 + 3 * i, 6 + 3 * i, 3, 3);
             R.block(12 + 3 * i, 12 + 3 * i, 3, 3) =
                     (1 + (1 - trust) * _largeVariance) *
-                    RInit.block(12 + 3 * i, 12 + 3 * i, 3, 3);
+                    RInit_.block(12 + 3 * i, 12 + 3 * i, 3, 3);
             R(24 + i, 24 + i) =
-                    (1 + (1 - trust) * _largeVariance) * RInit(24 + i, 24 + i);
+                    (1 + (1 - trust) * _largeVariance) * RInit_(24 + i, 24 + i);
         }
         _feetPos2Body.segment(3 * i, 3) = Eigen::Map<Eigen::Vector3d>(foot_poses_[i].p.data);
         _feetVel2Body.segment(3 * i, 3) = Eigen::Map<Eigen::Vector3d>(foot_vels_[i].data);
     }
 
     // Acceleration from imu as system input
-    rotation_ = KDL::Rotation::Quaternion(ctrlComp.imu_state_interface_[0].get().get_value(),
-                                          ctrlComp.imu_state_interface_[1].get().get_value(),
+    rotation_ = KDL::Rotation::Quaternion(ctrlComp.imu_state_interface_[1].get().get_value(),
                                           ctrlComp.imu_state_interface_[2].get().get_value(),
-                                          ctrlComp.imu_state_interface_[3].get().get_value());
+                                          ctrlComp.imu_state_interface_[3].get().get_value(),
+                                          ctrlComp.imu_state_interface_[0].get().get_value());
 
     gyro_ = KDL::Vector(ctrlComp.imu_state_interface_[4].get().get_value(),
                         ctrlComp.imu_state_interface_[5].get().get_value(),
@@ -190,16 +197,6 @@ void Estimator::update(const CtrlComponent &ctrlComp) {
                                 ctrlComp.imu_state_interface_[9].get().get_value());
 
     _u = Vec3((rotation_ * acceleration_ + g_).data);
-
-    const double *rot_mat = rotation_.data;
-    std::cout << "Rotation Matrix: " << std::endl;
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            std::cout << rot_mat[i * 3 + j] << " ";
-        }
-        std::cout << std::endl;
-    }
-
     _xhat = A * _xhat + B * _u;
     _yhat = C * _xhat;
 

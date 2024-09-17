@@ -60,8 +60,8 @@ KDL::Jacobian QuadrupedRobot::getJacobian(const int index) const {
 }
 
 KDL::JntArray QuadrupedRobot::getTorque(
-    const KDL::Wrenches &force, const int index) const {
-    return robot_legs_[index]->calcTorque(current_joint_pos_[index], current_joint_vel_[index], force);
+    const KDL::Vector &force, const int index) const {
+    return robot_legs_[index]->calcTorque(current_joint_pos_[index], force);
 }
 
 KDL::Vector QuadrupedRobot::getFeet2BVelocities(const int index) const {

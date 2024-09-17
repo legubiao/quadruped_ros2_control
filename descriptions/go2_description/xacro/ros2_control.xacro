@@ -152,10 +152,10 @@
         </joint>
 
         <sensor name="imu_sensor">
+            <state_interface name="orientation.w"/>
             <state_interface name="orientation.x"/>
             <state_interface name="orientation.y"/>
             <state_interface name="orientation.z"/>
-            <state_interface name="orientation.w"/>
             <state_interface name="angular_velocity.x"/>
             <state_interface name="angular_velocity.y"/>
             <state_interface name="angular_velocity.z"/>

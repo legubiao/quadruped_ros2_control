@@ -118,10 +118,10 @@ return_type HardwareUnitree::read(const rclcpp::Time &time, const rclcpp::Durati
     }
 
     // imu states
-    imu_states_[0] = _lowState.imu_state().quaternion()[0];
-    imu_states_[1] = _lowState.imu_state().quaternion()[1];
-    imu_states_[2] = _lowState.imu_state().quaternion()[2];
-    imu_states_[3] = _lowState.imu_state().quaternion()[3];
+    imu_states_[0] = _lowState.imu_state().quaternion()[0];     // w
+    imu_states_[1] = _lowState.imu_state().quaternion()[1];     // x
+    imu_states_[2] = _lowState.imu_state().quaternion()[2];     // y
+    imu_states_[3] = _lowState.imu_state().quaternion()[3];     // z
     imu_states_[4] = _lowState.imu_state().gyroscope()[0];
     imu_states_[5] = _lowState.imu_state().gyroscope()[1];
     imu_states_[6] = _lowState.imu_state().gyroscope()[2];

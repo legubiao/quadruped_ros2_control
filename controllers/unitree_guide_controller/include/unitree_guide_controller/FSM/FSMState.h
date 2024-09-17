@@ -18,7 +18,7 @@ public:
     FSMState(const FSMStateName &stateName, std::string stateNameString, CtrlComponent ctrlComp)
         : state_name(stateName),
           state_name_string(std::move(stateNameString)),
-          ctrlComp_(std::move(ctrlComp)) {
+          ctrl_comp_(std::move(ctrlComp)) {
     }
 
     virtual void enter() = 0;
@@ -33,7 +33,7 @@ public:
     std::string state_name_string;
 
 protected:
-    CtrlComponent ctrlComp_;
+    CtrlComponent ctrl_comp_;
 };
 
 #endif //FSMSTATE_H

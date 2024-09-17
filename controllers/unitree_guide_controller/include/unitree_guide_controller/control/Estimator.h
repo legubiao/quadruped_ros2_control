@@ -85,40 +85,38 @@ public:
     void update(const CtrlComponent &ctrlComp);
 
 private:
-    Eigen::Matrix<double, 18, 1> _xhat; // The state of estimator, position(3)+velocity(3)+feet position(3x4)
+    Eigen::Matrix<double, 18, 1> _xhat;     // The state of estimator, position(3)+velocity(3)+feet position(3x4)
 
-    Eigen::Matrix<double, 3, 1> _u; // The input of estimator
+    Eigen::Matrix<double, 3, 1> _u;         // The input of estimator
 
-    Eigen::Matrix<double, 28, 1> _y; // The measurement value of output y
-    Eigen::Matrix<double, 28, 1> _yhat; // The prediction of output y
-    Eigen::Matrix<double, 18, 18> A; // The transtion matrix of estimator
-    Eigen::Matrix<double, 18, 3> B; // The input matrix
-    Eigen::Matrix<double, 28, 18> C; // The output matrix
+    Eigen::Matrix<double, 28, 1> _y;        // The measurement value of output y
+    Eigen::Matrix<double, 28, 1> _yhat;     // The prediction of output y
+    Eigen::Matrix<double, 18, 18> A;        // The transtion matrix of estimator
+    Eigen::Matrix<double, 18, 3> B;         // The input matrix
+    Eigen::Matrix<double, 28, 18> C;        // The output matrix
+
     // Covariance Matrix
-    Eigen::Matrix<double, 18, 18> P; // Prediction covariance
-    Eigen::Matrix<double, 18, 18> Ppriori; // Priori prediction covariance
-    Eigen::Matrix<double, 18, 18> Q; // Dynamic simulation covariance
-    Eigen::Matrix<double, 28, 28> R; // Measurement covariance
-    Eigen::Matrix<double, 18, 18>
-    QInit; // Initial value of Dynamic simulation covariance
-    Eigen::Matrix<double, 28, 28>
-    RInit; // Initial value of Measurement covariance
-    Eigen::Matrix<double, 18, 1> Qdig; // adjustable process noise covariance
-    Eigen::Matrix<double, 3, 3> Cu; // The covariance of system input u
+    Eigen::Matrix<double, 18, 18> P;        // Prediction covariance
+    Eigen::Matrix<double, 18, 18> Ppriori;  // Priori prediction covariance
+    Eigen::Matrix<double, 18, 18> Q;        // Dynamic simulation covariance
+    Eigen::Matrix<double, 28, 28> R;        // Measurement covariance
+    Eigen::Matrix<double, 18, 18> QInit_;   // Initial value of Dynamic simulation covariance
+    Eigen::Matrix<double, 28, 28> RInit_;   // Initial value of Measurement covariance
+    Eigen::Matrix<double, 18, 1> Qdig;      // adjustable process noise covariance
+    Eigen::Matrix<double, 3, 3> Cu;         // The covariance of system input u
+
     // Output Measurement
-    Eigen::Matrix<double, 12, 1>
-    _feetPos2Body; // The feet positions to body, in the global coordinate
-    Eigen::Matrix<double, 12, 1>
-    _feetVel2Body; // The feet velocity to body, in the global coordinate
-    Eigen::Matrix<double, 4, 1>
-    _feetH; // The Height of each foot, in the global coordinate
-    Eigen::Matrix<double, 28, 28> S; // _S = C*P*C.T + R
+    Eigen::Matrix<double, 12, 1> _feetPos2Body;     // The feet positions to body, in the global coordinate
+    Eigen::Matrix<double, 12, 1> _feetVel2Body;     // The feet velocity to body, in the global coordinate
+    Eigen::Matrix<double, 4, 1> _feetH;             // The Height of each foot, in the global coordinate
+
+    Eigen::Matrix<double, 28, 28> S;        // _S = C*P*C.T + R
     Eigen::PartialPivLU<Eigen::Matrix<double, 28, 28> > Slu; // _S.lu()
-    Eigen::Matrix<double, 28, 1> Sy; // _Sy = _S.inv() * (y - yhat)
-    Eigen::Matrix<double, 28, 18> Sc; // _Sc = _S.inv() * C
-    Eigen::Matrix<double, 28, 28> SR; // _SR = _S.inv() * R
-    Eigen::Matrix<double, 28, 18> STC; // _STC = (_S.transpose()).inv() * C
-    Eigen::Matrix<double, 18, 18> IKC; // _IKC = I - KC
+    Eigen::Matrix<double, 28, 1> Sy;        // _Sy = _S.inv() * (y - yhat)
+    Eigen::Matrix<double, 28, 18> Sc;       // _Sc = _S.inv() * C
+    Eigen::Matrix<double, 28, 28> SR;       // _SR = _S.inv() * R
+    Eigen::Matrix<double, 28, 18> STC;      // _STC = (_S.transpose()).inv() * C
+    Eigen::Matrix<double, 18, 18> IKC;      // _IKC = I - KC
 
     KDL::Vector g_;
     double _dt;

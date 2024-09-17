@@ -100,9 +100,9 @@ void BalanceCtrl::calConstraints(const std::vector<int> &contact) {
 }
 
 void BalanceCtrl::solveQP() {
-    const int n = _F.size();
-    const int m = _ce0.size();
-    const int p = _ci0.size();
+    const long n = _F.size();
+    const long m = _ce0.size();
+    const long p = _ci0.size();
 
     quadprogpp::Matrix<double> G, CE, CI;
     quadprogpp::Vector<double> g0, ce0, ci0, x;

@@ -5,13 +5,14 @@
 #include <memory>
 #include "unitree_guide_controller/robot/RobotLeg.h"
 
+#include <unitree_guide_controller/common/mathTypes.h>
+
 RobotLeg::RobotLeg(const KDL::Chain &chain) {
     chain_ = chain;
 
     fk_pose_solver_ = std::make_shared<KDL::ChainFkSolverPos_recursive>(chain);
     ik_pose_solver_ = std::make_shared<KDL::ChainIkSolverPos_LMA>(chain);
     jac_solver_ = std::make_shared<KDL::ChainJntToJacSolver>(chain);
-    id_solver_ = std::make_shared<KDL::ChainIdSolver_RNE>(chain, KDL::Vector(0, 0, -9.81));
 }
 
 KDL::Frame RobotLeg::calcPEe2B(const KDL::JntArray &joint_positions) const {
@@ -32,10 +33,12 @@ KDL::Jacobian RobotLeg::calcJaco(const KDL::JntArray &joint_positions) const {
     return jacobian;
 }
 
-KDL::JntArray RobotLeg::calcTorque(const KDL::JntArray &joint_positions, const KDL::JntArray &joint_velocities,
-                                   const KDL::Wrenches &force) const {
+KDL::JntArray RobotLeg::calcTorque(const KDL::JntArray &joint_positions, const KDL::Vector &force) const {
+    const Eigen::Matrix<double, 3, Eigen::Dynamic> jacobian = calcJaco(joint_positions).data.topRows(3);
+    Eigen::VectorXd torque_eigen = jacobian.transpose() * Vec3(force.data);
     KDL::JntArray torque(chain_.getNrOfJoints());
-    id_solver_->CartToJnt(joint_positions, joint_velocities, KDL::JntArray(chain_.getNrOfJoints()), force,
-                          torque);
+    for (unsigned int i = 0; i < chain_.getNrOfJoints(); ++i) {
+        torque(i) = torque_eigen(i);
+    }
     return torque;
 }

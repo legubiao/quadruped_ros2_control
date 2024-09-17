@@ -55,7 +55,7 @@ public:
      * @return torque
      */
     [[nodiscard]] KDL::JntArray getTorque(
-        const KDL::Wrenches &force, int index) const;
+        const KDL::Vector &force, int index) const;
 
     /**
      * Calculate the foot end velocity

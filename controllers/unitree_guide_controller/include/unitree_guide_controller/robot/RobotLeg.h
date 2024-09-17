@@ -40,15 +40,19 @@ public:
      */
     [[nodiscard]] KDL::Jacobian calcJaco(const KDL::JntArray &joint_positions) const;
 
-    [[nodiscard]] KDL::JntArray calcTorque(const KDL::JntArray &joint_positions, const KDL::JntArray &joint_velocities,
-                                           const KDL::Wrenches& force) const;
+    /**
+     * Calculate the torque based on joint positions and end force
+     * @param joint_positions current joint positions
+     * @param force foot end force
+     * @return joint torque
+     */
+    [[nodiscard]] KDL::JntArray calcTorque(const KDL::JntArray &joint_positions, const KDL::Vector &force) const;
 
 protected:
     KDL::Chain chain_;
     std::shared_ptr<KDL::ChainFkSolverPos_recursive> fk_pose_solver_;
     std::shared_ptr<KDL::ChainJntToJacSolver> jac_solver_;
     std::shared_ptr<KDL::ChainIkSolverPos_LMA> ik_pose_solver_;
-    std::shared_ptr<KDL::ChainIdSolver_RNE> id_solver_;
 };
 
 
