@@ -7,7 +7,10 @@
 #include <unitree_guide_controller/common/mathTools.h>
 
 StateBalanceTest::StateBalanceTest(CtrlComponent ctrlComp) : FSMState(FSMStateName::BALANCETEST, "balance test",
-                                                                      std::move(ctrlComp)) {
+                                                                      std::move(ctrlComp)),
+                                                             estimator_(ctrlComp.estimator_.get()),
+                                                             robot_model_(ctrlComp.robot_model_.get()),
+                                                             balance_ctrl_(ctrlComp.balance_ctrl_.get()) {
     _xMax = 0.05;
     _xMin = -_xMax;
     _yMax = 0.05;
@@ -25,20 +28,20 @@ StateBalanceTest::StateBalanceTest(CtrlComponent ctrlComp) : FSMState(FSMStateNa
 }
 
 void StateBalanceTest::enter() {
-    pcdInit_ = ctrl_comp_.estimator_.get().getPosition();
-    pcd_ = pcdInit_;
-    init_rotation_ = ctrl_comp_.estimator_.get().getRotation();
+    pcd_init_ = estimator_.getPosition();
+    pcd_ = pcd_init_;
+    init_rotation_ = estimator_.getRotation();
 }
 
 void StateBalanceTest::run() {
-    pcd_(0) = pcdInit_(0) + invNormalize(ctrl_comp_.control_inputs_.get().ly, _xMin, _xMax);
-    pcd_(1) = pcdInit_(1) - invNormalize(ctrl_comp_.control_inputs_.get().lx, _yMin, _yMax);
-    pcd_(2) = pcdInit_(2) + invNormalize(ctrl_comp_.control_inputs_.get().ry, _zMin, _zMax);
+    pcd_(0) = pcd_init_(0) + invNormalize(ctrl_comp_.control_inputs_.get().ly, _xMin, _xMax);
+    pcd_(1) = pcd_init_(1) - invNormalize(ctrl_comp_.control_inputs_.get().lx, _yMin, _yMax);
+    pcd_(2) = pcd_init_(2) + invNormalize(ctrl_comp_.control_inputs_.get().ry, _zMin, _zMax);
     const float yaw = invNormalize(ctrl_comp_.control_inputs_.get().rx, _yawMin, _yawMax);
     Rd_ = Mat3((KDL::Rotation::RPY(0, 0, yaw).Inverse() * init_rotation_).data);
 
-    pose_body_ = ctrl_comp_.estimator_.get().getPosition();
-    vel_body_ = ctrl_comp_.estimator_.get().getVelocity();
+    pose_body_ = estimator_.getPosition();
+    vel_body_ = estimator_.getVelocity();
 
     for (int i = 0; i < 12; i++) {
         ctrl_comp_.joint_kp_command_interface_[i].get().set_value(0.8);
@@ -63,25 +66,24 @@ FSMStateName StateBalanceTest::checkChange() {
 }
 
 void StateBalanceTest::calcTorque() {
-    const auto B2G_Rotation = Eigen::Matrix3d(ctrl_comp_.estimator_.get().getRotation().data);
+    const auto B2G_Rotation = Eigen::Matrix3d(estimator_.getRotation().data);
     const RotMat G2B_Rotation = B2G_Rotation.transpose();
 
     // expected body acceleration
-    dd_pcd_ = Kp_p_ * Vec3((pcd_ - pose_body_).data) + Kd_p_ * Vec3((-vel_body_).data);
+    dd_pcd_ = Kp_p_ * (pcd_ - pose_body_) + Kd_p_ * -vel_body_;
 
     // expected body angular acceleration
-    d_wbd_ = kp_w_ * rotMatToExp(Rd_ * G2B_Rotation) +
-             Kd_w_ * (Vec3(0, 0, 0) - Vec3((-ctrl_comp_.estimator_.get().getGlobalGyro()).data));
+    d_wbd_ = -kp_w_ * rotMatToExp(Rd_ * G2B_Rotation) +
+             Kd_w_ * Vec3((-estimator_.getGlobalGyro()).data);
 
     // calculate foot force
     const std::vector contact(4, 1);
-    const Vec34 foot_force = G2B_Rotation * ctrl_comp_.balance_ctrl_.get().calF(dd_pcd_, -d_wbd_, B2G_Rotation,
-                                 ctrl_comp_.estimator_.get().
-                                 getFootPos2Body(), contact);
+    const Vec34 foot_force = G2B_Rotation * balance_ctrl_.calF(dd_pcd_, d_wbd_, B2G_Rotation,
+                                                               estimator_.getFootPos2Body(), contact);
 
-    std::vector<KDL::JntArray> current_joints = ctrl_comp_.robot_model_.get().current_joint_pos_;
+    std::vector<KDL::JntArray> current_joints = robot_model_.current_joint_pos_;
     for (int i = 0; i < 4; i++) {
-        KDL::JntArray torque = ctrl_comp_.robot_model_.get().getTorque(-foot_force.col(i), i);
+        KDL::JntArray torque = robot_model_.getTorque(-foot_force.col(i), i);
         for (int j = 0; j < 3; j++) {
             ctrl_comp_.joint_effort_command_interface_[i * 3 + j].get().set_value(torque(j));
             ctrl_comp_.joint_position_command_interface_[i * 3 + j].get().set_value(current_joints[i](j));

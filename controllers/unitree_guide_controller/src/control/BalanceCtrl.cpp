@@ -13,7 +13,7 @@ BalanceCtrl::BalanceCtrl() {
     mass_ = 15;
     alpha_ = 0.001;
     beta_ = 0.1;
-    _g << 0, 0, -9.81;
+    g_ << 0, 0, -9.81;
     friction_ratio_ = 0.4;
     friction_mat_ << 1, 0, friction_ratio_, -1, 0, friction_ratio_, 0, 1, friction_ratio_, 0, -1,
             friction_ratio_, 0, 0, 1;
@@ -21,7 +21,7 @@ BalanceCtrl::BalanceCtrl() {
 
 void BalanceCtrl::init(const QuadrupedRobot &robot) {
     mass_ = robot.mass_;
-    _pcb = Vec3(0.0, 0.0, 0.0);
+    pcb_ = Vec3(0.0, 0.0, 0.0);
     Ib_ = Vec3(0.0792, 0.2085, 0.2265).asDiagonal();
 
     Vec6 s;
@@ -37,10 +37,10 @@ void BalanceCtrl::init(const QuadrupedRobot &robot) {
     F_prev_.setZero();
 }
 
-Vec34 BalanceCtrl::calF(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rotM,
-                        const std::vector<KDL::Vector> &feetPos2B, const std::vector<int> &contact) {
-    calMatrixA(feetPos2B, rotM);
-    calVectorBd(ddPcd, dWbd, rotM);
+Vec34 BalanceCtrl::calF(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rot_matrix,
+                        const Vec34 &feet_pos_2_body, const std::vector<int> &contact) {
+    calMatrixA(feet_pos_2_body, rot_matrix);
+    calVectorBd(ddPcd, dWbd, rot_matrix);
     calConstraints(contact);
 
     G_ = A_.transpose() * S_ * A_ + alpha_ * W_ + beta_ * U_;
@@ -52,15 +52,15 @@ Vec34 BalanceCtrl::calF(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rotM,
     return vec12ToVec34(F_);
 }
 
-void BalanceCtrl::calMatrixA(const std::vector<KDL::Vector> &feetPos2B, const RotMat &rotM) {
+void BalanceCtrl::calMatrixA(const Vec34 &feet_pos_2_body, const RotMat &rotM) {
     for (int i = 0; i < 4; ++i) {
         A_.block(0, 3 * i, 3, 3) = I3;
-        A_.block(3, 3 * i, 3, 3) = skew(Vec3(feetPos2B[i].data) - rotM * _pcb);
+        A_.block(3, 3 * i, 3, 3) = skew(Vec3(feet_pos_2_body.col(i)) - rotM * pcb_);
     }
 }
 
 void BalanceCtrl::calVectorBd(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rotM) {
-    bd_.head(3) = mass_ * (ddPcd - _g);
+    bd_.head(3) = mass_ * (ddPcd - g_);
     bd_.tail(3) = rotM * Ib_ * rotM.transpose() * dWbd;
 }
 

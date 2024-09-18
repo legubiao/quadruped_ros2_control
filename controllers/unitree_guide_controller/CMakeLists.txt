@@ -45,6 +45,10 @@ add_library(${PROJECT_NAME} SHARED
         src/quadProgpp/Array.cc
         src/quadProgpp/QuadProg++.cc
 
+        src/gait/WaveGenerator.cpp
+        src/gait/FootEndCtrl.cpp
+        src/gait/GaitGenerator.cpp
+
 )
 target_include_directories(${PROJECT_NAME}
         PUBLIC

@@ -9,6 +9,7 @@
 #include <hardware_interface/loaned_command_interface.hpp>
 #include <hardware_interface/loaned_state_interface.hpp>
 #include <control_input_msgs/msg/inputs.hpp>
+#include <unitree_guide_controller/gait/WaveGenerator.h>
 #include <unitree_guide_controller/robot/QuadrupedRobot.h>
 
 #include "BalanceCtrl.h"
@@ -50,8 +51,11 @@ struct CtrlComponent {
     BalanceCtrl default_balance_ctrl_;
     std::reference_wrapper<BalanceCtrl> balance_ctrl_;
 
+    WaveGenerator default_wave_generator_;
+    std::reference_wrapper<WaveGenerator> wave_generator_;
+
     CtrlComponent() : control_inputs_(default_inputs_), robot_model_(default_robot_model_),
-                      estimator_(default_estimator_), balance_ctrl_(default_balance_ctrl_) {
+                      estimator_(default_estimator_), balance_ctrl_(default_balance_ctrl_), wave_generator_(default_wave_generator_) {
     }
 
     void clear() {

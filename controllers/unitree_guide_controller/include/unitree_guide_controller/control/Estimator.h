@@ -4,10 +4,9 @@
 
 #ifndef ESTIMATOR_H
 #define ESTIMATOR_H
-#include <iostream>
 #include <memory>
-#include <eigen3/Eigen/Dense>
 #include <kdl/frames.hpp>
+#include <unitree_guide_controller/common/mathTypes.h>
 
 #include "LowPassFilter.h"
 
@@ -23,16 +22,16 @@ public:
      * Get the estimated robot central position
      * @return robot central position
      */
-    KDL::Vector getPosition() {
-        return {x_hat_(0), x_hat_(1), x_hat_(2)};
+    Vec3 getPosition() {
+        return x_hat_.segment(0, 3);
     }
 
     /**
      * Get the estimated robot central velocity
      * @return robot central velocity
      */
-    KDL::Vector getVelocity() {
-        return {x_hat_(3), x_hat_(4), x_hat_(5)};
+    Vec3 getVelocity() {
+        return x_hat_.segment(3, 3);
     }
 
     /**
@@ -40,33 +39,19 @@ public:
      * @param index leg index
      * @return foot position in world frame
      */
-    KDL::Vector getFootPos(const int index) {
-        return getPosition() + rotation_ * foot_poses_[index].p;
-    }
-
-    /**
-     * Get all estimated foot positions in world frame
-     * @return all foot positions in world frame
-     */
-    std::vector<KDL::Vector> getFootPos() {
-        std::vector<KDL::Vector> foot_pos;
-        foot_pos.resize(4);
-        for (int i = 0; i < 4; i++) {
-            foot_pos[i] = getFootPos(i);
-        }
-        return foot_pos;
+    Vec3 getFootPos(const int index) {
+        return getPosition() + Vec3((rotation_ * foot_poses_[index].p).data);
     }
 
     /**
      * Get the estimated foot position in body frame
      * @return
      */
-    std::vector<KDL::Vector> getFootPos2Body() {
-        std::vector<KDL::Vector> foot_pos;
-        foot_pos.resize(4);
-        const KDL::Vector body_pos = getPosition();
+    Vec34 getFootPos2Body() {
+        Vec34 foot_pos;
+        const Vec3 body_pos = getPosition();
         for (int i = 0; i < 4; i++) {
-            foot_pos[i] = getFootPos(i) - body_pos;
+            foot_pos.col(i) = getFootPos(i) - body_pos;
         }
         return foot_pos;
     }

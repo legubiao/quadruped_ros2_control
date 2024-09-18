@@ -23,10 +23,16 @@ enum class FSMMode {
     CHANGE
 };
 
-enum class FrameType{
+enum class FrameType {
     BODY,
     HIP,
     GLOBAL
+};
+
+enum class WaveStatus {
+    STANCE_ALL,
+    SWING_ALL,
+    WAVE_ALL
 };
 
 #endif //ENUMCLASS_H

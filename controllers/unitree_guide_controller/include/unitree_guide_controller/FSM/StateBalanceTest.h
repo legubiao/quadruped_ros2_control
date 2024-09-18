@@ -22,12 +22,15 @@ public:
 private:
     void calcTorque();
 
-    KDL::Vector pcd_;
-    KDL::Vector pcdInit_;
+    Estimator& estimator_;
+    QuadrupedRobot& robot_model_;
+    BalanceCtrl& balance_ctrl_;
+
+    Vec3 pcd_, pcd_init_;
     RotMat Rd_;
     KDL::Rotation init_rotation_;
 
-    KDL::Vector pose_body_, vel_body_;
+    Vec3 pose_body_, vel_body_;
 
     double kp_w_;
     Mat3 Kp_p_, Kd_p_, Kd_w_;

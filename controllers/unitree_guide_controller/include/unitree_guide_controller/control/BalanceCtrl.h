@@ -5,8 +5,6 @@
 #ifndef BALANCECTRL_H
 #define BALANCECTRL_H
 
-#include <kdl/frames.hpp>
-
 #include "unitree_guide_controller/common/mathTypes.h"
 class QuadrupedRobot;
 
@@ -18,11 +16,20 @@ public:
 
     void init(const QuadrupedRobot &robot);
 
-    Vec34 calF(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rotM,
-               const std::vector<KDL::Vector> &feetPos2B, const std::vector<int> &contact);
+    /**
+     * Calculate the desired feet end force
+     * @param ddPcd desired body acceleration
+     * @param dWbd desired body angular acceleration
+     * @param rot_matrix current body rotation matrix
+     * @param feet_pos_2_body feet positions to body under world frame
+     * @param contact feet contact
+     * @return
+     */
+    Vec34 calF(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rot_matrix,
+               const Vec34 &feet_pos_2_body, const std::vector<int> &contact);
 
 private:
-    void calMatrixA(const std::vector<KDL::Vector> &feetPos2B, const RotMat &rotM);
+    void calMatrixA(const Vec34 &feet_pos_2_body, const RotMat &rotM);
 
     void calVectorBd(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rotM);
 
@@ -34,7 +41,7 @@ private:
     Mat6 S_;
     Mat3 Ib_;
     Vec6 bd_;
-    Vec3 _g, _pcb;
+    Vec3 g_, pcb_;
     Vec12 F_, F_prev_, g0T_;
     double mass_, alpha_, beta_, friction_ratio_;
     Eigen::MatrixXd CE_, CI_;
