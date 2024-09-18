@@ -26,14 +26,14 @@ public:
      * @return
      */
     Vec34 calF(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rot_matrix,
-               const Vec34 &feet_pos_2_body, const std::vector<int> &contact);
+               const Vec34 &feet_pos_2_body, const VecInt4 &contact);
 
 private:
     void calMatrixA(const Vec34 &feet_pos_2_body, const RotMat &rotM);
 
     void calVectorBd(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rotM);
 
-    void calConstraints(const std::vector<int> &contact);
+    void calConstraints(const VecInt4 &contact);
 
     void solveQP();
 

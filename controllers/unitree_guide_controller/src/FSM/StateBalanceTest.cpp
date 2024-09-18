@@ -10,7 +10,8 @@ StateBalanceTest::StateBalanceTest(CtrlComponent &ctrlComp) : FSMState(FSMStateN
                                                                        ctrlComp),
                                                               estimator_(ctrlComp.estimator_),
                                                               robot_model_(ctrlComp.robot_model_),
-                                                              balance_ctrl_(ctrlComp.balance_ctrl_) {
+                                                              balance_ctrl_(ctrlComp.balance_ctrl_),
+                                                              wave_generator_(ctrl_comp_.wave_generator_) {
     _xMax = 0.05;
     _xMin = -_xMax;
     _yMax = 0.05;
@@ -31,6 +32,7 @@ void StateBalanceTest::enter() {
     pcd_init_ = estimator_.getPosition();
     pcd_ = pcd_init_;
     init_rotation_ = estimator_.getRotation();
+    wave_generator_.status_ = WaveStatus::STANCE_ALL;
 }
 
 void StateBalanceTest::run() {
@@ -74,12 +76,11 @@ void StateBalanceTest::calcTorque() {
 
     // expected body angular acceleration
     d_wbd_ = -kp_w_ * rotMatToExp(Rd_ * G2B_Rotation) +
-             Kd_w_ * Vec3((-estimator_.getGlobalGyro()).data);
+             Kd_w_ * -estimator_.getGlobalGyro();
 
     // calculate foot force
-    const std::vector contact(4, 1);
     const Vec34 foot_force = G2B_Rotation * balance_ctrl_.calF(dd_pcd_, d_wbd_, B2G_Rotation,
-                                                               estimator_.getFootPos2Body(), contact);
+                                                               estimator_.getFeetPos2Body(), wave_generator_.contact_);
 
     std::vector<KDL::JntArray> current_joints = robot_model_.current_joint_pos_;
     for (int i = 0; i < 4; i++) {

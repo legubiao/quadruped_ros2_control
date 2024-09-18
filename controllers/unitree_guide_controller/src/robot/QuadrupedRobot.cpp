@@ -42,6 +42,26 @@ std::vector<KDL::JntArray> QuadrupedRobot::getQ(const std::vector<KDL::Frame> &p
     return result;
 }
 
+Vec12 QuadrupedRobot::getQ(const Vec34 &vecP) const {
+    Vec12 q;
+    for (int i(0); i < 4; ++i) {
+        KDL::Frame frame;
+        frame.p = KDL::Vector(vecP.col(i)[0], vecP.col(i)[1], vecP.col(i)[2]);
+        q.segment(3 * i, 3) = robot_legs_[i]->calcQ(frame, current_joint_pos_[i]).data;
+    }
+    return q;
+}
+
+Vec12 QuadrupedRobot::getQd(const std::vector<KDL::Frame> &pos, const Vec34 &vel) {
+    Vec12 qd;
+    std::vector<KDL::JntArray> q = getQ(pos);
+    for (int i(0); i < 4; ++i) {
+        Mat3 jacobian = robot_legs_[i]->calcJaco(q[i]).data.topRows(3);
+        qd.segment(3 * i, 3) = jacobian.inverse() * vel.col(i);
+    }
+    return qd;
+}
+
 std::vector<KDL::Frame> QuadrupedRobot::getFeet2BPositions() const {
     std::vector<KDL::Frame> result;
     result.resize(4);

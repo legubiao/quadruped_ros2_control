@@ -34,6 +34,7 @@ add_library(${PROJECT_NAME} SHARED
         src/FSM/StateSwingTest.cpp
         src/FSM/StateFreeStand.cpp
         src/FSM/StateBalanceTest.cpp
+        src/FSM/StateTrotting.cpp
 
         src/robot/QuadrupedRobot.cpp
         src/robot/RobotLeg.cpp
@@ -46,7 +47,7 @@ add_library(${PROJECT_NAME} SHARED
         src/quadProgpp/QuadProg++.cc
 
         src/gait/WaveGenerator.cpp
-        src/gait/FootEndCtrl.cpp
+        src/gait/FeetEndCtrl.cpp
         src/gait/GaitGenerator.cpp
 
 )

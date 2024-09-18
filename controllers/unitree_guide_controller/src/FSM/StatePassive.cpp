@@ -27,6 +27,7 @@ void StatePassive::enter() {
     for (auto i: ctrl_comp_.joint_kd_command_interface_) {
         i.get().set_value(1);
     }
+    ctrl_comp_.control_inputs_.get().command = 0;
 }
 
 void StatePassive::run() {

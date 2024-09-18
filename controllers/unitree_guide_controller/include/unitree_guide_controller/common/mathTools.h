@@ -61,5 +61,25 @@ inline Vec3 rotMatToExp(const RotMat &rm) {
     return exp;
 }
 
+template<typename T>
+T saturation(const T a, Vec2 limits) {
+    T lowLim, highLim;
+    if (limits(0) > limits(1)) {
+        lowLim = limits(1);
+        highLim = limits(0);
+    } else {
+        lowLim = limits(0);
+        highLim = limits(1);
+    }
+
+    if (a < lowLim) {
+        return lowLim;
+    }
+    if (a > highLim) {
+        return highLim;
+    }
+    return a;
+}
+
 
 #endif //MATHTOOLS_H

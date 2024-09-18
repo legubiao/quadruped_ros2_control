@@ -30,6 +30,10 @@ public:
      */
     [[nodiscard]] std::vector<KDL::JntArray> getQ(const std::vector<KDL::Frame> &pEe_list) const;
 
+    [[nodiscard]] Vec12 getQ(const Vec34 &vecP) const;
+
+    Vec12 getQd(const std::vector<KDL::Frame> &pos, const Vec34 &vel);
+
     /**
      * Calculate the foot end position based on joint positions
      * @return vector of foot-end position

@@ -45,10 +45,22 @@ public:
     }
 
     /**
+     * Get the estimated feet velocity in world frame
+     * @return feet velocity in world frame
+     */
+    Vec34 getFeetPos() {
+        Vec34 feetPos;
+        for (int i(0); i < 4; ++i) {
+            feetPos.col(i) = getFootPos(i);
+        }
+        return feetPos;
+    }
+
+    /**
      * Get the estimated foot position in body frame
      * @return
      */
-    Vec34 getFootPos2Body() {
+    Vec34 getFeetPos2Body() {
         Vec34 foot_pos;
         const Vec3 body_pos = getPosition();
         for (int i = 0; i < 4; i++) {
@@ -65,8 +77,18 @@ public:
         return gyro_;
     }
 
-    [[nodiscard]] KDL::Vector getGlobalGyro() const {
-        return rotation_ * gyro_;
+    [[nodiscard]] Vec3 getGlobalGyro() const {
+        return Vec3((rotation_ * gyro_).data);
+    }
+
+    [[nodiscard]] double getYaw() const {
+        double roll, pitch, yaw;
+        rotation_.GetRPY(roll, pitch, yaw);
+        return yaw;
+    }
+
+    [[nodiscard]] double getDYaw() const {
+        return getGlobalGyro()(2);
     }
 
     void update();

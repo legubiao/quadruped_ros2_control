@@ -16,6 +16,7 @@
 #include "FSM/StateFreeStand.h"
 #include "FSM/StatePassive.h"
 #include "FSM/StateSwingTest.h"
+#include "FSM/StateTrotting.h"
 
 namespace unitree_guide_controller {
     struct FSMStateList {
@@ -24,6 +25,7 @@ namespace unitree_guide_controller {
         std::shared_ptr<StateFixedDown> fixedDown;
         std::shared_ptr<StateFixedStand> fixedStand;
         std::shared_ptr<StateFreeStand> freeStand;
+        std::shared_ptr<StateTrotting> trotting;
 
         std::shared_ptr<StateSwingTest> swingTest;
         std::shared_ptr<StateBalanceTest> balanceTest;

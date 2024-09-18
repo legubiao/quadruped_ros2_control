@@ -38,7 +38,7 @@ void BalanceCtrl::init(const QuadrupedRobot &robot) {
 }
 
 Vec34 BalanceCtrl::calF(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rot_matrix,
-                        const Vec34 &feet_pos_2_body, const std::vector<int> &contact) {
+                        const Vec34 &feet_pos_2_body, const VecInt4 &contact) {
     calMatrixA(feet_pos_2_body, rot_matrix);
     calVectorBd(ddPcd, dWbd, rot_matrix);
     calConstraints(contact);
@@ -64,7 +64,7 @@ void BalanceCtrl::calVectorBd(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat 
     bd_.tail(3) = rotM * Ib_ * rotM.transpose() * dWbd;
 }
 
-void BalanceCtrl::calConstraints(const std::vector<int> &contact) {
+void BalanceCtrl::calConstraints(const VecInt4 &contact) {
     int contactLegNum = 0;
     for (int i(0); i < 4; ++i) {
         if (contact[i] == 1) {

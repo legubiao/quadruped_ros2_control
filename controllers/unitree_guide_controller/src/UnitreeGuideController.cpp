@@ -51,6 +51,7 @@ namespace unitree_guide_controller {
 
 
         ctrl_comp_.robot_model_.update();
+        ctrl_comp_.wave_generator_.update();
         ctrl_comp_.estimator_.update();
 
         if (mode_ == FSMMode::NORMAL) {
@@ -114,6 +115,8 @@ namespace unitree_guide_controller {
         get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);
         RCLCPP_INFO(get_node()->get_logger(), "Controller Manager Update Rate: %d Hz", ctrl_comp_.frequency_);
 
+        ctrl_comp_.wave_generator_.init(0.45, 0.5, Vec4(0, 0.5, 0.5, 0));
+
         return CallbackReturn::SUCCESS;
     }
 
@@ -142,6 +145,7 @@ namespace unitree_guide_controller {
         state_list_.swingTest = std::make_shared<StateSwingTest>(ctrl_comp_);
         state_list_.freeStand = std::make_shared<StateFreeStand>(ctrl_comp_);
         state_list_.balanceTest = std::make_shared<StateBalanceTest>(ctrl_comp_);
+        state_list_.trotting = std::make_shared<StateTrotting>(ctrl_comp_);
 
         // Initialize FSM
         current_state_ = state_list_.passive;
@@ -186,8 +190,8 @@ namespace unitree_guide_controller {
                 return state_list_.fixedStand;
             case FSMStateName::FREESTAND:
                 return state_list_.freeStand;
-            // case FSMStateName::TROTTING:
-            //     return state_list_.trotting;
+            case FSMStateName::TROTTING:
+                return state_list_.trotting;
             case FSMStateName::SWINGTEST:
                 return state_list_.swingTest;
             case FSMStateName::BALANCETEST:

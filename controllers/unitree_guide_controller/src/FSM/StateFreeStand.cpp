@@ -33,6 +33,7 @@ void StateFreeStand::enter() {
         foot_pos.p -= fr_init_pos_.p;
         foot_pos.M = KDL::Rotation::RPY(0, 0, 0);
     }
+    ctrl_comp_.control_inputs_.get().command = 0;
 }
 
 void StateFreeStand::run() {

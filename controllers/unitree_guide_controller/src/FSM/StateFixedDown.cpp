@@ -15,6 +15,7 @@ void StateFixedDown::enter() {
     for (int i = 0; i < 12; i++) {
         start_pos_[i] = ctrl_comp_.joint_position_state_interface_[i].get().get_value();
     }
+    ctrl_comp_.control_inputs_.get().command = 0;
 }
 
 void StateFixedDown::run() {

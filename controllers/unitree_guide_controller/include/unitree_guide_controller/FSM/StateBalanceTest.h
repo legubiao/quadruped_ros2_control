@@ -22,9 +22,10 @@ public:
 private:
     void calcTorque();
 
-    Estimator& estimator_;
-    QuadrupedRobot& robot_model_;
-    BalanceCtrl& balance_ctrl_;
+    Estimator &estimator_;
+    QuadrupedRobot &robot_model_;
+    BalanceCtrl &balance_ctrl_;
+    WaveGenerator &wave_generator_;
 
     Vec3 pcd_, pcd_init_;
     RotMat Rd_;

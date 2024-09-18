@@ -12,6 +12,7 @@ WaveGenerator::WaveGenerator() {
     phase_past_ << 0.5, 0.5, 0.5, 0.5;
     contact_past_.setZero();
     status_past_ = WaveStatus::SWING_ALL;
+    status_ = WaveStatus::SWING_ALL;
 }
 
 void WaveGenerator::init(const double period, const double st_ratio, const Vec4 &bias) {
@@ -35,18 +36,18 @@ void WaveGenerator::init(const double period, const double st_ratio, const Vec4 
     start_t_ = getSystemTime();
 }
 
-auto WaveGenerator::calculate(Vec4 &phase_result, VecInt4 &contact_result, const WaveStatus status) -> void {
-    calcWave(phase_, contact_, status);
+auto WaveGenerator::update() -> void {
+    calcWave(phase_, contact_, status_);
 
-    if (status != status_past_) {
+    if (status_ != status_past_) {
         if (switch_status_.sum() == 0) {
             switch_status_.setOnes();
         }
         calcWave(phase_past_, contact_past_, status_past_);
 
-        if (status == WaveStatus::STANCE_ALL && status_past_ == WaveStatus::SWING_ALL) {
+        if (status_ == WaveStatus::STANCE_ALL && status_past_ == WaveStatus::SWING_ALL) {
             contact_past_.setOnes();
-        } else if (status == WaveStatus::SWING_ALL && status_past_ == WaveStatus::STANCE_ALL) {
+        } else if (status_ == WaveStatus::SWING_ALL && status_past_ == WaveStatus::STANCE_ALL) {
             contact_past_.setZero();
         }
     }
@@ -61,12 +62,9 @@ auto WaveGenerator::calculate(Vec4 &phase_result, VecInt4 &contact_result, const
             }
         }
         if (switch_status_.sum() == 0) {
-            status_past_ = status;
+            status_past_ = status_;
         }
     }
-
-    phase_result = phase_;
-    contact_result = contact_;
 }
 
 void WaveGenerator::calcWave(Vec4 &phase, VecInt4 &contact, const WaveStatus status) {
