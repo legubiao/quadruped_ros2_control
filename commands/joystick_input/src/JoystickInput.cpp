@@ -29,9 +29,9 @@ void JoystickInput::joy_callback(sensor_msgs::msg::Joy::SharedPtr msg) {
         inputs_.command = 8; // LT + Y
     } else {
         inputs_.command = 0;
-        inputs_.lx = msg->axes[0];
+        inputs_.lx = -msg->axes[0];
         inputs_.ly = msg->axes[1];
-        inputs_.rx = msg->axes[3];
+        inputs_.rx = -msg->axes[3];
         inputs_.ry = msg->axes[4];
     }
     publisher_->publish(inputs_);

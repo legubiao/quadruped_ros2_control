@@ -80,12 +80,14 @@ void StateBalanceTest::calcTorque() {
              Kd_w_ * (Vec3(0, 0, 0) - estimator_.getGlobalGyro());
 
     // calculate foot force
-    const Vec34 foot_force = G2B_Rotation * balance_ctrl_.calF(dd_pcd_, d_wbd_, B2G_Rotation,
-                                                               estimator_.getFeetPos2Body(), wave_generator_.contact_);
+    const Vec34 pos_feet_2_body_global = estimator_.getFeetPos2Body();
+    const Vec34 force_feet_global = -balance_ctrl_.calF(dd_pcd_, d_wbd_, B2G_Rotation,
+                                                        pos_feet_2_body_global, wave_generator_.contact_);
+    const Vec34 force_feet_body = G2B_Rotation * force_feet_global;
 
     std::vector<KDL::JntArray> current_joints = robot_model_.current_joint_pos_;
     for (int i = 0; i < 4; i++) {
-        KDL::JntArray torque = robot_model_.getTorque(-foot_force.col(i), i);
+        KDL::JntArray torque = robot_model_.getTorque(force_feet_body.col(i), i);
         for (int j = 0; j < 3; j++) {
             ctrl_comp_.joint_effort_command_interface_[i * 3 + j].get().set_value(torque(j));
             ctrl_comp_.joint_position_command_interface_[i * 3 + j].get().set_value(current_joints[i](j));

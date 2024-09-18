@@ -9,7 +9,7 @@ colcon build --packages-up-to joystick_input
 
 ```bash
 source ~/ros2_ws/install/setup.bash
-ros2 launch jotstick_input joystick.launch.py
+ros2 launch joystick_input joystick.launch.py
 ```
 
 ## 1. Use Instructions
