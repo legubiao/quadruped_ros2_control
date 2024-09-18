@@ -22,7 +22,7 @@ public:
 
     void setGait(Vec2 vxy_goal_global, double d_yaw_goal, double gait_height);
 
-    void run(Vec34 &feet_pos, Vec34 &feet_vel);
+    void generate(Vec34 &feet_pos, Vec34 &feet_vel);
 
     void restart();
 

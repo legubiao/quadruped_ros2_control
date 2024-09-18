@@ -62,7 +62,7 @@ void StateFreeStand::calc_body_target(const float row, const float pitch,
     KDL::Frame fr_2_body_pos;
     fr_2_body_pos.p = -fr_init_pos_.p;
     fr_2_body_pos.p.z(fr_2_body_pos.p.z() + height);
-    fr_2_body_pos.M = KDL::Rotation::RPY(row, pitch, yaw);
+    fr_2_body_pos.M = KDL::Rotation::RPY(row, pitch, -yaw);
 
     const KDL::Frame body_2_fr_pos = fr_2_body_pos.Inverse();
     std::vector goal_pos(4, KDL::Frame::Identity());

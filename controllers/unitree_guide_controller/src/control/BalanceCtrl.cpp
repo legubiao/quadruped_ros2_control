@@ -47,8 +47,8 @@ Vec34 BalanceCtrl::calF(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rot_m
     g0T_ = -bd_.transpose() * S_ * A_ - beta_ * F_prev_.transpose() * U_;
 
     solveQP();
-    F_prev_ = F_;
 
+    F_prev_ = F_;
     return vec12ToVec34(F_);
 }
 
@@ -71,6 +71,7 @@ void BalanceCtrl::calConstraints(const VecInt4 &contact) {
             contactLegNum += 1;
         }
     }
+
     CI_.resize(5 * contactLegNum, 12);
     ci0_.resize(5 * contactLegNum);
     CE_.resize(3 * (4 - contactLegNum), 12);

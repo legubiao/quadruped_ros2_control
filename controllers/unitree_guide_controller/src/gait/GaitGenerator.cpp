@@ -20,7 +20,7 @@ void GaitGenerator::setGait(Vec2 vxy_goal_global, const double d_yaw_goal, const
     gait_height_ = gait_height;
 }
 
-void GaitGenerator::run(Vec34 &feet_pos, Vec34 &feet_vel) {
+void GaitGenerator::generate(Vec34 &feet_pos, Vec34 &feet_vel) {
     if (first_run_) {
         start_p_ = estimator_.getFeetPos();
         first_run_ = false;

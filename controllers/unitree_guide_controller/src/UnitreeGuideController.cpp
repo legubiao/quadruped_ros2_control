@@ -49,7 +49,6 @@ namespace unitree_guide_controller {
         // update_frequency_ = 1.0 / time_diff.count();
         // RCLCPP_INFO(get_node()->get_logger(), "Update frequency: %f Hz", update_frequency_);
 
-
         ctrl_comp_.robot_model_.update();
         ctrl_comp_.wave_generator_.update();
         ctrl_comp_.estimator_.update();

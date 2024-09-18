@@ -7,6 +7,7 @@
 #include <memory>
 #include <kdl/frames.hpp>
 #include <unitree_guide_controller/common/mathTypes.h>
+#include <unitree_guide_controller/robot/QuadrupedRobot.h>
 
 #include "LowPassFilter.h"
 
@@ -41,7 +42,7 @@ public:
      * @return foot position in world frame
      */
     Vec3 getFootPos(const int index) {
-        return getPosition() + Vec3((rotation_ * foot_poses_[index].p).data);
+        return getPosition() + rotation_ * Vec3(foot_poses_[index].p.data);
     }
 
     /**
@@ -49,11 +50,24 @@ public:
      * @return feet velocity in world frame
      */
     Vec34 getFeetPos() {
-        Vec34 feetPos;
+        Vec34 feet_pos;
         for (int i(0); i < 4; ++i) {
-            feetPos.col(i) = getFootPos(i);
+            feet_pos.col(i) = getFootPos(i);
         }
-        return feetPos;
+        return feet_pos;
+    }
+
+    /**
+     * Get the estimated feet velocity in world frame
+     * @return feet velocity in world frame
+     */
+    Vec34 getFeetVel() {
+        const std::vector<KDL::Vector> feet_vel = robot_model_.getFeet2BVelocities();
+        Vec34 result;
+        for (int i(0); i < 4; ++i) {
+            result.col(i) = Vec3(feet_vel[i].data) + getVelocity();
+        }
+        return result;
     }
 
     /**
@@ -69,23 +83,19 @@ public:
         return foot_pos;
     }
 
-    KDL::Rotation getRotation() {
+    RotMat getRotation() {
         return rotation_;
     }
 
-    KDL::Vector getGyro() {
+    Vec3 getGyro() {
         return gyro_;
     }
 
     [[nodiscard]] Vec3 getGlobalGyro() const {
-        return Vec3((rotation_ * gyro_).data);
+        return rotation_ * gyro_;
     }
 
-    [[nodiscard]] double getYaw() const {
-        double roll, pitch, yaw;
-        rotation_.GetRPY(roll, pitch, yaw);
-        return yaw;
-    }
+    [[nodiscard]] double getYaw() const;
 
     [[nodiscard]] double getDYaw() const {
         return getGlobalGyro()(2);
@@ -130,12 +140,12 @@ private:
     Eigen::Matrix<double, 28, 18> STC; // _STC = (_S.transpose()).inv() * C
     Eigen::Matrix<double, 18, 18> IKC; // _IKC = I - KC
 
-    KDL::Vector g_;
+    Vec3 g_;
     double _dt;
 
-    KDL::Rotation rotation_;
-    KDL::Vector acceleration_;
-    KDL::Vector gyro_;
+    RotMat rotation_;
+    Vec3 acceleration_;
+    Vec3 gyro_;
 
     std::vector<KDL::Frame> foot_poses_;
     std::vector<KDL::Vector> foot_vels_;

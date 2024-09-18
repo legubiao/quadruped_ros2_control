@@ -12,7 +12,7 @@ StateTrotting::StateTrotting(CtrlComponent &ctrlComp) : FSMState(FSMStateName::T
                                                         balance_ctrl_(ctrlComp.balance_ctrl_),
                                                         wave_generator_(ctrl_comp_.wave_generator_),
                                                         gait_generator_(ctrlComp) {
-    _gaitHeight = 0.08;
+    gait_height_ = 0.08;
     Kpp = Vec3(70, 70, 70).asDiagonal();
     Kdp = Vec3(10, 10, 10).asDiagonal();
     _kpw = 780;
@@ -27,7 +27,7 @@ StateTrotting::StateTrotting(CtrlComponent &ctrlComp) : FSMState(FSMStateName::T
 }
 
 void StateTrotting::enter() {
-    _pcd = estimator_.getPosition();
+    pcd_ = estimator_.getPosition();
     _vCmdBody.setZero();
     _yawCmd = estimator_.getYaw();
     Rd = Mat3(KDL::Rotation::RPY(0, 0, _yawCmd).Inverse().data);
@@ -38,18 +38,17 @@ void StateTrotting::enter() {
 }
 
 void StateTrotting::run() {
-    _posBody = estimator_.getPosition();
-    _velBody = estimator_.getVelocity();
-    _posFeet2BGlobal = estimator_.getFeetPos2Body();
-    _posFeetGlobal = estimator_.getFeetPos();
-    B2G_RotMat = Eigen::Matrix3d(estimator_.getRotation().data);
+    pos_body_ = estimator_.getPosition();
+    vel_body_ = estimator_.getVelocity();
+
+    B2G_RotMat = estimator_.getRotation();
     G2B_RotMat = B2G_RotMat.transpose();
 
     getUserCmd();
     calcCmd();
 
-    gait_generator_.setGait(_vCmdGlobal.segment(0, 2), _wCmdGlobal(2), _gaitHeight);
-    gait_generator_.run(_posFeetGlobalGoal, _velFeetGlobalGoal);
+    gait_generator_.setGait(vel_target_.segment(0, 2), _wCmdGlobal(2), gait_height_);
+    gait_generator_.generate(pos_feet_global_goal_, vel_feet_global_goal_);
 
     calcTau();
     calcQQd();
@@ -92,19 +91,19 @@ void StateTrotting::getUserCmd() {
 
 void StateTrotting::calcCmd() {
     /* Movement */
-    _vCmdGlobal = B2G_RotMat * _vCmdBody;
+    vel_target_ = B2G_RotMat * _vCmdBody;
 
-    _vCmdGlobal(0) =
-            saturation(_vCmdGlobal(0), Vec2(_velBody(0) - 0.2, _velBody(0) + 0.2));
-    _vCmdGlobal(1) =
-            saturation(_vCmdGlobal(1), Vec2(_velBody(1) - 0.2, _velBody(1) + 0.2));
+    vel_target_(0) =
+            saturation(vel_target_(0), Vec2(vel_body_(0) - 0.2, vel_body_(0) + 0.2));
+    vel_target_(1) =
+            saturation(vel_target_(1), Vec2(vel_body_(1) - 0.2, vel_body_(1) + 0.2));
 
-    _pcd(0) = saturation(_pcd(0) + _vCmdGlobal(0) * dt_,
-                         Vec2(_posBody(0) - 0.05, _posBody(0) + 0.05));
-    _pcd(1) = saturation(_pcd(1) + _vCmdGlobal(1) * dt_,
-                         Vec2(_posBody(1) - 0.05, _posBody(1) + 0.05));
+    pcd_(0) = saturation(pcd_(0) + vel_target_(0) * dt_,
+                         Vec2(pos_body_(0) - 0.05, pos_body_(0) + 0.05));
+    pcd_(1) = saturation(pcd_(1) + vel_target_(1) * dt_,
+                         Vec2(pos_body_(1) - 0.05, pos_body_(1) + 0.05));
 
-    _vCmdGlobal(2) = 0;
+    vel_target_(2) = 0;
 
     /* Turning */
     _yawCmd = _yawCmd + _dYawCmd * dt_;
@@ -113,33 +112,37 @@ void StateTrotting::calcCmd() {
 }
 
 void StateTrotting::calcTau() {
-    pos_error_ = _pcd - _posBody;
-    vel_error_ = _vCmdGlobal - _velBody;
+    pos_error_ = pcd_ - pos_body_;
+    vel_error_ = vel_target_ - vel_body_;
 
-    _ddPcd = Kpp * pos_error_ + Kdp * vel_error_;
-    _dWbd = _kpw * rotMatToExp(Rd * G2B_RotMat) +
-            Kdw * (_wCmdGlobal - estimator_.getGlobalGyro());
+    Vec3 dd_pcd = Kpp * pos_error_ + Kdp * vel_error_;
+    Vec3 d_wbd = _kpw * rotMatToExp(Rd * G2B_RotMat) +
+                 Kdw * (_wCmdGlobal - estimator_.getGlobalGyro());
 
-    _ddPcd(0) = saturation(_ddPcd(0), Vec2(-3, 3));
-    _ddPcd(1) = saturation(_ddPcd(1), Vec2(-3, 3));
-    _ddPcd(2) = saturation(_ddPcd(2), Vec2(-5, 5));
+    dd_pcd(0) = saturation(dd_pcd(0), Vec2(-3, 3));
+    dd_pcd(1) = saturation(dd_pcd(1), Vec2(-3, 3));
+    dd_pcd(2) = saturation(dd_pcd(2), Vec2(-5, 5));
 
-    _dWbd(0) = saturation(_dWbd(0), Vec2(-40, 40));
-    _dWbd(1) = saturation(_dWbd(1), Vec2(-40, 40));
-    _dWbd(2) = saturation(_dWbd(2), Vec2(-10, 10));
+    d_wbd(0) = saturation(d_wbd(0), Vec2(-40, 40));
+    d_wbd(1) = saturation(d_wbd(1), Vec2(-40, 40));
+    d_wbd(2) = saturation(d_wbd(2), Vec2(-10, 10));
 
-    force_feet_global_ =
-            -balance_ctrl_.calF(_ddPcd, _dWbd, B2G_RotMat, _posFeet2BGlobal, wave_generator_.contact_);
+    const Vec34 pos_feet2_b_global = estimator_.getFeetPos2Body();
+    Vec34 force_feet_global =
+            -balance_ctrl_.calF(dd_pcd, d_wbd, B2G_RotMat, pos_feet2_b_global, wave_generator_.contact_);
 
+
+    Vec34 pos_feet_global = estimator_.getFeetPos();
+    Vec34 vel_feet_global = estimator_.getFeetVel();
     for (int i(0); i < 4; ++i) {
         if (wave_generator_.contact_(i) == 0) {
-            force_feet_global_.col(i) =
-                    KpSwing * (_posFeetGlobalGoal.col(i) - _posFeetGlobal.col(i)) +
-                    KdSwing * (_velFeetGlobalGoal.col(i) - _velFeetGlobal.col(i));
+            force_feet_global.col(i) =
+                    KpSwing * (pos_feet_global_goal_.col(i) - pos_feet_global.col(i)) +
+                    KdSwing * (vel_feet_global_goal_.col(i) - vel_feet_global.col(i));
         }
     }
 
-    force_feet_body_ = G2B_RotMat * force_feet_global_;
+    Vec34 force_feet_body_ = G2B_RotMat * force_feet_global;
 
     std::vector<KDL::JntArray> current_joints = robot_model_.current_joint_pos_;
     for (int i = 0; i < 4; i++) {
@@ -151,18 +154,19 @@ void StateTrotting::calcTau() {
 }
 
 void StateTrotting::calcQQd() {
-    const std::vector<KDL::Frame> _posFeet2B = robot_model_.getFeet2BPositions();
+    const std::vector<KDL::Frame> pos_feet2_b = robot_model_.getFeet2BPositions();
 
+    Vec34 pos_feet2_b_goal, vel_feet2_b_goal;
     for (int i(0); i < 4; ++i) {
-        _posFeet2BGoal.col(i) = G2B_RotMat * (_posFeetGlobalGoal.col(i) - _posBody);
-        _velFeet2BGoal.col(i) = G2B_RotMat * (_velFeetGlobalGoal.col(i) - _velBody);
+        pos_feet2_b_goal.col(i) = G2B_RotMat * (pos_feet_global_goal_.col(i) - pos_body_);
+        vel_feet2_b_goal.col(i) = G2B_RotMat * (vel_feet_global_goal_.col(i) - vel_body_);
         // _velFeet2BGoal.col(i) = _G2B_RotMat * (_velFeetGlobalGoal.col(i) -
         // _velBody - _B2G_RotMat * (skew(_lowState->getGyro()) * _posFeet2B.col(i))
         // );  //  c.f formula (6.12)
     }
 
-    Vec12 q_goal = robot_model_.getQ(_posFeet2BGoal);
-    Vec12 qd_goal = robot_model_.getQd(_posFeet2B, _velFeet2BGoal);
+    Vec12 q_goal = robot_model_.getQ(pos_feet2_b_goal);
+    Vec12 qd_goal = robot_model_.getQd(pos_feet2_b, vel_feet2_b_goal);
     for (int i = 0; i < 12; i++) {
         ctrl_comp_.joint_position_command_interface_[i].get().set_value(q_goal(i));
         ctrl_comp_.joint_velocity_command_interface_[i].get().set_value(qd_goal(i));

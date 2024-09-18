@@ -3,12 +3,14 @@
 //
 
 #include "unitree_guide_controller/control/Estimator.h"
+
+#include <unitree_guide_controller/common/mathTools.h>
+
 #include "unitree_guide_controller/control/CtrlComponent.h"
-#include "unitree_guide_controller/common/mathTools.h"
 
 Estimator::Estimator(CtrlComponent &ctrl_component) : ctrl_component_(ctrl_component),
                                                       robot_model_(ctrl_component.robot_model_) {
-    g_ = KDL::Vector(0, 0, -9.81);
+    g_ << 0, 0, -9.81;
     _dt = 0.002;
     _largeVariance = 100;
     for (int i(0); i < Qdig.rows(); ++i) {
@@ -139,6 +141,10 @@ Estimator::Estimator(CtrlComponent &ctrl_component) : ctrl_component_(ctrl_compo
     low_pass_filters_[2] = std::make_shared<LowPassFilter>(0.02, 3.0);
 }
 
+double Estimator::getYaw() const {
+    return rotMatToRPY(rotation_)(2);
+}
+
 void Estimator::update() {
     if (robot_model_.mass_ == 0) return;
 
@@ -176,20 +182,34 @@ void Estimator::update() {
     }
 
     // Acceleration from imu as system input
-    rotation_ = KDL::Rotation::Quaternion(ctrl_component_.imu_state_interface_[1].get().get_value(),
-                                          ctrl_component_.imu_state_interface_[2].get().get_value(),
-                                          ctrl_component_.imu_state_interface_[3].get().get_value(),
-                                          ctrl_component_.imu_state_interface_[0].get().get_value());
+    // rotation_ = KDL::Rotation::Quaternion(ctrl_component_.imu_state_interface_[1].get().get_value(),
+    //                                       ctrl_component_.imu_state_interface_[2].get().get_value(),
+    //                                       ctrl_component_.imu_state_interface_[3].get().get_value(),
+    //                                       ctrl_component_.imu_state_interface_[0].get().get_value());
 
-    gyro_ = KDL::Vector(ctrl_component_.imu_state_interface_[4].get().get_value(),
-                        ctrl_component_.imu_state_interface_[5].get().get_value(),
-                        ctrl_component_.imu_state_interface_[6].get().get_value());
+    Quat quat;
+    quat << ctrl_component_.imu_state_interface_[0].get().get_value(),
+            ctrl_component_.imu_state_interface_[1].get().get_value(),
+            ctrl_component_.imu_state_interface_[2].get().get_value(),
+            ctrl_component_.imu_state_interface_[3].get().get_value();
+    rotation_ = quatToRotMat(quat);
 
-    acceleration_ = KDL::Vector(ctrl_component_.imu_state_interface_[7].get().get_value(),
-                                ctrl_component_.imu_state_interface_[8].get().get_value(),
-                                ctrl_component_.imu_state_interface_[9].get().get_value());
+    gyro_ << ctrl_component_.imu_state_interface_[4].get().get_value(),
+            ctrl_component_.imu_state_interface_[5].get().get_value(),
+            ctrl_component_.imu_state_interface_[6].get().get_value();
 
-    _u = Vec3((rotation_ * acceleration_ + g_).data);
+    // gyro_ = KDL::Vector(ctrl_component_.imu_state_interface_[4].get().get_value(),
+    //                     ctrl_component_.imu_state_interface_[5].get().get_value(),
+    //                     ctrl_component_.imu_state_interface_[6].get().get_value());
+
+    acceleration_ << ctrl_component_.imu_state_interface_[7].get().get_value(),
+            ctrl_component_.imu_state_interface_[8].get().get_value(),
+            ctrl_component_.imu_state_interface_[9].get().get_value();
+    // acceleration_ = KDL::Vector(ctrl_component_.imu_state_interface_[7].get().get_value(),
+    //                             ctrl_component_.imu_state_interface_[8].get().get_value(),
+    //                             ctrl_component_.imu_state_interface_[9].get().get_value());
+
+    _u = rotation_ * acceleration_ + g_;
     x_hat_ = A * x_hat_ + B * _u;
     y_hat_ = C * x_hat_;
 

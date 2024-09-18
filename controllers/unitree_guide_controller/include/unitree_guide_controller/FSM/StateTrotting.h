@@ -42,34 +42,25 @@ private:
     QuadrupedRobot &robot_model_;
     BalanceCtrl &balance_ctrl_;
     WaveGenerator &wave_generator_;
-
     GaitGenerator gait_generator_;
 
     // Robot State
-    Vec3 _posBody, _velBody;
-    double _yaw{}, _dYaw{};
-    Vec34 _posFeetGlobal, _velFeetGlobal;
-    Vec34 _posFeet2BGlobal;
+    Vec3 pos_body_, vel_body_;
     RotMat B2G_RotMat, G2B_RotMat;
-    Vec12 _q;
 
 
     // Robot command
-    Vec3 _pcd;
-    Vec3 _vCmdGlobal, _vCmdBody;
+    Vec3 pcd_;
+    Vec3 vel_target_, _vCmdBody;
     double dt_;
     double _yawCmd{}, _dYawCmd{};
     double _dYawCmdPast{};
     Vec3 _wCmdGlobal;
-    Vec34 _posFeetGlobalGoal, _velFeetGlobalGoal;
-    Vec34 _posFeet2BGoal, _velFeet2BGoal;
+    Vec34 pos_feet_global_goal_, vel_feet_global_goal_;
     RotMat Rd;
-    Vec3 _ddPcd, _dWbd;
-    Vec34 force_feet_global_, force_feet_body_;
-    Vec12 _tau;
 
     // Control Parameters
-    double _gaitHeight;
+    double gait_height_;
     Vec3 pos_error_, vel_error_;
     Mat3 Kpp, Kdp, Kdw;
     double _kpw;

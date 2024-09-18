@@ -29,9 +29,7 @@ private:
 
     Vec3 pcd_, pcd_init_;
     RotMat Rd_;
-    KDL::Rotation init_rotation_;
-
-    Vec3 pose_body_, vel_body_;
+    RotMat init_rotation_;
 
     double kp_w_;
     Mat3 Kp_p_, Kd_p_, Kd_w_;
