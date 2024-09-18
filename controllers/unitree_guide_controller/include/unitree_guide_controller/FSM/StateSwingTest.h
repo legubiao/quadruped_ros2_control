@@ -10,7 +10,7 @@
 
 class StateSwingTest final : public FSMState {
 public:
-    explicit StateSwingTest(CtrlComponent ctrlComp);
+    explicit StateSwingTest(CtrlComponent &ctrlComp);
 
     void enter() override;
 

@@ -6,8 +6,8 @@
 #include "unitree_guide_controller/FSM/StateSwingTest.h"
 #include "unitree_guide_controller/common/mathTools.h"
 
-StateSwingTest::StateSwingTest(CtrlComponent ctrlComp): FSMState(
-    FSMStateName::SWINGTEST, "swing test", std::move(ctrlComp)) {
+StateSwingTest::StateSwingTest(CtrlComponent &ctrlComp): FSMState(
+    FSMStateName::SWINGTEST, "swing test", ctrlComp) {
     _xMin = -0.15;
     _xMax = 0.10;
     _yMin = -0.15;

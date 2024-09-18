@@ -9,7 +9,7 @@
 
 class StateFixedStand final : public FSMState {
 public:
-    explicit StateFixedStand(CtrlComponent ctrlComp);
+    explicit StateFixedStand(CtrlComponent &ctrlComp);
 
     void enter() override;
 

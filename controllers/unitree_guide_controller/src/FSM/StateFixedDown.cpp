@@ -6,8 +6,8 @@
 
 #include <cmath>
 
-StateFixedDown::StateFixedDown(CtrlComponent ctrlComp): FSMState(
-    FSMStateName::FIXEDDOWN, "fixed down", std::move(ctrlComp)) {
+StateFixedDown::StateFixedDown(CtrlComponent &ctrlComp): FSMState(
+    FSMStateName::FIXEDDOWN, "fixed down", ctrlComp) {
     duration_ = ctrl_comp_.frequency_ * 1.2;
 }
 

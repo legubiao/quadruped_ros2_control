@@ -9,7 +9,7 @@
 
 class StateBalanceTest final : public FSMState {
 public:
-    explicit StateBalanceTest(CtrlComponent ctrlComp);
+    explicit StateBalanceTest(CtrlComponent &ctrlComp);
 
     void enter() override;
 

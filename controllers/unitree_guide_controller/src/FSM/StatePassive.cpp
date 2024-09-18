@@ -7,8 +7,8 @@
 #include <iostream>
 #include <utility>
 
-StatePassive::StatePassive(CtrlComponent ctrlComp) : FSMState(
-    FSMStateName::PASSIVE, "passive", std::move(ctrlComp)) {
+StatePassive::StatePassive(CtrlComponent &ctrlComp) : FSMState(
+    FSMStateName::PASSIVE, "passive", ctrlComp) {
 }
 
 void StatePassive::enter() {

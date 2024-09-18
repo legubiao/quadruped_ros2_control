@@ -15,10 +15,10 @@ class FSMState {
 public:
     virtual ~FSMState() = default;
 
-    FSMState(const FSMStateName &stateName, std::string stateNameString, CtrlComponent ctrlComp)
-        : state_name(stateName),
-          state_name_string(std::move(stateNameString)),
-          ctrl_comp_(std::move(ctrlComp)) {
+    FSMState(const FSMStateName &state_name, std::string state_name_string, CtrlComponent &ctrl_comp)
+        : state_name(state_name),
+          state_name_string(std::move(state_name_string)),
+          ctrl_comp_(ctrl_comp) {
     }
 
     virtual void enter() = 0;
@@ -33,7 +33,7 @@ public:
     std::string state_name_string;
 
 protected:
-    CtrlComponent ctrl_comp_;
+    CtrlComponent &ctrl_comp_;
 };
 
 #endif //FSMSTATE_H

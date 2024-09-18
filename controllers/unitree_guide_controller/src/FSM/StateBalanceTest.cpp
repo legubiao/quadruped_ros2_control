@@ -6,8 +6,8 @@
 
 #include <unitree_guide_controller/common/mathTools.h>
 
-StateBalanceTest::StateBalanceTest(CtrlComponent ctrlComp) : FSMState(FSMStateName::BALANCETEST, "balance test",
-                                                                      std::move(ctrlComp)),
+StateBalanceTest::StateBalanceTest(CtrlComponent &ctrlComp) : FSMState(FSMStateName::BALANCETEST, "balance test",
+                                                                      ctrlComp),
                                                              estimator_(ctrlComp.estimator_.get()),
                                                              robot_model_(ctrlComp.robot_model_.get()),
                                                              balance_ctrl_(ctrlComp.balance_ctrl_.get()) {

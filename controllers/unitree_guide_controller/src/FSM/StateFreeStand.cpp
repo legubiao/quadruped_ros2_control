@@ -5,8 +5,8 @@
 #include "unitree_guide_controller/FSM/StateFreeStand.h"
 #include "unitree_guide_controller/common/mathTools.h"
 
-StateFreeStand::StateFreeStand(CtrlComponent ctrl_component) : FSMState(FSMStateName::FREESTAND, "free stand",
-                                                                        std::move(ctrl_component)) {
+StateFreeStand::StateFreeStand(CtrlComponent &ctrl_component) : FSMState(FSMStateName::FREESTAND, "free stand",
+                                                                        ctrl_component) {
     row_max_ = 20 * M_PI / 180;
     row_min_ = -row_max_;
     pitch_max_ = 15 * M_PI / 180;
