@@ -6,7 +6,8 @@
 #include "unitree_guide_controller/common/mathTools.h"
 
 StateFreeStand::StateFreeStand(CtrlComponent &ctrl_component) : FSMState(FSMStateName::FREESTAND, "free stand",
-                                                                        ctrl_component) {
+                                                                         ctrl_component),
+                                                                robot_model_(ctrl_component.robot_model_) {
     row_max_ = 20 * M_PI / 180;
     row_min_ = -row_max_;
     pitch_max_ = 15 * M_PI / 180;
@@ -23,8 +24,8 @@ void StateFreeStand::enter() {
         ctrl_comp_.joint_kd_command_interface_[i].get().set_value(5);
     }
 
-    init_joint_pos_ = ctrl_comp_.robot_model_.get().current_joint_pos_;
-    init_foot_pos_ = ctrl_comp_.robot_model_.get().getFeet2BPositions();
+    init_joint_pos_ = robot_model_.current_joint_pos_;
+    init_foot_pos_ = robot_model_.getFeet2BPositions();
 
 
     fr_init_pos_ = init_foot_pos_[0];
@@ -35,7 +36,6 @@ void StateFreeStand::enter() {
 }
 
 void StateFreeStand::run() {
-    ctrl_comp_.robot_model_.get().update(ctrl_comp_);
     calc_body_target(invNormalize(ctrl_comp_.control_inputs_.get().lx, row_min_, row_max_),
                      invNormalize(ctrl_comp_.control_inputs_.get().ly, pitch_min_, pitch_max_),
                      invNormalize(ctrl_comp_.control_inputs_.get().rx, yaw_min_, yaw_max_),
@@ -68,7 +68,7 @@ void StateFreeStand::calc_body_target(const float row, const float pitch,
     for (int i = 0; i < 4; i++) {
         goal_pos[i] = body_2_fr_pos * init_foot_pos_[i];
     }
-    target_joint_pos_ = ctrl_comp_.robot_model_.get().getQ(goal_pos);
+    target_joint_pos_ = robot_model_.getQ(goal_pos);
 
     for (int i = 0; i < 4; i++) {
         ctrl_comp_.joint_position_command_interface_[i * 3].get().set_value(target_joint_pos_[i](0));

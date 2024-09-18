@@ -41,7 +41,6 @@ namespace unitree_guide_controller {
 
     controller_interface::return_type UnitreeGuideController::
     update(const rclcpp::Time &time, const rclcpp::Duration &period) {
-
         // auto now = std::chrono::steady_clock::now();
         // std::chrono::duration<double> time_diff = now - last_update_time_;
         // last_update_time_ = now;
@@ -51,8 +50,8 @@ namespace unitree_guide_controller {
         // RCLCPP_INFO(get_node()->get_logger(), "Update frequency: %f Hz", update_frequency_);
 
 
-        ctrl_comp_.robot_model_.get().update(ctrl_comp_);
-        ctrl_comp_.estimator_.get().update(ctrl_comp_);
+        ctrl_comp_.robot_model_.update();
+        ctrl_comp_.estimator_.update();
 
         if (mode_ == FSMMode::NORMAL) {
             current_state_->run();
@@ -108,8 +107,8 @@ namespace unitree_guide_controller {
         robot_description_subscription_ = get_node()->create_subscription<std_msgs::msg::String>(
             "~/robot_description", rclcpp::QoS(rclcpp::KeepLast(1)).transient_local(),
             [this](const std_msgs::msg::String::SharedPtr msg) {
-                ctrl_comp_.robot_model_.get().init(msg->data);
-                ctrl_comp_.balance_ctrl_.get().init(ctrl_comp_.robot_model_.get());
+                ctrl_comp_.robot_model_.init(msg->data);
+                ctrl_comp_.balance_ctrl_.init(ctrl_comp_.robot_model_);
             });
 
         get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);

@@ -10,7 +10,7 @@
 
 class StateSwingTest final : public FSMState {
 public:
-    explicit StateSwingTest(CtrlComponent &ctrlComp);
+    explicit StateSwingTest(CtrlComponent &ctrl_component);
 
     void enter() override;
 
@@ -21,11 +21,11 @@ public:
     FSMStateName checkChange() override;
 
 private:
-
     void positionCtrl();
 
     void torqueCtrl() const;
 
+    QuadrupedRobot &robot_model_;
     float _xMin, _xMax;
     float _yMin, _yMax;
     float _zMin, _zMax;

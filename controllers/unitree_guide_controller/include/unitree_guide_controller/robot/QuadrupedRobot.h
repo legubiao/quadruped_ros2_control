@@ -16,7 +16,8 @@ struct CtrlComponent;
 
 class QuadrupedRobot {
 public:
-    explicit QuadrupedRobot() = default;
+    explicit QuadrupedRobot(CtrlComponent &ctrl_component): ctrl_component_(ctrl_component) {
+    }
 
     ~QuadrupedRobot() = default;
 
@@ -84,9 +85,10 @@ public:
     std::vector<KDL::JntArray> current_joint_pos_;
     std::vector<KDL::JntArray> current_joint_vel_;
 
-    void update(const CtrlComponent &ctrlComp);
+    void update();
 
 private:
+    CtrlComponent &ctrl_component_;
     std::vector<std::shared_ptr<RobotLeg> > robot_legs_;
 
     KDL::Chain fr_chain_;

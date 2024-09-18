@@ -10,11 +10,12 @@
 
 #include "LowPassFilter.h"
 
+class QuadrupedRobot;
 struct CtrlComponent;
 
 class Estimator {
 public:
-    Estimator();
+    explicit Estimator(CtrlComponent &ctrl_component);
 
     ~Estimator() = default;
 
@@ -68,9 +69,12 @@ public:
         return rotation_ * gyro_;
     }
 
-    void update(const CtrlComponent &ctrlComp);
+    void update();
 
 private:
+    CtrlComponent &ctrl_component_;
+    QuadrupedRobot &robot_model_;
+
     Eigen::Matrix<double, 18, 1> x_hat_; // The state of estimator, position(3)+velocity(3)+feet position(3x4)
 
     Eigen::Matrix<double, 3, 1> _u; // The input of estimator

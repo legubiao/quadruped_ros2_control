@@ -42,20 +42,15 @@ struct CtrlComponent {
     std::reference_wrapper<control_input_msgs::msg::Inputs> control_inputs_;
     int frequency_{};
 
-    QuadrupedRobot default_robot_model_;
-    std::reference_wrapper<QuadrupedRobot> robot_model_;
+    QuadrupedRobot robot_model_;
+    Estimator estimator_;
+    BalanceCtrl balance_ctrl_;
 
-    Estimator default_estimator_;
-    std::reference_wrapper<Estimator> estimator_;
+    WaveGenerator wave_generator_;
 
-    BalanceCtrl default_balance_ctrl_;
-    std::reference_wrapper<BalanceCtrl> balance_ctrl_;
-
-    WaveGenerator default_wave_generator_;
-    std::reference_wrapper<WaveGenerator> wave_generator_;
-
-    CtrlComponent() : control_inputs_(default_inputs_), robot_model_(default_robot_model_),
-                      estimator_(default_estimator_), balance_ctrl_(default_balance_ctrl_), wave_generator_(default_wave_generator_) {
+    CtrlComponent() : control_inputs_(default_inputs_),
+                      robot_model_(*this),
+                      estimator_(*this) {
     }
 
     void clear() {

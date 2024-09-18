@@ -4,13 +4,13 @@
 
 #include "unitree_guide_controller/FSM/StateBalanceTest.h"
 
-#include <unitree_guide_controller/common/mathTools.h>
+#include "unitree_guide_controller/common/mathTools.h"
 
 StateBalanceTest::StateBalanceTest(CtrlComponent &ctrlComp) : FSMState(FSMStateName::BALANCETEST, "balance test",
-                                                                      ctrlComp),
-                                                             estimator_(ctrlComp.estimator_.get()),
-                                                             robot_model_(ctrlComp.robot_model_.get()),
-                                                             balance_ctrl_(ctrlComp.balance_ctrl_.get()) {
+                                                                       ctrlComp),
+                                                              estimator_(ctrlComp.estimator_),
+                                                              robot_model_(ctrlComp.robot_model_),
+                                                              balance_ctrl_(ctrlComp.balance_ctrl_) {
     _xMax = 0.05;
     _xMin = -_xMax;
     _yMax = 0.05;
