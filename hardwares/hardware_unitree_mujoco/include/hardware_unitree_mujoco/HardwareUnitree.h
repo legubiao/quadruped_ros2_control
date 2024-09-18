@@ -45,17 +45,17 @@ protected:
     };
 
 
-    void init_low_cmd();
+    void initLowCmd();
 
-    void low_state_message_handler(const void *messages);
+    void lowStateMessageHandle(const void *messages);
 
-    unitree_go::msg::dds_::LowCmd_ _lowCmd{}; // default init
-    unitree_go::msg::dds_::LowState_ _lowState{}; // default init
+    unitree_go::msg::dds_::LowCmd_ low_cmd_{}; // default init
+    unitree_go::msg::dds_::LowState_ low_state_{}; // default init
 
     /*publisher*/
-    unitree::robot::ChannelPublisherPtr<unitree_go::msg::dds_::LowCmd_> lowcmd_publisher;
+    unitree::robot::ChannelPublisherPtr<unitree_go::msg::dds_::LowCmd_> low_cmd_publisher_;
     /*subscriber*/
-    unitree::robot::ChannelSubscriberPtr<unitree_go::msg::dds_::LowState_> lowstate_subscriber;
+    unitree::robot::ChannelSubscriberPtr<unitree_go::msg::dds_::LowState_> lows_tate_subscriber_;
 };
 
 

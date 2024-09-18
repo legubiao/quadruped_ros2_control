@@ -2,9 +2,9 @@
 // Created by biao on 24-9-9.
 //
 
-#include <hardware_unitree_mujoco/crc32.h>
-#include <hardware_unitree_mujoco/HardwareUnitree.h>
+#include "hardware_unitree_mujoco/HardwareUnitree.h"
 #include <rclcpp/logging.hpp>
+#include "crc32.h"
 
 #define TOPIC_LOWCMD "rt/lowcmd"
 #define TOPIC_LOWSTATE "rt/lowstate"
@@ -37,21 +37,21 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Hardwa
     }
 
     ChannelFactory::Instance()->Init(1, "lo");
-    lowcmd_publisher =
+    low_cmd_publisher_ =
             std::make_shared<ChannelPublisher<unitree_go::msg::dds_::LowCmd_> >(
                 TOPIC_LOWCMD);
-    lowcmd_publisher->InitChannel();
+    low_cmd_publisher_->InitChannel();
 
     /*create subscriber*/
-    lowstate_subscriber =
+    lows_tate_subscriber_ =
             std::make_shared<ChannelSubscriber<unitree_go::msg::dds_::LowState_> >(
                 TOPIC_LOWSTATE);
-    lowstate_subscriber->InitChannel(
+    lows_tate_subscriber_->InitChannel(
         [this](auto &&PH1) {
-            low_state_message_handler(std::forward<decltype(PH1)>(PH1));
+            lowStateMessageHandle(std::forward<decltype(PH1)>(PH1));
         },
         1);
-    init_low_cmd();
+    initLowCmd();
 
 
     return SystemInterface::on_init(info);
@@ -109,25 +109,24 @@ std::vector<hardware_interface::CommandInterface> HardwareUnitree::export_comman
 }
 
 return_type HardwareUnitree::read(const rclcpp::Time &time, const rclcpp::Duration &period) {
-
     // joint states
     for (int i(0); i < 12; ++i) {
-        joint_position_[i] = _lowState.motor_state()[i].q();
-        joint_velocities_[i] = _lowState.motor_state()[i].dq();
-        joint_effort_[i] = _lowState.motor_state()[i].tau_est();
+        joint_position_[i] = low_state_.motor_state()[i].q();
+        joint_velocities_[i] = low_state_.motor_state()[i].dq();
+        joint_effort_[i] = low_state_.motor_state()[i].tau_est();
     }
 
     // imu states
-    imu_states_[0] = _lowState.imu_state().quaternion()[0];     // w
-    imu_states_[1] = _lowState.imu_state().quaternion()[1];     // x
-    imu_states_[2] = _lowState.imu_state().quaternion()[2];     // y
-    imu_states_[3] = _lowState.imu_state().quaternion()[3];     // z
-    imu_states_[4] = _lowState.imu_state().gyroscope()[0];
-    imu_states_[5] = _lowState.imu_state().gyroscope()[1];
-    imu_states_[6] = _lowState.imu_state().gyroscope()[2];
-    imu_states_[7] = _lowState.imu_state().accelerometer()[0];
-    imu_states_[8] = _lowState.imu_state().accelerometer()[1];
-    imu_states_[9] = _lowState.imu_state().accelerometer()[2];
+    imu_states_[0] = low_state_.imu_state().quaternion()[0]; // w
+    imu_states_[1] = low_state_.imu_state().quaternion()[1]; // x
+    imu_states_[2] = low_state_.imu_state().quaternion()[2]; // y
+    imu_states_[3] = low_state_.imu_state().quaternion()[3]; // z
+    imu_states_[4] = low_state_.imu_state().gyroscope()[0];
+    imu_states_[5] = low_state_.imu_state().gyroscope()[1];
+    imu_states_[6] = low_state_.imu_state().gyroscope()[2];
+    imu_states_[7] = low_state_.imu_state().accelerometer()[0];
+    imu_states_[8] = low_state_.imu_state().accelerometer()[1];
+    imu_states_[9] = low_state_.imu_state().accelerometer()[2];
 
     return return_type::OK;
 }
@@ -135,39 +134,39 @@ return_type HardwareUnitree::read(const rclcpp::Time &time, const rclcpp::Durati
 return_type HardwareUnitree::write(const rclcpp::Time &, const rclcpp::Duration &) {
     // send command
     for (int i(0); i < 12; ++i) {
-        _lowCmd.motor_cmd()[i].mode() = 0x01;
-        _lowCmd.motor_cmd()[i].q() = static_cast<float>(joint_position_command_[i]);
-        _lowCmd.motor_cmd()[i].dq() = static_cast<float>(joint_velocities_command_[i]);
-        _lowCmd.motor_cmd()[i].kp() = static_cast<float>(joint_kp_command_[i]);
-        _lowCmd.motor_cmd()[i].kd() = static_cast<float>(joint_kd_command_[i]);
-        _lowCmd.motor_cmd()[i].tau() = static_cast<float>(joint_effort_command_[i]);
+        low_cmd_.motor_cmd()[i].mode() = 0x01;
+        low_cmd_.motor_cmd()[i].q() = static_cast<float>(joint_position_command_[i]);
+        low_cmd_.motor_cmd()[i].dq() = static_cast<float>(joint_velocities_command_[i]);
+        low_cmd_.motor_cmd()[i].kp() = static_cast<float>(joint_kp_command_[i]);
+        low_cmd_.motor_cmd()[i].kd() = static_cast<float>(joint_kd_command_[i]);
+        low_cmd_.motor_cmd()[i].tau() = static_cast<float>(joint_effort_command_[i]);
     }
 
-    _lowCmd.crc() = crc32_core(reinterpret_cast<uint32_t *>(&_lowCmd),
-                               (sizeof(unitree_go::msg::dds_::LowCmd_) >> 2) - 1);
-    lowcmd_publisher->Write(_lowCmd);
+    low_cmd_.crc() = crc32_core(reinterpret_cast<uint32_t *>(&low_cmd_),
+                                (sizeof(unitree_go::msg::dds_::LowCmd_) >> 2) - 1);
+    low_cmd_publisher_->Write(low_cmd_);
     return return_type::OK;
 }
 
-void HardwareUnitree::init_low_cmd() {
-    _lowCmd.head()[0] = 0xFE;
-    _lowCmd.head()[1] = 0xEF;
-    _lowCmd.level_flag() = 0xFF;
-    _lowCmd.gpio() = 0;
+void HardwareUnitree::initLowCmd() {
+    low_cmd_.head()[0] = 0xFE;
+    low_cmd_.head()[1] = 0xEF;
+    low_cmd_.level_flag() = 0xFF;
+    low_cmd_.gpio() = 0;
 
     for (int i = 0; i < 20; i++) {
-        _lowCmd.motor_cmd()[i].mode() =
+        low_cmd_.motor_cmd()[i].mode() =
                 0x01; // motor switch to servo (PMSM) mode
-        _lowCmd.motor_cmd()[i].q() = 0;
-        _lowCmd.motor_cmd()[i].kp() = 0;
-        _lowCmd.motor_cmd()[i].dq() = 0;
-        _lowCmd.motor_cmd()[i].kd() = 0;
-        _lowCmd.motor_cmd()[i].tau() = 0;
+        low_cmd_.motor_cmd()[i].q() = 0;
+        low_cmd_.motor_cmd()[i].kp() = 0;
+        low_cmd_.motor_cmd()[i].dq() = 0;
+        low_cmd_.motor_cmd()[i].kd() = 0;
+        low_cmd_.motor_cmd()[i].tau() = 0;
     }
 }
 
-void HardwareUnitree::low_state_message_handler(const void *messages) {
-    _lowState = *(unitree_go::msg::dds_::LowState_ *) messages;
+void HardwareUnitree::lowStateMessageHandle(const void *messages) {
+    low_state_ = *(unitree_go::msg::dds_::LowState_ *) messages;
 }
 
 #include "pluginlib/class_list_macros.hpp"
