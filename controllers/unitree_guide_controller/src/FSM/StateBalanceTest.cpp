@@ -89,7 +89,7 @@ void StateBalanceTest::calcTorque() {
     for (int i = 0; i < 4; i++) {
         KDL::JntArray torque = robot_model_.getTorque(force_feet_body.col(i), i);
         for (int j = 0; j < 3; j++) {
-            ctrl_comp_.joint_effort_command_interface_[i * 3 + j].get().set_value(torque(j));
+            ctrl_comp_.joint_torque_command_interface_[i * 3 + j].get().set_value(torque(j));
             ctrl_comp_.joint_position_command_interface_[i * 3 + j].get().set_value(current_joints[i](j));
         }
     }

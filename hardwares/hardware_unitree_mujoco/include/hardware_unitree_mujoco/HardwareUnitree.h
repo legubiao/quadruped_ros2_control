@@ -26,7 +26,7 @@ public:
     hardware_interface::return_type write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) override;
 
 protected:
-    std::vector<double> joint_effort_command_;
+    std::vector<double> joint_torque_command_;
     std::vector<double> joint_position_command_;
     std::vector<double> joint_velocities_command_;
     std::vector<double> joint_kp_command_;

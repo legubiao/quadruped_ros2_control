@@ -89,7 +89,7 @@ namespace unitree_guide_controller {
         std::unordered_map<
             std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> > *>
         command_interface_map_ = {
-            {"effort", &ctrl_comp_.joint_effort_command_interface_},
+            {"torque", &ctrl_comp_.joint_torque_command_interface_},
             {"position", &ctrl_comp_.joint_position_command_interface_},
             {"velocity", &ctrl_comp_.joint_velocity_command_interface_},
             {"kp", &ctrl_comp_.joint_kp_command_interface_},

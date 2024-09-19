@@ -36,7 +36,7 @@ unitree_guide_controller:
       - RL_calf_joint
 
     command_interfaces:
-      - effort
+      - torque
       - position
       - velocity
       - kp

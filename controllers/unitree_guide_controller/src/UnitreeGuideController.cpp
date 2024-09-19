@@ -138,6 +138,7 @@ namespace unitree_guide_controller {
             }
         }
 
+        // Create FSM List
         state_list_.passive = std::make_shared<StatePassive>(ctrl_comp_);
         state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_comp_);
         state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_comp_);

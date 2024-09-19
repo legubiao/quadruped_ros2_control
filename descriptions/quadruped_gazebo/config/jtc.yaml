@@ -1,8 +1,7 @@
 # Controller Manager configuration
 controller_manager:
   ros__parameters:
-    update_rate: 1000  # Hz
-    use_sim_time: true  # If running in simulation
+    update_rate: 500  # Hz
 
     # Define the available controllers
     joint_state_broadcaster:
@@ -11,7 +10,76 @@ controller_manager:
     imu_sensor_broadcaster:
       type: imu_sensor_broadcaster/IMUSensorBroadcaster
 
+    leg_pd_controller:
+      type: leg_pd_controller/LegPdController
+
 imu_sensor_broadcaster:
   ros__parameters:
     sensor_name: "imu_sensor"
     frame_id: "imu_sensor"
+
+leg_pd_controller:
+  ros__parameters:
+    update_rate: 500  # Hz
+    joints:
+      - RF_HAA
+      - RH_HFE
+      - RF_KFE
+      - LF_HAA
+      - LF_HFE
+      - LF_KFE
+      - RH_HAA
+      - RH_HFE
+      - RH_KFE
+      - LH_HAA
+      - LH_HFE
+      - LH_KFE
+
+    command_interfaces:
+      - effort
+
+    state_interfaces:
+      - position
+      - velocity
+
+unitree_guide_controller:
+  ros__parameters:
+    joints:
+      - RF_HAA
+      - RH_HFE
+      - RF_KFE
+      - LF_HAA
+      - LF_HFE
+      - LF_KFE
+      - RH_HAA
+      - RH_HFE
+      - RH_KFE
+      - LH_HAA
+      - LH_HFE
+      - LH_KFE
+
+    command_interfaces:
+      - torque
+      - position
+      - velocity
+      - kp
+      - kd
+
+    state_interfaces:
+      - effort
+      - position
+      - velocity
+
+    imu_name: "imu_sensor"
+
+    imu_interfaces:
+      - orientation.w
+      - orientation.x
+      - orientation.y
+      - orientation.z
+      - angular_velocity.x
+      - angular_velocity.y
+      - angular_velocity.z
+      - linear_acceleration.x
+      - linear_acceleration.y
+      - linear_acceleration.z
