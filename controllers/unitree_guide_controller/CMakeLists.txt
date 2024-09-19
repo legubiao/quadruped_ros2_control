@@ -47,7 +47,7 @@ add_library(${PROJECT_NAME} SHARED
         src/quadProgpp/QuadProg++.cc
 
         src/gait/WaveGenerator.cpp
-        src/gait/FeetEndCtrl.cpp
+        src/gait/FeetEndCalc.cpp
         src/gait/GaitGenerator.cpp
 
 )

@@ -26,10 +26,19 @@ private:
 
     void calcCmd();
 
+    /**
+    * Calculate the torque command
+    */
     void calcTau();
 
+    /**
+    * Calculate the joint space velocity and acceleration
+    */
     void calcQQd();
 
+    /**
+    * Calculate the PD gain for the joints
+    */
     void calcGain() const;
 
     /**
@@ -48,14 +57,12 @@ private:
     Vec3 pos_body_, vel_body_;
     RotMat B2G_RotMat, G2B_RotMat;
 
-
     // Robot command
     Vec3 pcd_;
-    Vec3 vel_target_, _vCmdBody;
+    Vec3 vel_target_, v_cmd_body_;
     double dt_;
-    double _yawCmd{}, _dYawCmd{};
-    double _dYawCmdPast{};
-    Vec3 _wCmdGlobal;
+    double yaw_cmd_{}, d_yaw_cmd_{}, d_yaw_cmd_past_{};
+    Vec3 w_cmd_global_;
     Vec34 pos_feet_global_goal_, vel_feet_global_goal_;
     RotMat Rd;
 
@@ -65,7 +72,7 @@ private:
     Mat3 Kpp, Kdp, Kd_w_;
     double kp_w_;
     Mat3 Kp_swing_, Kd_swing_;
-    Vec2 _vxLim, _vyLim, _wyawLim;
+    Vec2 v_x_limit_, v_y_limit_, w_yaw_limit_;
 };
 
 

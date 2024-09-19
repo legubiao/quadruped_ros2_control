@@ -77,7 +77,7 @@ void StateBalanceTest::calcTorque() {
 
     // expected body angular acceleration
     d_wbd_ = kp_w_ * rotMatToExp(Rd_ * G2B_Rotation) +
-             Kd_w_ * (Vec3(0, 0, 0) - estimator_.getGlobalGyro());
+             Kd_w_ * (Vec3(0, 0, 0) - estimator_.getGyroGlobal());
 
     // calculate foot force
     const Vec34 pos_feet_2_body_global = estimator_.getFeetPos2Body();

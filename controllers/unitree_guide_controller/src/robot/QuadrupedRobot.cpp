@@ -49,6 +49,7 @@ Vec12 QuadrupedRobot::getQ(const Vec34 &vecP) const {
     for (int i(0); i < 4; ++i) {
         KDL::Frame frame;
         frame.p = KDL::Vector(vecP.col(i)[0], vecP.col(i)[1], vecP.col(i)[2]);
+        frame.M = KDL::Rotation::Identity();
         q.segment(3 * i, 3) = robot_legs_[i]->calcQ(frame, current_joint_pos_[i]).data;
     }
     return q;
@@ -56,7 +57,7 @@ Vec12 QuadrupedRobot::getQ(const Vec34 &vecP) const {
 
 Vec12 QuadrupedRobot::getQd(const std::vector<KDL::Frame> &pos, const Vec34 &vel) {
     Vec12 qd;
-    std::vector<KDL::JntArray> q = getQ(pos);
+    const std::vector<KDL::JntArray> q = getQ(pos);
     for (int i(0); i < 4; ++i) {
         Mat3 jacobian = robot_legs_[i]->calcJaco(q[i]).data.topRows(3);
         qd.segment(3 * i, 3) = jacobian.inverse() * vel.col(i);
@@ -91,8 +92,8 @@ KDL::JntArray QuadrupedRobot::getTorque(const KDL::Vector &force, int index) con
 }
 
 KDL::Vector QuadrupedRobot::getFeet2BVelocities(const int index) const {
-    const Eigen::Matrix<double, 3, Eigen::Dynamic> jacobian = getJacobian(index).data.topRows(3);
-    Eigen::VectorXd foot_velocity = jacobian * current_joint_vel_[index].data;
+    const Mat3 jacobian = getJacobian(index).data.topRows(3);
+    Vec3 foot_velocity = jacobian * current_joint_vel_[index].data;
     return {foot_velocity(0), foot_velocity(1), foot_velocity(2)};
 }
 

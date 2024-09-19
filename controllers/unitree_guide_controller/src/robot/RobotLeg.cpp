@@ -18,6 +18,7 @@ RobotLeg::RobotLeg(const KDL::Chain &chain) {
 KDL::Frame RobotLeg::calcPEe2B(const KDL::JntArray &joint_positions) const {
     KDL::Frame pEe;
     fk_pose_solver_->JntToCart(joint_positions, pEe);
+    pEe.M = KDL::Rotation::Identity();
     return pEe;
 }
 

@@ -12,13 +12,13 @@ class Estimator;
 struct CtrlComponent;
 class QuadrupedRobot;
 
-class FeetEndCtrl {
+class FeetEndCalc {
 public:
-    explicit FeetEndCtrl(CtrlComponent &ctrl_component);
+    explicit FeetEndCalc(CtrlComponent &ctrl_component);
 
     void init();
 
-    ~FeetEndCtrl() = default;
+    ~FeetEndCalc() = default;
 
     Vec3 calcFootPos(int index, Vec2 vxy_goal_global, double d_yaw_global, double phase);
 

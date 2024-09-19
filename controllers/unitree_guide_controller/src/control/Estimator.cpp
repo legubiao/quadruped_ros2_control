@@ -12,8 +12,8 @@ Estimator::Estimator(CtrlComponent &ctrl_component) : ctrl_component_(ctrl_compo
                                                       robot_model_(ctrl_component.robot_model_),
                                                       wave_generator_(ctrl_component.wave_generator_) {
     g_ << 0, 0, -9.81;
-    _dt = 0.002;
-    _largeVariance = 100;
+    dt_ = 0.002;
+    large_variance_ = 100;
     for (int i(0); i < Qdig.rows(); ++i) {
         Qdig(i) = i < 6 ? 0.0003 : 0.01;
     }
@@ -23,12 +23,12 @@ Estimator::Estimator(CtrlComponent &ctrl_component) : ctrl_component_(ctrl_compo
 
     A.setZero();
     A.block(0, 0, 3, 3) = I3;
-    A.block(0, 3, 3, 3) = I3 * _dt;
+    A.block(0, 3, 3, 3) = I3 * dt_;
     A.block(3, 3, 3, 3) = I3;
     A.block(6, 6, 12, 12) = I12;
 
     B.setZero();
-    B.block(3, 0, 3, 3) = I3 * _dt;
+    B.block(3, 0, 3, 3) = I3 * dt_;
 
     C.setZero();
     C.block(0, 0, 3, 3) = -I3;
@@ -46,7 +46,7 @@ Estimator::Estimator(CtrlComponent &ctrl_component) : ctrl_component_(ctrl_compo
     C(27, 17) = 1;
 
     P.setIdentity();
-    P = _largeVariance * P;
+    P = large_variance_ * P;
 
     RInit_ << 0.008, 0.012, -0.000, -0.009, 0.012, 0.000, 0.009, -0.009, -0.000,
             -0.009, -0.009, 0.000, -0.000, 0.000, -0.000, 0.000, -0.000, -0.001,
@@ -135,11 +135,10 @@ Estimator::Estimator(CtrlComponent &ctrl_component) : ctrl_component_(ctrl_compo
     QInit_ = Qdig.asDiagonal();
     QInit_ += B * Cu * B.transpose();
 
-
-    low_pass_filters_.resize(3);
-    low_pass_filters_[0] = std::make_shared<LowPassFilter>(0.02, 3.0);
-    low_pass_filters_[1] = std::make_shared<LowPassFilter>(0.02, 3.0);
-    low_pass_filters_[2] = std::make_shared<LowPassFilter>(0.02, 3.0);
+    // low_pass_filters_.resize(3);
+    // low_pass_filters_[0] = std::make_shared<LowPassFilter>(dt_, 3.0);
+    // low_pass_filters_[1] = std::make_shared<LowPassFilter>(dt_, 3.0);
+    // low_pass_filters_[2] = std::make_shared<LowPassFilter>(dt_, 3.0);
 }
 
 double Estimator::getYaw() const {
@@ -154,29 +153,29 @@ void Estimator::update() {
 
     foot_poses_ = robot_model_.getFeet2BPositions();
     foot_vels_ = robot_model_.getFeet2BVelocities();
-    _feetH.setZero();
+    feet_h_.setZero();
 
     // Adjust the covariance based on foot contact and phase.
     for (int i(0); i < 4; ++i) {
         if (wave_generator_.contact_[i] == 0) {
             // foot not contact
-            Q.block(6 + 3 * i, 6 + 3 * i, 3, 3) = _largeVariance * Eigen::MatrixXd::Identity(3, 3);
-            R.block(12 + 3 * i, 12 + 3 * i, 3, 3) = _largeVariance * Eigen::MatrixXd::Identity(3, 3);
-            R(24 + i, 24 + i) = _largeVariance;
+            Q.block(6 + 3 * i, 6 + 3 * i, 3, 3) = large_variance_ * Eigen::MatrixXd::Identity(3, 3);
+            R.block(12 + 3 * i, 12 + 3 * i, 3, 3) = large_variance_ * Eigen::MatrixXd::Identity(3, 3);
+            R(24 + i, 24 + i) = large_variance_;
         } else {
             // foot contact
             const double trust = windowFunc(wave_generator_.phase_[i], 0.2);
             Q.block(6 + 3 * i, 6 + 3 * i, 3, 3) =
-                    (1 + (1 - trust) * _largeVariance) *
+                    (1 + (1 - trust) * large_variance_) *
                     QInit_.block(6 + 3 * i, 6 + 3 * i, 3, 3);
             R.block(12 + 3 * i, 12 + 3 * i, 3, 3) =
-                    (1 + (1 - trust) * _largeVariance) *
+                    (1 + (1 - trust) * large_variance_) *
                     RInit_.block(12 + 3 * i, 12 + 3 * i, 3, 3);
             R(24 + i, 24 + i) =
-                    (1 + (1 - trust) * _largeVariance) * RInit_(24 + i, 24 + i);
+                    (1 + (1 - trust) * large_variance_) * RInit_(24 + i, 24 + i);
         }
-        _feetPos2Body.segment(3 * i, 3) = Eigen::Map<Eigen::Vector3d>(foot_poses_[i].p.data);
-        _feetVel2Body.segment(3 * i, 3) = Eigen::Map<Eigen::Vector3d>(foot_vels_[i].data);
+        feet_pos_body_.segment(3 * i, 3) = Vec3(foot_poses_[i].p.data);
+        feet_vel_body_.segment(3 * i, 3) = Vec3(foot_vels_[i].data);
     }
 
     // Acceleration from imu as system input
@@ -212,13 +211,13 @@ void Estimator::update() {
     y_hat_ = C * x_hat_;
 
     // Update the measurement value
-    _y << _feetPos2Body, _feetVel2Body, _feetH;
+    y_ << feet_pos_body_, feet_vel_body_, feet_h_;
 
     // Update the covariance matrix
     Ppriori = A * P * A.transpose() + Q;
     S = R + C * Ppriori * C.transpose();
     Slu = S.lu();
-    Sy = Slu.solve(_y - y_hat_);
+    Sy = Slu.solve(y_ - y_hat_);
     Sc = Slu.solve(C);
     SR = Slu.solve(R);
     STC = S.transpose().lu().solve(C);
@@ -229,11 +228,11 @@ void Estimator::update() {
     P = IKC * Ppriori * IKC.transpose() +
         Ppriori * C.transpose() * SR * STC * Ppriori.transpose();
 
-    // Using low pass filter to smooth the velocity
-    low_pass_filters_[0]->addValue(x_hat_(3));
-    low_pass_filters_[1]->addValue(x_hat_(4));
-    low_pass_filters_[2]->addValue(x_hat_(5));
-    x_hat_(3) = low_pass_filters_[0]->getValue();
-    x_hat_(4) = low_pass_filters_[1]->getValue();
-    x_hat_(5) = low_pass_filters_[2]->getValue();
+    // // Using low pass filter to smooth the velocity
+    // low_pass_filters_[0]->addValue(x_hat_(3));
+    // low_pass_filters_[1]->addValue(x_hat_(4));
+    // low_pass_filters_[2]->addValue(x_hat_(5));
+    // x_hat_(3) = low_pass_filters_[0]->getValue();
+    // x_hat_(4) = low_pass_filters_[1]->getValue();
+    // x_hat_(5) = low_pass_filters_[2]->getValue();
 }

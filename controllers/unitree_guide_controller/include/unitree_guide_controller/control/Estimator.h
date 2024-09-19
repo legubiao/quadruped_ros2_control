@@ -92,14 +92,14 @@ public:
         return gyro_;
     }
 
-    [[nodiscard]] Vec3 getGlobalGyro() const {
+    [[nodiscard]] Vec3 getGyroGlobal() const {
         return rotation_ * gyro_;
     }
 
     [[nodiscard]] double getYaw() const;
 
     [[nodiscard]] double getDYaw() const {
-        return getGlobalGyro()(2);
+        return getGyroGlobal()(2);
     }
 
     void update();
@@ -113,7 +113,7 @@ private:
 
     Eigen::Matrix<double, 3, 1> u_; // The input of estimator
 
-    Eigen::Matrix<double, 28, 1> _y; // The measurement value of output y
+    Eigen::Matrix<double, 28, 1> y_; // The measurement value of output y
     Eigen::Matrix<double, 28, 1> y_hat_; // The prediction of output y
     Eigen::Matrix<double, 18, 18> A; // The transtion matrix of estimator
     Eigen::Matrix<double, 18, 3> B; // The input matrix
@@ -130,9 +130,9 @@ private:
     Eigen::Matrix<double, 3, 3> Cu; // The covariance of system input u
 
     // Output Measurement
-    Eigen::Matrix<double, 12, 1> _feetPos2Body; // The feet positions to body, in the global coordinate
-    Eigen::Matrix<double, 12, 1> _feetVel2Body; // The feet velocity to body, in the global coordinate
-    Eigen::Matrix<double, 4, 1> _feetH; // The Height of each foot, in the global coordinate
+    Eigen::Matrix<double, 12, 1> feet_pos_body_; // The feet positions to body, in the global coordinate
+    Eigen::Matrix<double, 12, 1> feet_vel_body_; // The feet velocity to body, in the global coordinate
+    Eigen::Matrix<double, 4, 1> feet_h_; // The Height of each foot, in the global coordinate
 
     Eigen::Matrix<double, 28, 28> S; // _S = C*P*C.T + R
     Eigen::PartialPivLU<Eigen::Matrix<double, 28, 28> > Slu; // _S.lu()
@@ -143,7 +143,7 @@ private:
     Eigen::Matrix<double, 18, 18> IKC; // _IKC = I - KC
 
     Vec3 g_;
-    double _dt;
+    double dt_;
 
     RotMat rotation_;
     Vec3 acceleration_;
@@ -153,7 +153,7 @@ private:
     std::vector<KDL::Vector> foot_vels_;
     std::vector<std::shared_ptr<LowPassFilter> > low_pass_filters_;
 
-    double _largeVariance;
+    double large_variance_;
 };
 
 

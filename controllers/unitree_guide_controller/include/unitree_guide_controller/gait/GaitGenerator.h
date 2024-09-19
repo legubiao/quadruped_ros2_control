@@ -7,7 +7,7 @@
 #define GAITGENERATOR_H
 #include <unitree_guide_controller/common/mathTypes.h>
 
-#include "FeetEndCtrl.h"
+#include "FeetEndCalc.h"
 
 
 class Estimator;
@@ -68,7 +68,7 @@ private:
 
     WaveGenerator &wave_generator_;
     Estimator &estimator_;
-    FeetEndCtrl feet_end_ctrl_;
+    FeetEndCalc feet_end_calc_;
 
     double gait_height_{};
     Vec2 vxy_goal_;
