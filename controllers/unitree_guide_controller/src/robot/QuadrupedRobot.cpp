@@ -31,6 +31,8 @@ void QuadrupedRobot::init(const std::string &robot_description) {
     for (const auto &[fst, snd]: robot_tree.getSegments()) {
         mass_ += snd.segment.getInertia().getMass();
     }
+    feet_pos_normal_stand_ << 0.1881, 0.1881, -0.1881, -0.1881, -0.1300, 0.1300,
+            -0.1300, 0.1300, -0.3200, -0.3200, -0.3200, -0.3200;
 }
 
 std::vector<KDL::JntArray> QuadrupedRobot::getQ(const std::vector<KDL::Frame> &pEe_list) const {

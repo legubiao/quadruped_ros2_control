@@ -9,7 +9,8 @@
 #include "unitree_guide_controller/control/CtrlComponent.h"
 
 Estimator::Estimator(CtrlComponent &ctrl_component) : ctrl_component_(ctrl_component),
-                                                      robot_model_(ctrl_component.robot_model_) {
+                                                      robot_model_(ctrl_component.robot_model_),
+                                                      wave_generator_(ctrl_component.wave_generator_) {
     g_ << 0, 0, -9.81;
     _dt = 0.002;
     _largeVariance = 100;
@@ -18,7 +19,7 @@ Estimator::Estimator(CtrlComponent &ctrl_component) : ctrl_component_(ctrl_compo
     }
 
     x_hat_.setZero();
-    _u.setZero();
+    u_.setZero();
 
     A.setZero();
     A.block(0, 0, 3, 3) = I3;
@@ -155,19 +156,16 @@ void Estimator::update() {
     foot_vels_ = robot_model_.getFeet2BVelocities();
     _feetH.setZero();
 
-    const std::vector contact(4, 1);
-    const std::vector phase(4, 0.5);
-
     // Adjust the covariance based on foot contact and phase.
     for (int i(0); i < 4; ++i) {
-        if (contact[i] == 0) {
+        if (wave_generator_.contact_[i] == 0) {
             // foot not contact
             Q.block(6 + 3 * i, 6 + 3 * i, 3, 3) = _largeVariance * Eigen::MatrixXd::Identity(3, 3);
             R.block(12 + 3 * i, 12 + 3 * i, 3, 3) = _largeVariance * Eigen::MatrixXd::Identity(3, 3);
             R(24 + i, 24 + i) = _largeVariance;
         } else {
             // foot contact
-            const double trust = windowFunc(phase[i], 0.2);
+            const double trust = windowFunc(wave_generator_.phase_[i], 0.2);
             Q.block(6 + 3 * i, 6 + 3 * i, 3, 3) =
                     (1 + (1 - trust) * _largeVariance) *
                     QInit_.block(6 + 3 * i, 6 + 3 * i, 3, 3);
@@ -209,8 +207,8 @@ void Estimator::update() {
     //                             ctrl_component_.imu_state_interface_[8].get().get_value(),
     //                             ctrl_component_.imu_state_interface_[9].get().get_value());
 
-    _u = rotation_ * acceleration_ + g_;
-    x_hat_ = A * x_hat_ + B * _u;
+    u_ = rotation_ * acceleration_ + g_;
+    x_hat_ = A * x_hat_ + B * u_;
     y_hat_ = C * x_hat_;
 
     // Update the measurement value

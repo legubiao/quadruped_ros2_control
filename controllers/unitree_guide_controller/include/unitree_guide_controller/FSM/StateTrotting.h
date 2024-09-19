@@ -62,9 +62,9 @@ private:
     // Control Parameters
     double gait_height_;
     Vec3 pos_error_, vel_error_;
-    Mat3 Kpp, Kdp, Kdw;
-    double _kpw;
-    Mat3 KpSwing, KdSwing;
+    Mat3 Kpp, Kdp, Kd_w_;
+    double kp_w_;
+    Mat3 Kp_swing_, Kd_swing_;
     Vec2 _vxLim, _vyLim, _wyawLim;
 };
 

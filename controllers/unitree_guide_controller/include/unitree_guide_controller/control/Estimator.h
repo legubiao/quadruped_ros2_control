@@ -11,6 +11,7 @@
 
 #include "LowPassFilter.h"
 
+class WaveGenerator;
 class QuadrupedRobot;
 struct CtrlComponent;
 
@@ -106,10 +107,11 @@ public:
 private:
     CtrlComponent &ctrl_component_;
     QuadrupedRobot &robot_model_;
+    WaveGenerator &wave_generator_;
 
     Eigen::Matrix<double, 18, 1> x_hat_; // The state of estimator, position(3)+velocity(3)+feet position(3x4)
 
-    Eigen::Matrix<double, 3, 1> _u; // The input of estimator
+    Eigen::Matrix<double, 3, 1> u_; // The input of estimator
 
     Eigen::Matrix<double, 28, 1> _y; // The measurement value of output y
     Eigen::Matrix<double, 28, 1> y_hat_; // The prediction of output y

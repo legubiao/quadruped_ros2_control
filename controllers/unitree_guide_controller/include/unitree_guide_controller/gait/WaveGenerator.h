@@ -5,14 +5,14 @@
 
 #ifndef WAVEGENERATOR_H
 #define WAVEGENERATOR_H
-#include <sys/time.h>
+#include <chrono>
 #include <unitree_guide_controller/common/enumClass.h>
 #include <unitree_guide_controller/common/mathTypes.h>
 
 inline long long getSystemTime() {
-    timeval t{};
-    gettimeofday(&t, nullptr);
-    return 1000000 * t.tv_sec + t.tv_usec;
+    const auto now = std::chrono::system_clock::now();
+    const auto duration = now.time_since_epoch();
+    return std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
 }
 
 class WaveGenerator {

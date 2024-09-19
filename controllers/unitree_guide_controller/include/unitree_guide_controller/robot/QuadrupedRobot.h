@@ -86,6 +86,7 @@ public:
     [[nodiscard]] std::vector<KDL::Vector> getFeet2BVelocities() const;
 
     double mass_ = 0;
+    Vec34 feet_pos_normal_stand_;
     std::vector<KDL::JntArray> current_joint_pos_;
     std::vector<KDL::JntArray> current_joint_vel_;
 

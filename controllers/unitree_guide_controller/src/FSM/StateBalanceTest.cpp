@@ -40,7 +40,7 @@ void StateBalanceTest::run() {
     pcd_(1) = pcd_init_(1) - invNormalize(ctrl_comp_.control_inputs_.get().lx, _yMin, _yMax);
     pcd_(2) = pcd_init_(2) + invNormalize(ctrl_comp_.control_inputs_.get().ry, _zMin, _zMax);
 
-    const float yaw = invNormalize(ctrl_comp_.control_inputs_.get().rx, _yawMin, _yawMax);
+    const float yaw = - invNormalize(ctrl_comp_.control_inputs_.get().rx, _yawMin, _yawMax);
     Rd_ = rotz(yaw) * init_rotation_;
 
     for (int i = 0; i < 12; i++) {
