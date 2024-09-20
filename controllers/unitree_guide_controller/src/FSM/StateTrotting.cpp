@@ -64,7 +64,7 @@ void StateTrotting::run() {
 }
 
 void StateTrotting::exit() {
-    wave_generator_.status_ = WaveStatus::STANCE_ALL;
+    wave_generator_.status_ = WaveStatus::SWING_ALL;
 }
 
 FSMStateName StateTrotting::checkChange() {

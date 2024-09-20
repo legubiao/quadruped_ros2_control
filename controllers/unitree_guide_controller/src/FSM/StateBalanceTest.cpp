@@ -52,6 +52,7 @@ void StateBalanceTest::run() {
 }
 
 void StateBalanceTest::exit() {
+    wave_generator_.status_ = WaveStatus::SWING_ALL;
 }
 
 FSMStateName StateBalanceTest::checkChange() {

@@ -11,8 +11,8 @@
 WaveGenerator::WaveGenerator() {
     phase_past_ << 0.5, 0.5, 0.5, 0.5;
     contact_past_.setZero();
-    status_past_ = WaveStatus::STANCE_ALL;
-    status_ = WaveStatus::STANCE_ALL;
+    status_past_ = WaveStatus::SWING_ALL;
+    status_ = WaveStatus::SWING_ALL;
 }
 
 void WaveGenerator::init(const double period, const double st_ratio, const Vec4 &bias) {
