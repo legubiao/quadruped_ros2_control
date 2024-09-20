@@ -3,9 +3,10 @@ import os
 import xacro
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription, RegisterEventHandler
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution
+from launch.event_handlers import OnProcessExit
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -29,33 +30,70 @@ def launch_setup(context, *args, **kwargs):
         arguments=['-topic', 'robot_description', '-name',
                    robot_type, '-allow_renaming', 'true', '-z', '0.5'],
     )
+
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_state_publisher',
+        parameters=[
+            {
+                'publish_frequency': 20.0,
+                'use_tf_static': True,
+                'robot_description': robot_description,
+                'ignore_timestamp': True
+            }
+        ],
+    )
+
+    joint_state_publisher = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_state_broadcaster",
+                   "--controller-manager", "/controller_manager"],
+    )
+
+    imu_sensor_broadcaster = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["imu_sensor_broadcaster",
+                   "--controller-manager", "/controller_manager"],
+    )
+
+    leg_pd_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["leg_pd_controller",
+                   "--controller-manager", "/controller_manager"],
+    )
+
+    unitree_guide_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["unitree_guide_controller", "--controller-manager", "/controller_manager"],
+    )
+
     return [
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            parameters=[
-                {
-                    'use_sim_time': True,
-                    'publish_frequency': 100.0,
-                    'use_tf_static': True,
-                    'robot_description': robot_description
-                }
-            ],
-        ),
-        Node(
-            package="controller_manager",
-            executable="spawner",
-            arguments=["joint_state_broadcaster",
-                       "--controller-manager", "/controller_manager"],
-        ),
-        Node(
-            package="controller_manager",
-            executable="spawner",
-            arguments=["imu_sensor_broadcaster",
-                       "--controller-manager", "/controller_manager"],
-        ),
+        robot_state_publisher,
         gz_spawn_entity,
+        joint_state_publisher,
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=joint_state_publisher,
+                on_exit=[imu_sensor_broadcaster],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=imu_sensor_broadcaster,
+                on_exit=[leg_pd_controller],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=leg_pd_controller,
+                on_exit=[unitree_guide_controller],
+            )
+        ),
     ]
 
 

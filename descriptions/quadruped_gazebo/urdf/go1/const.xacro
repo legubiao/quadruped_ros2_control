@@ -128,4 +128,14 @@
     <!-- foot -->
     <xacro:property name="foot_mass" value="0.06"/>
 
+    <gazebo reference="trunk">
+        <visual name="DarkGrey">
+            <material>
+                <ambient>.5 .5 .5  1.0</ambient>
+                <diffuse>.5 .5 .5  1.0</diffuse>
+                <specular>.5 .5 .5  1.0</specular>
+            </material>
+        </visual>
+    </gazebo>
+
 </robot>

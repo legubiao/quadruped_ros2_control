@@ -17,7 +17,7 @@
 
 struct CtrlComponent {
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> >
-    joint_effort_command_interface_;
+    joint_torque_command_interface_;
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> >
     joint_position_command_interface_;
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> >
@@ -54,7 +54,7 @@ struct CtrlComponent {
     }
 
     void clear() {
-        joint_effort_command_interface_.clear();
+        joint_torque_command_interface_.clear();
         joint_position_command_interface_.clear();
         joint_velocity_command_interface_.clear();
         joint_kd_command_interface_.clear();

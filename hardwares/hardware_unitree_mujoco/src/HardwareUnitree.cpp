@@ -18,7 +18,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Hardwa
         return CallbackReturn::ERROR;
     }
 
-    joint_effort_command_.assign(12, 0);
+    joint_torque_command_.assign(12, 0);
     joint_position_command_.assign(12, 0);
     joint_velocities_command_.assign(12, 0);
     joint_kp_command_.assign(12, 0);
@@ -100,7 +100,7 @@ std::vector<hardware_interface::CommandInterface> HardwareUnitree::export_comman
 
     ind = 0;
     for (const auto &joint_name: joint_interfaces["effort"]) {
-        command_interfaces.emplace_back(joint_name, "effort", &joint_effort_command_[ind]);
+        command_interfaces.emplace_back(joint_name, "effort", &joint_torque_command_[ind]);
         command_interfaces.emplace_back(joint_name, "kp", &joint_kp_command_[ind]);
         command_interfaces.emplace_back(joint_name, "kd", &joint_kd_command_[ind]);
         ind++;
@@ -108,7 +108,7 @@ std::vector<hardware_interface::CommandInterface> HardwareUnitree::export_comman
     return command_interfaces;
 }
 
-return_type HardwareUnitree::read(const rclcpp::Time &time, const rclcpp::Duration &period) {
+return_type HardwareUnitree::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
     // joint states
     for (int i(0); i < 12; ++i) {
         joint_position_[i] = low_state_.motor_state()[i].q();
@@ -131,7 +131,7 @@ return_type HardwareUnitree::read(const rclcpp::Time &time, const rclcpp::Durati
     return return_type::OK;
 }
 
-return_type HardwareUnitree::write(const rclcpp::Time &, const rclcpp::Duration &) {
+return_type HardwareUnitree::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
     // send command
     for (int i(0); i < 12; ++i) {
         low_cmd_.motor_cmd()[i].mode() = 0x01;
@@ -139,7 +139,7 @@ return_type HardwareUnitree::write(const rclcpp::Time &, const rclcpp::Duration 
         low_cmd_.motor_cmd()[i].dq() = static_cast<float>(joint_velocities_command_[i]);
         low_cmd_.motor_cmd()[i].kp() = static_cast<float>(joint_kp_command_[i]);
         low_cmd_.motor_cmd()[i].kd() = static_cast<float>(joint_kd_command_[i]);
-        low_cmd_.motor_cmd()[i].tau() = static_cast<float>(joint_effort_command_[i]);
+        low_cmd_.motor_cmd()[i].tau() = static_cast<float>(joint_torque_command_[i]);
     }
 
     low_cmd_.crc() = crc32_core(reinterpret_cast<uint32_t *>(&low_cmd_),

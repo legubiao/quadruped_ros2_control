@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(unitree_guide_controller)
+project(leg_pd_controller)
 
 if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -Wextra -Wpedantic)
@@ -13,9 +13,6 @@ set(CONTROLLER_INCLUDE_DEPENDS
         rcpputils
         controller_interface
         realtime_tools
-        std_msgs
-        control_input_msgs
-        kdl_parser
 )
 
 # find dependencies
@@ -25,44 +22,18 @@ foreach (Dependency IN ITEMS ${CONTROLLER_INCLUDE_DEPENDS})
 endforeach ()
 
 add_library(${PROJECT_NAME} SHARED
-
-        src/UnitreeGuideController.cpp
-
-        src/FSM/StatePassive.cpp
-        src/FSM/StateFixedDown.cpp
-        src/FSM/StateFixedStand.cpp
-        src/FSM/StateSwingTest.cpp
-        src/FSM/StateFreeStand.cpp
-        src/FSM/StateBalanceTest.cpp
-        src/FSM/StateTrotting.cpp
-
-        src/robot/QuadrupedRobot.cpp
-        src/robot/RobotLeg.cpp
-
-        src/control/Estimator.cpp
-        src/control/LowPassFilter.cpp
-        src/control/BalanceCtrl.cpp
-
-        src/quadProgpp/Array.cc
-        src/quadProgpp/QuadProg++.cc
-
-        src/gait/WaveGenerator.cpp
-        src/gait/FeetEndCalc.cpp
-        src/gait/GaitGenerator.cpp
-
+        src/LegPdController.cpp
 )
 target_include_directories(${PROJECT_NAME}
         PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-        "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
-        PRIVATE
-        src)
+        "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 ament_target_dependencies(
         ${PROJECT_NAME} PUBLIC
         ${CONTROLLER_INCLUDE_DEPENDS}
 )
 
-pluginlib_export_plugin_description_file(controller_interface unitree_guide_controller.xml)
+pluginlib_export_plugin_description_file(controller_interface leg_pd_controller.xml)
 
 install(
         DIRECTORY include/

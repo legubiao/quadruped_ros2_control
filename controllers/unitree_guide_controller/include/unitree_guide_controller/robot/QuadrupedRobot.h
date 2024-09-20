@@ -21,7 +21,7 @@ public:
 
     ~QuadrupedRobot() = default;
 
-    void init(const std::string &robot_description);
+    void init(const std::string &robot_description, const std::vector<std::string> &feet_names);
 
     /**
      * Calculate the joint positions based on the foot end position

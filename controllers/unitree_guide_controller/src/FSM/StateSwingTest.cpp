@@ -99,6 +99,6 @@ void StateSwingTest::torqueCtrl() const {
     KDL::JntArray torque0 = robot_model_.getTorque(force0, 0);
 
     for (int i = 0; i < 3; i++) {
-        ctrl_comp_.joint_effort_command_interface_[i].get().set_value(torque0(i));
+        ctrl_comp_.joint_torque_command_interface_[i].get().set_value(torque0(i));
     }
 }

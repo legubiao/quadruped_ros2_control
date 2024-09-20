@@ -6,14 +6,15 @@
 #include "unitree_guide_controller/control/CtrlComponent.h"
 #include "unitree_guide_controller/robot/QuadrupedRobot.h"
 
-void QuadrupedRobot::init(const std::string &robot_description) {
+void QuadrupedRobot::init(const std::string &robot_description, const std::vector<std::string> &feet_names) {
     KDL::Tree robot_tree;
     kdl_parser::treeFromString(robot_description, robot_tree);
 
-    robot_tree.getChain("base", "FR_foot", fr_chain_);
-    robot_tree.getChain("base", "FL_foot", fl_chain_);
-    robot_tree.getChain("base", "RR_foot", rr_chain_);
-    robot_tree.getChain("base", "RL_foot", rl_chain_);
+    robot_tree.getChain("base", feet_names[0], fr_chain_);
+    robot_tree.getChain("base", feet_names[1], fl_chain_);
+    robot_tree.getChain("base", feet_names[2], rr_chain_);
+    robot_tree.getChain("base", feet_names[3], rl_chain_);
+
 
     robot_legs_.resize(4);
     robot_legs_[0] = std::make_shared<RobotLeg>(fr_chain_);
@@ -70,6 +71,7 @@ std::vector<KDL::Frame> QuadrupedRobot::getFeet2BPositions() const {
     result.resize(4);
     for (int i = 0; i < 4; i++) {
         result[i] = robot_legs_[i]->calcPEe2B(current_joint_pos_[i]);
+        result[i].M = KDL::Rotation::Identity();
     }
     return result;
 }

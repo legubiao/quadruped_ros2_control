@@ -12,21 +12,63 @@
             <state_interface name="position"/>
             <state_interface name="velocity"/>
             <state_interface name="effort"/>
-        </joint>  
+        </joint>
+
+        <joint name="RF_HFE">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="RF_KFE">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
 
         <joint name="LF_HAA">
             <command_interface name="effort" initial_value="0.0"/>
             <state_interface name="position"/>
             <state_interface name="velocity"/>
             <state_interface name="effort"/>
-        </joint>  
+        </joint>
+
+        <joint name="LF_HFE">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="LF_KFE">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
 
         <joint name="RH_HAA">
             <command_interface name="effort" initial_value="0.0"/>
             <state_interface name="position"/>
             <state_interface name="velocity"/>
             <state_interface name="effort"/>
-        </joint>  
+        </joint>
+
+        <joint name="RH_HFE">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="RH_KFE">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
 
         <joint name="LH_HAA">
             <command_interface name="effort" initial_value="0.0"/>
@@ -35,54 +77,12 @@
             <state_interface name="effort"/>
         </joint>
 
-        <joint name="RF_HFE">
-            <command_interface name="effort" initial_value="0.0"/>
-            <state_interface name="position"/>
-            <state_interface name="velocity"/>
-            <state_interface name="effort"/>
-        </joint>  
-
-        <joint name="LF_HFE">
-            <command_interface name="effort" initial_value="0.0"/>
-            <state_interface name="position"/>
-            <state_interface name="velocity"/>
-            <state_interface name="effort"/>
-        </joint>  
-
-        <joint name="RH_HFE">
-            <command_interface name="effort" initial_value="0.0"/>
-            <state_interface name="position"/>
-            <state_interface name="velocity"/>
-            <state_interface name="effort"/>
-        </joint>  
-
         <joint name="LH_HFE">
             <command_interface name="effort" initial_value="0.0"/>
             <state_interface name="position"/>
             <state_interface name="velocity"/>
             <state_interface name="effort"/>
-        </joint>  
-
-        <joint name="RF_KFE">
-            <command_interface name="effort" initial_value="0.0"/>
-            <state_interface name="position"/>
-            <state_interface name="velocity"/>
-            <state_interface name="effort"/>
-        </joint>  
-
-        <joint name="LF_KFE">
-            <command_interface name="effort" initial_value="0.0"/>
-            <state_interface name="position"/>
-            <state_interface name="velocity"/>
-            <state_interface name="effort"/>
-        </joint>  
-
-        <joint name="RH_KFE">
-            <command_interface name="effort" initial_value="0.0"/>
-            <state_interface name="position"/>
-            <state_interface name="velocity"/>
-            <state_interface name="effort"/>
-        </joint>  
+        </joint>
 
         <joint name="LH_KFE">
             <command_interface name="effort" initial_value="0.0"/>
@@ -133,7 +133,7 @@
     <!-- Gazebo's ros2_control plugin  -->
     <gazebo>
         <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-            <parameters>$(find quadruped_gazebo)/config/jtc.yaml</parameters>
+            <parameters>$(find quadruped_gazebo)/config/robot_control.yaml</parameters>
         </plugin>
         <plugin filename="gz-sim-imu-system"
                 name="gz::sim::systems::Imu">

@@ -47,6 +47,12 @@ unitree_guide_controller:
       - position
       - velocity
 
+    feet_names:
+      - FR_foot
+      - FL_foot
+      - RR_foot
+      - RL_foot
+
     imu_name: "imu_sensor"
 
     imu_interfaces:

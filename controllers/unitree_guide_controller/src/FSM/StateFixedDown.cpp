@@ -25,9 +25,9 @@ void StateFixedDown::run() {
         ctrl_comp_.joint_position_command_interface_[i].get().set_value(
             phase * target_pos_[i] + (1 - phase) * start_pos_[i]);
         ctrl_comp_.joint_velocity_command_interface_[i].get().set_value(0);
-        ctrl_comp_.joint_effort_command_interface_[i].get().set_value(0);
-        ctrl_comp_.joint_kp_command_interface_[i].get().set_value(50.0);
-        ctrl_comp_.joint_kd_command_interface_[i].get().set_value(3.5);
+        ctrl_comp_.joint_torque_command_interface_[i].get().set_value(0);
+        ctrl_comp_.joint_kp_command_interface_[i].get().set_value(30.0);
+        ctrl_comp_.joint_kd_command_interface_[i].get().set_value(1.5);
     }
 }
 

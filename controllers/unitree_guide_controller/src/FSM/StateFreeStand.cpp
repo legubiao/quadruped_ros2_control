@@ -20,7 +20,7 @@ StateFreeStand::StateFreeStand(CtrlComponent &ctrl_component) : FSMState(FSMStat
 
 void StateFreeStand::enter() {
     for (int i = 0; i < 12; i++) {
-        ctrl_comp_.joint_kp_command_interface_[i].get().set_value(180);
+        ctrl_comp_.joint_kp_command_interface_[i].get().set_value(100);
         ctrl_comp_.joint_kd_command_interface_[i].get().set_value(5);
     }
 

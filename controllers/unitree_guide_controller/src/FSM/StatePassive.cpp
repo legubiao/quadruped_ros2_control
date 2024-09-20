@@ -12,7 +12,7 @@ StatePassive::StatePassive(CtrlComponent &ctrlComp) : FSMState(
 }
 
 void StatePassive::enter() {
-    for (auto i: ctrl_comp_.joint_effort_command_interface_) {
+    for (auto i: ctrl_comp_.joint_torque_command_interface_) {
         i.get().set_value(0);
     }
     for (auto i: ctrl_comp_.joint_position_command_interface_) {

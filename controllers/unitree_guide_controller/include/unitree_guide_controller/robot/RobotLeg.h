@@ -10,7 +10,6 @@
 #include <kdl/chainiksolverpos_lma.hpp>
 #include <kdl/chainjnttojacsolver.hpp>
 #include <kdl_parser/kdl_parser.hpp>
-#include <kdl/chainidsolver_recursive_newton_euler.hpp>
 #include <unitree_guide_controller/common/mathTypes.h>
 
 class RobotLeg {

@@ -8,7 +8,7 @@
 
         <joint name="${prefix}_HAA" type="revolute">
             <xacro:insert_block name="origin"/>
-            <parent link="base"/>
+            <parent link="trunk"/>
             <child link="${prefix}_hip"/>
             <axis xyz="1 0 0"/>
             <dynamics damping="${damping}" friction="${friction}"/>
@@ -40,7 +40,7 @@
                     <mesh filename="${mesh_path}/hip.dae"
                           scale="1 1 1"/>
                 </geometry>
-                <material name="orange"/>
+<!--                <material name="orange"/>-->
             </visual>
             <collision>
                 <origin rpy="${pi/2.0} 0 0" xyz="0 0 0"/>
@@ -81,7 +81,7 @@
                               scale="1 1 1"/>
                     </xacro:if>
                 </geometry>
-                <material name="orange"/>
+<!--                <material name="orange"/>-->
             </visual>
             <collision>
                 <origin rpy="0 ${pi/2.0+0.1} 0" xyz="${thigh_x_offset} 0 ${-thigh_length/2.0}"/>
@@ -121,7 +121,7 @@
                     <mesh filename="${mesh_path}/calf.dae"
                           scale="1 1 1"/>
                 </geometry>
-                <material name="orange"/>
+<!--                <material name="orange"/>-->
             </visual>
             <collision>
                 <origin rpy="0 ${pi/2.0} 0" xyz="${calf_x_offset} 0 ${-calf_length/2.0}"/>
@@ -151,7 +151,7 @@
                 <geometry>
                     <sphere radius="${foot_radius-0.01}"/>
                 </geometry>
-                <material name="orange"/>
+<!--                <material name="orange"/>-->
             </visual>
             <collision>
                 <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -178,26 +178,53 @@
         <gazebo reference="${prefix}_hip">
             <mu1>0.2</mu1>
             <mu2>0.2</mu2>
-            <material>Gazebo/DarkGrey</material>
+            <visual>
+                <material>
+                    <ambient>.5 .5 .5  1.0</ambient>
+                    <diffuse>.5 .5 .5  1.0</diffuse>
+                    <specular>.5 .5 .5  1.0</specular>
+                </material>
+            </visual>
         </gazebo>
         <gazebo reference="${prefix}_thigh">
             <mu1>0.2</mu1>
             <mu2>0.2</mu2>
             <self_collide>0</self_collide>
-            <material>Gazebo/DarkGrey</material>
+            <visual>
+                <material>
+                    <ambient>.175 .175 .175  1.0</ambient>
+                    <diffuse>.175 .175 .175  1.0</diffuse>
+                    <specular>.175 .175 .175 1.0</specular>
+                </material>
+            </visual>
             <kp value="1000000.0"/>
             <kd value="100.0"/>
         </gazebo>
+
         <gazebo reference="${prefix}_calf">
             <mu1>0.6</mu1>
             <mu2>0.6</mu2>
             <self_collide>1</self_collide>
+            <visual>
+                <material>
+                    <ambient>.5 .5 .5  1.0</ambient>
+                    <diffuse>.5 .5 .5  1.0</diffuse>
+                    <specular>.5 .5 .5  1.0</specular>
+                </material>
+            </visual>
         </gazebo>
+
         <gazebo reference="${prefix}_FOOT">
             <mu1>0.6</mu1>
             <mu2>0.6</mu2>
             <self_collide>1</self_collide>
-            <material>Gazebo/DarkGrey</material>
+            <visual>
+                <material>
+                    <ambient>.175 .175 .175  1.0</ambient>
+                    <diffuse>.175 .175 .175  1.0</diffuse>
+                    <specular>.175 .175 .175 1.0</specular>
+                </material>
+            </visual>
             <kp value="1000000.0"/>
             <kd value="100.0"/>
 
