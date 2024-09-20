@@ -66,6 +66,11 @@ def launch_setup(context, *args, **kwargs):
                    "--controller-manager", "/controller_manager"],
     )
 
+    unitree_guide_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["unitree_guide_controller", "--controller-manager", "/controller_manager"],
+    )
 
     return [
         robot_state_publisher,
@@ -81,6 +86,12 @@ def launch_setup(context, *args, **kwargs):
             event_handler=OnProcessExit(
                 target_action=imu_sensor_broadcaster,
                 on_exit=[leg_pd_controller],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=leg_pd_controller,
+                on_exit=[unitree_guide_controller],
             )
         ),
     ]

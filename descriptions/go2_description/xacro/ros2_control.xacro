@@ -10,7 +10,7 @@
         <joint name="FR_hip_joint">
             <command_interface name="position"/>
             <command_interface name="velocity"/>
-            <command_interface name="torque"/>
+            <command_interface name="effort"/>
             <command_interface name="kp"/>
             <command_interface name="kd"/>
 
@@ -22,7 +22,7 @@
         <joint name="FR_thigh_joint">
             <command_interface name="position"/>
             <command_interface name="velocity"/>
-            <command_interface name="torque"/>
+            <command_interface name="effort"/>
             <command_interface name="kp"/>
             <command_interface name="kd"/>
 
@@ -34,7 +34,7 @@
         <joint name="FR_calf_joint">
             <command_interface name="position"/>
             <command_interface name="velocity"/>
-            <command_interface name="torque"/>
+            <command_interface name="effort"/>
             <command_interface name="kp"/>
             <command_interface name="kd"/>
 
@@ -46,7 +46,7 @@
         <joint name="FL_hip_joint">
             <command_interface name="position"/>
             <command_interface name="velocity"/>
-            <command_interface name="torque"/>
+            <command_interface name="effort"/>
             <command_interface name="kp"/>
             <command_interface name="kd"/>
 
@@ -58,7 +58,7 @@
         <joint name="FL_thigh_joint">
             <command_interface name="position"/>
             <command_interface name="velocity"/>
-            <command_interface name="torque"/>
+            <command_interface name="effort"/>
             <command_interface name="kp"/>
             <command_interface name="kd"/>
 
@@ -70,7 +70,7 @@
         <joint name="FL_calf_joint">
             <command_interface name="position"/>
             <command_interface name="velocity"/>
-            <command_interface name="torque"/>
+            <command_interface name="effort"/>
             <command_interface name="kp"/>
             <command_interface name="kd"/>
 
@@ -82,7 +82,7 @@
         <joint name="RR_hip_joint">
             <command_interface name="position"/>
             <command_interface name="velocity"/>
-            <command_interface name="torque"/>
+            <command_interface name="effort"/>
             <command_interface name="kp"/>
             <command_interface name="kd"/>
 
@@ -94,7 +94,7 @@
         <joint name="RR_thigh_joint">
             <command_interface name="position"/>
             <command_interface name="velocity"/>
-            <command_interface name="torque"/>
+            <command_interface name="effort"/>
             <command_interface name="kp"/>
             <command_interface name="kd"/>
 
@@ -106,7 +106,7 @@
         <joint name="RR_calf_joint">
             <command_interface name="position"/>
             <command_interface name="velocity"/>
-            <command_interface name="torque"/>
+            <command_interface name="effort"/>
             <command_interface name="kp"/>
             <command_interface name="kd"/>
 
@@ -118,7 +118,7 @@
         <joint name="RL_hip_joint">
             <command_interface name="position"/>
             <command_interface name="velocity"/>
-            <command_interface name="torque"/>
+            <command_interface name="effort"/>
             <command_interface name="kp"/>
             <command_interface name="kd"/>
 
@@ -130,7 +130,7 @@
         <joint name="RL_thigh_joint">
             <command_interface name="position"/>
             <command_interface name="velocity"/>
-            <command_interface name="torque"/>
+            <command_interface name="effort"/>
             <command_interface name="kp"/>
             <command_interface name="kd"/>
 
@@ -142,7 +142,7 @@
         <joint name="RL_calf_joint">
             <command_interface name="position"/>
             <command_interface name="velocity"/>
-            <command_interface name="torque"/>
+            <command_interface name="effort"/>
             <command_interface name="kp"/>
             <command_interface name="kd"/>
 

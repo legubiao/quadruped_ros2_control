@@ -36,7 +36,7 @@ unitree_guide_controller:
       - RL_calf_joint
 
     command_interfaces:
-      - torque
+      - effort
       - position
       - velocity
       - kp
@@ -46,6 +46,12 @@ unitree_guide_controller:
       - effort
       - position
       - velocity
+
+    feet_names:
+      - FR_FOOT
+      - FL_FOOT
+      - RR_FOOT
+      - RL_FOOT
 
     imu_name: "imu_sensor"
 

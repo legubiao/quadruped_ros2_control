@@ -13,6 +13,9 @@ controller_manager:
     leg_pd_controller:
       type: leg_pd_controller/LegPdController
 
+    unitree_guide_controller:
+      type: unitree_guide_controller/UnitreeGuideController
+
 imu_sensor_broadcaster:
   ros__parameters:
     sensor_name: "imu_sensor"
@@ -20,10 +23,9 @@ imu_sensor_broadcaster:
 
 leg_pd_controller:
   ros__parameters:
-    update_rate: 500  # Hz
     joints:
       - RF_HAA
-      - RH_HFE
+      - RF_HFE
       - RF_KFE
       - LF_HAA
       - LF_HFE
@@ -44,9 +46,10 @@ leg_pd_controller:
 
 unitree_guide_controller:
   ros__parameters:
+    command_prefix: "leg_pd_controller"
     joints:
       - RF_HAA
-      - RH_HFE
+      - RF_HFE
       - RF_KFE
       - LF_HAA
       - LF_HFE
@@ -59,7 +62,7 @@ unitree_guide_controller:
       - LH_KFE
 
     command_interfaces:
-      - torque
+      - effort
       - position
       - velocity
       - kp
@@ -69,6 +72,12 @@ unitree_guide_controller:
       - effort
       - position
       - velocity
+
+    feet_names:
+      - RF_FOOT
+      - LF_FOOT
+      - RH_FOOT
+      - LH_FOOT
 
     imu_name: "imu_sensor"
 

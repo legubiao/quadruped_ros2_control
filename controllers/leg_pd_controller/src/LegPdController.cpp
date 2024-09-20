@@ -18,6 +18,14 @@ namespace leg_pd_controller {
             fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
             return controller_interface::CallbackReturn::ERROR;
         }
+
+        const size_t joint_num = joint_names_.size();
+        joint_effort_command_.assign(joint_num, 0);
+        joint_position_command_.assign(joint_num, 0);
+        joint_velocities_command_.assign(joint_num, 0);
+        joint_kp_command_.assign(joint_num, 0);
+        joint_kd_command_.assign(joint_num, 0);
+
         return CallbackReturn::SUCCESS;
     }
 
@@ -50,6 +58,11 @@ namespace leg_pd_controller {
 
     controller_interface::CallbackReturn LegPdController::on_activate(
         const rclcpp_lifecycle::State & /*previous_state*/) {
+
+        joint_effort_command_interface_.clear();
+        joint_position_state_interface_.clear();
+        joint_velocity_state_interface_.clear();
+
         // assign effort command interface
         for (auto &interface: command_interfaces_) {
             joint_effort_command_interface_.emplace_back(interface);
@@ -75,6 +88,24 @@ namespace leg_pd_controller {
 
     controller_interface::return_type LegPdController::update_and_write_commands(
         const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
+        if (joint_names_.size() != joint_effort_command_.size() ||
+            joint_names_.size() != joint_kp_command_.size() ||
+            joint_names_.size() != joint_position_command_.size() ||
+            joint_names_.size() != joint_position_state_interface_.size() ||
+            joint_names_.size() != joint_velocity_state_interface_.size() ||
+            joint_names_.size() != joint_effort_command_interface_.size()) {
+
+            std::cout << "joint_names_.size() = " << joint_names_.size() << std::endl;
+            std::cout << "joint_effort_command_.size() = " << joint_effort_command_.size() << std::endl;
+            std::cout << "joint_kp_command_.size() = " << joint_kp_command_.size() << std::endl;
+            std::cout << "joint_position_command_.size() = " << joint_position_command_.size() << std::endl;
+            std::cout << "joint_position_state_interface_.size() = " << joint_position_state_interface_.size() << std::endl;
+            std::cout << "joint_velocity_state_interface_.size() = " << joint_velocity_state_interface_.size() << std::endl;
+            std::cout << "joint_effort_command_interface_.size() = " << joint_effort_command_interface_.size() << std::endl;
+
+            throw std::runtime_error("Mismatch in vector sizes in update_and_write_commands");
+        }
+
         for (size_t i = 0; i < joint_names_.size(); ++i) {
             // PD Controller
             const double torque = joint_effort_command_[i] + joint_kp_command_[i] * (
@@ -98,7 +129,7 @@ namespace leg_pd_controller {
             reference_interfaces.emplace_back(controller_name, joint_name + "/position", &joint_position_command_[ind]);
             reference_interfaces.emplace_back(controller_name, joint_name + "/velocity",
                                               &joint_velocities_command_[ind]);
-            reference_interfaces.emplace_back(controller_name, joint_name + "/torque", &joint_effort_command_[ind]);
+            reference_interfaces.emplace_back(controller_name, joint_name + "/effort", &joint_effort_command_[ind]);
             reference_interfaces.emplace_back(controller_name, joint_name + "/kp", &joint_kp_command_[ind]);
             reference_interfaces.emplace_back(controller_name, joint_name + "/kd", &joint_kd_command_[ind]);
             ind++;

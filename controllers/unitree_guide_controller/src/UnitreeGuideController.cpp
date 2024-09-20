@@ -15,7 +15,11 @@ namespace unitree_guide_controller {
         conf.names.reserve(joint_names_.size() * command_interface_types_.size());
         for (const auto &joint_name: joint_names_) {
             for (const auto &interface_type: command_interface_types_) {
-                conf.names.push_back(joint_name + "/" += interface_type);
+                if (!command_prefix_.empty()) {
+                    conf.names.push_back(command_prefix_ + "/" + joint_name + "/" += interface_type);
+                } else {
+                    conf.names.push_back(joint_name + "/" += interface_type);
+                }
             }
         }
 
@@ -84,6 +88,9 @@ namespace unitree_guide_controller {
             // imu sensor
             imu_name_ = auto_declare<std::string>("imu_name", imu_name_);
             imu_interface_types_ = auto_declare<std::vector<std::string> >("imu_interfaces", state_interface_types_);
+            command_prefix_ = auto_declare<std::string>("command_prefix", command_prefix_);
+            feet_names_ =
+                    auto_declare<std::vector<std::string> >("feet_names", feet_names_);
         } catch (const std::exception &e) {
             fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
             return controller_interface::CallbackReturn::ERROR;
@@ -105,9 +112,9 @@ namespace unitree_guide_controller {
             });
 
         robot_description_subscription_ = get_node()->create_subscription<std_msgs::msg::String>(
-            "~/robot_description", rclcpp::QoS(rclcpp::KeepLast(1)).transient_local(),
+            "/robot_description", rclcpp::QoS(rclcpp::KeepLast(1)).transient_local(),
             [this](const std_msgs::msg::String::SharedPtr msg) {
-                ctrl_comp_.robot_model_.init(msg->data);
+                ctrl_comp_.robot_model_.init(msg->data, feet_names_);
                 ctrl_comp_.balance_ctrl_.init(ctrl_comp_.robot_model_);
             });
 
@@ -126,7 +133,12 @@ namespace unitree_guide_controller {
 
         // assign command interfaces
         for (auto &interface: command_interfaces_) {
-            command_interface_map_[interface.get_interface_name()]->push_back(interface);
+            std::string interface_name = interface.get_interface_name();
+            if (const size_t pos = interface_name.find('/'); pos != std::string::npos) {
+                command_interface_map_[interface_name.substr(pos + 1)]->push_back(interface);
+            } else {
+                command_interface_map_[interface_name]->push_back(interface);
+            }
         }
 
         // assign state interfaces

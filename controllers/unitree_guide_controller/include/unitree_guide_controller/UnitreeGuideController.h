@@ -81,7 +81,9 @@ namespace unitree_guide_controller {
         std::vector<std::string> state_interface_types_;
 
         std::string imu_name_;
+        std::string command_prefix_;
         std::vector<std::string> imu_interface_types_;
+        std::vector<std::string> feet_names_;
 
         rclcpp::Subscription<control_input_msgs::msg::Inputs>::SharedPtr control_input_subscription_;
         rclcpp::Subscription<std_msgs::msg::String>::SharedPtr robot_description_subscription_;
@@ -89,7 +91,7 @@ namespace unitree_guide_controller {
         std::unordered_map<
             std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> > *>
         command_interface_map_ = {
-            {"torque", &ctrl_comp_.joint_torque_command_interface_},
+            {"effort", &ctrl_comp_.joint_torque_command_interface_},
             {"position", &ctrl_comp_.joint_position_command_interface_},
             {"velocity", &ctrl_comp_.joint_velocity_command_interface_},
             {"kp", &ctrl_comp_.joint_kp_command_interface_},

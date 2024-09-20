@@ -9,7 +9,7 @@
 
 
 namespace leg_pd_controller {
-    class LegPdController : public controller_interface::ChainableControllerInterface {
+    class LegPdController final : public controller_interface::ChainableControllerInterface {
     public:
         controller_interface::CallbackReturn on_init() override;
 

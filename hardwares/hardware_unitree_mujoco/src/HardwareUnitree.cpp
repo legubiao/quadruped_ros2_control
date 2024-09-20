@@ -100,7 +100,7 @@ std::vector<hardware_interface::CommandInterface> HardwareUnitree::export_comman
 
     ind = 0;
     for (const auto &joint_name: joint_interfaces["effort"]) {
-        command_interfaces.emplace_back(joint_name, "torque", &joint_torque_command_[ind]);
+        command_interfaces.emplace_back(joint_name, "effort", &joint_torque_command_[ind]);
         command_interfaces.emplace_back(joint_name, "kp", &joint_kp_command_[ind]);
         command_interfaces.emplace_back(joint_name, "kd", &joint_kd_command_[ind]);
         ind++;
