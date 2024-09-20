@@ -1,6 +1,11 @@
 # Quadruped Gazebo
 
-This package contains the description of the legged robot from Unitree Robotics, and the launch file to load them into the gazebo empty world. 
+This package contains the description of the quadruped robot from Unitree Robotics, and the launch file to load them into the gazebo empty world.
+
+Tested environment:
+* Ubuntu 24.04
+  * ROS2 Jazzy
+  * Gazebo Harmonic
 
 ## Build
 ```bash

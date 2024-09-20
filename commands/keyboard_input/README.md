@@ -2,6 +2,12 @@
 
 This node will read the keyboard input and publish a control_input_msgs/Input message.
 
+Tested environment:
+* Ubuntu 24.04
+  * ROS2 Jazzy
+* Ubuntu 22.04
+  * ROS2 Humble
+
 ```bash
 cd ~/ros2_ws
 colcon build --packages-up-to keyboard_input
@@ -12,7 +18,7 @@ source ~/ros2_ws/install/setup.bash
 ros2 run keyboard_input keyboard_input
 ```
 
-## 1. Use Instructions
+## 1. Use Instructions for Unitree Guide
 ### 1.1 Control Mode
 * Passive Mode: Keyboard 1
 * Fixed Stand: Keyboard 2

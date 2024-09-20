@@ -1,6 +1,11 @@
 # Unitree Go2 Description
 This repository contains the urdf model of go2.
 
+Tested environment:
+* Ubuntu 24.04
+  * ROS2 Jazzy
+* Ubuntu 22.04
+  * ROS2 Humble
 
 ## Build
 ```bash

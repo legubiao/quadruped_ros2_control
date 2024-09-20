@@ -2,6 +2,11 @@
 
 This node will listen to the joystick topic and publish a control_input_msgs/Input message.
 
+Tested environment:
+* Ubuntu 24.04
+  * ROS2 Jazzy
+  * Logitech F310 Gamepad
+
 ```bash
 cd ~/ros2_ws
 colcon build --packages-up-to joystick_input
@@ -12,7 +17,7 @@ source ~/ros2_ws/install/setup.bash
 ros2 launch joystick_input joystick.launch.py
 ```
 
-## 1. Use Instructions
+## 1. Use Instructions for Unitree Guide
 
 ### 1.1 Control Mode
 
