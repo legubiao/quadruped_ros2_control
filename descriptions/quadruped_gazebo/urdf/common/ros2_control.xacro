@@ -133,7 +133,7 @@
     <!-- Gazebo's ros2_control plugin  -->
     <gazebo>
         <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-            <parameters>$(find quadruped_gazebo)/config/jtc.yaml</parameters>
+            <parameters>$(find quadruped_gazebo)/config/robot_control.yaml</parameters>
         </plugin>
         <plugin filename="gz-sim-imu-system"
                 name="gz::sim::systems::Imu">

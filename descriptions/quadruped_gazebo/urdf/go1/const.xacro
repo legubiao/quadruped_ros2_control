@@ -129,11 +129,13 @@
     <xacro:property name="foot_mass" value="0.06"/>
 
     <gazebo reference="trunk">
-        <material>
-            <ambient>.175 .175 .175  1.0</ambient>
-            <diffuse>.175 .175 .175  1.0</diffuse>
-            <specular>.175 .175 .175 1.000000 1.500000</specular>
-        </material>
+        <visual name="DarkGrey">
+            <material>
+                <ambient>.5 .5 .5  1.0</ambient>
+                <diffuse>.5 .5 .5  1.0</diffuse>
+                <specular>.5 .5 .5  1.0</specular>
+            </material>
+        </visual>
     </gazebo>
 
 </robot>
