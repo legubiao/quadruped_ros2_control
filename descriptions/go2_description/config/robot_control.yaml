@@ -48,10 +48,10 @@ unitree_guide_controller:
       - velocity
 
     feet_names:
-      - FR_FOOT
-      - FL_FOOT
-      - RR_FOOT
-      - RL_FOOT
+      - FR_foot
+      - FL_foot
+      - RR_foot
+      - RL_foot
 
     imu_name: "imu_sensor"
 
