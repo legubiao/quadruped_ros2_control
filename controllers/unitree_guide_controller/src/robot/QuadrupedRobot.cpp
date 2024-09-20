@@ -6,14 +6,15 @@
 #include "unitree_guide_controller/control/CtrlComponent.h"
 #include "unitree_guide_controller/robot/QuadrupedRobot.h"
 
-void QuadrupedRobot::init(const std::string &robot_description, const std::vector<std::string> &feet_names) {
+void QuadrupedRobot::init(const std::string &robot_description, const std::vector<std::string> &feet_names,
+                          const std::string& base_name) {
     KDL::Tree robot_tree;
     kdl_parser::treeFromString(robot_description, robot_tree);
 
-    robot_tree.getChain("base", feet_names[0], fr_chain_);
-    robot_tree.getChain("base", feet_names[1], fl_chain_);
-    robot_tree.getChain("base", feet_names[2], rr_chain_);
-    robot_tree.getChain("base", feet_names[3], rl_chain_);
+    robot_tree.getChain(base_name, feet_names[0], fr_chain_);
+    robot_tree.getChain(base_name, feet_names[1], fl_chain_);
+    robot_tree.getChain(base_name, feet_names[2], rr_chain_);
+    robot_tree.getChain(base_name, feet_names[3], rl_chain_);
 
 
     robot_legs_.resize(4);

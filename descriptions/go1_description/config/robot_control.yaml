@@ -54,6 +54,7 @@ unitree_guide_controller:
       - RL_foot
 
     imu_name: "imu_sensor"
+    base_name: "base"
 
     imu_interfaces:
       - orientation.w

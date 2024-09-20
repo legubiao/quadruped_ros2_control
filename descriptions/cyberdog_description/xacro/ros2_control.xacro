@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- <xacro:macro name="leg" params="name mirror mirror_dae front_hind front_hind_dae"> -->
+    <ros2_control name="GazeboSystem" type="system">
+        <hardware>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+
+        <joint name="FR_abad_joint">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="FR_hip_joint">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="FR_knee_joint">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="FL_abad_joint">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="FL_hip_joint">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="FL_knee_joint">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="RR_abad_joint">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="RR_hip_joint">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="RR_knee_joint">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="RL_abad_joint">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="RL_hip_joint">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="RL_knee_joint">
+            <command_interface name="effort" initial_value="0.0"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <sensor name="imu_sensor">
+            <state_interface name="orientation.x"/>
+            <state_interface name="orientation.y"/>
+            <state_interface name="orientation.z"/>
+            <state_interface name="orientation.w"/>
+            <state_interface name="angular_velocity.x"/>
+            <state_interface name="angular_velocity.y"/>
+            <state_interface name="angular_velocity.z"/>
+            <state_interface name="linear_acceleration.x"/>
+            <state_interface name="linear_acceleration.y"/>
+            <state_interface name="linear_acceleration.z"/>
+        </sensor>
+
+        <sensor name="LF_foot_end">
+            <state_interface name="force.x"/>
+            <state_interface name="force.y"/>
+            <state_interface name="force.z"/>
+            <param name="frame_id">LF_FOOT</param>
+        </sensor>
+        <sensor name="RF_foot_end">
+            <state_interface name="force.x"/>
+            <state_interface name="force.y"/>
+            <state_interface name="force.z"/>
+            <param name="frame_id">RF_FOOT</param>
+        </sensor>
+        <sensor name="LH_foot_end">
+            <state_interface name="force.x"/>
+            <state_interface name="force.y"/>
+            <state_interface name="force.z"/>
+            <param name="frame_id">LH_FOOT</param>
+        </sensor>
+        <sensor name="RH_foot_end">
+            <state_interface name="force.x"/>
+            <state_interface name="force.y"/>
+            <state_interface name="force.z"/>
+            <param name="frame_id">LH_FOOT</param>
+        </sensor>
+    </ros2_control>
+
+    <!-- Gazebo's ros2_control plugin  -->
+    <gazebo>
+        <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+            <parameters>$(find cyberdog_description)/config/robot_control.yaml</parameters>
+        </plugin>
+        <plugin filename="gz-sim-imu-system"
+                name="gz::sim::systems::Imu">
+        </plugin>
+        <plugin filename="gz-sim-contact-system"
+                name="gz::sim::systems::Contact">
+        </plugin>
+        <plugin filename="gz-sim-forcetorque-system"
+                name="gz::sim::systems::ForceTorque">
+        </plugin>
+    </gazebo>
+
+</robot>

@@ -4,6 +4,13 @@ This is a ros2-control controller based on unitree guide. The original unitree g
 found [here](https://github.com/unitreerobotics/unitree_guide). I used KDL for the kinematic and dynamic calculation, so
 the controller performance has difference with the original one (sometimes very unstable).
 
+Tested environment:
+* Ubuntu 24.04
+    * ROS2 Jazzy
+* Ubuntu 22.04
+    * ROS2 Humble
+
+
 ## 1. Interfaces
 
 Required hardware interfaces:

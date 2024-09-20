@@ -6,6 +6,14 @@ This repository contains the ros2-control based controllers for the quadruped ro
 * [Descriptions](descriptions): contains the urdf model of the robot
 * [Hardwares](hardwares): contains the ros2-control hardware interface for the robot
 
+Todo List:
+- [x] Mujoco Simulation
+- [x] Unitree Guide Controller
+- [x] Gazebo Simulation
+- [x] Leg PD Controller
+- [ ] Contact Sensor
+- [ ] OCS2 Legged Control
+
 
 ## 1. Build
 * rosdep

@@ -80,6 +80,7 @@ unitree_guide_controller:
       - LH_FOOT
 
     imu_name: "imu_sensor"
+    base_name: "base"
 
     imu_interfaces:
       - orientation.w

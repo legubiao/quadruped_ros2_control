@@ -87,6 +87,7 @@ namespace unitree_guide_controller {
 
             // imu sensor
             imu_name_ = auto_declare<std::string>("imu_name", imu_name_);
+            base_name_ = auto_declare<std::string>("base_name", base_name_);
             imu_interface_types_ = auto_declare<std::vector<std::string> >("imu_interfaces", state_interface_types_);
             command_prefix_ = auto_declare<std::string>("command_prefix", command_prefix_);
             feet_names_ =
@@ -114,7 +115,7 @@ namespace unitree_guide_controller {
         robot_description_subscription_ = get_node()->create_subscription<std_msgs::msg::String>(
             "/robot_description", rclcpp::QoS(rclcpp::KeepLast(1)).transient_local(),
             [this](const std_msgs::msg::String::SharedPtr msg) {
-                ctrl_comp_.robot_model_.init(msg->data, feet_names_);
+                ctrl_comp_.robot_model_.init(msg->data, feet_names_, base_name_);
                 ctrl_comp_.balance_ctrl_.init(ctrl_comp_.robot_model_);
             });
 

@@ -81,6 +81,7 @@ namespace unitree_guide_controller {
         std::vector<std::string> state_interface_types_;
 
         std::string imu_name_;
+        std::string base_name_;
         std::string command_prefix_;
         std::vector<std::string> imu_interface_types_;
         std::vector<std::string> feet_names_;

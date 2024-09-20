@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<robot name="cyber_dog" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<!--    <gazebo>-->
+<!--        <plugin name="gazebo_rt_control" filename="liblegged_plugin.so">-->
+<!--        </plugin>-->
+<!--        <plugin name="gazebo_rt_control" filename="libreal_time_control.so">-->
+<!--            <robotName>$(arg ROBOT)</robotName>-->
+<!--        </plugin>-->
+<!--    </gazebo>-->
+
+    <gazebo reference="imu_link">
+        <sensor name="imu_sensor" type="imu">
+            <always_on>1</always_on>
+            <update_rate>500</update_rate>
+            <visualize>true</visualize>
+            <topic>imu</topic>
+            <imu>
+                <angular_velocity>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-4</stddev>
+                            <bias_mean>0.0000075</bias_mean>
+                            <bias_stddev>0.0000008</bias_stddev>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-4</stddev>
+                            <bias_mean>0.0000075</bias_mean>
+                            <bias_stddev>0.0000008</bias_stddev>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-4</stddev>
+                            <bias_mean>0.0000075</bias_mean>
+                            <bias_stddev>0.0000008</bias_stddev>
+                        </noise>
+                    </z>
+                </angular_velocity>
+                <linear_acceleration>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>1.7e-2</stddev>
+                            <bias_mean>0.1</bias_mean>
+                            <bias_stddev>0.001</bias_stddev>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>1.7e-2</stddev>
+                            <bias_mean>0.1</bias_mean>
+                            <bias_stddev>0.001</bias_stddev>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>1.7e-2</stddev>
+                            <bias_mean>0.1</bias_mean>
+                            <bias_stddev>0.001</bias_stddev>
+                        </noise>
+                    </z>
+                </linear_acceleration>
+            </imu>
+        </sensor>
+    </gazebo>
+    <gazebo reference="imu_joint">
+        <disableFixedJointLumping>true</disableFixedJointLumping>
+    </gazebo>
+
+
+<!--    <xacro:if value="$(arg USE_LIDAR)">-->
+<!--        <gazebo reference="lidar_link">-->
+<!--        <sensor name="realsense" type="ray">-->
+<!--            <always_on>true</always_on>-->
+<!--            <visualize>true</visualize>-->
+<!--            <pose>0.0 0 0.0 0 0 0</pose>-->
+<!--            <update_rate>5</update_rate>-->
+<!--            <ray>-->
+<!--            <scan>-->
+<!--                <horizontal>-->
+<!--                <samples>180</samples>-->
+<!--                <resolution>1.000000</resolution>-->
+<!--                <min_angle>-1.5700</min_angle>-->
+<!--                <max_angle>1.5700</max_angle>-->
+<!--                </horizontal>-->
+<!--            </scan>-->
+<!--            <range>-->
+<!--                <min>0.01</min>-->
+<!--                <max>12.00</max>-->
+<!--                <resolution>0.015000</resolution>-->
+<!--            </range>-->
+<!--            <noise>-->
+<!--                <type>gaussian</type>-->
+<!--                <mean>0.0</mean>-->
+<!--                <stddev>0.01</stddev>-->
+<!--            </noise>-->
+<!--            </ray>-->
+<!--            <plugin name="cyberdog_laserscan" filename="libgazebo_ros_ray_sensor.so">-->
+<!--            <ros>-->
+<!--                <remapping>~/out:=scan</remapping>-->
+<!--            </ros>-->
+<!--            <output_type>sensor_msgs/LaserScan</output_type>-->
+<!--            <frame_name>lidar_link</frame_name>-->
+<!--            </plugin>-->
+<!--        </sensor>-->
+<!--        </gazebo>-->
+<!--    </xacro:if>-->
+
+<!--    &lt;!&ndash; Foot contacts. &ndash;&gt;-->
+<!--    <gazebo reference="FR_knee">-->
+<!--        <sensor name="FR_foot_contact" type="contact">-->
+<!--        <update_rate>100</update_rate>-->
+<!--        <plugin name="contactPlugin" filename="libfoot_contact_plugin.so"/>-->
+<!--        <contact>-->
+<!--            <collision>FR_knee_fixed_joint_lump__FR_foot_collision_2</collision>-->
+<!--        </contact>-->
+<!--        </sensor>-->
+<!--    </gazebo>-->
+<!--    <gazebo reference="FL_knee">-->
+<!--        <sensor name="FL_foot_contact" type="contact">-->
+<!--        <update_rate>100</update_rate>-->
+<!--        <plugin name="contactPlugin" filename="libfoot_contact_plugin.so"/>-->
+<!--        <contact>-->
+<!--            <collision>FL_knee_fixed_joint_lump__FL_foot_collision_2</collision>-->
+<!--        </contact>-->
+<!--        </sensor>-->
+<!--    </gazebo>-->
+<!--    <gazebo reference="RR_knee">-->
+<!--        <sensor name="RR_foot_contact" type="contact">-->
+<!--        <update_rate>100</update_rate>-->
+<!--        <plugin name="contactPlugin" filename="libfoot_contact_plugin.so"/>-->
+<!--        <contact>-->
+<!--            <collision>RR_knee_fixed_joint_lump__RR_foot_collision_2</collision>-->
+<!--        </contact>-->
+<!--        </sensor>-->
+<!--    </gazebo>-->
+<!--    <gazebo reference="RL_knee">-->
+<!--        <sensor name="RL_foot_contact" type="contact">-->
+<!--        <update_rate>100</update_rate>-->
+<!--        <plugin name="contactPlugin" filename="libfoot_contact_plugin.so"/>-->
+<!--        <contact>-->
+<!--            <collision>RL_knee_fixed_joint_lump__RL_foot_collision_2</collision>-->
+<!--        </contact>-->
+<!--        </sensor>-->
+<!--    </gazebo>-->
+
+</robot>
