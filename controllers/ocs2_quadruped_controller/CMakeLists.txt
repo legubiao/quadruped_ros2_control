@@ -31,7 +31,7 @@ add_library(${PROJECT_NAME} SHARED
         src/Ocs2QuadrupedController.cpp
 
         #        src/estimator/FromTopicEstimate.cpp
-        #        src/estimator/LinearKalmanFilter.cpp
+        src/estimator/LinearKalmanFilter.cpp
         src/estimator/StateEstimateBase.cpp
 
         src/wbc/HierarchicalWbc.cpp

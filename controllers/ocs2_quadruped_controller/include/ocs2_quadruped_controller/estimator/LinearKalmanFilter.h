@@ -18,7 +18,8 @@ namespace ocs2::legged_robot {
     class KalmanFilterEstimate final : public StateEstimateBase {
     public:
         KalmanFilterEstimate(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
-                             const PinocchioEndEffectorKinematics &eeKinematics);
+                             const PinocchioEndEffectorKinematics &eeKinematics,
+                             const rclcpp_lifecycle::LifecycleNode::SharedPtr &node);
 
         vector_t update(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
@@ -49,10 +50,6 @@ namespace ocs2::legged_robot {
         vector_t xHat_, ps_, vs_;
 
         // Topic
-        ros::Subscriber sub_;
-        realtime_tools::RealtimeBuffer<nav_msgs::Odometry> buffer_;
-        tf2_ros::Buffer tfBuffer_;
-        tf2_ros::TransformListener tfListener_;
         tf2::Transform world2odom_;
         std::string frameOdom_, frameGuess_;
         bool topicUpdated_;

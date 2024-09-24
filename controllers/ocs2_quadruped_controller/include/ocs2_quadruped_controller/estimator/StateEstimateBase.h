@@ -14,6 +14,7 @@
 #include <ocs2_legged_robot/common/Types.h>
 #include <ocs2_legged_robot/gait/MotionPhaseDefinition.h>
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
+#include <rclcpp_lifecycle/lifecycle_node.hpp>
 
 namespace ocs2::legged_robot {
     class StateEstimateBase {
@@ -21,7 +22,8 @@ namespace ocs2::legged_robot {
         virtual ~StateEstimateBase() = default;
 
         StateEstimateBase(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
-                          const PinocchioEndEffectorKinematics &eeKinematics, rclcpp::Node::SharedPtr node);
+                          const PinocchioEndEffectorKinematics &eeKinematics,
+                          rclcpp_lifecycle::LifecycleNode::SharedPtr node);
 
         virtual void updateJointStates(const vector_t &jointPos, const vector_t &jointVel);
 
@@ -58,7 +60,7 @@ namespace ocs2::legged_robot {
         rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr posePub_;
 
         rclcpp::Time lastPub_;
-        rclcpp::Node::SharedPtr node_;
+        rclcpp_lifecycle::LifecycleNode::SharedPtr node_;
     };
 
     template<typename T>

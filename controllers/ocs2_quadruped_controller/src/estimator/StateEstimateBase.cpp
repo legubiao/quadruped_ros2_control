@@ -15,7 +15,7 @@ namespace ocs2::legged_robot {
 
     StateEstimateBase::StateEstimateBase(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
                                          const PinocchioEndEffectorKinematics &eeKinematics,
-                                         rclcpp::Node::SharedPtr node)
+                                         rclcpp_lifecycle::LifecycleNode::SharedPtr node)
         : pinocchioInterface_(std::move(pinocchioInterface)),
           info_(std::move(info)),
           eeKinematics_(eeKinematics.clone()),
