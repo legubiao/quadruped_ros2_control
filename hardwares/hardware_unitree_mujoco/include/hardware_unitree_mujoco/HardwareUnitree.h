@@ -37,6 +37,7 @@ protected:
     std::vector<double> joint_effort_;
 
     std::vector<double> imu_states_;
+    std::vector<double> foot_force_;
 
     std::unordered_map<std::string, std::vector<std::string> > joint_interfaces = {
         {"position", {}},

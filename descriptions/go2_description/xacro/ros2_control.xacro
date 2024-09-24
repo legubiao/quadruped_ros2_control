@@ -164,6 +164,13 @@
             <state_interface name="linear_acceleration.z"/>
         </sensor>
 
+        <sensor name="foot_force">
+            <state_interface name="FR"/>
+            <state_interface name="FL"/>
+            <state_interface name="RR"/>
+            <state_interface name="RL"/>
+        </sensor>
+
     </ros2_control>
 
 </robot>

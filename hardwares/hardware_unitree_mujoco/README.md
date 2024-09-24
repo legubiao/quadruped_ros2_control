@@ -4,6 +4,28 @@ This package contains the hardware interface based on [unitree_sdk2](https://git
 
 In theory, it also can communicate with real robot, but it is not tested yet. You can use go2 simulation in [unitree_mujoco](https://github.com/unitreerobotics/unitree_mujoco).
 
+## 1. Interfaces
+
+Required hardware interfaces:
+
+* command:
+  * joint position
+  * joint velocity
+  * joint effort
+  * KP
+  * KD
+* state:
+  * joint effort
+  * joint position
+  * joint velocity
+  * imu sensor
+    * linear acceleration
+    * angular velocity
+    * orientation
+  * foot force sensor
+
+## 2. Build
+
 Tested environment:
 * Ubuntu 24.04
     * ROS2 Jazzy

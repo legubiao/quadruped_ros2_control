@@ -29,6 +29,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Hardwa
     joint_effort_.assign(12, 0);
 
     imu_states_.assign(10, 0);
+    foot_force_.assign(4, 0);
 
     for (const auto &joint: info_.joints) {
         for (const auto &interface: joint.state_interfaces) {
@@ -81,6 +82,12 @@ std::vector<hardware_interface::StateInterface> HardwareUnitree::export_state_in
             info_.sensors[0].name, info_.sensors[0].state_interfaces[i].name, &imu_states_[i]);
     }
 
+    // export foot force sensor state interface
+    for (uint i = 0; i < info_.sensors[1].state_interfaces.size(); i++) {
+        state_interfaces.emplace_back(
+            info_.sensors[1].name, info_.sensors[1].state_interfaces[i].name, &foot_force_[i]);
+    }
+
 
     return state_interfaces;
 }
@@ -128,6 +135,12 @@ return_type HardwareUnitree::read(const rclcpp::Time & /*time*/, const rclcpp::D
     imu_states_[8] = low_state_.imu_state().accelerometer()[1];
     imu_states_[9] = low_state_.imu_state().accelerometer()[2];
 
+    // contact states
+    foot_force_[0] = low_state_.foot_force()[0];
+    foot_force_[1] = low_state_.foot_force()[1];
+    foot_force_[2] = low_state_.foot_force()[2];
+    foot_force_[3] = low_state_.foot_force()[3];
+
     return return_type::OK;
 }
 
@@ -166,7 +179,7 @@ void HardwareUnitree::initLowCmd() {
 }
 
 void HardwareUnitree::lowStateMessageHandle(const void *messages) {
-    low_state_ = *(unitree_go::msg::dds_::LowState_ *) messages;
+    low_state_ = *static_cast<const unitree_go::msg::dds_::LowState_ *>(messages);
 }
 
 #include "pluginlib/class_list_macros.hpp"
