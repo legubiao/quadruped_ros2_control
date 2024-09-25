@@ -20,11 +20,17 @@ source ~/ros2_ws/install/setup.bash
 ros2 launch go2_description visualize.launch.py
 ```
 
-## Launch Hardware Interface
-```bash
-source ~/ros2_ws/install/setup.bash
-ros2 launch go2_description hardware.launch.py
-```
+## Launch ROS2 Control
+* Unitree Guide Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch go2_description hardware.launch.py
+  ```
+* OCS2 Quadruped Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch go2_description ocs2_control.launch.py
+  ```
 
 ## When used for isaac gym or other similiar engine 
 

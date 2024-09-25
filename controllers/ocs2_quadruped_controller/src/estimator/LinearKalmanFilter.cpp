@@ -15,18 +15,20 @@
 namespace ocs2::legged_robot {
     KalmanFilterEstimate::KalmanFilterEstimate(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
                                                const PinocchioEndEffectorKinematics &eeKinematics,
+                                               CtrlComponent &ctrl_component,
                                                const rclcpp_lifecycle::LifecycleNode::SharedPtr &node)
-        : StateEstimateBase(std::move(pinocchioInterface), std::move(info), eeKinematics, std::move(node)),
+        : StateEstimateBase(std::move(pinocchioInterface), std::move(info), eeKinematics, ctrl_component,
+                            node),
           numContacts_(info_.numThreeDofContacts + info_.numSixDofContacts),
           dimContacts_(3 * numContacts_),
           numState_(6 + dimContacts_),
-          numObserve_(2 * dimContacts_ + numContacts_),
-          topicUpdated_(false) {
+          numObserve_(2 * dimContacts_ + numContacts_) {
         xHat_.setZero(numState_);
         ps_.setZero(dimContacts_);
         vs_.setZero(dimContacts_);
         a_.setIdentity(numState_, numState_);
         b_.setZero(numState_, 3);
+
         matrix_t c1(3, 6), c2(3, 6);
         c1 << matrix3_t::Identity(), matrix3_t::Zero();
         c2 << matrix3_t::Zero(), matrix3_t::Identity();
@@ -44,11 +46,13 @@ namespace ocs2::legged_robot {
         feetHeights_.setZero(numContacts_);
 
         eeKinematics_->setPinocchioInterface(pinocchioInterface_);
-
-        world2odom_.setRotation(tf2::Quaternion::getIdentity());
     }
 
     vector_t KalmanFilterEstimate::update(const rclcpp::Time &time, const rclcpp::Duration &period) {
+        updateJointStates();
+        updateContact();
+        updateImu();
+
         scalar_t dt = period.seconds();
         a_.block(0, 3, 3, 3) = dt * matrix3_t::Identity();
         b_.block(0, 0, 3, 3) = 0.5 * dt * dt * matrix3_t::Identity();
@@ -101,7 +105,7 @@ namespace ocs2::legged_robot {
             int rIndex1 = i1;
             int rIndex2 = dimContacts_ + i1;
             int rIndex3 = 2 * dimContacts_ + i;
-            bool isContact = contactFlag_[i];
+            bool isContact = contact_flag_[i];
 
             scalar_t high_suspect_number(100);
             q.block(qIndex, qIndex, 3, 3) = (isContact ? 1. : high_suspect_number) * q.block(qIndex, qIndex, 3, 3);
@@ -115,7 +119,7 @@ namespace ocs2::legged_robot {
         }
 
         vector3_t g(0, 0, -9.81);
-        vector3_t accel = getRotationMatrixFromZyxEulerAngles(quatToZyx(quat_)) * linearAccelLocal_ + g;
+        vector3_t accel = getRotationMatrixFromZyxEulerAngles(quatToZyx(quat_)) * linear_accel_local_ + g;
 
         vector_t y(numObserve_);
         y << ps_, vs_, feetHeights_;
@@ -141,11 +145,6 @@ namespace ocs2::legged_robot {
         //    p_.block(2, 0, 16, 2).setZero();
         //    p_.block(0, 0, 2, 2) /= 10.;
         //  }
-
-        if (topicUpdated_) {
-            updateFromTopic();
-            topicUpdated_ = false;
-        }
 
         updateLinear(xHat_.segment<3>(0), xHat_.segment<3>(3));
 
@@ -179,9 +178,9 @@ namespace ocs2::legged_robot {
         odom.twist.twist.linear.x = twist.x();
         odom.twist.twist.linear.y = twist.y();
         odom.twist.twist.linear.z = twist.z();
-        odom.twist.twist.angular.x = angularVelLocal_.x();
-        odom.twist.twist.angular.y = angularVelLocal_.y();
-        odom.twist.twist.angular.z = angularVelLocal_.z();
+        odom.twist.twist.angular.x = angular_vel_local_.x();
+        odom.twist.twist.angular.y = angular_vel_local_.y();
+        odom.twist.twist.angular.z = angular_vel_local_.z();
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
                 odom.twist.covariance[i * 6 + j] = p_.block<3, 3>(3, 3)(i, j);

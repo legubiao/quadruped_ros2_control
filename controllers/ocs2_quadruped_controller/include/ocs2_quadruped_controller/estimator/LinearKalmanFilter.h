@@ -9,7 +9,6 @@
 #include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
 
-#include <realtime_tools/realtime_tools/realtime_buffer.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/transform_listener.h>
@@ -19,6 +18,7 @@ namespace ocs2::legged_robot {
     public:
         KalmanFilterEstimate(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
                              const PinocchioEndEffectorKinematics &eeKinematics,
+                             CtrlComponent &ctrl_component,
                              const rclcpp_lifecycle::LifecycleNode::SharedPtr &node);
 
         vector_t update(const rclcpp::Time &time, const rclcpp::Duration &period) override;
@@ -26,10 +26,6 @@ namespace ocs2::legged_robot {
         void loadSettings(const std::string &taskFile, bool verbose);
 
     protected:
-        void updateFromTopic();
-
-        void callback(const nav_msgs::msg::Odometry::SharedPtr &msg);
-
         nav_msgs::msg::Odometry getOdomMsg();
 
         vector_t feetHeights_;
@@ -48,10 +44,5 @@ namespace ocs2::legged_robot {
 
         matrix_t a_, b_, c_, q_, p_, r_;
         vector_t xHat_, ps_, vs_;
-
-        // Topic
-        tf2::Transform world2odom_;
-        std::string frameOdom_, frameGuess_;
-        bool topicUpdated_;
     };
 } // namespace legged

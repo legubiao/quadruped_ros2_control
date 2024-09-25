@@ -2,6 +2,7 @@
 // Created by qiayuan on 2022/7/16.
 //
 
+#include <memory>
 #include <pinocchio/fwd.hpp>  // forward declarations must be included first.
 
 #include <pinocchio/algorithm/frames.hpp>
@@ -35,166 +36,160 @@
 #include <boost/filesystem/path.hpp>
 
 namespace ocs2::legged_robot {
-    LeggedInterface::LeggedInterface(const std::string &taskFile, const std::string &urdfFile,
-                                     const std::string &referenceFile,
-                                     bool useHardFrictionConeConstraint)
-        : useHardFrictionConeConstraint_(useHardFrictionConeConstraint) {
+    LeggedInterface::LeggedInterface(const std::string &task_file, const std::string &urdf_file,
+                                     const std::string &reference_file,
+                                     const bool use_hard_friction_cone_constraint)
+        : use_hard_friction_cone_constraint_(use_hard_friction_cone_constraint) {
         // check that task file exists
-        boost::filesystem::path taskFilePath(taskFile);
-        if (boost::filesystem::exists(taskFilePath)) {
-            std::cerr << "[LeggedInterface] Loading task file: " << taskFilePath << std::endl;
+        if (const boost::filesystem::path task_file_path(task_file); exists(task_file_path)) {
+            std::cerr << "[LeggedInterface] Loading task file: " << task_file_path << std::endl;
         } else {
-            throw std::invalid_argument("[LeggedInterface] Task file not found: " + taskFilePath.string());
+            throw std::invalid_argument("[LeggedInterface] Task file not found: " + task_file_path.string());
         }
 
         // check that urdf file exists
-        boost::filesystem::path urdfFilePath(urdfFile);
-        if (boost::filesystem::exists(urdfFilePath)) {
-            std::cerr << "[LeggedInterface] Loading Pinocchio model from: " << urdfFilePath << std::endl;
+        if (const boost::filesystem::path urdf_file_path(urdf_file); exists(urdf_file_path)) {
+            std::cerr << "[LeggedInterface] Loading Pinocchio model from: " << urdf_file_path << std::endl;
         } else {
-            throw std::invalid_argument("[LeggedInterface] URDF file not found: " + urdfFilePath.string());
+            throw std::invalid_argument("[LeggedInterface] URDF file not found: " + urdf_file_path.string());
         }
 
         // check that targetCommand file exists
-        boost::filesystem::path referenceFilePath(referenceFile);
-        if (boost::filesystem::exists(referenceFilePath)) {
-            std::cerr << "[LeggedInterface] Loading target command settings from: " << referenceFilePath << std::endl;
+        if (const boost::filesystem::path reference_file_path(reference_file); exists(reference_file_path)) {
+            std::cerr << "[LeggedInterface] Loading target command settings from: " << reference_file_path << std::endl;
         } else {
             throw std::invalid_argument(
-                "[LeggedInterface] targetCommand file not found: " + referenceFilePath.string());
+                "[LeggedInterface] targetCommand file not found: " + reference_file_path.string());
         }
 
         bool verbose = false;
-        loadData::loadCppDataType(taskFile, "legged_robot_interface.verbose", verbose);
+        loadData::loadCppDataType(task_file, "legged_robot_interface.verbose", verbose);
 
         // load setting from loading file
-        modelSettings_ = loadModelSettings(taskFile, "model_settings", verbose);
-        mpcSettings_ = mpc::loadSettings(taskFile, "mpc", verbose);
-        ddpSettings_ = ddp::loadSettings(taskFile, "ddp", verbose);
-        sqpSettings_ = sqp::loadSettings(taskFile, "sqp", verbose);
-        ipmSettings_ = ipm::loadSettings(taskFile, "ipm", verbose);
-        rolloutSettings_ = rollout::loadSettings(taskFile, "rollout", verbose);
+        model_settings_ = loadModelSettings(task_file, "model_settings", verbose);
+
+        // Todo : load settings from ros param
+        model_settings_.jointNames = {
+            "FF_hip_joint", "FL_thigh_joint", "FL_calf_joint",
+            "FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
+            "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
+            "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint"
+        };
+        model_settings_.contactNames3DoF = {"FL_foot", "FR_foot", "RL_foot", "RR_foot"};
+
+        mpc_settings_ = mpc::loadSettings(task_file, "mpc", verbose);
+        ddp_settings_ = ddp::loadSettings(task_file, "ddp", verbose);
+        sqp_settings_ = sqp::loadSettings(task_file, "sqp", verbose);
+        ipm_settings_ = ipm::loadSettings(task_file, "ipm", verbose);
+        rollout_settings_ = rollout::loadSettings(task_file, "rollout", verbose);
     }
 
-    /******************************************************************************************************/
-    /******************************************************************************************************/
-    /******************************************************************************************************/
-    void LeggedInterface::setupOptimalControlProblem(const std::string &taskFile, const std::string &urdfFile,
-                                                     const std::string &referenceFile,
-                                                     bool verbose) {
-        setupModel(taskFile, urdfFile, referenceFile, verbose);
+
+    void LeggedInterface::setupOptimalControlProblem(const std::string &task_file, const std::string &urdf_file,
+                                                     const std::string &reference_file,
+                                                     const bool verbose) {
+        setupModel(task_file, urdf_file, reference_file);
 
         // Initial state
-        initialState_.setZero(centroidalModelInfo_.stateDim);
-        loadData::loadEigenMatrix(taskFile, "initialState", initialState_);
+        initial_state_.setZero(centroidal_model_info_.stateDim);
+        loadData::loadEigenMatrix(task_file, "initialState", initial_state_);
 
-        setupReferenceManager(taskFile, urdfFile, referenceFile, verbose);
+        setupReferenceManager(task_file, urdf_file, reference_file, verbose);
 
         // Optimal control problem
-        problemPtr_ = std::make_unique<OptimalControlProblem>();
+        problem_ptr_ = std::make_unique<OptimalControlProblem>();
 
         // Dynamics
-        std::unique_ptr<SystemDynamicsBase> dynamicsPtr;
-        dynamicsPtr = std::make_unique<LeggedRobotDynamicsAD>(*pinocchioInterfacePtr_, centroidalModelInfo_, "dynamics",
-                                                              modelSettings_);
-        problemPtr_->dynamicsPtr = std::move(dynamicsPtr);
+        std::unique_ptr<SystemDynamicsBase> dynamicsPtr = std::make_unique<LeggedRobotDynamicsAD>(
+            *pinocchio_interface_ptr_, centroidal_model_info_, "dynamics",
+            model_settings_);
+        problem_ptr_->dynamicsPtr = std::move(dynamicsPtr);
 
         // Cost terms
-        problemPtr_->costPtr->add("baseTrackingCost", getBaseTrackingCost(taskFile, centroidalModelInfo_, verbose));
+        problem_ptr_->costPtr->add("baseTrackingCost", getBaseTrackingCost(task_file, centroidal_model_info_, verbose));
 
         // Constraint terms
         // friction cone settings
         scalar_t frictionCoefficient = 0.7;
         RelaxedBarrierPenalty::Config barrierPenaltyConfig;
-        std::tie(frictionCoefficient, barrierPenaltyConfig) = loadFrictionConeSettings(taskFile, verbose);
+        std::tie(frictionCoefficient, barrierPenaltyConfig) = loadFrictionConeSettings(task_file, verbose);
 
-        for (size_t i = 0; i < centroidalModelInfo_.numThreeDofContacts; i++) {
-            const std::string &footName = modelSettings_.contactNames3DoF[i];
+        for (size_t i = 0; i < centroidal_model_info_.numThreeDofContacts; i++) {
+            const std::string &footName = model_settings_.contactNames3DoF[i];
             std::unique_ptr<EndEffectorKinematics<scalar_t> > eeKinematicsPtr =
                     getEeKinematicsPtr({footName}, footName);
 
-            if (useHardFrictionConeConstraint_) {
-                problemPtr_->inequalityConstraintPtr->add(footName + "_frictionCone",
-                                                          getFrictionConeConstraint(i, frictionCoefficient));
+            if (use_hard_friction_cone_constraint_) {
+                problem_ptr_->inequalityConstraintPtr->add(footName + "_frictionCone",
+                                                           getFrictionConeConstraint(i, frictionCoefficient));
             } else {
-                problemPtr_->softConstraintPtr->add(footName + "_frictionCone",
-                                                    getFrictionConeSoftConstraint(
-                                                        i, frictionCoefficient, barrierPenaltyConfig));
+                problem_ptr_->softConstraintPtr->add(footName + "_frictionCone",
+                                                     getFrictionConeSoftConstraint(
+                                                         i, frictionCoefficient, barrierPenaltyConfig));
             }
-            problemPtr_->equalityConstraintPtr->add(footName + "_zeroForce", std::unique_ptr<StateInputConstraint>(
-                                                        new ZeroForceConstraint(
-                                                            *referenceManagerPtr_, i, centroidalModelInfo_)));
-            problemPtr_->equalityConstraintPtr->add(footName + "_zeroVelocity",
-                                                    getZeroVelocityConstraint(*eeKinematicsPtr, i));
-            problemPtr_->equalityConstraintPtr->add(
+            problem_ptr_->equalityConstraintPtr->add(footName + "_zeroForce", std::make_unique<ZeroForceConstraint>(
+                                                         *reference_manager_ptr_, i, centroidal_model_info_));
+            problem_ptr_->equalityConstraintPtr->add(footName + "_zeroVelocity",
+                                                     getZeroVelocityConstraint(*eeKinematicsPtr, i));
+            problem_ptr_->equalityConstraintPtr->add(
                 footName + "_normalVelocity",
-                std::unique_ptr<StateInputConstraint>(
-                    new NormalVelocityConstraintCppAd(*referenceManagerPtr_, *eeKinematicsPtr, i)));
+                std::make_unique<NormalVelocityConstraintCppAd>(*reference_manager_ptr_, *eeKinematicsPtr, i));
         }
 
         // Self-collision avoidance constraint
-        problemPtr_->stateSoftConstraintPtr->add("selfCollision",
-                                                 getSelfCollisionConstraint(
-                                                     *pinocchioInterfacePtr_, taskFile, "selfCollision", verbose));
+        problem_ptr_->stateSoftConstraintPtr->add("selfCollision",
+                                                  getSelfCollisionConstraint(
+                                                      *pinocchio_interface_ptr_, task_file, "selfCollision", verbose));
 
-        setupPreComputation(taskFile, urdfFile, referenceFile, verbose);
+        setupPreComputation(task_file, urdf_file, reference_file, verbose);
 
         // Rollout
-        rolloutPtr_ = std::make_unique<TimeTriggeredRollout>(*problemPtr_->dynamicsPtr, rolloutSettings_);
+        rollout_ptr_ = std::make_unique<TimeTriggeredRollout>(*problem_ptr_->dynamicsPtr, rollout_settings_);
 
         // Initialization
         constexpr bool extendNormalizedNomentum = true;
-        initializerPtr_ = std::make_unique<LeggedRobotInitializer>(centroidalModelInfo_, *referenceManagerPtr_,
-                                                                   extendNormalizedNomentum);
+        initializer_ptr_ = std::make_unique<LeggedRobotInitializer>(centroidal_model_info_, *reference_manager_ptr_,
+                                                                    extendNormalizedNomentum);
     }
 
-    /******************************************************************************************************/
-    /******************************************************************************************************/
-    /******************************************************************************************************/
-    void LeggedInterface::setupModel(const std::string &taskFile, const std::string &urdfFile,
-                                     const std::string &referenceFile,
-                                     bool /*verbose*/) {
+
+    void LeggedInterface::setupModel(const std::string &task_file, const std::string &urdf_file,
+                                     const std::string &reference_file) {
         // PinocchioInterface
-        pinocchioInterfacePtr_ =
+        pinocchio_interface_ptr_ =
                 std::make_unique<PinocchioInterface>(
-                    centroidal_model::createPinocchioInterface(urdfFile, modelSettings_.jointNames));
+                    centroidal_model::createPinocchioInterface(urdf_file, model_settings_.jointNames));
 
         // CentroidalModelInfo
-        centroidalModelInfo_ = centroidal_model::createCentroidalModelInfo(
-            *pinocchioInterfacePtr_, centroidal_model::loadCentroidalType(taskFile),
-            centroidal_model::loadDefaultJointState(pinocchioInterfacePtr_->getModel().nq - 6, referenceFile),
-            modelSettings_.contactNames3DoF,
-            modelSettings_.contactNames6DoF);
+        centroidal_model_info_ = centroidal_model::createCentroidalModelInfo(
+            *pinocchio_interface_ptr_, centroidal_model::loadCentroidalType(task_file),
+            centroidal_model::loadDefaultJointState(pinocchio_interface_ptr_->getModel().nq - 6, reference_file),
+            model_settings_.contactNames3DoF,
+            model_settings_.contactNames6DoF);
     }
 
-    /******************************************************************************************************/
-    /******************************************************************************************************/
-    /******************************************************************************************************/
+
     void LeggedInterface::setupReferenceManager(const std::string &taskFile, const std::string &urdfFile,
                                                 const std::string &referenceFile,
                                                 bool verbose) {
         auto swingTrajectoryPlanner =
                 std::make_unique<SwingTrajectoryPlanner>(
                     loadSwingTrajectorySettings(taskFile, "swing_trajectory_config", verbose), 4);
-        referenceManagerPtr_ =
+        reference_manager_ptr_ =
                 std::make_shared<SwitchedModelReferenceManager>(loadGaitSchedule(referenceFile, verbose),
                                                                 std::move(swingTrajectoryPlanner));
     }
 
-    /******************************************************************************************************/
-    /******************************************************************************************************/
-    /******************************************************************************************************/
+
     void LeggedInterface::setupPreComputation(const std::string &taskFile, const std::string &urdfFile,
                                               const std::string &referenceFile,
                                               bool verbose) {
-        problemPtr_->preComputationPtr = std::make_unique<LeggedRobotPreComputation>(
-            *pinocchioInterfacePtr_, centroidalModelInfo_, *referenceManagerPtr_->getSwingTrajectoryPlanner(),
-            modelSettings_);
+        problem_ptr_->preComputationPtr = std::make_unique<LeggedRobotPreComputation>(
+            *pinocchio_interface_ptr_, centroidal_model_info_, *reference_manager_ptr_->getSwingTrajectoryPlanner(),
+            model_settings_);
     }
 
-    /******************************************************************************************************/
-    /******************************************************************************************************/
-    /******************************************************************************************************/
+
     std::shared_ptr<GaitSchedule> LeggedInterface::loadGaitSchedule(const std::string &file, bool verbose) const {
         const auto initModeSchedule = loadModeSchedule(file, "initialModeSchedule", false);
         const auto defaultModeSequenceTemplate = loadModeSequenceTemplate(file, "defaultModeSequenceTemplate", false);
@@ -221,26 +216,24 @@ namespace ocs2::legged_robot {
         }
 
         return std::make_shared<GaitSchedule>(initModeSchedule, defaultModeSequenceTemplate,
-                                              modelSettings_.phaseTransitionStanceTime);
+                                              model_settings_.phaseTransitionStanceTime);
     }
 
-    /******************************************************************************************************/
-    /******************************************************************************************************/
-    /******************************************************************************************************/
+
     matrix_t LeggedInterface::initializeInputCostWeight(const std::string &taskFile, const CentroidalModelInfo &info) {
         const size_t totalContactDim = 3 * info.numThreeDofContacts;
 
-        const auto &model = pinocchioInterfacePtr_->getModel();
-        auto &data = pinocchioInterfacePtr_->getData();
-        const auto q = centroidal_model::getGeneralizedCoordinates(initialState_, centroidalModelInfo_);
-        pinocchio::computeJointJacobians(model, data, q);
-        pinocchio::updateFramePlacements(model, data);
+        const auto &model = pinocchio_interface_ptr_->getModel();
+        auto &data = pinocchio_interface_ptr_->getData();
+        const auto q = centroidal_model::getGeneralizedCoordinates(initial_state_, centroidal_model_info_);
+        computeJointJacobians(model, data, q);
+        updateFramePlacements(model, data);
 
         matrix_t base2feetJac(totalContactDim, info.actuatedDofNum);
         for (size_t i = 0; i < info.numThreeDofContacts; i++) {
             matrix_t jac = matrix_t::Zero(6, info.generalizedCoordinatesNum);
-            pinocchio::getFrameJacobian(model, data, model.getBodyId(modelSettings_.contactNames3DoF[i]),
-                                        pinocchio::LOCAL_WORLD_ALIGNED, jac);
+            getFrameJacobian(model, data, model.getBodyId(model_settings_.contactNames3DoF[i]),
+                             pinocchio::LOCAL_WORLD_ALIGNED, jac);
             base2feetJac.block(3 * i, 0, 3, info.actuatedDofNum) = jac.block(0, 6, 3, info.actuatedDofNum);
         }
 
@@ -255,9 +248,7 @@ namespace ocs2::legged_robot {
         return r;
     }
 
-    /******************************************************************************************************/
-    /******************************************************************************************************/
-    /******************************************************************************************************/
+
     std::unique_ptr<StateInputCost> LeggedInterface::getBaseTrackingCost(
         const std::string &taskFile, const CentroidalModelInfo &info,
         bool verbose) {
@@ -274,16 +265,14 @@ namespace ocs2::legged_robot {
         }
 
         return std::make_unique<LeggedRobotStateInputQuadraticCost>(std::move(Q), std::move(R), info,
-                                                                    *referenceManagerPtr_);
+                                                                    *reference_manager_ptr_);
     }
 
-    /******************************************************************************************************/
-    /******************************************************************************************************/
-    /******************************************************************************************************/
+
     std::pair<scalar_t, RelaxedBarrierPenalty::Config> LeggedInterface::loadFrictionConeSettings(
         const std::string &taskFile, bool verbose) {
         boost::property_tree::ptree pt;
-        boost::property_tree::read_info(taskFile, pt);
+        read_info(taskFile, pt);
         const std::string prefix = "frictionConeSoftConstraint.";
 
         scalar_t frictionCoefficient = 1.0;
@@ -302,19 +291,16 @@ namespace ocs2::legged_robot {
         return {frictionCoefficient, barrierPenaltyConfig};
     }
 
-    /******************************************************************************************************/
-    /******************************************************************************************************/
-    /******************************************************************************************************/
+
     std::unique_ptr<StateInputConstraint> LeggedInterface::getFrictionConeConstraint(
         size_t contactPointIndex, scalar_t frictionCoefficient) {
         FrictionConeConstraint::Config frictionConeConConfig(frictionCoefficient);
-        return std::make_unique<FrictionConeConstraint>(*referenceManagerPtr_, frictionConeConConfig, contactPointIndex,
-                                                        centroidalModelInfo_);
+        return std::make_unique<FrictionConeConstraint>(*reference_manager_ptr_, frictionConeConConfig,
+                                                        contactPointIndex,
+                                                        centroidal_model_info_);
     }
 
-    /******************************************************************************************************/
-    /******************************************************************************************************/
-    /******************************************************************************************************/
+
     std::unique_ptr<StateInputCost> LeggedInterface::getFrictionConeSoftConstraint(
         size_t contactPointIndex, scalar_t frictionCoefficient,
         const RelaxedBarrierPenalty::Config &barrierPenaltyConfig) {
@@ -323,39 +309,35 @@ namespace ocs2::legged_robot {
             std::make_unique<RelaxedBarrierPenalty>(barrierPenaltyConfig));
     }
 
-    /******************************************************************************************************/
-    /******************************************************************************************************/
-    /******************************************************************************************************/
-    std::unique_ptr<EndEffectorKinematics<scalar_t> > LeggedInterface::getEeKinematicsPtr(
-        const std::vector<std::string> &footNames,
-        const std::string &modelName) {
-        std::unique_ptr<EndEffectorKinematics<scalar_t> > eeKinematicsPtr;
 
-        const auto infoCppAd = centroidalModelInfo_.toCppAd();
+    std::unique_ptr<EndEffectorKinematics<scalar_t> > LeggedInterface::getEeKinematicsPtr(
+        const std::vector<std::string> &foot_names,
+        const std::string &model_name) {
+        const auto infoCppAd = centroidal_model_info_.toCppAd();
         const CentroidalModelPinocchioMappingCppAd pinocchioMappingCppAd(infoCppAd);
         auto velocityUpdateCallback = [&infoCppAd](const ad_vector_t &state,
                                                    PinocchioInterfaceCppAd &pinocchioInterfaceAd) {
             const ad_vector_t q = centroidal_model::getGeneralizedCoordinates(state, infoCppAd);
             updateCentroidalDynamics(pinocchioInterfaceAd, infoCppAd, q);
         };
-        eeKinematicsPtr.reset(new PinocchioEndEffectorKinematicsCppAd(*pinocchioInterfacePtr_, pinocchioMappingCppAd,
-                                                                      footNames,
-                                                                      centroidalModelInfo_.stateDim,
-                                                                      centroidalModelInfo_.inputDim,
-                                                                      velocityUpdateCallback, modelName,
-                                                                      modelSettings_.modelFolderCppAd,
-                                                                      modelSettings_.recompileLibrariesCppAd,
-                                                                      modelSettings_.verboseCppAd));
+        std::unique_ptr<EndEffectorKinematics<scalar_t> > end_effector_kinematics = std::make_unique<
+            PinocchioEndEffectorKinematicsCppAd>(
+            *pinocchio_interface_ptr_, pinocchioMappingCppAd,
+            foot_names,
+            centroidal_model_info_.stateDim,
+            centroidal_model_info_.inputDim,
+            velocityUpdateCallback, model_name,
+            model_settings_.modelFolderCppAd,
+            model_settings_.recompileLibrariesCppAd,
+            model_settings_.verboseCppAd);
 
-        return eeKinematicsPtr;
+        return end_effector_kinematics;
     }
 
-    /******************************************************************************************************/
-    /******************************************************************************************************/
-    /******************************************************************************************************/
+
     std::unique_ptr<StateInputConstraint> LeggedInterface::getZeroVelocityConstraint(
-        const EndEffectorKinematics<scalar_t> &eeKinematics,
-        size_t contactPointIndex) {
+        const EndEffectorKinematics<scalar_t> &end_effector_kinematics,
+        const size_t contact_point_index) {
         auto eeZeroVelConConfig = [](scalar_t positionErrorGain) {
             EndEffectorLinearConstraint::Config config;
             config.b.setZero(3);
@@ -366,14 +348,12 @@ namespace ocs2::legged_robot {
             }
             return config;
         };
-        return std::unique_ptr<StateInputConstraint>(new ZeroVelocityConstraintCppAd(
-            *referenceManagerPtr_, eeKinematics, contactPointIndex,
-            eeZeroVelConConfig(modelSettings_.positionErrorGain)));
+        return std::make_unique<ZeroVelocityConstraintCppAd>(
+            *reference_manager_ptr_, end_effector_kinematics, contact_point_index,
+            eeZeroVelConConfig(model_settings_.positionErrorGain));
     }
 
-    /******************************************************************************************************/
-    /******************************************************************************************************/
-    /******************************************************************************************************/
+
     std::unique_ptr<StateCost> LeggedInterface::getSelfCollisionConstraint(const PinocchioInterface &pinocchioInterface,
                                                                            const std::string &taskFile,
                                                                            const std::string &prefix,
@@ -385,7 +365,7 @@ namespace ocs2::legged_robot {
         scalar_t minimumDistance = 0.0;
 
         boost::property_tree::ptree pt;
-        boost::property_tree::read_info(taskFile, pt);
+        read_info(taskFile, pt);
         if (verbose) {
             std::cerr << "\n #### SelfCollision Settings: ";
             std::cerr << "\n #### =============================================================================\n";
@@ -396,16 +376,16 @@ namespace ocs2::legged_robot {
         loadData::loadStdVectorOfPair(taskFile, prefix + ".collisionObjectPairs", collisionObjectPairs, verbose);
         loadData::loadStdVectorOfPair(taskFile, prefix + ".collisionLinkPairs", collisionLinkPairs, verbose);
 
-        geometryInterfacePtr_ = std::make_unique<PinocchioGeometryInterface>(
+        geometry_interface_ptr_ = std::make_unique<PinocchioGeometryInterface>(
             pinocchioInterface, collisionLinkPairs, collisionObjectPairs);
         if (verbose) {
             std::cerr << " #### =============================================================================\n";
-            const size_t numCollisionPairs = geometryInterfacePtr_->getNumCollisionPairs();
+            const size_t numCollisionPairs = geometry_interface_ptr_->getNumCollisionPairs();
             std::cerr << "SelfCollision: Testing for " << numCollisionPairs << " collision pairs\n";
         }
 
         std::unique_ptr<StateConstraint> constraint = std::make_unique<LeggedSelfCollisionConstraint>(
-            CentroidalModelPinocchioMapping(centroidalModelInfo_), *geometryInterfacePtr_, minimumDistance);
+            CentroidalModelPinocchioMapping(centroidal_model_info_), *geometry_interface_ptr_, minimumDistance);
 
         auto penalty = std::make_unique<RelaxedBarrierPenalty>(RelaxedBarrierPenalty::Config{mu, delta});
 

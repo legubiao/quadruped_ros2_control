@@ -4,13 +4,16 @@
 
 #ifndef OCS2QUADRUPEDCONTROLLER_H
 #define OCS2QUADRUPEDCONTROLLER_H
-#include "SafetyChecker.h"
+
 #include <controller_interface/controller_interface.hpp>
-#include <ocs2_quadruped_controller/interface/LeggedInterface.h>
-#include <ocs2_mpc/MPC_MRT_Interface.h>
+#include <control_input_msgs/msg/inputs.hpp>
 #include <ocs2_centroidal_model/CentroidalModelRbdConversions.h>
+#include <ocs2_mpc/MPC_MRT_Interface.h>
 #include <ocs2_quadruped_controller/estimator/StateEstimateBase.h>
+#include <ocs2_quadruped_controller/interface/LeggedInterface.h>
 #include <ocs2_quadruped_controller/wbc/WbcBase.h>
+#include "SafetyChecker.h"
+#include "ocs2_quadruped_controller/control/CtrlComponent.h"
 
 namespace ocs2::legged_robot {
     class Ocs2QuadrupedController final : public controller_interface::ControllerInterface {
@@ -56,13 +59,45 @@ namespace ocs2::legged_robot {
             const rclcpp_lifecycle::State &previous_state) override;
 
     protected:
-        void setUpLeggedInterface();
+        void setupLeggedInterface();
 
         void setupMpc();
 
         void setupMrt();
 
         void setupStateEstimate();
+
+        CtrlComponent ctrl_comp_;
+        std::vector<std::string> joint_names_;
+        std::vector<std::string> command_interface_types_;
+        std::vector<std::string> state_interface_types_;
+
+        std::unordered_map<
+            std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> > *>
+        command_interface_map_ = {
+            {"effort", &ctrl_comp_.joint_torque_command_interface_},
+            {"position", &ctrl_comp_.joint_position_command_interface_},
+            {"velocity", &ctrl_comp_.joint_velocity_command_interface_},
+            {"kp", &ctrl_comp_.joint_kp_command_interface_},
+            {"kd", &ctrl_comp_.joint_kd_command_interface_}
+        };
+        std::unordered_map<
+            std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> > *>
+        state_interface_map_ = {
+            {"position", &ctrl_comp_.joint_position_state_interface_},
+            {"effort", &ctrl_comp_.joint_effort_state_interface_},
+            {"velocity", &ctrl_comp_.joint_velocity_state_interface_}
+        };
+
+        // IMU Sensor
+        std::string imu_name_;
+        std::vector<std::string> imu_interface_types_;
+        // Foot Force Sensor
+        std::string foot_force_name_;
+        std::vector<std::string> foot_force_interface_types_;
+
+        rclcpp::Subscription<control_input_msgs::msg::Inputs>::SharedPtr control_input_subscription_;
+
 
         SystemObservation currentObservation_;
 

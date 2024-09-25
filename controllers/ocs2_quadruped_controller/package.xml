@@ -15,6 +15,7 @@
   <depend>control_input_msgs</depend>
   <depend>qpOASES</depend>
   <depend>ocs2_self_collision</depend>
+  <depend>angles</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

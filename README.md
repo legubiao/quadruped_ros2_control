@@ -11,7 +11,7 @@ Todo List:
 - [x] Unitree Guide Controller
 - [x] Gazebo Simulation
 - [x] Leg PD Controller
-- [ ] Contact Sensor
+- [x] Contact Sensor
 - [ ] OCS2 Legged Control
 
 

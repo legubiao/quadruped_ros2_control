@@ -17,6 +17,7 @@ set(CONTROLLER_INCLUDE_DEPENDS
         ocs2_legged_robot_ros
         ocs2_self_collision
         control_input_msgs
+        angles
         nav_msgs
         qpOASES
 )
@@ -55,11 +56,31 @@ target_include_directories(${PROJECT_NAME}
         PUBLIC
         ${qpOASES_INCLUDE_DIR}
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-        "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
+        "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+        PRIVATE
+        src)
 ament_target_dependencies(
         ${PROJECT_NAME} PUBLIC
         ${CONTROLLER_INCLUDE_DEPENDS}
 )
+
+pluginlib_export_plugin_description_file(controller_interface ocs2_quadruped_controller.xml)
+
+install(
+        DIRECTORY include/
+        DESTINATION include/${PROJECT_NAME}
+)
+
+install(
+        TARGETS ${PROJECT_NAME}
+        EXPORT export_${PROJECT_NAME}
+        ARCHIVE DESTINATION lib/${PROJECT_NAME}
+        LIBRARY DESTINATION lib/${PROJECT_NAME}
+        RUNTIME DESTINATION bin
+)
+
+ament_export_dependencies(${CONTROLLER_INCLUDE_DEPENDS})
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 
 if (BUILD_TESTING)
     find_package(ament_lint_auto REQUIRED)

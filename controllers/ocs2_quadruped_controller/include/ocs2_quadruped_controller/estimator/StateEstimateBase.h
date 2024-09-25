@@ -16,6 +16,8 @@
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 
+struct CtrlComponent;
+
 namespace ocs2::legged_robot {
     class StateEstimateBase {
     public:
@@ -23,27 +25,27 @@ namespace ocs2::legged_robot {
 
         StateEstimateBase(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
                           const PinocchioEndEffectorKinematics &eeKinematics,
+                          CtrlComponent &ctrl_component,
                           rclcpp_lifecycle::LifecycleNode::SharedPtr node);
 
-        virtual void updateJointStates(const vector_t &jointPos, const vector_t &jointVel);
+        virtual void updateJointStates();
 
-        virtual void updateContact(contact_flag_t contactFlag) { contactFlag_ = contactFlag; }
+        virtual void updateContact();
 
-        virtual void updateImu(const Eigen::Quaternion<scalar_t> &quat, const vector3_t &angularVelLocal,
-                               const vector3_t &linearAccelLocal,
-                               const matrix3_t &orientationCovariance, const matrix3_t &angularVelCovariance,
-                               const matrix3_t &linearAccelCovariance);
+        virtual void updateImu();
 
         virtual vector_t update(const rclcpp::Time &time, const rclcpp::Duration &period) = 0;
 
-        size_t getMode() { return stanceLeg2ModeNumber(contactFlag_); }
+        size_t getMode() { return stanceLeg2ModeNumber(contact_flag_); }
 
     protected:
         void updateAngular(const vector3_t &zyx, const vector_t &angularVel);
 
         void updateLinear(const vector_t &pos, const vector_t &linearVel);
 
-        void publishMsgs(const nav_msgs::msg::Odometry &odom);
+        void publishMsgs(const nav_msgs::msg::Odometry &odom) const;
+
+        CtrlComponent &ctrl_component_;
 
         PinocchioInterface pinocchioInterface_;
         CentroidalModelInfo info_;
@@ -51,15 +53,13 @@ namespace ocs2::legged_robot {
 
         vector3_t zyxOffset_ = vector3_t::Zero();
         vector_t rbdState_;
-        contact_flag_t contactFlag_{};
+        contact_flag_t contact_flag_{};
         Eigen::Quaternion<scalar_t> quat_;
-        vector3_t angularVelLocal_, linearAccelLocal_;
+        vector3_t angular_vel_local_, linear_accel_local_;
         matrix3_t orientationCovariance_, angularVelCovariance_, linearAccelCovariance_;
 
-        rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odomPub_;
-        rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr posePub_;
-
-        rclcpp::Time lastPub_;
+        rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
+        rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr pose_pub_;
         rclcpp_lifecycle::LifecycleNode::SharedPtr node_;
     };
 
