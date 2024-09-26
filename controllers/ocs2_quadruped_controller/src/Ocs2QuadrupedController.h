@@ -102,7 +102,7 @@ namespace ocs2::legged_robot {
         rclcpp::Subscription<control_input_msgs::msg::Inputs>::SharedPtr control_input_subscription_;
 
 
-        SystemObservation currentObservation_;
+        SystemObservation current_observation_;
 
         std::string task_file_;
         std::string urdf_file_;
@@ -116,20 +116,20 @@ namespace ocs2::legged_robot {
 
         // Whole Body Control
         std::shared_ptr<WbcBase> wbc_;
-        std::shared_ptr<SafetyChecker> safetyChecker_;
+        std::shared_ptr<SafetyChecker> safety_checker_;
 
         // Nonlinear MPC
         std::shared_ptr<MPC_BASE> mpc_;
-        std::shared_ptr<MPC_MRT_Interface> mpcMrtInterface_;
+        std::shared_ptr<MPC_MRT_Interface> mpc_mrt_interface_;
 
-        std::shared_ptr<CentroidalModelRbdConversions> rbdConversions_;
+        std::shared_ptr<CentroidalModelRbdConversions> rbd_conversions_;
 
     private:
         vector_t measuredRbdState_;
-        std::thread mpcThread_;
-        std::atomic_bool controllerRunning_{}, mpcRunning_{};
-        benchmark::RepeatedTimer mpcTimer_;
-        benchmark::RepeatedTimer wbcTimer_;
+        std::thread mpc_thread_;
+        std::atomic_bool controller_running_{}, mpc_running_{};
+        benchmark::RepeatedTimer mpc_timer_;
+        benchmark::RepeatedTimer wbc_timer_;
     };
 }
 
