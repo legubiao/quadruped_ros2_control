@@ -67,6 +67,9 @@ namespace ocs2::legged_robot {
 
         void setupStateEstimate();
 
+        void updateStateEstimation(const rclcpp::Time &time,
+                                   const rclcpp::Duration &period);
+
         CtrlComponent ctrl_comp_;
         std::vector<std::string> joint_names_;
         std::vector<std::string> command_interface_types_;
@@ -104,6 +107,7 @@ namespace ocs2::legged_robot {
         std::string task_file_;
         std::string urdf_file_;
         std::string reference_file_;
+        std::string gait_file_;
 
         bool verbose_;
 
@@ -119,9 +123,9 @@ namespace ocs2::legged_robot {
         std::shared_ptr<MPC_MRT_Interface> mpcMrtInterface_;
 
         std::shared_ptr<CentroidalModelRbdConversions> rbdConversions_;
-        std::shared_ptr<StateEstimateBase> stateEstimate_;
 
     private:
+        vector_t measuredRbdState_;
         std::thread mpcThread_;
         std::atomic_bool controllerRunning_{}, mpcRunning_{};
         benchmark::RepeatedTimer mpcTimer_;

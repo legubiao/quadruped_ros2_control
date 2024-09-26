@@ -12,7 +12,6 @@
 #include "ocs2_quadruped_controller/control/CtrlComponent.h"
 
 namespace ocs2::legged_robot {
-    using namespace legged_robot;
 
     StateEstimateBase::StateEstimateBase(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
                                          const PinocchioEndEffectorKinematics &eeKinematics,

@@ -54,7 +54,9 @@ def launch_setup(context, *args, **kwargs):
                         'task_file': os.path.join(get_package_share_directory(package_description), 'config', 'ocs2',
                                                   'task.info'),
                         'reference_file': os.path.join(get_package_share_directory(package_description), 'config',
-                                                       'ocs2', 'reference.info')
+                                                       'ocs2', 'reference.info'),
+                        'gait_file': os.path.join(get_package_share_directory(package_description), 'config',
+                                                       'ocs2', 'gait.info')
                     }],
         output="both",
     )

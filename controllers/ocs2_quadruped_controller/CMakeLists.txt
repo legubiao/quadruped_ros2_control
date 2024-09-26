@@ -51,6 +51,8 @@ add_library(${PROJECT_NAME} SHARED
         src/interface/LeggedRobotPreComputation.cpp
         src/interface/LeggedInterface.cpp
 
+        src/control/GaitManager.cpp
+
 )
 target_include_directories(${PROJECT_NAME}
         PUBLIC

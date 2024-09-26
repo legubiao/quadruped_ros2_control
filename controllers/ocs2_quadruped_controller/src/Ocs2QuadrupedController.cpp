@@ -13,6 +13,7 @@
 #include <ocs2_ros_interfaces/synchronized_module/RosReferenceManager.h>
 #include <ocs2_sqp/SqpMpc.h>
 #include <angles/angles.h>
+#include <ocs2_quadruped_controller/control/GaitManager.h>
 
 namespace ocs2::legged_robot {
     using config_type = controller_interface::interface_configuration_type;
@@ -53,13 +54,9 @@ namespace ocs2::legged_robot {
 
     controller_interface::return_type Ocs2QuadrupedController::update(const rclcpp::Time &time,
                                                                       const rclcpp::Duration &period) {
+
         // State Estimate
-        const vector_t rbd_state = ctrl_comp_.estimator_->update(time, period);
-        currentObservation_.time += period.seconds();
-        const scalar_t yaw_last = currentObservation_.state(9);
-        currentObservation_.state = rbdConversions_->computeCentroidalStateFromRbdModel(rbd_state);
-        currentObservation_.state(9) = yaw_last + angles::shortest_angular_distance(yaw_last, currentObservation_.state(9));
-        currentObservation_.mode = stateEstimate_->getMode();
+        updateStateEstimation(time, period);
 
         // Update the current state of the system
         mpcMrtInterface_->setCurrentObservation(currentObservation_);
@@ -69,20 +66,22 @@ namespace ocs2::legged_robot {
 
         // Evaluate the current policy
         vector_t optimizedState, optimizedInput;
-        size_t plannedMode = 0;  // The mode that is active at the time the policy is evaluated at.
-        mpcMrtInterface_->evaluatePolicy(currentObservation_.time, currentObservation_.state, optimizedState, optimizedInput, plannedMode);
+        size_t plannedMode = 0; // The mode that is active at the time the policy is evaluated at.
+        mpcMrtInterface_->evaluatePolicy(currentObservation_.time, currentObservation_.state, optimizedState,
+                                         optimizedInput, plannedMode);
 
         // Whole body control
         currentObservation_.input = optimizedInput;
 
         wbcTimer_.startTimer();
-        vector_t x = wbc_->update(optimizedState, optimizedInput, rbd_state, plannedMode, period.seconds());
+        vector_t x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.seconds());
         wbcTimer_.endTimer();
 
         vector_t torque = x.tail(12);
 
         vector_t posDes = centroidal_model::getJointAngles(optimizedState, legged_interface_->getCentroidalModelInfo());
-        vector_t velDes = centroidal_model::getJointVelocities(optimizedInput, legged_interface_->getCentroidalModelInfo());
+        vector_t velDes = centroidal_model::getJointVelocities(optimizedInput,
+                                                               legged_interface_->getCentroidalModelInfo());
 
         // Safety check, if failed, stop the controller
         if (!safetyChecker_->check(currentObservation_, optimizedState, optimizedInput)) {
@@ -105,6 +104,7 @@ namespace ocs2::legged_robot {
         urdf_file_ = auto_declare<std::string>("urdf_file", urdf_file_);
         task_file_ = auto_declare<std::string>("task_file", task_file_);
         reference_file_ = auto_declare<std::string>("reference_file", reference_file_);
+        gait_file_ = auto_declare<std::string>("gait_file", gait_file_);
 
         verbose_ = false;
         loadData::loadCppDataType(task_file_, "legged_robot_interface.verbose", verbose_);
@@ -194,6 +194,30 @@ namespace ocs2::legged_robot {
             }
         }
 
+        if (mpcRunning_ == false) {
+            // Initial state
+            currentObservation_.state.setZero(static_cast<long>(legged_interface_->getCentroidalModelInfo().stateDim));
+            updateStateEstimation(get_node()->now(), rclcpp::Duration(0, 200000));
+            currentObservation_.input.setZero(static_cast<long>(legged_interface_->getCentroidalModelInfo().inputDim));
+            currentObservation_.mode = STANCE;
+
+            TargetTrajectories target_trajectories({currentObservation_.time}, {currentObservation_.state},
+                                                   {currentObservation_.input});
+
+            // Set the first observation and command and wait for optimization to finish
+            mpcMrtInterface_->setCurrentObservation(currentObservation_);
+            mpcMrtInterface_->getReferenceManager().setTargetTrajectories(target_trajectories);
+            RCLCPP_INFO(get_node()->get_logger(), "Waiting for the initial policy ...");
+            while (!mpcMrtInterface_->initialPolicyReceived()) {
+                std::cout<<legged_interface_->mpcSettings().mrtDesiredFrequency_<<std::endl;
+                mpcMrtInterface_->advanceMpc();
+                rclcpp::WallRate(legged_interface_->mpcSettings().mrtDesiredFrequency_).sleep();
+            }
+            RCLCPP_INFO(get_node()->get_logger(), "Initial policy has been received.");
+
+            mpcRunning_ = true;
+        }
+
         return CallbackReturn::SUCCESS;
     }
 
@@ -234,16 +258,16 @@ namespace ocs2::legged_robot {
 
         // Todo Handle Gait Receive.
         // Gait receiver
-        // auto gaitReceiverPtr =
-        //         std::make_shared<GaitReceiver>(this->get_node(),
-        //                                        legged_interface_->getSwitchedModelReferenceManagerPtr()->
-        //                                        getGaitSchedule(), robotName);
+        const auto gait_manager_ptr = std::make_shared<GaitManager>(
+            ctrl_comp_, legged_interface_->getSwitchedModelReferenceManagerPtr()->
+            getGaitSchedule());
+        gait_manager_ptr->init(gait_file_);
 
         // ROS ReferenceManager
         // auto rosReferenceManagerPtr = std::make_shared<RosReferenceManager>(
         //     robotName, legged_interface_->getReferenceManagerPtr());
         // rosReferenceManagerPtr->subscribe(this->get_node());
-        // mpc_->getSolverPtr()->addSynchronizedModule(gaitReceiverPtr);
+        // mpc_->getSolverPtr()->addSynchronizedModule(gait_manager_ptr);
         // mpc_->getSolverPtr()->setReferenceManager(rosReferenceManagerPtr);
         // observationPublisher_ = nh.advertise<ocs2_msgs::msg::mpc_observation>(robotName + "_mpc_observation", 1);
     }
@@ -281,6 +305,17 @@ namespace ocs2::legged_robot {
                                                                        *eeKinematicsPtr_, ctrl_comp_, this->get_node());
         dynamic_cast<KalmanFilterEstimate &>(*ctrl_comp_.estimator_).loadSettings(task_file_, verbose_);
         currentObservation_.time = 0;
+    }
+
+    void Ocs2QuadrupedController::updateStateEstimation(const rclcpp::Time &time, const rclcpp::Duration &period) {
+        measuredRbdState_ = ctrl_comp_.estimator_->update(time, period);
+        currentObservation_.time += period.seconds();
+        const scalar_t yaw_last = currentObservation_.state(9);
+        currentObservation_.state = rbdConversions_->computeCentroidalStateFromRbdModel(measuredRbdState_);
+        currentObservation_.state(9) = yaw_last + angles::shortest_angular_distance(
+                                           yaw_last, currentObservation_.state(9));
+        std::cout << ctrl_comp_.estimator_->getMode() << std::endl;
+        currentObservation_.mode = ctrl_comp_.estimator_->getMode();
     }
 }
 
