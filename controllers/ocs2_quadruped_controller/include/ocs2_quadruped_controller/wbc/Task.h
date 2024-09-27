@@ -12,7 +12,6 @@
 #include <utility>
 
 namespace ocs2::legged_robot {
-    using namespace ocs2;
 
     class Task {
     public:

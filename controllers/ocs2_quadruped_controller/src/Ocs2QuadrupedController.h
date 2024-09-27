@@ -12,6 +12,7 @@
 #include <ocs2_quadruped_controller/estimator/StateEstimateBase.h>
 #include <ocs2_quadruped_controller/interface/LeggedInterface.h>
 #include <ocs2_quadruped_controller/wbc/WbcBase.h>
+#include <ocs2_msgs/msg/mpc_observation.hpp>
 #include "SafetyChecker.h"
 #include "ocs2_quadruped_controller/control/CtrlComponent.h"
 
@@ -100,6 +101,7 @@ namespace ocs2::legged_robot {
         std::vector<std::string> foot_force_interface_types_;
 
         rclcpp::Subscription<control_input_msgs::msg::Inputs>::SharedPtr control_input_subscription_;
+        rclcpp::Publisher<ocs2_msgs::msg::MpcObservation>::SharedPtr observation_publisher_;
 
 
         SystemObservation current_observation_;

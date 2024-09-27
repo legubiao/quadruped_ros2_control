@@ -13,11 +13,11 @@
 #include <ocs2_robotic_tools/common/RotationTransforms.h>
 
 namespace ocs2::legged_robot {
-    KalmanFilterEstimate::KalmanFilterEstimate(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
-                                               const PinocchioEndEffectorKinematics &eeKinematics,
+    KalmanFilterEstimate::KalmanFilterEstimate(PinocchioInterface pinocchio_interface, CentroidalModelInfo info,
+                                               const PinocchioEndEffectorKinematics &ee_kinematics,
                                                CtrlComponent &ctrl_component,
                                                const rclcpp_lifecycle::LifecycleNode::SharedPtr &node)
-        : StateEstimateBase(std::move(pinocchioInterface), std::move(info), eeKinematics, ctrl_component,
+        : StateEstimateBase(std::move(pinocchio_interface), std::move(info), ee_kinematics, ctrl_component,
                             node),
           numContacts_(info_.numThreeDofContacts + info_.numSixDofContacts),
           dimContacts_(3 * numContacts_),
@@ -45,7 +45,7 @@ namespace ocs2::legged_robot {
         r_.setIdentity(numObserve_, numObserve_);
         feetHeights_.setZero(numContacts_);
 
-        eeKinematics_->setPinocchioInterface(pinocchioInterface_);
+        ee_kinematics_->setPinocchioInterface(pinocchio_interface_);
     }
 
     vector_t KalmanFilterEstimate::update(const rclcpp::Time &time, const rclcpp::Duration &period) {
@@ -61,28 +61,28 @@ namespace ocs2::legged_robot {
         q_.block(3, 3, 3, 3) = (dt * 9.81f / 20.f) * matrix3_t::Identity();
         q_.block(6, 6, dimContacts_, dimContacts_) = dt * matrix_t::Identity(dimContacts_, dimContacts_);
 
-        const auto &model = pinocchioInterface_.getModel();
-        auto &data = pinocchioInterface_.getData();
+        const auto &model = pinocchio_interface_.getModel();
+        auto &data = pinocchio_interface_.getData();
         size_t actuatedDofNum = info_.actuatedDofNum;
 
         vector_t qPino(info_.generalizedCoordinatesNum);
         vector_t vPino(info_.generalizedCoordinatesNum);
         qPino.setZero();
-        qPino.segment<3>(3) = rbdState_.head<3>(); // Only set orientation, let position in origin.
-        qPino.tail(actuatedDofNum) = rbdState_.segment(6, actuatedDofNum);
+        qPino.segment<3>(3) = rbd_state_.head<3>(); // Only set orientation, let position in origin.
+        qPino.tail(actuatedDofNum) = rbd_state_.segment(6, actuatedDofNum);
 
         vPino.setZero();
         vPino.segment<3>(3) = getEulerAnglesZyxDerivativesFromGlobalAngularVelocity<scalar_t>(
             qPino.segment<3>(3),
-            rbdState_.segment<3>(info_.generalizedCoordinatesNum));
+            rbd_state_.segment<3>(info_.generalizedCoordinatesNum));
         // Only set angular velocity, let linear velocity be zero
-        vPino.tail(actuatedDofNum) = rbdState_.segment(6 + info_.generalizedCoordinatesNum, actuatedDofNum);
+        vPino.tail(actuatedDofNum) = rbd_state_.segment(6 + info_.generalizedCoordinatesNum, actuatedDofNum);
 
         forwardKinematics(model, data, qPino, vPino);
         updateFramePlacements(model, data);
 
-        const auto eePos = eeKinematics_->getPosition(vector_t());
-        const auto eeVel = eeKinematics_->getVelocity(vector_t(), vector_t());
+        const auto eePos = ee_kinematics_->getPosition(vector_t());
+        const auto eeVel = ee_kinematics_->getVelocity(vector_t(), vector_t());
 
         matrix_t q = matrix_t::Identity(numState_, numState_);
         q.block(0, 0, 3, 3) = q_.block(0, 0, 3, 3) * imuProcessNoisePosition_;
@@ -154,7 +154,7 @@ namespace ocs2::legged_robot {
         odom.child_frame_id = "base";
         publishMsgs(odom);
 
-        return rbdState_;
+        return rbd_state_;
     }
 
     nav_msgs::msg::Odometry KalmanFilterEstimate::getOdomMsg() {

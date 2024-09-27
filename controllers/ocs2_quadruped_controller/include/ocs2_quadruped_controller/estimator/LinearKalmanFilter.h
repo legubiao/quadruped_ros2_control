@@ -16,8 +16,8 @@
 namespace ocs2::legged_robot {
     class KalmanFilterEstimate final : public StateEstimateBase {
     public:
-        KalmanFilterEstimate(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
-                             const PinocchioEndEffectorKinematics &eeKinematics,
+        KalmanFilterEstimate(PinocchioInterface pinocchio_interface, CentroidalModelInfo info,
+                             const PinocchioEndEffectorKinematics &ee_kinematics,
                              CtrlComponent &ctrl_component,
                              const rclcpp_lifecycle::LifecycleNode::SharedPtr &node);
 

@@ -41,7 +41,6 @@ namespace ocs2::legged_robot {
     }
 
     void GaitManager::getTargetGait() {
-        std::cout << "ctrl_component_.control_inputs_.command: " << ctrl_component_.control_inputs_.command << std::endl;
         if (ctrl_component_.control_inputs_.command == 0) return;
         target_gait_ = gait_list_[ctrl_component_.control_inputs_.command - 1];
         RCLCPP_INFO(rclcpp::get_logger("GaitManager"), "Switch to gait: %s",

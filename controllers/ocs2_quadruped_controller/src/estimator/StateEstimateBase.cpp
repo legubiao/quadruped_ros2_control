@@ -13,15 +13,15 @@
 
 namespace ocs2::legged_robot {
 
-    StateEstimateBase::StateEstimateBase(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
-                                         const PinocchioEndEffectorKinematics &eeKinematics,
+    StateEstimateBase::StateEstimateBase(PinocchioInterface pinocchio_interface, CentroidalModelInfo info,
+                                         const PinocchioEndEffectorKinematics &ee_kinematics,
                                          CtrlComponent &ctrl_component,
                                          rclcpp_lifecycle::LifecycleNode::SharedPtr node)
         : ctrl_component_(ctrl_component),
-          pinocchioInterface_(std::move(pinocchioInterface)),
+          pinocchio_interface_(std::move(pinocchio_interface)),
           info_(std::move(info)),
-          eeKinematics_(eeKinematics.clone()),
-          rbdState_(vector_t::Zero(2 * info_.generalizedCoordinatesNum)), node_(std::move(node)) {
+          ee_kinematics_(ee_kinematics.clone()),
+          rbd_state_(vector_t::Zero(2 * info_.generalizedCoordinatesNum)), node_(std::move(node)) {
         odom_pub_ = node_->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
         pose_pub_ = node_->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("pose", 10);
     }
@@ -35,8 +35,8 @@ namespace ocs2::legged_robot {
             joint_vel(i) = ctrl_component_.joint_velocity_state_interface_[i].get().get_value();
         }
 
-        rbdState_.segment(6, info_.actuatedDofNum) = joint_pos;
-        rbdState_.segment(6 + info_.generalizedCoordinatesNum, info_.actuatedDofNum) = joint_vel;
+        rbd_state_.segment(6, info_.actuatedDofNum) = joint_pos;
+        rbd_state_.segment(6 + info_.generalizedCoordinatesNum, info_.actuatedDofNum) = joint_vel;
     }
 
     void StateEstimateBase::updateContact() {
@@ -70,20 +70,20 @@ namespace ocs2::legged_robot {
         // angularVelCovariance_ = angularVelCovariance;
         // linearAccelCovariance_ = linearAccelCovariance;
 
-        const vector3_t zyx = quatToZyx(quat_) - zyxOffset_;
+        const vector3_t zyx = quatToZyx(quat_) - zyx_offset_;
         const vector3_t angularVelGlobal = getGlobalAngularVelocityFromEulerAnglesZyxDerivatives<scalar_t>(
             zyx, getEulerAnglesZyxDerivativesFromLocalAngularVelocity<scalar_t>(quatToZyx(quat_), angular_vel_local_));
         updateAngular(zyx, angularVelGlobal);
     }
 
     void StateEstimateBase::updateAngular(const vector3_t &zyx, const vector_t &angularVel) {
-        rbdState_.segment<3>(0) = zyx;
-        rbdState_.segment<3>(info_.generalizedCoordinatesNum) = angularVel;
+        rbd_state_.segment<3>(0) = zyx;
+        rbd_state_.segment<3>(info_.generalizedCoordinatesNum) = angularVel;
     }
 
     void StateEstimateBase::updateLinear(const vector_t &pos, const vector_t &linearVel) {
-        rbdState_.segment<3>(3) = pos;
-        rbdState_.segment<3>(info_.generalizedCoordinatesNum + 3) = linearVel;
+        rbd_state_.segment<3>(3) = pos;
+        rbd_state_.segment<3>(info_.generalizedCoordinatesNum + 3) = linearVel;
     }
 
     void StateEstimateBase::publishMsgs(const nav_msgs::msg::Odometry &odom) const {

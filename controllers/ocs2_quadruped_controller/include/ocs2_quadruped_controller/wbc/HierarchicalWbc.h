@@ -6,7 +6,7 @@
 #include "WbcBase.h"
 
 namespace ocs2::legged_robot {
-    class HierarchicalWbc : public WbcBase {
+    class HierarchicalWbc final : public WbcBase {
     public:
         using WbcBase::WbcBase;
 
