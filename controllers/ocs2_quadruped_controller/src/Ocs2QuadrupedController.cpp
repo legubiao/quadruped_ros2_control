@@ -86,6 +86,7 @@ namespace ocs2::legged_robot {
         // Safety check, if failed, stop the controller
         if (!safety_checker_->check(current_observation_, optimized_state, optimized_input)) {
             RCLCPP_ERROR(get_node()->get_logger(), "[Legged Controller] Safety check failed, stopping the controller.");
+            return controller_interface::return_type::ERROR;
         }
 
         for (int i = 0; i < joint_names_.size(); i++) {

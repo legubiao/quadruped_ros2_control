@@ -70,7 +70,7 @@ namespace ocs2::legged_robot {
 
         // Todo : load settings from ros param
         model_settings_.jointNames = {
-            "FF_hip_joint", "FL_thigh_joint", "FL_calf_joint",
+            "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
             "FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
             "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
             "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint"
@@ -160,7 +160,7 @@ namespace ocs2::legged_robot {
                 std::make_unique<PinocchioInterface>(
                     centroidal_model::createPinocchioInterface(urdf_file, model_settings_.jointNames));
 
-        // CentroidalModelInfo
+        // CentroidModelInfo
         centroidal_model_info_ = centroidal_model::createCentroidalModelInfo(
             *pinocchio_interface_ptr_, centroidal_model::loadCentroidalType(task_file),
             centroidal_model::loadDefaultJointState(pinocchio_interface_ptr_->getModel().nq - 6, reference_file),

@@ -13,7 +13,7 @@
   <depend>controller_interface</depend>
   <depend>pluginlib</depend>
   <depend>control_input_msgs</depend>
-  <depend>qpOASES</depend>
+  <depend>qpoases_colcon</depend>
   <depend>ocs2_self_collision</depend>
   <depend>angles</depend>
 

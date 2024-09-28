@@ -75,10 +75,6 @@ ocs2_quadruped_controller:
   ros__parameters:
     update_rate: 500  # Hz
 
-    #    urdf_file: "$(find legged_controllers)/config/$(arg robot_type)/robot.urdf"
-    #    task_file: "$(find go2_description)/config/ocs2/task.info"
-    #    reference_file: "$(find go2_description)/config/ocs2/reference.info"
-
     joints:
       - FL_hip_joint
       - FL_thigh_joint

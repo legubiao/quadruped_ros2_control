@@ -19,11 +19,11 @@ set(CONTROLLER_INCLUDE_DEPENDS
         control_input_msgs
         angles
         nav_msgs
+        qpoases_colcon
 )
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(qpOASES REQUIRED)
 foreach (Dependency IN ITEMS ${CONTROLLER_INCLUDE_DEPENDS})
     find_package(${Dependency} REQUIRED)
 endforeach ()
@@ -64,10 +64,6 @@ target_include_directories(${PROJECT_NAME}
 ament_target_dependencies(${PROJECT_NAME}
         ${CONTROLLER_INCLUDE_DEPENDS}
 )
-target_link_libraries(${PROJECT_NAME}
-        ${qpOASES_LIBRARY_DIR}/libqpOASES.a
-)
-
 pluginlib_export_plugin_description_file(controller_interface ocs2_quadruped_controller.xml)
 
 install(
