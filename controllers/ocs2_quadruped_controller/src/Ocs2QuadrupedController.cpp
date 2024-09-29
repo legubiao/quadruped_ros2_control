@@ -74,7 +74,7 @@ namespace ocs2::legged_robot {
         current_observation_.input = optimized_input;
 
         wbc_timer_.startTimer();
-        vector_t x = wbc_->update(optimized_state, optimized_input, measuredRbdState_, planned_mode, period.seconds());
+        vector_t x = wbc_->update(optimized_state, optimized_input, measured_rbd_state_, planned_mode, period.seconds());
         wbc_timer_.endTimer();
 
         vector_t torque = x.tail(12);
@@ -86,6 +86,13 @@ namespace ocs2::legged_robot {
         // Safety check, if failed, stop the controller
         if (!safety_checker_->check(current_observation_, optimized_state, optimized_input)) {
             RCLCPP_ERROR(get_node()->get_logger(), "[Legged Controller] Safety check failed, stopping the controller.");
+            for (int i = 0; i < joint_names_.size(); i++) {
+                ctrl_comp_.joint_torque_command_interface_[i].get().set_value(0);
+                ctrl_comp_.joint_position_command_interface_[i].get().set_value(0);
+                ctrl_comp_.joint_velocity_command_interface_[i].get().set_value(0);
+                ctrl_comp_.joint_kp_command_interface_[i].get().set_value(0.0);
+                ctrl_comp_.joint_kd_command_interface_[i].get().set_value(0.35);
+            }
             return controller_interface::return_type::ERROR;
         }
 
@@ -109,6 +116,7 @@ namespace ocs2::legged_robot {
         reference_file_ = auto_declare<std::string>("reference_file", reference_file_);
         gait_file_ = auto_declare<std::string>("gait_file", gait_file_);
 
+        // Load verbose parameter from the task file
         verbose_ = false;
         loadData::loadCppDataType(task_file_, "legged_robot_interface.verbose", verbose_);
 
@@ -129,9 +137,9 @@ namespace ocs2::legged_robot {
         setupMrt();
 
         // Visualization
-        CentroidalModelPinocchioMapping pinocchioMapping(legged_interface_->getCentroidalModelInfo());
+        CentroidalModelPinocchioMapping pinocchio_mapping(legged_interface_->getCentroidalModelInfo());
         eeKinematicsPtr_ = std::make_shared<PinocchioEndEffectorKinematics>(
-            legged_interface_->getPinocchioInterface(), pinocchioMapping,
+            legged_interface_->getPinocchioInterface(), pinocchio_mapping,
             legged_interface_->modelSettings().contactNames3DoF);
         // robotVisualizer_ = std::make_shared<LeggedRobotVisualizer>(leggedInterface_->getPinocchioInterface(),
         //                                                            leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_, nh);
@@ -182,6 +190,7 @@ namespace ocs2::legged_robot {
         // assign command interfaces
         for (auto &interface: command_interfaces_) {
             std::string interface_name = interface.get_interface_name();
+            std::cout << "interface_name: " << interface.get_prefix_name() << std::endl;
             if (const size_t pos = interface_name.find('/'); pos != std::string::npos) {
                 command_interface_map_[interface_name.substr(pos + 1)]->push_back(interface);
             } else {
@@ -314,10 +323,10 @@ namespace ocs2::legged_robot {
     }
 
     void Ocs2QuadrupedController::updateStateEstimation(const rclcpp::Time &time, const rclcpp::Duration &period) {
-        measuredRbdState_ = ctrl_comp_.estimator_->update(time, period);
+        measured_rbd_state_ = ctrl_comp_.estimator_->update(time, period);
         current_observation_.time += period.seconds();
         const scalar_t yaw_last = current_observation_.state(9);
-        current_observation_.state = rbd_conversions_->computeCentroidalStateFromRbdModel(measuredRbdState_);
+        current_observation_.state = rbd_conversions_->computeCentroidalStateFromRbdModel(measured_rbd_state_);
         current_observation_.state(9) = yaw_last + angles::shortest_angular_distance(
                                             yaw_last, current_observation_.state(9));
         current_observation_.mode = ctrl_comp_.estimator_->getMode();

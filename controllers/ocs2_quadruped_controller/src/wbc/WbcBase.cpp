@@ -1,16 +1,18 @@
 //
 // Created by qiayuan on 2022/7/1.
 //
-#include <utility>
+
 #include "ocs2_quadruped_controller/wbc/WbcBase.h"
+
+#include <utility>
 #include <ocs2_centroidal_model/AccessHelperFunctions.h>
 #include <ocs2_centroidal_model/ModelHelperFunctions.h>
+#include <ocs2_core/misc/LoadData.h>
 #include <pinocchio/fwd.hpp>  // forward declarations must be included first.
 #include <pinocchio/algorithm/centroidal.hpp>
 #include <pinocchio/algorithm/crba.hpp>
 #include <pinocchio/algorithm/frames.hpp>
 #include <pinocchio/algorithm/rnea.hpp>
-#include <ocs2_core/misc/LoadData.h>
 
 namespace ocs2::legged_robot {
     WbcBase::WbcBase(const PinocchioInterface &pinocchioInterface, CentroidalModelInfo info,
@@ -31,7 +33,7 @@ namespace ocs2::legged_robot {
                              scalar_t /*period*/) {
         contact_flag_ = modeNumber2StanceLeg(mode);
         num_contacts_ = 0;
-        for (bool flag: contact_flag_) {
+        for (const bool flag: contact_flag_) {
             if (flag) {
                 num_contacts_++;
             }
@@ -99,7 +101,7 @@ namespace ocs2::legged_robot {
     }
 
     Task WbcBase::formulateFloatingBaseEomTask() {
-        auto &data = pinocchio_interface_measured_.getData();
+        const auto &data = pinocchio_interface_measured_.getData();
 
         matrix_t s(info_.actuatedDofNum, info_.generalizedCoordinatesNum);
         s.block(0, 0, info_.actuatedDofNum, 6).setZero();

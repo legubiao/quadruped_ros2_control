@@ -2,13 +2,24 @@
 // Created by qiayuan on 2022/7/16.
 //
 
-#include <memory>
-#include <pinocchio/fwd.hpp>  // forward declarations must be included first.
+#include "ocs2_quadruped_controller/interface/LeggedInterface.h"
 
+#include <memory>
+#include <ocs2_centroidal_model/AccessHelperFunctions.h>
+#include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
+#include <ocs2_centroidal_model/FactoryFunctions.h>
+#include <ocs2_centroidal_model/ModelHelperFunctions.h>
+#include <ocs2_core/misc/LoadData.h>
+#include <ocs2_core/misc/LoadStdVectorOfPair.h>
+#include <ocs2_core/soft_constraint/StateInputSoftConstraint.h>
+#include <ocs2_core/soft_constraint/StateSoftConstraint.h>
+#include <ocs2_legged_robot/dynamics/LeggedRobotDynamicsAD.h>
+#include <ocs2_oc/synchronized_module/SolverSynchronizedModule.h>
+#include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematicsCppAd.h>
+#include <pinocchio/fwd.hpp>  // forward declarations must be included first.
 #include <pinocchio/algorithm/frames.hpp>
 #include <pinocchio/algorithm/jacobian.hpp>
 
-#include "ocs2_quadruped_controller/interface/LeggedInterface.h"
 #include "ocs2_quadruped_controller/interface/LeggedRobotPreComputation.h"
 #include "ocs2_quadruped_controller/interface/constraint/FrictionConeConstraint.h"
 #include "ocs2_quadruped_controller/interface/constraint/LeggedSelfCollisionConstraint.h"
@@ -18,25 +29,13 @@
 #include "ocs2_quadruped_controller/interface/cost/LeggedRobotQuadraticTrackingCost.h"
 #include "ocs2_quadruped_controller/interface/initialization/LeggedRobotInitializer.h"
 
-#include <ocs2_centroidal_model/AccessHelperFunctions.h>
-#include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
-#include <ocs2_centroidal_model/FactoryFunctions.h>
-#include <ocs2_centroidal_model/ModelHelperFunctions.h>
-#include <ocs2_core/misc/LoadData.h>
-#include <ocs2_core/misc/LoadStdVectorOfPair.h>
-#include <ocs2_core/soft_constraint/StateInputSoftConstraint.h>
-#include <ocs2_core/soft_constraint/StateSoftConstraint.h>
-#include <ocs2_oc/synchronized_module/SolverSynchronizedModule.h>
-#include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematicsCppAd.h>
-
-#include <ocs2_legged_robot/dynamics/LeggedRobotDynamicsAD.h>
-
 // Boost
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 
 namespace ocs2::legged_robot {
-    LeggedInterface::LeggedInterface(const std::string &task_file, const std::string &urdf_file,
+    LeggedInterface::LeggedInterface(const std::string &task_file,
+                                     const std::string &urdf_file,
                                      const std::string &reference_file,
                                      const bool use_hard_friction_cone_constraint)
         : use_hard_friction_cone_constraint_(use_hard_friction_cone_constraint) {
@@ -85,7 +84,8 @@ namespace ocs2::legged_robot {
     }
 
 
-    void LeggedInterface::setupOptimalControlProblem(const std::string &task_file, const std::string &urdf_file,
+    void LeggedInterface::setupOptimalControlProblem(const std::string &task_file,
+                                                     const std::string &urdf_file,
                                                      const std::string &reference_file,
                                                      const bool verbose) {
         setupModel(task_file, urdf_file, reference_file);
@@ -147,9 +147,9 @@ namespace ocs2::legged_robot {
         rollout_ptr_ = std::make_unique<TimeTriggeredRollout>(*problem_ptr_->dynamicsPtr, rollout_settings_);
 
         // Initialization
-        constexpr bool extendNormalizedNomentum = true;
+        constexpr bool extend_normalized_momentum = true;
         initializer_ptr_ = std::make_unique<LeggedRobotInitializer>(centroidal_model_info_, *reference_manager_ptr_,
-                                                                    extendNormalizedNomentum);
+                                                                    extend_normalized_momentum);
     }
 
 
@@ -171,7 +171,7 @@ namespace ocs2::legged_robot {
 
     void LeggedInterface::setupReferenceManager(const std::string &taskFile, const std::string &urdfFile,
                                                 const std::string &referenceFile,
-                                                bool verbose) {
+                                                const bool verbose) {
         auto swingTrajectoryPlanner =
                 std::make_unique<SwingTrajectoryPlanner>(
                     loadSwingTrajectorySettings(taskFile, "swing_trajectory_config", verbose), 4);

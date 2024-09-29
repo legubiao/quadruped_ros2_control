@@ -127,7 +127,7 @@ namespace ocs2::legged_robot {
         std::shared_ptr<CentroidalModelRbdConversions> rbd_conversions_;
 
     private:
-        vector_t measuredRbdState_;
+        vector_t measured_rbd_state_;
         std::thread mpc_thread_;
         std::atomic_bool controller_running_{}, mpc_running_{};
         benchmark::RepeatedTimer mpc_timer_;
