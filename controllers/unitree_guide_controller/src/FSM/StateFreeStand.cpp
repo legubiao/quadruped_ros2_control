@@ -33,23 +33,23 @@ void StateFreeStand::enter() {
         foot_pos.p -= fr_init_pos_.p;
         foot_pos.M = KDL::Rotation::RPY(0, 0, 0);
     }
-    ctrl_comp_.control_inputs_.get().command = 0;
+    ctrl_comp_.control_inputs_.command = 0;
 }
 
 void StateFreeStand::run() {
-    calc_body_target(invNormalize(ctrl_comp_.control_inputs_.get().lx, row_min_, row_max_),
-                     invNormalize(ctrl_comp_.control_inputs_.get().ly, pitch_min_, pitch_max_),
-                     invNormalize(ctrl_comp_.control_inputs_.get().rx, yaw_min_, yaw_max_),
-                     invNormalize(ctrl_comp_.control_inputs_.get().ry, height_min_, height_max_));
+    calc_body_target(invNormalize(ctrl_comp_.control_inputs_.lx, row_min_, row_max_),
+                     invNormalize(ctrl_comp_.control_inputs_.ly, pitch_min_, pitch_max_),
+                     invNormalize(ctrl_comp_.control_inputs_.rx, yaw_min_, yaw_max_),
+                     invNormalize(ctrl_comp_.control_inputs_.ry, height_min_, height_max_));
 }
 
 void StateFreeStand::exit() {
 }
 
 FSMStateName StateFreeStand::checkChange() {
-    switch (ctrl_comp_.control_inputs_.get().command) {
+    switch (ctrl_comp_.control_inputs_.command) {
         case 1:
-            return FSMStateName::FIXEDDOWN;
+            return FSMStateName::PASSIVE;
         case 2:
             return FSMStateName::FIXEDSTAND;
         default:

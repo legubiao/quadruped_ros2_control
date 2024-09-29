@@ -38,8 +38,7 @@ struct CtrlComponent {
     std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> >
     imu_state_interface_;
 
-    control_input_msgs::msg::Inputs default_inputs_;
-    std::reference_wrapper<control_input_msgs::msg::Inputs> control_inputs_;
+    control_input_msgs::msg::Inputs control_inputs_;
     int frequency_{};
 
     QuadrupedRobot robot_model_;
@@ -48,8 +47,7 @@ struct CtrlComponent {
 
     WaveGenerator wave_generator_;
 
-    CtrlComponent() : control_inputs_(default_inputs_),
-                      robot_model_(*this),
+    CtrlComponent() : robot_model_(*this),
                       estimator_(*this) {
     }
 

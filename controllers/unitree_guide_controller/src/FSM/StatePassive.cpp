@@ -27,7 +27,7 @@ void StatePassive::enter() {
     for (auto i: ctrl_comp_.joint_kd_command_interface_) {
         i.get().set_value(1);
     }
-    ctrl_comp_.control_inputs_.get().command = 0;
+    ctrl_comp_.control_inputs_.command = 0;
 }
 
 void StatePassive::run() {
@@ -37,7 +37,7 @@ void StatePassive::exit() {
 }
 
 FSMStateName StatePassive::checkChange() {
-    if (ctrl_comp_.control_inputs_.get().command == 2) {
+    if (ctrl_comp_.control_inputs_.command == 2) {
         return FSMStateName::FIXEDDOWN;
     }
     return FSMStateName::PASSIVE;

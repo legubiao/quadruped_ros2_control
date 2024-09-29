@@ -26,8 +26,21 @@ void KeyboardInput::timer_callback() {
             inputs_.ly = 0;
             inputs_.rx = 0;
             inputs_.ry = 0;
+            reset_count_ = 100;
         }
         publisher_->publish(inputs_);
+        just_published_ = true;
+    } else {
+        if (just_published_) {
+            reset_count_ -= 1;
+            if (reset_count_ == 0) {
+                just_published_ = false;
+                if (inputs_.command != 0) {
+                    inputs_.command = 0;
+                    publisher_->publish(inputs_);
+                }
+            }
+        }
     }
 }
 
