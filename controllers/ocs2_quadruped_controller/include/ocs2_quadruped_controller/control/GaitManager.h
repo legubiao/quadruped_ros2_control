@@ -31,6 +31,7 @@ namespace ocs2::legged_robot {
         std::shared_ptr<GaitSchedule> gait_schedule_ptr_;
 
         ModeSequenceTemplate target_gait_;
+        int last_command_ = 0;
         bool gait_updated_{false};
         bool verbose_{false};
         std::vector<ModeSequenceTemplate> gait_list_;
