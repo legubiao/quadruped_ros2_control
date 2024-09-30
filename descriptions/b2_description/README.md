@@ -1,6 +1,7 @@
 # Unitree B2 Description
 This repository contains the urdf model of b2.
 
+![B2](../../.images/b2.png)
 
 ## Build
 ```bash

@@ -11,7 +11,7 @@ from launch_ros.substitutions import FindPackageShare
 from sympy.physics.vector.printing import params
 
 package_description = "aliengo_description"
-
+package_controller = "ocs2_quadruped_controller"
 
 def process_xacro(context):
     robot_type_value = context.launch_configurations['robot_type']
@@ -107,7 +107,7 @@ def generate_launch_description():
         description='Type of the robot'
     )
 
-    rviz_config_file = os.path.join(get_package_share_directory(package_description), "config", "visualize_urdf.rviz")
+    rviz_config_file = os.path.join(get_package_share_directory(package_controller), "config", "visualize_ocs2.rviz")
 
     return LaunchDescription([
         robot_type_arg,

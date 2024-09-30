@@ -1,6 +1,8 @@
 # Unitree Go2 Description
 This repository contains the urdf model of go2.
 
+![go2](../../.images/go2.png)
+
 Tested environment:
 * Ubuntu 24.04
   * ROS2 Jazzy

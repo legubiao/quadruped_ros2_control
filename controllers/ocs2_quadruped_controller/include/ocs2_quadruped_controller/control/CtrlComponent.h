@@ -10,6 +10,7 @@
 #include <hardware_interface/loaned_state_interface.hpp>
 #include <control_input_msgs/msg/inputs.hpp>
 #include <ocs2_mpc/SystemObservation.h>
+#include <ocs2_legged_robot_ros/visualization/LeggedRobotVisualizer.h>
 
 #include "TargetManager.h"
 #include "ocs2_quadruped_controller/estimator/StateEstimateBase.h"
@@ -46,6 +47,7 @@ struct CtrlComponent {
 
     std::shared_ptr<ocs2::legged_robot::StateEstimateBase> estimator_;
     std::shared_ptr<ocs2::legged_robot::TargetManager> target_manager_;
+    std::shared_ptr<ocs2::legged_robot::LeggedRobotVisualizer> visualizer_;
 
     CtrlComponent() {
     }

@@ -1,6 +1,8 @@
 # Unitree AlienGo Description
 This repository contains the urdf model of Aliengo.
 
+![Aliengo](../../.images/aliengo.png)
+
 Tested environment:
 * Ubuntu 24.04
     * ROS2 Jazzy

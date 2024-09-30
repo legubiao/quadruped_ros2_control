@@ -109,7 +109,8 @@
       <child link="${name}_thigh"/>
       <axis xyz="0 1 0"/>
       <dynamics damping="${damping}" friction="${friction}"/>
-      <limit effort="${thigh_torque_max}" velocity="${thigh_velocity_max}"/>
+      <limit effort="${thigh_torque_max}" velocity="${thigh_velocity_max}" lower="${thigh_position_min}"
+             upper="${thigh_position_max}"/>
     </joint>
 
     <joint name="${name}_thigh_rotor_joint" type="fixed">

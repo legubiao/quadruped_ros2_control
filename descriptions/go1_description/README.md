@@ -1,6 +1,8 @@
 # Unitree Go1 Description
 This repository contains the urdf model of go1.
 
+![go1](../../.images/go1.png)
+
 ## Build
 ```bash
 cd ~/ros2_ws

@@ -36,3 +36,8 @@ colcon build --packages-up-to ocs2_quadruped_controller
   source ~/ros2_ws/install/setup.bash
   ros2 launch go2_description ocs2_control.launch.py
   ```
+* Unitree B2 Robot
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch b2_description ocs2_control.launch.py
+  ```

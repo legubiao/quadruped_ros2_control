@@ -276,12 +276,6 @@
       </geometry>
       <material name="green"/>
     </visual>
-    <!-- <collision>
-          <origin rpy="0 ${PI/2.0} 0" xyz="0 0 0"/>
-          <geometry>
-              <cylinder length="0.02" radius="0.035"/>
-          </geometry>
-      </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.146"/>
@@ -294,7 +288,7 @@
     <child link="FR_thigh"/>
     <axis xyz="0 1 0"/>
     <dynamics damping="0" friction="0"/>
-    <limit effort="35.278" velocity="20"/>
+    <limit effort="35.278" lower="-2.0943951023931953" upper="4.1887902047863905" velocity="20"/>
   </joint>
   <joint name="FR_thigh_rotor_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0.0 -0.0298 0"/>
@@ -329,12 +323,6 @@
       </geometry>
       <material name="green"/>
     </visual>
-    <!-- <collision>
-          <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
-          <geometry>
-              <cylinder length="0.02" radius="0.035"/>
-          </geometry>
-      </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.146"/>
@@ -360,7 +348,6 @@
       <geometry>
         <mesh filename="file:///home/tlab-uav/ros2_ws/install/aliengo_description/share/aliengo_description/meshes/calf.dae" scale="1 1 1"/>
       </geometry>
-      <material name="orange"/>
     </visual>
     <collision>
       <origin rpy="0 1.5707963267948966 0" xyz="0 0 -0.125"/>
@@ -380,14 +367,7 @@
       <geometry>
         <cylinder length="0.02" radius="0.035"/>
       </geometry>
-      <material name="green"/>
     </visual>
-    <!-- <collision>
-          <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
-          <geometry>
-              <cylinder length="0.02" radius="0.035"/>
-          </geometry>
-      </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.132"/>
@@ -405,7 +385,6 @@
       <geometry>
         <sphere radius="0.0165"/>
       </geometry>
-      <material name="green"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -489,12 +468,6 @@
       </geometry>
       <material name="green"/>
     </visual>
-    <!-- <collision>
-          <origin rpy="0 ${PI/2.0} 0" xyz="0 0 0"/>
-          <geometry>
-              <cylinder length="0.02" radius="0.035"/>
-          </geometry>
-      </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.146"/>
@@ -507,7 +480,7 @@
     <child link="FL_thigh"/>
     <axis xyz="0 1 0"/>
     <dynamics damping="0" friction="0"/>
-    <limit effort="35.278" velocity="20"/>
+    <limit effort="35.278" lower="-2.0943951023931953" upper="4.1887902047863905" velocity="20"/>
   </joint>
   <joint name="FL_thigh_rotor_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0.0 0.0298 0"/>
@@ -542,12 +515,6 @@
       </geometry>
       <material name="green"/>
     </visual>
-    <!-- <collision>
-          <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
-          <geometry>
-              <cylinder length="0.02" radius="0.035"/>
-          </geometry>
-      </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.146"/>
@@ -573,7 +540,6 @@
       <geometry>
         <mesh filename="file:///home/tlab-uav/ros2_ws/install/aliengo_description/share/aliengo_description/meshes/calf.dae" scale="1 1 1"/>
       </geometry>
-      <material name="orange"/>
     </visual>
     <collision>
       <origin rpy="0 1.5707963267948966 0" xyz="0 0 -0.125"/>
@@ -593,14 +559,7 @@
       <geometry>
         <cylinder length="0.02" radius="0.035"/>
       </geometry>
-      <material name="green"/>
     </visual>
-    <!-- <collision>
-          <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
-          <geometry>
-              <cylinder length="0.02" radius="0.035"/>
-          </geometry>
-      </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.132"/>
@@ -618,7 +577,6 @@
       <geometry>
         <sphere radius="0.0165"/>
       </geometry>
-      <material name="green"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -702,12 +660,6 @@
       </geometry>
       <material name="green"/>
     </visual>
-    <!-- <collision>
-          <origin rpy="0 ${PI/2.0} 0" xyz="0 0 0"/>
-          <geometry>
-              <cylinder length="0.02" radius="0.035"/>
-          </geometry>
-      </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.146"/>
@@ -720,7 +672,7 @@
     <child link="RR_thigh"/>
     <axis xyz="0 1 0"/>
     <dynamics damping="0" friction="0"/>
-    <limit effort="35.278" velocity="20"/>
+    <limit effort="35.278" lower="-2.0943951023931953" upper="4.1887902047863905" velocity="20"/>
   </joint>
   <joint name="RR_thigh_rotor_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0.0 -0.0298 0"/>
@@ -755,12 +707,6 @@
       </geometry>
       <material name="green"/>
     </visual>
-    <!-- <collision>
-          <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
-          <geometry>
-              <cylinder length="0.02" radius="0.035"/>
-          </geometry>
-      </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.146"/>
@@ -786,7 +732,6 @@
       <geometry>
         <mesh filename="file:///home/tlab-uav/ros2_ws/install/aliengo_description/share/aliengo_description/meshes/calf.dae" scale="1 1 1"/>
       </geometry>
-      <material name="orange"/>
     </visual>
     <collision>
       <origin rpy="0 1.5707963267948966 0" xyz="0 0 -0.125"/>
@@ -806,14 +751,7 @@
       <geometry>
         <cylinder length="0.02" radius="0.035"/>
       </geometry>
-      <material name="green"/>
     </visual>
-    <!-- <collision>
-          <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
-          <geometry>
-              <cylinder length="0.02" radius="0.035"/>
-          </geometry>
-      </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.132"/>
@@ -831,7 +769,6 @@
       <geometry>
         <sphere radius="0.0165"/>
       </geometry>
-      <material name="green"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -915,12 +852,6 @@
       </geometry>
       <material name="green"/>
     </visual>
-    <!-- <collision>
-          <origin rpy="0 ${PI/2.0} 0" xyz="0 0 0"/>
-          <geometry>
-              <cylinder length="0.02" radius="0.035"/>
-          </geometry>
-      </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.146"/>
@@ -933,7 +864,7 @@
     <child link="RL_thigh"/>
     <axis xyz="0 1 0"/>
     <dynamics damping="0" friction="0"/>
-    <limit effort="35.278" velocity="20"/>
+    <limit effort="35.278" lower="-2.0943951023931953" upper="4.1887902047863905" velocity="20"/>
   </joint>
   <joint name="RL_thigh_rotor_joint" type="fixed">
     <origin rpy="0 0 0" xyz="0.0 0.0298 0"/>
@@ -968,12 +899,6 @@
       </geometry>
       <material name="green"/>
     </visual>
-    <!-- <collision>
-          <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
-          <geometry>
-              <cylinder length="0.02" radius="0.035"/>
-          </geometry>
-      </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.146"/>
@@ -999,7 +924,6 @@
       <geometry>
         <mesh filename="file:///home/tlab-uav/ros2_ws/install/aliengo_description/share/aliengo_description/meshes/calf.dae" scale="1 1 1"/>
       </geometry>
-      <material name="orange"/>
     </visual>
     <collision>
       <origin rpy="0 1.5707963267948966 0" xyz="0 0 -0.125"/>
@@ -1019,14 +943,7 @@
       <geometry>
         <cylinder length="0.02" radius="0.035"/>
       </geometry>
-      <material name="green"/>
     </visual>
-    <!-- <collision>
-          <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
-          <geometry>
-              <cylinder length="0.02" radius="0.035"/>
-          </geometry>
-      </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.132"/>
@@ -1044,7 +961,6 @@
       <geometry>
         <sphere radius="0.0165"/>
       </geometry>
-      <material name="green"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
