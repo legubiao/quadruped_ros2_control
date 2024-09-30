@@ -24,9 +24,9 @@ ros2 launch joystick_input joystick.launch.py
 * Passive Mode: LB + B
 * Fixed Stand: LB + A
     * Free Stand: LB + X
-    * Trot: start
-    * SwingTest: LT + A
-    * Balance: LT + X
+    * Trot: LB + Y
+    * SwingTest: LT + B
+    * Balance: LT + A
 
 ### 1.2 Control Input
 

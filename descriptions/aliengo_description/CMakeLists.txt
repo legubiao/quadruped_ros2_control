@@ -4,7 +4,7 @@ project(aliengo_description)
 find_package(ament_cmake REQUIRED)
 
 install(
-        DIRECTORY meshes xacro launch config
+        DIRECTORY meshes xacro launch config urdf
         DESTINATION share/${PROJECT_NAME}/
 )
 

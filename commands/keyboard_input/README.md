@@ -24,8 +24,8 @@ ros2 run keyboard_input keyboard_input
 * Fixed Stand: Keyboard 2
     * Free Stand: Keyboard 3
     * Trot: Keyboard 4
-    * SwingTest: Keyboard 9
-    * Balance: Keyboard 0
+    * SwingTest: Keyboard 5
+    * Balance: Keyboard 6
 ### 1.2 Control Input
 * WASD IJKL: Move robot
 * Space: Reset Speed Input

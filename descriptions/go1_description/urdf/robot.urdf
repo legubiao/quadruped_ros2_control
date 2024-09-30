@@ -194,7 +194,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/trunk.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/trunk.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -252,7 +252,7 @@
     <visual>
       <origin rpy="3.141592653589793 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/hip.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/hip.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -276,12 +276,6 @@
       </geometry>
       <material name="green"/>
     </visual>
-    <!-- <collision>
-                <origin rpy="0 ${PI/2.0} 0" xyz="0 0 0"/>
-                <geometry>
-                    <cylinder length="0.02" radius="0.035"/>
-                </geometry>
-            </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.089"/>
@@ -305,9 +299,8 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/thigh_mirror.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/thigh_mirror.dae" scale="1 1 1"/>
       </geometry>
-      <!-- <material name="orange"/> -->
     </visual>
     <collision>
       <origin rpy="0 1.5707963267948966 0" xyz="0 0 -0.1065"/>
@@ -329,12 +322,6 @@
       </geometry>
       <material name="green"/>
     </visual>
-    <!-- <collision>
-                <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
-                <geometry>
-                    <cylinder length="0.02" radius="0.035"/>
-                </geometry>
-            </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.089"/>
@@ -358,9 +345,8 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/calf.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/calf.dae" scale="1 1 1"/>
       </geometry>
-      <!-- <material name="orange"/> -->
     </visual>
     <collision>
       <origin rpy="0 1.5707963267948966 0" xyz="0 0 -0.1065"/>
@@ -380,14 +366,7 @@
       <geometry>
         <cylinder length="0.02" radius="0.035"/>
       </geometry>
-      <material name="green"/>
     </visual>
-    <!-- <collision>
-                <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
-                <geometry>
-                    <cylinder length="0.02" radius="0.035"/>
-                </geometry>
-            </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.089"/>
@@ -405,7 +384,6 @@
       <geometry>
         <sphere radius="0.01"/>
       </geometry>
-      <!-- <material name="orange"/> -->
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -465,7 +443,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/hip.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/hip.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -489,12 +467,6 @@
       </geometry>
       <material name="green"/>
     </visual>
-    <!-- <collision>
-                <origin rpy="0 ${PI/2.0} 0" xyz="0 0 0"/>
-                <geometry>
-                    <cylinder length="0.02" radius="0.035"/>
-                </geometry>
-            </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.089"/>
@@ -518,9 +490,8 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/thigh.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/thigh.dae" scale="1 1 1"/>
       </geometry>
-      <!-- <material name="orange"/> -->
     </visual>
     <collision>
       <origin rpy="0 1.5707963267948966 0" xyz="0 0 -0.1065"/>
@@ -542,12 +513,6 @@
       </geometry>
       <material name="green"/>
     </visual>
-    <!-- <collision>
-                <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
-                <geometry>
-                    <cylinder length="0.02" radius="0.035"/>
-                </geometry>
-            </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.089"/>
@@ -571,9 +536,8 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/calf.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/calf.dae" scale="1 1 1"/>
       </geometry>
-      <!-- <material name="orange"/> -->
     </visual>
     <collision>
       <origin rpy="0 1.5707963267948966 0" xyz="0 0 -0.1065"/>
@@ -593,14 +557,7 @@
       <geometry>
         <cylinder length="0.02" radius="0.035"/>
       </geometry>
-      <material name="green"/>
     </visual>
-    <!-- <collision>
-                <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
-                <geometry>
-                    <cylinder length="0.02" radius="0.035"/>
-                </geometry>
-            </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.089"/>
@@ -618,7 +575,6 @@
       <geometry>
         <sphere radius="0.01"/>
       </geometry>
-      <!-- <material name="orange"/> -->
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -678,7 +634,7 @@
     <visual>
       <origin rpy="3.141592653589793 3.141592653589793 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/hip.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/hip.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -702,12 +658,6 @@
       </geometry>
       <material name="green"/>
     </visual>
-    <!-- <collision>
-                <origin rpy="0 ${PI/2.0} 0" xyz="0 0 0"/>
-                <geometry>
-                    <cylinder length="0.02" radius="0.035"/>
-                </geometry>
-            </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.089"/>
@@ -731,9 +681,8 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/thigh_mirror.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/thigh_mirror.dae" scale="1 1 1"/>
       </geometry>
-      <!-- <material name="orange"/> -->
     </visual>
     <collision>
       <origin rpy="0 1.5707963267948966 0" xyz="0 0 -0.1065"/>
@@ -755,12 +704,6 @@
       </geometry>
       <material name="green"/>
     </visual>
-    <!-- <collision>
-                <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
-                <geometry>
-                    <cylinder length="0.02" radius="0.035"/>
-                </geometry>
-            </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.089"/>
@@ -784,9 +727,8 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/calf.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/calf.dae" scale="1 1 1"/>
       </geometry>
-      <!-- <material name="orange"/> -->
     </visual>
     <collision>
       <origin rpy="0 1.5707963267948966 0" xyz="0 0 -0.1065"/>
@@ -806,14 +748,7 @@
       <geometry>
         <cylinder length="0.02" radius="0.035"/>
       </geometry>
-      <material name="green"/>
     </visual>
-    <!-- <collision>
-                <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
-                <geometry>
-                    <cylinder length="0.02" radius="0.035"/>
-                </geometry>
-            </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.089"/>
@@ -831,7 +766,6 @@
       <geometry>
         <sphere radius="0.01"/>
       </geometry>
-      <!-- <material name="orange"/> -->
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -891,7 +825,7 @@
     <visual>
       <origin rpy="0 3.141592653589793 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/hip.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/hip.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -915,12 +849,6 @@
       </geometry>
       <material name="green"/>
     </visual>
-    <!-- <collision>
-                <origin rpy="0 ${PI/2.0} 0" xyz="0 0 0"/>
-                <geometry>
-                    <cylinder length="0.02" radius="0.035"/>
-                </geometry>
-            </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.089"/>
@@ -944,9 +872,8 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/thigh.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/thigh.dae" scale="1 1 1"/>
       </geometry>
-      <!-- <material name="orange"/> -->
     </visual>
     <collision>
       <origin rpy="0 1.5707963267948966 0" xyz="0 0 -0.1065"/>
@@ -968,12 +895,6 @@
       </geometry>
       <material name="green"/>
     </visual>
-    <!-- <collision>
-                <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
-                <geometry>
-                    <cylinder length="0.02" radius="0.035"/>
-                </geometry>
-            </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.089"/>
@@ -997,9 +918,8 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/calf.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/calf.dae" scale="1 1 1"/>
       </geometry>
-      <!-- <material name="orange"/> -->
     </visual>
     <collision>
       <origin rpy="0 1.5707963267948966 0" xyz="0 0 -0.1065"/>
@@ -1019,14 +939,7 @@
       <geometry>
         <cylinder length="0.02" radius="0.035"/>
       </geometry>
-      <material name="green"/>
     </visual>
-    <!-- <collision>
-                <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
-                <geometry>
-                    <cylinder length="0.02" radius="0.035"/>
-                </geometry>
-            </collision> -->
     <inertial>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
       <mass value="0.089"/>
@@ -1044,7 +957,6 @@
       <geometry>
         <sphere radius="0.01"/>
       </geometry>
-      <!-- <material name="orange"/> -->
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -1102,7 +1014,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/depthCamera.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/depthCamera.dae" scale="1 1 1"/>
       </geometry>
     </visual>
     <inertial>
@@ -1176,7 +1088,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/depthCamera.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/depthCamera.dae" scale="1 1 1"/>
       </geometry>
     </visual>
     <inertial>
@@ -1250,7 +1162,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/depthCamera.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/depthCamera.dae" scale="1 1 1"/>
       </geometry>
     </visual>
     <inertial>
@@ -1324,7 +1236,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/depthCamera.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/depthCamera.dae" scale="1 1 1"/>
       </geometry>
     </visual>
     <inertial>
@@ -1398,7 +1310,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/depthCamera.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/depthCamera.dae" scale="1 1 1"/>
       </geometry>
     </visual>
     <inertial>
@@ -1486,7 +1398,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/ultraSound.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/ultraSound.dae" scale="1 1 1"/>
       </geometry>
       <material name="black"/>
     </visual>
@@ -1511,7 +1423,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/ultraSound.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/ultraSound.dae" scale="1 1 1"/>
       </geometry>
       <material name="black"/>
     </visual>
@@ -1536,7 +1448,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/biao/ros2_ws/install/go1_description/share/go1_description/meshes/ultraSound.dae" scale="1 1 1"/>
+        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go1_description/share/go1_description/meshes/ultraSound.dae" scale="1 1 1"/>
       </geometry>
       <material name="black"/>
     </visual>

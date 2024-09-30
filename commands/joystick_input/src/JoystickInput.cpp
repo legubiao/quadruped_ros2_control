@@ -19,14 +19,18 @@ void JoystickInput::joy_callback(sensor_msgs::msg::Joy::SharedPtr msg) {
         inputs_.command = 2; // LB + A
     } else if (msg->buttons[2] && msg->buttons[4]) {
         inputs_.command = 3; // LB + X
-    } else if (msg->buttons[7]) {
-        inputs_.command = 4; // START
-    } else if (msg->axes[2] != 1 && msg->buttons[2]) {
-        inputs_.command = 10; // LT + X
+    } else if (msg->buttons[3] && msg->buttons[4]) {
+        inputs_.command = 4; // LB + Y
+    } else if (msg->axes[2] != 1 && msg->buttons[1]) {
+        inputs_.command = 5; // LT + B
     } else if (msg->axes[2] != 1 && msg->buttons[0]) {
-        inputs_.command = 9; // LT + A
+        inputs_.command = 6; // LT + A
+    } else if (msg->axes[2] != 1 && msg->buttons[2]) {
+        inputs_.command = 7; // LT + X
     } else if (msg->axes[2] != 1 && msg->buttons[3]) {
         inputs_.command = 8; // LT + Y
+    } else if (msg->buttons[7]) {
+        inputs_.command = 9; // START
     } else {
         inputs_.command = 0;
         inputs_.lx = -msg->axes[0];

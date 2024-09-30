@@ -49,9 +49,9 @@ FSMStateName StateFixedStand::checkChange() {
             return FSMStateName::FREESTAND;
         case 4:
             return FSMStateName::TROTTING;
-        case 9:
+        case 5:
             return FSMStateName::SWINGTEST;
-        case 10:
+        case 6:
             return FSMStateName::BALANCETEST;
         default:
             return FSMStateName::FIXEDSTAND;

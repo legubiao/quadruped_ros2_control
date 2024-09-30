@@ -51,6 +51,8 @@ namespace ocs2::legged_robot {
         vector_t default_joint_state_{};
         scalar_t command_height_{};
         scalar_t time_to_target_{};
+        scalar_t target_displacement_velocity_;
+        scalar_t target_rotation_velocity_;
     };
 }
 

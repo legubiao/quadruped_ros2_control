@@ -20,14 +20,16 @@ namespace ocs2::legged_robot {
         loadData::loadCppDataType(reference_file, "comHeight", command_height_);
         loadData::loadEigenMatrix(reference_file, "defaultJointState", default_joint_state_);
         loadData::loadCppDataType(task_file, "mpc.timeHorizon", time_to_target_);
+        loadData::loadCppDataType(reference_file, "targetRotationVelocity", target_rotation_velocity_);
+        loadData::loadCppDataType(reference_file, "targetDisplacementVelocity", target_displacement_velocity_);
     }
 
     void TargetManager::update() {
         vector_t cmdGoal = vector_t::Zero(6);
-        cmdGoal[0] = ctrl_component_.control_inputs_.ly;
-        cmdGoal[1] = -ctrl_component_.control_inputs_.lx;
+        cmdGoal[0] = ctrl_component_.control_inputs_.ly * target_displacement_velocity_;
+        cmdGoal[1] = -ctrl_component_.control_inputs_.lx * target_displacement_velocity_;
         cmdGoal[2] = ctrl_component_.control_inputs_.ry;
-        cmdGoal[3] = -ctrl_component_.control_inputs_.rx;
+        cmdGoal[3] = -ctrl_component_.control_inputs_.rx * target_rotation_velocity_;
 
         const vector_t currentPose = ctrl_component_.observation_.state.segment<6>(6);
         const Eigen::Matrix<scalar_t, 3, 1> zyx = currentPose.tail(3);

@@ -56,17 +56,26 @@ void KeyboardInput::check_command(const char key) {
             inputs_.command = 3; // L2_X
             break;
         case '4':
-            inputs_.command = 4; // START
+            inputs_.command = 4; // L2_Y
             break;
-        case '0':
-            inputs_.command = 10; // L1_X
+        case '5':
+            inputs_.command = 5; // L1_A
             break;
-        case '9':
-            inputs_.command = 9; // L1_A
+        case '6':
+            inputs_.command = 6; // L1_B
+            break;
+        case '7':
+            inputs_.command = 7; // L1_X
             break;
         case '8':
             inputs_.command = 8; // L1_Y
             break;
+        case '9':
+            inputs_.command = 9;
+            break;
+        case '0':
+            inputs_.command = 10;
+        break;
         case ' ':
             inputs_.lx = 0;
             inputs_.ly = 0;

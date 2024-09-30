@@ -24,7 +24,7 @@ ros2 launch go2_description visualize.launch.py
 * Unitree Guide Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch go2_description hardware.launch.py
+  ros2 launch go2_description unitree_guide.launch.py
   ```
 * OCS2 Quadruped Controller
   ```bash
