@@ -12,9 +12,12 @@ Todo List:
 - [x] Gazebo Simulation
 - [x] Leg PD Controller
 - [x] Contact Sensor
-- [ ] OCS2 Legged Control
+- [x] OCS2 Legged Control
 
+Video for Unitree Guide Controller:
 [![](http://i1.hdslb.com/bfs/archive/310e6208920985ac43015b2da31c01ec15e2c5f9.jpg)](https://www.bilibili.com/video/BV1aJbAeZEuo/)
+
+
 
 ## 1. Build
 * rosdep

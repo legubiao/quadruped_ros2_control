@@ -105,8 +105,8 @@ namespace ocs2::legged_robot {
             ctrl_comp_.joint_torque_command_interface_[i].get().set_value(torque(i));
             ctrl_comp_.joint_position_command_interface_[i].get().set_value(pos_des(i));
             ctrl_comp_.joint_velocity_command_interface_[i].get().set_value(vel_des(i));
-            ctrl_comp_.joint_kp_command_interface_[i].get().set_value(0.0);
-            ctrl_comp_.joint_kd_command_interface_[i].get().set_value(6.0);
+            ctrl_comp_.joint_kp_command_interface_[i].get().set_value(default_kp_);
+            ctrl_comp_.joint_kd_command_interface_[i].get().set_value(default_kd_);
         }
 
         observation_publisher_->publish(ros_msg_conversions::createObservationMsg(ctrl_comp_.observation_));
@@ -136,6 +136,10 @@ namespace ocs2::legged_robot {
         foot_force_name_ = auto_declare<std::string>("foot_force_name", foot_force_name_);
         foot_force_interface_types_ =
                 auto_declare<std::vector<std::string> >("foot_force_interfaces", state_interface_types_);
+
+        // PD gains
+        default_kp_ = auto_declare<double>("default_kp", default_kp_);
+        default_kd_ = auto_declare<double>("default_kd", default_kd_);
 
         setupLeggedInterface();
         setupMpc();
