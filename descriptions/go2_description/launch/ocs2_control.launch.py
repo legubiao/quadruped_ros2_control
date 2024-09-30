@@ -11,7 +11,7 @@ from launch_ros.substitutions import FindPackageShare
 from sympy.physics.vector.printing import params
 
 package_description = "go2_description"
-
+package_controller = "ocs2_quadruped_controller"
 
 def process_xacro(context):
     robot_type_value = context.launch_configurations['robot_type']
@@ -75,7 +75,7 @@ def launch_setup(context, *args, **kwargs):
                    "--controller-manager", "/controller_manager"],
     )
 
-    unitree_guide_controller = Node(
+    ocs2_controller = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["ocs2_quadruped_controller", "--controller-manager", "/controller_manager"]
@@ -94,7 +94,7 @@ def launch_setup(context, *args, **kwargs):
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=imu_sensor_broadcaster,
-                on_exit=[unitree_guide_controller],
+                on_exit=[ocs2_controller],
             )
         ),
     ]
@@ -107,7 +107,7 @@ def generate_launch_description():
         description='Type of the robot'
     )
 
-    rviz_config_file = os.path.join(get_package_share_directory(package_description), "config", "visualize_urdf.rviz")
+    rviz_config_file = os.path.join(get_package_share_directory(package_controller), "config", "visualize_ocs2.rviz")
 
     return LaunchDescription([
         robot_type_arg,

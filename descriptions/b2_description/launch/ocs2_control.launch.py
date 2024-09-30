@@ -103,7 +103,7 @@ def launch_setup(context, *args, **kwargs):
 def generate_launch_description():
     robot_type_arg = DeclareLaunchArgument(
         'robot_type',
-        default_value='aliengo',
+        default_value='b2',
         description='Type of the robot'
     )
 
