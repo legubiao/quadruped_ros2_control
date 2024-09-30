@@ -9,7 +9,9 @@
 #include <hardware_interface/loaned_command_interface.hpp>
 #include <hardware_interface/loaned_state_interface.hpp>
 #include <control_input_msgs/msg/inputs.hpp>
+#include <ocs2_mpc/SystemObservation.h>
 
+#include "TargetManager.h"
 #include "ocs2_quadruped_controller/estimator/StateEstimateBase.h"
 
 struct CtrlComponent {
@@ -39,9 +41,11 @@ struct CtrlComponent {
     foot_force_state_interface_;
 
     control_input_msgs::msg::Inputs control_inputs_;
+    ocs2::SystemObservation observation_;
     int frequency_{};
 
     std::shared_ptr<ocs2::legged_robot::StateEstimateBase> estimator_;
+    std::shared_ptr<ocs2::legged_robot::TargetManager> target_manager_;
 
     CtrlComponent() {
     }

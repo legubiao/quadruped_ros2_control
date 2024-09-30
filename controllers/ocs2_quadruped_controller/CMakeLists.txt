@@ -52,6 +52,7 @@ add_library(${PROJECT_NAME} SHARED
         src/interface/LeggedInterface.cpp
 
         src/control/GaitManager.cpp
+        src/control/TargetManager.cpp
 
 )
 target_include_directories(${PROJECT_NAME}

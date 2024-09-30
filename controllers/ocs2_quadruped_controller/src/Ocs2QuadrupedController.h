@@ -103,9 +103,6 @@ namespace ocs2::legged_robot {
         rclcpp::Subscription<control_input_msgs::msg::Inputs>::SharedPtr control_input_subscription_;
         rclcpp::Publisher<ocs2_msgs::msg::MpcObservation>::SharedPtr observation_publisher_;
 
-
-        SystemObservation current_observation_;
-
         std::string task_file_;
         std::string urdf_file_;
         std::string reference_file_;
