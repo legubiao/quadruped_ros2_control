@@ -36,11 +36,11 @@ void StateBalanceTest::enter() {
 }
 
 void StateBalanceTest::run() {
-    pcd_(0) = pcd_init_(0) + invNormalize(ctrl_comp_.control_inputs_.get().ly, _xMin, _xMax);
-    pcd_(1) = pcd_init_(1) - invNormalize(ctrl_comp_.control_inputs_.get().lx, _yMin, _yMax);
-    pcd_(2) = pcd_init_(2) + invNormalize(ctrl_comp_.control_inputs_.get().ry, _zMin, _zMax);
+    pcd_(0) = pcd_init_(0) + invNormalize(ctrl_comp_.control_inputs_.ly, _xMin, _xMax);
+    pcd_(1) = pcd_init_(1) - invNormalize(ctrl_comp_.control_inputs_.lx, _yMin, _yMax);
+    pcd_(2) = pcd_init_(2) + invNormalize(ctrl_comp_.control_inputs_.ry, _zMin, _zMax);
 
-    const float yaw = - invNormalize(ctrl_comp_.control_inputs_.get().rx, _yawMin, _yawMax);
+    const float yaw = - invNormalize(ctrl_comp_.control_inputs_.rx, _yawMin, _yawMax);
     Rd_ = rotz(yaw) * init_rotation_;
 
     for (int i = 0; i < 12; i++) {
@@ -56,7 +56,7 @@ void StateBalanceTest::exit() {
 }
 
 FSMStateName StateBalanceTest::checkChange() {
-    switch (ctrl_comp_.control_inputs_.get().command) {
+    switch (ctrl_comp_.control_inputs_.command) {
         case 1:
             return FSMStateName::FIXEDDOWN;
         case 2:

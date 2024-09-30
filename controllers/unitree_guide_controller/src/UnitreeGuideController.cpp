@@ -105,11 +105,11 @@ namespace unitree_guide_controller {
         control_input_subscription_ = get_node()->create_subscription<control_input_msgs::msg::Inputs>(
             "/control_input", 10, [this](const control_input_msgs::msg::Inputs::SharedPtr msg) {
                 // Handle message
-                ctrl_comp_.control_inputs_.get().command = msg->command;
-                ctrl_comp_.control_inputs_.get().lx = msg->lx;
-                ctrl_comp_.control_inputs_.get().ly = msg->ly;
-                ctrl_comp_.control_inputs_.get().rx = msg->rx;
-                ctrl_comp_.control_inputs_.get().ry = msg->ry;
+                ctrl_comp_.control_inputs_.command = msg->command;
+                ctrl_comp_.control_inputs_.lx = msg->lx;
+                ctrl_comp_.control_inputs_.ly = msg->ly;
+                ctrl_comp_.control_inputs_.rx = msg->rx;
+                ctrl_comp_.control_inputs_.ry = msg->ry;
             });
 
         robot_description_subscription_ = get_node()->create_subscription<std_msgs::msg::String>(

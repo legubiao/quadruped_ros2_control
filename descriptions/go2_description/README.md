@@ -1,6 +1,8 @@
 # Unitree Go2 Description
 This repository contains the urdf model of go2.
 
+![go2](../../.images/go2.png)
+
 Tested environment:
 * Ubuntu 24.04
   * ROS2 Jazzy
@@ -20,11 +22,17 @@ source ~/ros2_ws/install/setup.bash
 ros2 launch go2_description visualize.launch.py
 ```
 
-## Launch Hardware Interface
-```bash
-source ~/ros2_ws/install/setup.bash
-ros2 launch go2_description hardware.launch.py
-```
+## Launch ROS2 Control
+* Unitree Guide Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch go2_description unitree_guide.launch.py
+  ```
+* OCS2 Quadruped Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch go2_description ocs2_control.launch.py
+  ```
 
 ## When used for isaac gym or other similiar engine 
 

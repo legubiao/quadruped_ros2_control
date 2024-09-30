@@ -1,0 +1,9 @@
+<library path="ocs2_quadruped_controller">
+  <class name="ocs2_quadruped_controller/Ocs2QuadrupedController"
+         type="ocs2::legged_robot::Ocs2QuadrupedController"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>
+      Quadruped Controller based on OCS2 Legged Control.
+    </description>
+  </class>
+</library>

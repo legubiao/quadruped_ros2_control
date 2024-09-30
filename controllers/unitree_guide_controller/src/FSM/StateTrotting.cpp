@@ -34,7 +34,7 @@ void StateTrotting::enter() {
     Rd = rotz(yaw_cmd_);
     w_cmd_global_.setZero();
 
-    ctrl_comp_.control_inputs_.get().command = 0;
+    ctrl_comp_.control_inputs_.command = 0;
     gait_generator_.restart();
 }
 
@@ -68,9 +68,9 @@ void StateTrotting::exit() {
 }
 
 FSMStateName StateTrotting::checkChange() {
-    switch (ctrl_comp_.control_inputs_.get().command) {
+    switch (ctrl_comp_.control_inputs_.command) {
         case 1:
-            return FSMStateName::FIXEDDOWN;
+            return FSMStateName::PASSIVE;
         case 2:
             return FSMStateName::FIXEDSTAND;
         default:
@@ -80,12 +80,12 @@ FSMStateName StateTrotting::checkChange() {
 
 void StateTrotting::getUserCmd() {
     /* Movement */
-    v_cmd_body_(0) = invNormalize(ctrl_comp_.control_inputs_.get().ly, v_x_limit_(0), v_x_limit_(1));
-    v_cmd_body_(1) = -invNormalize(ctrl_comp_.control_inputs_.get().lx, v_y_limit_(0), v_y_limit_(1));
+    v_cmd_body_(0) = invNormalize(ctrl_comp_.control_inputs_.ly, v_x_limit_(0), v_x_limit_(1));
+    v_cmd_body_(1) = -invNormalize(ctrl_comp_.control_inputs_.lx, v_y_limit_(0), v_y_limit_(1));
     v_cmd_body_(2) = 0;
 
     /* Turning */
-    d_yaw_cmd_ = -invNormalize(ctrl_comp_.control_inputs_.get().rx, w_yaw_limit_(0), w_yaw_limit_(1));
+    d_yaw_cmd_ = -invNormalize(ctrl_comp_.control_inputs_.rx, w_yaw_limit_(0), w_yaw_limit_(1));
     d_yaw_cmd_ = 0.9 * d_yaw_cmd_past_ + (1 - 0.9) * d_yaw_cmd_;
     d_yaw_cmd_past_ = d_yaw_cmd_;
 }

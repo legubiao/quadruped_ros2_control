@@ -15,7 +15,7 @@ void StateFixedStand::enter() {
     for (int i = 0; i < 12; i++) {
         start_pos_[i] = ctrl_comp_.joint_position_state_interface_[i].get().get_value();
     }
-    ctrl_comp_.control_inputs_.get().command = 0;
+    ctrl_comp_.control_inputs_.command = 0;
 }
 
 void StateFixedStand::run() {
@@ -40,16 +40,18 @@ FSMStateName StateFixedStand::checkChange() {
     if (percent_ < 1.5) {
         return FSMStateName::FIXEDSTAND;
     }
-    switch (ctrl_comp_.control_inputs_.get().command) {
+    switch (ctrl_comp_.control_inputs_.command) {
         case 1:
+            return FSMStateName::PASSIVE;
+        case 2:
             return FSMStateName::FIXEDDOWN;
         case 3:
             return FSMStateName::FREESTAND;
         case 4:
             return FSMStateName::TROTTING;
-        case 9:
+        case 5:
             return FSMStateName::SWINGTEST;
-        case 10:
+        case 6:
             return FSMStateName::BALANCETEST;
         default:
             return FSMStateName::FIXEDSTAND;

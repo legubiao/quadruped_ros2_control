@@ -38,25 +38,25 @@ void StateSwingTest::enter() {
 }
 
 void StateSwingTest::run() {
-    if (ctrl_comp_.control_inputs_.get().ly > 0) {
-        fr_goal_pos_.p.x(invNormalize(ctrl_comp_.control_inputs_.get().ly, fr_init_pos_.p.x(),
+    if (ctrl_comp_.control_inputs_.ly > 0) {
+        fr_goal_pos_.p.x(invNormalize(ctrl_comp_.control_inputs_.ly, fr_init_pos_.p.x(),
                                       fr_init_pos_.p.x() + _xMax, 0, 1));
     } else {
-        fr_goal_pos_.p.x(invNormalize(ctrl_comp_.control_inputs_.get().ly, fr_init_pos_.p.x() + _xMin,
+        fr_goal_pos_.p.x(invNormalize(ctrl_comp_.control_inputs_.ly, fr_init_pos_.p.x() + _xMin,
                                       fr_init_pos_.p.x(), -1, 0));
     }
-    if (ctrl_comp_.control_inputs_.get().lx > 0) {
-        fr_goal_pos_.p.y(invNormalize(ctrl_comp_.control_inputs_.get().lx, fr_init_pos_.p.y(),
+    if (ctrl_comp_.control_inputs_.lx > 0) {
+        fr_goal_pos_.p.y(invNormalize(ctrl_comp_.control_inputs_.lx, fr_init_pos_.p.y(),
                                       fr_init_pos_.p.y() + _yMax, 0, 1));
     } else {
-        fr_goal_pos_.p.y(invNormalize(ctrl_comp_.control_inputs_.get().lx, fr_init_pos_.p.y() + _yMin,
+        fr_goal_pos_.p.y(invNormalize(ctrl_comp_.control_inputs_.lx, fr_init_pos_.p.y() + _yMin,
                                       fr_init_pos_.p.y(), -1, 0));
     }
-    if (ctrl_comp_.control_inputs_.get().ry > 0) {
-        fr_goal_pos_.p.z(invNormalize(ctrl_comp_.control_inputs_.get().ry, fr_init_pos_.p.z(),
+    if (ctrl_comp_.control_inputs_.ry > 0) {
+        fr_goal_pos_.p.z(invNormalize(ctrl_comp_.control_inputs_.ry, fr_init_pos_.p.z(),
                                       fr_init_pos_.p.z() + _zMax, 0, 1));
     } else {
-        fr_goal_pos_.p.z(invNormalize(ctrl_comp_.control_inputs_.get().ry, fr_init_pos_.p.z() + _zMin,
+        fr_goal_pos_.p.z(invNormalize(ctrl_comp_.control_inputs_.ry, fr_init_pos_.p.z() + _zMin,
                                       fr_init_pos_.p.z(), -1, 0));
     }
 
@@ -68,9 +68,9 @@ void StateSwingTest::exit() {
 }
 
 FSMStateName StateSwingTest::checkChange() {
-    switch (ctrl_comp_.control_inputs_.get().command) {
+    switch (ctrl_comp_.control_inputs_.command) {
         case 1:
-            return FSMStateName::FIXEDDOWN;
+            return FSMStateName::PASSIVE;
         case 2:
             return FSMStateName::FIXEDSTAND;
         default:
