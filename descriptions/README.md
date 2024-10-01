@@ -5,6 +5,7 @@ This folder contains the URDF and SRDF files for the quadruped robot.
 * Unitree
   * [Go1](unitree/go1_description/)
   * [Go2](unitree/go2_description/)
+  * [A1](unitree/a1_description/)
   * [Aliengo](unitree/aliengo_description/)
   * [B2](unitree/b2_description/)
 * Xiaomi
