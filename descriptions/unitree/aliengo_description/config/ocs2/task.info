@@ -154,7 +154,7 @@ initialState
    ;; Base Pose: [position, orientation] ;;
    (6,0)  0.0     ; p_base_x
    (7,0)  0.0     ; p_base_y
-   (8,0)  0.3     ; p_base_z
+   (8,0)  0.39     ; p_base_z
    (9,0)  0.0     ; theta_base_z
    (10,0) 0.0     ; theta_base_y
    (11,0) 0.0     ; theta_base_x
@@ -283,9 +283,9 @@ selfCollision
 ; Whole body control
 torqueLimitsTask
 {
-   (0,0)  12.0     ; HAA
-   (1,0)  12.0     ; HFE
-   (2,0)  12.0       ; KFE
+   (0,0)  35.278     ; HAA
+   (1,0)  35.278     ; HFE
+   (2,0)  44.4       ; KFE
 }
 
 frictionConeTask

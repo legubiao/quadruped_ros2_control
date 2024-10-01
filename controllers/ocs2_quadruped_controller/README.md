@@ -3,6 +3,8 @@
 This is a ros2-control controller based on [legged_control](https://github.com/qiayuanl/legged_control)
 and [ocs2_ros2](https://github.com/legubiao/ocs2_ros2).
 
+[![](http://i0.hdslb.com/bfs/archive/e758ce019587032449a153cf897a543443b64bba.jpg)](https://www.bilibili.com/video/BV1UcxieuEmH/)
+
 ## 2. Build
 
 ### 2.1 Build Dependencies

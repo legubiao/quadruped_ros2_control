@@ -18,6 +18,8 @@ Todo List:
 Video for Unitree Guide Controller:
 [![](http://i1.hdslb.com/bfs/archive/310e6208920985ac43015b2da31c01ec15e2c5f9.jpg)](https://www.bilibili.com/video/BV1aJbAeZEuo/)
 
+Video for OCS2 Quadruped Controller:
+[![](http://i0.hdslb.com/bfs/archive/e758ce019587032449a153cf897a543443b64bba.jpg)](https://www.bilibili.com/video/BV1UcxieuEmH/)
 
 
 ## Quick Start
