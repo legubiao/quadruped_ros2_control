@@ -41,4 +41,4 @@ ros2 launch go2_description unitree_guide.launch.py
 source ~/ros2_ws/install/setup.bash
 ros2 run keyboard_input keyboard_input
 ```
-For more details, please refer to the [unitree guide controller](controllers/unitree_guide_controller/) and [go2 description](descriptions/go2_description/).
+For more details, please refer to the [unitree guide controller](controllers/unitree_guide_controller/) and [go2 description](descriptions/unitree/go2_description/).

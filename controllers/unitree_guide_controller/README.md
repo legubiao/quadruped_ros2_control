@@ -38,5 +38,5 @@ colcon build --packages-up-to unitree_guide_controller
 ```
 
 ## 3. Run
-* [Go2 in mujoco simulation](../../descriptions/go2_description)
+* [Go2 in mujoco simulation](../../descriptions/unitree/go2_description)
 * [Go1/A1 in gazebo simulation](../../descriptions/quadruped_gazebo)
