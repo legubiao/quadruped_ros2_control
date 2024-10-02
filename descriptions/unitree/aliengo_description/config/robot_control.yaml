@@ -102,7 +102,7 @@ ocs2_quadruped_controller:
       - position
       - velocity
 
-    feet_names:
+    feet:
       - FL_foot
       - FR_foot
       - RL_foot

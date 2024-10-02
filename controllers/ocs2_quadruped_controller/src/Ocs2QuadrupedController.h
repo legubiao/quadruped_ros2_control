@@ -73,6 +73,7 @@ namespace ocs2::legged_robot {
 
         CtrlComponent ctrl_comp_;
         std::vector<std::string> joint_names_;
+        std::vector<std::string> feet_names_;
         std::vector<std::string> command_interface_types_;
         std::vector<std::string> state_interface_types_;
 
@@ -99,6 +100,7 @@ namespace ocs2::legged_robot {
         // Foot Force Sensor
         std::string foot_force_name_;
         std::vector<std::string> foot_force_interface_types_;
+
         double default_kp_ = 0;
         double default_kd_ = 6;
 

@@ -131,6 +131,7 @@ namespace ocs2::legged_robot {
 
         // Hardware Parameters
         joint_names_ = auto_declare<std::vector<std::string> >("joints", joint_names_);
+        feet_names_ = auto_declare<std::vector<std::string> >("feet", feet_names_);
         command_interface_types_ =
                 auto_declare<std::vector<std::string> >("command_interfaces", command_interface_types_);
         state_interface_types_ =
@@ -226,12 +227,15 @@ namespace ocs2::legged_robot {
 
         if (mpc_running_ == false) {
             // Initial state
-            ctrl_comp_.observation_.state.setZero(static_cast<long>(legged_interface_->getCentroidalModelInfo().stateDim));
+            ctrl_comp_.observation_.state.setZero(
+                static_cast<long>(legged_interface_->getCentroidalModelInfo().stateDim));
             updateStateEstimation(get_node()->now(), rclcpp::Duration(0, 200000));
-            ctrl_comp_.observation_.input.setZero(static_cast<long>(legged_interface_->getCentroidalModelInfo().inputDim));
+            ctrl_comp_.observation_.input.setZero(
+                static_cast<long>(legged_interface_->getCentroidalModelInfo().inputDim));
             ctrl_comp_.observation_.mode = STANCE;
 
-            const TargetTrajectories target_trajectories({ctrl_comp_.observation_.time}, {ctrl_comp_.observation_.state},
+            const TargetTrajectories target_trajectories({ctrl_comp_.observation_.time},
+                                                         {ctrl_comp_.observation_.state},
                                                          {ctrl_comp_.observation_.input});
 
             // Set the first observation and command and wait for optimization to finish
@@ -273,6 +277,7 @@ namespace ocs2::legged_robot {
 
     void Ocs2QuadrupedController::setupLeggedInterface() {
         legged_interface_ = std::make_shared<LeggedInterface>(task_file_, urdf_file_, reference_file_);
+        legged_interface_->setupJointNames(joint_names_, feet_names_);
         legged_interface_->setupOptimalControlProblem(task_file_, urdf_file_, reference_file_, verbose_);
     }
 
@@ -338,7 +343,7 @@ namespace ocs2::legged_robot {
         const scalar_t yaw_last = ctrl_comp_.observation_.state(9);
         ctrl_comp_.observation_.state = rbd_conversions_->computeCentroidalStateFromRbdModel(measured_rbd_state_);
         ctrl_comp_.observation_.state(9) = yaw_last + angles::shortest_angular_distance(
-                                            yaw_last, ctrl_comp_.observation_.state(9));
+                                               yaw_last, ctrl_comp_.observation_.state(9));
         ctrl_comp_.observation_.mode = ctrl_comp_.estimator_->getMode();
     }
 }

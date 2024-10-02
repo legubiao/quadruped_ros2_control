@@ -67,15 +67,6 @@ namespace ocs2::legged_robot {
         // load setting from loading file
         model_settings_ = loadModelSettings(task_file, "model_settings", verbose);
 
-        // Todo : load settings from ros param
-        model_settings_.jointNames = {
-            "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
-            "FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
-            "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
-            "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint"
-        };
-        model_settings_.contactNames3DoF = {"FL_foot", "FR_foot", "RL_foot", "RR_foot"};
-
         mpc_settings_ = mpc::loadSettings(task_file, "mpc", verbose);
         ddp_settings_ = ddp::loadSettings(task_file, "ddp", verbose);
         sqp_settings_ = sqp::loadSettings(task_file, "sqp", verbose);
@@ -83,6 +74,12 @@ namespace ocs2::legged_robot {
         rollout_settings_ = rollout::loadSettings(task_file, "rollout", verbose);
     }
 
+
+    void LeggedInterface::setupJointNames(const std::vector<std::string> &joint_names,
+                                          const std::vector<std::string> &foot_names) {
+        model_settings_.jointNames = joint_names;
+        model_settings_.contactNames3DoF = foot_names;
+    }
 
     void LeggedInterface::setupOptimalControlProblem(const std::string &task_file,
                                                      const std::string &urdf_file,
