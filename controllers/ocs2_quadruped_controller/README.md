@@ -3,7 +3,31 @@
 This is a ros2-control controller based on [legged_control](https://github.com/qiayuanl/legged_control)
 and [ocs2_ros2](https://github.com/legubiao/ocs2_ros2).
 
+Tested environment:
+* Ubuntu 24.04
+  * ROS2 Jazzy
+
 [![](http://i0.hdslb.com/bfs/archive/e758ce019587032449a153cf897a543443b64bba.jpg)](https://www.bilibili.com/video/BV1UcxieuEmH/)
+
+## 1. Interfaces
+
+Required hardware interfaces:
+
+* command:
+  * joint position
+  * joint velocity
+  * joint effort
+  * KP
+  * KD
+* state:
+  * joint effort
+  * joint position
+  * joint velocity
+  * imu sensor
+    * linear acceleration
+    * angular velocity
+    * orientation
+  * feet force sensor
 
 ## 2. Build
 
