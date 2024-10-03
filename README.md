@@ -44,3 +44,13 @@ source ~/ros2_ws/install/setup.bash
 ros2 run keyboard_input keyboard_input
 ```
 For more details, please refer to the [unitree guide controller](controllers/unitree_guide_controller/) and [go2 description](descriptions/unitree/go2_description/).
+
+## Reference
+
+### Conference Paper
+[1] Liao, Qiayuan, et al. "Walking in narrow spaces: Safety-critical locomotion control for quadrupedal robots with duality-based optimization." In *2023 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)*, pp. 2723-2730. IEEE, 2023.
+
+### Miscellaneous
+[1] Unitree Robotics. *unitree\_guide: An open source project for controlling the quadruped robot of Unitree Robotics, and it is also the software project accompanying 《四足机器人控制算法--建模、控制与实践》 published by Unitree Robotics*. [Online]. Available: [https://github.com/unitreerobotics/unitree_guide](https://github.com/unitreerobotics/unitree_guide)
+
+[2] Qiayuan Liao. *legged\_control: An open-source NMPC, WBC, state estimation, and sim2real framework for legged robots*. [Online]. Available: [https://github.com/qiayuanl/legged_control](https://github.com/qiayuanl/legged_control)
