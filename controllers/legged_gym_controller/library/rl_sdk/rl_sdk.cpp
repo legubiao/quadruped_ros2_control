@@ -374,55 +374,55 @@ std::vector<T> ReadVectorFromYaml(const YAML::Node& node, const std::string& fra
 
 void RL::ReadYaml(std::string robot_name)
 {
-    // The config file is located at "rl_sar/src/rl_sar/models/<robot_name>/config.yaml"
-    std::string config_path = std::string(CMAKE_CURRENT_SOURCE_DIR) + "/models/" + robot_name + "/config.yaml";
-    YAML::Node config;
-    try
-    {
-        config = YAML::LoadFile(config_path)[robot_name];
-    } catch(YAML::BadFile &e)
-    {
-        std::cout << LOGGER::ERROR << "The file '" << config_path << "' does not exist" << std::endl;
-        return;
-    }
-
-    this->params.model_name = config["model_name"].as<std::string>();
-    this->params.framework = config["framework"].as<std::string>();
-    int rows = config["rows"].as<int>();
-    int cols = config["cols"].as<int>();
-    this->params.use_history = config["use_history"].as<bool>();
-    this->params.dt = config["dt"].as<double>();
-    this->params.decimation = config["decimation"].as<int>();
-    this->params.num_observations = config["num_observations"].as<int>();
-    this->params.observations = ReadVectorFromYaml<std::string>(config["observations"]);
-    this->params.clip_obs = config["clip_obs"].as<double>();
-    if(config["clip_actions_lower"].IsNull() && config["clip_actions_upper"].IsNull())
-    {
-        this->params.clip_actions_upper = torch::tensor({}).view({1, -1});
-        this->params.clip_actions_lower = torch::tensor({}).view({1, -1});
-    }
-    else
-    {
-        this->params.clip_actions_upper = torch::tensor(ReadVectorFromYaml<double>(config["clip_actions_upper"], this->params.framework, rows, cols)).view({1, -1});
-        this->params.clip_actions_lower = torch::tensor(ReadVectorFromYaml<double>(config["clip_actions_lower"], this->params.framework, rows, cols)).view({1, -1});
-    }
-    this->params.action_scale = config["action_scale"].as<double>();
-    this->params.hip_scale_reduction = config["hip_scale_reduction"].as<double>();
-    this->params.hip_scale_reduction_indices = ReadVectorFromYaml<int>(config["hip_scale_reduction_indices"]);
-    this->params.num_of_dofs = config["num_of_dofs"].as<int>();
-    this->params.lin_vel_scale = config["lin_vel_scale"].as<double>();
-    this->params.ang_vel_scale = config["ang_vel_scale"].as<double>();
-    this->params.dof_pos_scale = config["dof_pos_scale"].as<double>();
-    this->params.dof_vel_scale = config["dof_vel_scale"].as<double>();
-    // this->params.commands_scale = torch::tensor(ReadVectorFromYaml<double>(config["commands_scale"])).view({1, -1});
-    this->params.commands_scale = torch::tensor({this->params.lin_vel_scale, this->params.lin_vel_scale, this->params.ang_vel_scale});
-    this->params.rl_kp = torch::tensor(ReadVectorFromYaml<double>(config["rl_kp"], this->params.framework, rows, cols)).view({1, -1});
-    this->params.rl_kd = torch::tensor(ReadVectorFromYaml<double>(config["rl_kd"], this->params.framework, rows, cols)).view({1, -1});
-    this->params.fixed_kp = torch::tensor(ReadVectorFromYaml<double>(config["fixed_kp"], this->params.framework, rows, cols)).view({1, -1});
-    this->params.fixed_kd = torch::tensor(ReadVectorFromYaml<double>(config["fixed_kd"], this->params.framework, rows, cols)).view({1, -1});
-    this->params.torque_limits = torch::tensor(ReadVectorFromYaml<double>(config["torque_limits"], this->params.framework, rows, cols)).view({1, -1});
-    this->params.default_dof_pos = torch::tensor(ReadVectorFromYaml<double>(config["default_dof_pos"], this->params.framework, rows, cols)).view({1, -1});
-    this->params.joint_controller_names = ReadVectorFromYaml<std::string>(config["joint_controller_names"], this->params.framework, rows, cols);
+    // // The config file is located at "rl_sar/src/rl_sar/models/<robot_name>/config.yaml"
+    // std::string config_path = std::string(CMAKE_CURRENT_SOURCE_DIR) + "/models/" + robot_name + "/config.yaml";
+    // YAML::Node config;
+    // try
+    // {
+    //     config = YAML::LoadFile(config_path)[robot_name];
+    // } catch(YAML::BadFile &e)
+    // {
+    //     std::cout << LOGGER::ERROR << "The file '" << config_path << "' does not exist" << std::endl;
+    //     return;
+    // }
+    //
+    // this->params.model_name = config["model_name"].as<std::string>();
+    // this->params.framework = config["framework"].as<std::string>();
+    // int rows = config["rows"].as<int>();
+    // int cols = config["cols"].as<int>();
+    // this->params.use_history = config["use_history"].as<bool>();
+    // this->params.dt = config["dt"].as<double>();
+    // this->params.decimation = config["decimation"].as<int>();
+    // this->params.num_observations = config["num_observations"].as<int>();
+    // this->params.observations = ReadVectorFromYaml<std::string>(config["observations"]);
+    // this->params.clip_obs = config["clip_obs"].as<double>();
+    // if(config["clip_actions_lower"].IsNull() && config["clip_actions_upper"].IsNull())
+    // {
+    //     this->params.clip_actions_upper = torch::tensor({}).view({1, -1});
+    //     this->params.clip_actions_lower = torch::tensor({}).view({1, -1});
+    // }
+    // else
+    // {
+    //     this->params.clip_actions_upper = torch::tensor(ReadVectorFromYaml<double>(config["clip_actions_upper"], this->params.framework, rows, cols)).view({1, -1});
+    //     this->params.clip_actions_lower = torch::tensor(ReadVectorFromYaml<double>(config["clip_actions_lower"], this->params.framework, rows, cols)).view({1, -1});
+    // }
+    // this->params.action_scale = config["action_scale"].as<double>();
+    // this->params.hip_scale_reduction = config["hip_scale_reduction"].as<double>();
+    // this->params.hip_scale_reduction_indices = ReadVectorFromYaml<int>(config["hip_scale_reduction_indices"]);
+    // this->params.num_of_dofs = config["num_of_dofs"].as<int>();
+    // this->params.lin_vel_scale = config["lin_vel_scale"].as<double>();
+    // this->params.ang_vel_scale = config["ang_vel_scale"].as<double>();
+    // this->params.dof_pos_scale = config["dof_pos_scale"].as<double>();
+    // this->params.dof_vel_scale = config["dof_vel_scale"].as<double>();
+    // // this->params.commands_scale = torch::tensor(ReadVectorFromYaml<double>(config["commands_scale"])).view({1, -1});
+    // this->params.commands_scale = torch::tensor({this->params.lin_vel_scale, this->params.lin_vel_scale, this->params.ang_vel_scale});
+    // this->params.rl_kp = torch::tensor(ReadVectorFromYaml<double>(config["rl_kp"], this->params.framework, rows, cols)).view({1, -1});
+    // this->params.rl_kd = torch::tensor(ReadVectorFromYaml<double>(config["rl_kd"], this->params.framework, rows, cols)).view({1, -1});
+    // this->params.fixed_kp = torch::tensor(ReadVectorFromYaml<double>(config["fixed_kp"], this->params.framework, rows, cols)).view({1, -1});
+    // this->params.fixed_kd = torch::tensor(ReadVectorFromYaml<double>(config["fixed_kd"], this->params.framework, rows, cols)).view({1, -1});
+    // this->params.torque_limits = torch::tensor(ReadVectorFromYaml<double>(config["torque_limits"], this->params.framework, rows, cols)).view({1, -1});
+    // this->params.default_dof_pos = torch::tensor(ReadVectorFromYaml<double>(config["default_dof_pos"], this->params.framework, rows, cols)).view({1, -1});
+    // this->params.joint_controller_names = ReadVectorFromYaml<std::string>(config["joint_controller_names"], this->params.framework, rows, cols);
 }
 
 void RL::CSVInit(std::string robot_name)

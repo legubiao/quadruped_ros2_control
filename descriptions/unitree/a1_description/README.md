@@ -31,4 +31,8 @@ ros2 launch a1_description visualize.launch.py
   source ~/ros2_ws/install/setup.bash
   ros2 launch a1_description ocs2_control.launch.py
   ```
-
+* Legged Gym Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch a1_description rl_control.launch.py
+  ```

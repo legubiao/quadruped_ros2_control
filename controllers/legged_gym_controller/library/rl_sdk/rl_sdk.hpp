@@ -2,11 +2,7 @@
 #define RL_SDK_HPP
 
 #include <torch/script.h>
-#include <iostream>
 #include <string>
-#include <unistd.h>
-
-#include <yaml-cpp/yaml.h>
 
 namespace LOGGER {
     const char* const INFO    = "\033[0;37m[INFO]\033[0m ";

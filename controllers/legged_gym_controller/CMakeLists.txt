@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
+set(CMAKE_CXX_STANDARD 17)
 project(legged_gym_controller)
 
 if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -10,25 +11,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(ament_cmake REQUIRED)
 
-# rl_sdk library
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
-add_definitions(-DCMAKE_CURRENT_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
-
 find_package(Torch REQUIRED)
-find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
-add_library(rl_sdk library/rl_sdk/rl_sdk.cpp)
-target_include_directories(rl_sdk
-        PUBLIC
-        library/rl_sdk)
-target_link_libraries(rl_sdk "${TORCH_LIBRARIES}" Python3::Python Python3::Module)
-set_property(TARGET rl_sdk PROPERTY CXX_STANDARD 14)
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 find_package(Python3 COMPONENTS NumPy)
-if (Python3_NumPy_FOUND)
-    target_link_libraries(rl_sdk Python3::NumPy)
-else ()
-    target_compile_definitions(rl_sdk WITHOUT_NUMPY)
-endif ()
 
 set(dependencies
         pluginlib
@@ -43,6 +30,44 @@ foreach (Dependency IN ITEMS ${dependencies})
     find_package(${Dependency} REQUIRED)
 endforeach ()
 
+add_library(${PROJECT_NAME} SHARED
+        src/LeggedGymController.cpp
+
+        src/FSM/StatePassive.cpp
+        src/FSM/StateFixedStand.cpp
+        src/FSM/StateFixedDown.cpp
+)
+target_include_directories(${PROJECT_NAME}
+        PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+        "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+        PRIVATE
+        src)
+target_link_libraries(${PROJECT_NAME} PUBLIC
+        "${TORCH_LIBRARIES}"
+)
+ament_target_dependencies(
+        ${PROJECT_NAME} PUBLIC
+        ${dependencies}
+)
+
+pluginlib_export_plugin_description_file(controller_interface legged_gym_controller.xml)
+
+install(
+        DIRECTORY include/
+        DESTINATION include/${PROJECT_NAME}
+)
+
+install(
+        TARGETS ${PROJECT_NAME}
+        EXPORT export_${PROJECT_NAME}
+        ARCHIVE DESTINATION lib/${PROJECT_NAME}
+        LIBRARY DESTINATION lib/${PROJECT_NAME}
+        RUNTIME DESTINATION bin
+)
+
+ament_export_dependencies(${dependencies})
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 
 if (BUILD_TESTING)
     find_package(ament_lint_auto REQUIRED)
