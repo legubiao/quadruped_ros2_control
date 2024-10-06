@@ -11,6 +11,7 @@ enum class FSMStateName {
     PASSIVE,
     FIXEDDOWN,
     FIXEDSTAND,
+    RL,
 };
 
 enum class FSMMode {

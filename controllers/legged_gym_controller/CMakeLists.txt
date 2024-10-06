@@ -33,9 +33,12 @@ endforeach ()
 add_library(${PROJECT_NAME} SHARED
         src/LeggedGymController.cpp
 
+        src/common/ObservationBuffer.cpp
+
         src/FSM/StatePassive.cpp
         src/FSM/StateFixedStand.cpp
         src/FSM/StateFixedDown.cpp
+        src/FSM/StateRL.cpp
 )
 target_include_directories(${PROJECT_NAME}
         PUBLIC
