@@ -5,6 +5,8 @@
 #ifndef LEGGEDGYMCONTROLLER_H
 #define LEGGEDGYMCONTROLLER_H
 #include <controller_interface/controller_interface.hpp>
+#include <legged_gym_controller/FSM/StateRL.h>
+
 #include "legged_gym_controller/FSM/StateFixedStand.h"
 #include "legged_gym_controller/FSM/StateFixedDown.h"
 #include "legged_gym_controller/FSM/StatePassive.h"
@@ -16,6 +18,7 @@ namespace legged_gym_controller {
         std::shared_ptr<StatePassive> passive;
         std::shared_ptr<StateFixedDown> fixedDown;
         std::shared_ptr<StateFixedStand> fixedStand;
+        std::shared_ptr<StateRL> rl;
     };
 
     class LeggedGymController final : public controller_interface::ControllerInterface {
@@ -75,6 +78,8 @@ namespace legged_gym_controller {
         // Foot Force Sensor
         std::string foot_force_name_;
         std::vector<std::string> foot_force_interface_types_;
+
+        std::string rl_config_folder_;
 
         std::unordered_map<
             std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> > *>

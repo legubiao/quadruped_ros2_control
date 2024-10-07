@@ -17,6 +17,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 find_package(Python3 COMPONENTS NumPy)
 
+find_package(yaml-cpp REQUIRED)
+
 set(dependencies
         pluginlib
         rcpputils
@@ -45,9 +47,11 @@ target_include_directories(${PROJECT_NAME}
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
         "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
         PRIVATE
+        ${YAML_CPP_INCLUDE_DIR}
         src)
 target_link_libraries(${PROJECT_NAME} PUBLIC
         "${TORCH_LIBRARIES}"
+        yaml-cpp
 )
 ament_target_dependencies(
         ${PROJECT_NAME} PUBLIC

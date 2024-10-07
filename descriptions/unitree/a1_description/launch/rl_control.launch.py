@@ -47,7 +47,11 @@ def launch_setup(context, *args, **kwargs):
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[robot_controllers],
+        parameters=[robot_controllers,
+                    {
+                        'config_folder': os.path.join(get_package_share_directory(package_description), 'config',
+                                                      'issacgym'),
+                    }],
         output="both",
     )
 

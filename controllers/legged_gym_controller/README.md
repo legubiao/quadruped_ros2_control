@@ -11,8 +11,11 @@ Tested environment:
 ### 2.1 Installing libtorch
 ```bash
 cd ~/CLionProjects/
-wget https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip
-unzip libtorch-shared-with-deps-latest.zip
+wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.0.1%2Bcpu.zip
+unzip libtorch-cxx11-abi-shared-with-deps-2.0.1+cpu.zip -d ./
+```
+```bash
+cd ~/CLionProjects/
 rm -rf libtorch-shared-with-deps-latest.zip
 echo 'export Torch_DIR=~/CLionProjects/libtorch' >> ~/.bashrc
 ```

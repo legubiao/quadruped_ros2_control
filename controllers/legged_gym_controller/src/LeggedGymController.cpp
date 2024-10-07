@@ -75,6 +75,10 @@ namespace legged_gym_controller {
             // imu sensor
             imu_name_ = auto_declare<std::string>("imu_name", imu_name_);
             imu_interface_types_ = auto_declare<std::vector<std::string> >("imu_interfaces", state_interface_types_);
+
+            // rl config folder
+            rl_config_folder_ = auto_declare<std::string>("config_folder", rl_config_folder_);
+
         } catch (const std::exception &e) {
             fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
             return controller_interface::CallbackReturn::ERROR;
@@ -131,6 +135,7 @@ namespace legged_gym_controller {
         state_list_.passive = std::make_shared<StatePassive>(ctrl_comp_);
         state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_comp_);
         state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_comp_);
+        state_list_.rl = std::make_shared<StateRL>(ctrl_comp_, rl_config_folder_);
 
         // Initialize FSM
         current_state_ = state_list_.passive;
@@ -162,7 +167,7 @@ namespace legged_gym_controller {
         return ControllerInterface::on_error(previous_state);
     }
 
-    std::shared_ptr<FSMState> LeggedGymController::getNextState(FSMStateName stateName) const {
+    std::shared_ptr<FSMState> LeggedGymController::getNextState(const FSMStateName stateName) const {
         switch (stateName) {
             case FSMStateName::INVALID:
                 return state_list_.invalid;
@@ -172,6 +177,8 @@ namespace legged_gym_controller {
                 return state_list_.fixedDown;
             case FSMStateName::FIXEDSTAND:
                 return state_list_.fixedStand;
+            case FSMStateName::RL:
+                return state_list_.rl;
             default:
                 return state_list_.invalid;
         }
