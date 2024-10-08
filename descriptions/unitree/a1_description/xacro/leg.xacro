@@ -35,9 +35,8 @@
                     <origin rpy="${PI} ${PI} 0" xyz="0 0 0"/>
                 </xacro:if>
                 <geometry>
-                    <mesh filename="package://a1_description/meshes/hip.dae" scale="1 1 1"/>
+                    <mesh filename="file://$(find a1_description)/meshes/hip.dae" scale="1 1 1"/>
                 </geometry>
-                <material name="orange"/>
             </visual>
             <collision>
                 <origin rpy="${PI/2.0} 0 0" xyz="0 0 0"/>
@@ -85,13 +84,12 @@
                 <origin rpy="0 0 0" xyz="0 0 0"/>
                 <geometry>
                     <xacro:if value="${mirror_dae == True}">
-                        <mesh filename="package://a1_description/meshes/thigh.dae" scale="1 1 1"/>
+                        <mesh filename="file://$(find a1_description)/meshes/thigh.dae" scale="1 1 1"/>
                     </xacro:if>
                     <xacro:if value="${mirror_dae == False}">
-                        <mesh filename="package://a1_description/meshes/thigh_mirror.dae" scale="1 1 1"/>
+                        <mesh filename="file://$(find a1_description)/meshes/thigh_mirror.dae" scale="1 1 1"/>
                     </xacro:if>
                 </geometry>
-                <material name="orange"/>
             </visual>
             <collision>
                 <origin rpy="0 ${PI/2.0} 0" xyz="0 0 ${-thigh_length/2.0}"/>
@@ -122,9 +120,8 @@
             <visual>
                 <origin rpy="0 0 0" xyz="0 0 0"/>
                 <geometry>
-                    <mesh filename="package://a1_description/meshes/calf.dae" scale="1 1 1"/>
+                    <mesh filename="file://$(find a1_description)/meshes/calf.dae" scale="1 1 1"/>
                 </geometry>
-                <material name="orange"/>
             </visual>
             <collision>
                 <origin rpy="0 ${PI/2.0} 0" xyz="0 0 ${-calf_length/2.0}"/>
@@ -154,7 +151,6 @@
                 <geometry>
                     <sphere radius="${foot_radius-0.01}"/>
                 </geometry>
-                <material name="orange"/>
             </visual>
             <collision>
                 <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -170,6 +166,60 @@
                     izz="${(2*foot_mass)/5.0*(foot_radius*foot_radius)}"/>             
             </inertial>
         </link>
+
+        <gazebo reference="${name}_hip">
+            <mu1>0.2</mu1>
+            <mu2>0.2</mu2>
+            <visual>
+                <material>
+                    <ambient>.5 .5 .5  1.0</ambient>
+                    <diffuse>.5 .5 .5  1.0</diffuse>
+                    <specular>.5 .5 .5  1.0</specular>
+                </material>
+            </visual>
+        </gazebo>
+        <gazebo reference="${name}_thigh">
+            <mu1>0.2</mu1>
+            <mu2>0.2</mu2>
+            <self_collide>0</self_collide>
+            <visual>
+                <material>
+                    <ambient>.175 .175 .175  1.0</ambient>
+                    <diffuse>.175 .175 .175  1.0</diffuse>
+                    <specular>.175 .175 .175 1.0</specular>
+                </material>
+            </visual>
+            <kp value="1000000.0"/>
+            <kd value="100.0"/>
+        </gazebo>
+
+        <gazebo reference="${name}_calf">
+            <mu1>0.6</mu1>
+            <mu2>0.6</mu2>
+            <self_collide>1</self_collide>
+            <visual>
+                <material>
+                    <ambient>.5 .5 .5  1.0</ambient>
+                    <diffuse>.5 .5 .5  1.0</diffuse>
+                    <specular>.5 .5 .5  1.0</specular>
+                </material>
+            </visual>
+        </gazebo>
+
+        <gazebo reference="${name}_foot">
+            <mu1>0.6</mu1>
+            <mu2>0.6</mu2>
+            <self_collide>1</self_collide>
+            <visual>
+                <material>
+                    <ambient>.175 .175 .175  1.0</ambient>
+                    <diffuse>.175 .175 .175  1.0</diffuse>
+                    <specular>.175 .175 .175 1.0</specular>
+                </material>
+            </visual>
+            <kp value="1000000.0"/>
+            <kd value="100.0"/>
+        </gazebo>
 
         <xacro:leg_transmission name="${name}"/>
     </xacro:macro>

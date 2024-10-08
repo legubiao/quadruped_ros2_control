@@ -10,6 +10,23 @@
 
 #include "FSMState.h"
 
+template <typename Functor>
+void executeAndSleep(Functor f, const double frequency) {
+    using clock = std::chrono::high_resolution_clock;
+    const auto start = clock::now();
+
+    // Execute wrapped function
+    f();
+
+    // Compute desired duration rounded to clock decimation
+    const std::chrono::duration<double> desiredDuration(1.0 / frequency);
+    const auto dt = std::chrono::duration_cast<clock::duration>(desiredDuration);
+
+    // Sleep
+    const auto sleepTill = start + dt;
+    std::this_thread::sleep_until(sleepTill);
+}
+
 template<typename T>
 struct RobotCommand {
     struct MotorCommand {
@@ -38,11 +55,17 @@ struct RobotState {
     } motor_state;
 };
 
+struct Control
+{
+    double x = 0.0;
+    double y = 0.0;
+    double yaw = 0.0;
+};
+
 struct ModelParams {
     std::string model_name;
     std::string framework;
     bool use_history;
-    double dt;
     int decimation;
     int num_observations;
     std::vector<std::string> observations;
@@ -66,7 +89,6 @@ struct ModelParams {
     torch::Tensor fixed_kd;
     torch::Tensor commands_scale;
     torch::Tensor default_dof_pos;
-    std::vector<std::string> joint_controller_names;
 };
 
 struct Observations
@@ -98,26 +120,40 @@ private:
 
     void loadYaml(const std::string &config_path);
 
-    static torch::Tensor quatRotateInverse(torch::Tensor q, torch::Tensor v, const std::string& framework);
+    static torch::Tensor quatRotateInverse(const torch::Tensor &q, const torch::Tensor& v, const std::string& framework);
 
     /**
     * @brief Forward the RL model to get the action
     */
     torch::Tensor forward();
 
+    void getState();
+
+    void runModel();
+
+    void setCommand() const;
+
     // Parameters
     ModelParams params_;
-    Observations obs;
+    Observations obs_;
+    Control control_;
+
+    RobotState<double> robot_state_;
+    RobotCommand<double> robot_command_;
 
     // history buffer
     std::shared_ptr<ObservationBuffer> history_obs_buf_;
     torch::Tensor history_obs_;
 
     // rl module
-    torch::jit::script::Module model;
+    torch::jit::script::Module model_;
+    std::thread rl_thread_;
+    bool running_ = false;
+    bool updated_ = false;
+
     // output buffer
     torch::Tensor output_torques;
-    torch::Tensor output_dof_pos;
+    torch::Tensor output_dof_pos_;
 };
 
 

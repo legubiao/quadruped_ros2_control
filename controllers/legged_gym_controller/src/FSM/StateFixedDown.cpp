@@ -44,6 +44,8 @@ FSMStateName StateFixedDown::checkChange() {
             return FSMStateName::PASSIVE;
         case 2:
             return FSMStateName::FIXEDSTAND;
+        case 3:
+            return FSMStateName::RL;
         default:
             return FSMStateName::FIXEDDOWN;
     }

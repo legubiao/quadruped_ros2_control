@@ -3,12 +3,19 @@
 <robot name="a1" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:arg name="DEBUG" default="false"/>
+    <xacro:arg name="GAZEBO" default="false"/>
 
     <xacro:include filename="$(find a1_description)/xacro/const.xacro"/>
     <xacro:include filename="$(find a1_description)/xacro/materials.xacro"/>
     <xacro:include filename="$(find a1_description)/xacro/leg.xacro"/>
     <xacro:include filename="$(find a1_description)/xacro/stairs.xacro"/>
-    <xacro:include filename="$(find a1_description)/xacro/ros2_control.xacro"/>
+
+    <xacro:if value="$(arg GAZEBO)">
+        <xacro:include filename="$(find a1_description)/xacro/gazebo.xacro"/>
+    </xacro:if>
+    <xacro:unless value="$(arg GAZEBO)">
+        <xacro:include filename="$(find a1_description)/xacro/ros2_control.xacro"/>
+    </xacro:unless>
 
     <!-- <xacro:stairs stairs="15" xpos="0" ypos="0" zpos="0" /> -->
 
@@ -44,7 +51,7 @@
         <visual>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <mesh filename="package://a1_description/meshes/trunk.dae" scale="1 1 1"/>
+                <mesh filename="file://$(find a1_description)/meshes/trunk.dae" scale="1 1 1"/>
             </geometry>
             <material name="orange"/>
         </visual>

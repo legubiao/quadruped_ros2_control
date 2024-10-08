@@ -72,6 +72,8 @@ namespace legged_gym_controller {
         std::vector<std::string> command_interface_types_;
         std::vector<std::string> state_interface_types_;
 
+        std::string command_prefix_;
+
         // IMU Sensor
         std::string imu_name_;
         std::vector<std::string> imu_interface_types_;

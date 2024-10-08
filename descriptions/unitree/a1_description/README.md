@@ -10,7 +10,7 @@ Tested environment:
 ## Build
 ```bash
 cd ~/ros2_ws
-colcon build --packages-up-to a1_description
+colcon build --packages-up-to a1_description --symlink-install
 ```
 
 ## Visualize the robot
@@ -21,6 +21,7 @@ ros2 launch a1_description visualize.launch.py
 ```
 
 ## Launch ROS2 Control
+### Mujoco Simulator
 * Unitree Guide Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
@@ -35,4 +36,16 @@ ros2 launch a1_description visualize.launch.py
   ```bash
   source ~/ros2_ws/install/setup.bash
   ros2 launch a1_description rl_control.launch.py
+  ```
+
+### Gazebo Simulator
+* Unitree Guide Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch a1_description gazebo_unitree_guide.launch.py
+  ```
+* Legged Gym Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch a1_description gazebo_rl_control.launch.py
   ```

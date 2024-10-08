@@ -13,7 +13,11 @@ namespace legged_gym_controller {
         conf.names.reserve(joint_names_.size() * command_interface_types_.size());
         for (const auto &joint_name: joint_names_) {
             for (const auto &interface_type: command_interface_types_) {
-                conf.names.push_back(joint_name + "/" += interface_type);
+                if (!command_prefix_.empty()) {
+                    conf.names.push_back(command_prefix_ + "/" + joint_name + "/" += interface_type);
+                } else {
+                    conf.names.push_back(joint_name + "/" += interface_type);
+                }
             }
         }
 
@@ -72,6 +76,8 @@ namespace legged_gym_controller {
             state_interface_types_ =
                     auto_declare<std::vector<std::string> >("state_interfaces", state_interface_types_);
 
+            command_prefix_ = auto_declare<std::string>("command_prefix", command_prefix_);
+
             // imu sensor
             imu_name_ = auto_declare<std::string>("imu_name", imu_name_);
             imu_interface_types_ = auto_declare<std::vector<std::string> >("imu_interfaces", state_interface_types_);
@@ -79,6 +85,8 @@ namespace legged_gym_controller {
             // rl config folder
             rl_config_folder_ = auto_declare<std::string>("config_folder", rl_config_folder_);
 
+            get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);
+            RCLCPP_INFO(get_node()->get_logger(), "Controller Update Rate: %d Hz", ctrl_comp_.frequency_);
         } catch (const std::exception &e) {
             fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
             return controller_interface::CallbackReturn::ERROR;
@@ -98,9 +106,6 @@ namespace legged_gym_controller {
                 ctrl_comp_.control_inputs_.rx = msg->rx;
                 ctrl_comp_.control_inputs_.ry = msg->ry;
             });
-
-        get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);
-        RCLCPP_INFO(get_node()->get_logger(), "Controller Manager Update Rate: %d Hz", ctrl_comp_.frequency_);
 
         return CallbackReturn::SUCCESS;
     }

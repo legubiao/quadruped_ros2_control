@@ -54,3 +54,4 @@ For more details, please refer to the [unitree guide controller](controllers/uni
 [1] Unitree Robotics. *unitree\_guide: An open source project for controlling the quadruped robot of Unitree Robotics, and it is also the software project accompanying 《四足机器人控制算法--建模、控制与实践》 published by Unitree Robotics*. [Online]. Available: [https://github.com/unitreerobotics/unitree_guide](https://github.com/unitreerobotics/unitree_guide)
 
 [2] Qiayuan Liao. *legged\_control: An open-source NMPC, WBC, state estimation, and sim2real framework for legged robots*. [Online]. Available: [https://github.com/qiayuanl/legged_control](https://github.com/qiayuanl/legged_control)
+
