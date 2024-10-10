@@ -67,7 +67,7 @@
         <geometry>
           <mesh filename="file://$(find go1_description)/meshes/hip.dae" scale="1 1 1"/>
         </geometry>
-        <!-- <material name="orange"/> -->
+        <material name="deep-grey"/>
       </visual>
       <collision>
         <origin rpy="${PI/2.0} 0 0" xyz="0 ${hip_offset*mirror} 0"/>
@@ -91,7 +91,6 @@
         <geometry>
           <cylinder length="0.02" radius="0.035"/>
         </geometry>
-        <material name="green"/>
       </visual>
       <inertial>
         <origin rpy="0 0 0" xyz="${hip_rotor_com_x} ${hip_rotor_com_y} ${hip_rotor_com_z}"/>
@@ -130,6 +129,7 @@
             <mesh filename="file://$(find go1_description)/meshes/thigh_mirror.dae" scale="1 1 1"/>
           </xacro:if>
         </geometry>
+        <material name="grey"/>
       </visual>
       <collision>
         <origin rpy="0 ${PI/2.0} 0" xyz="0 0 ${-thigh_length/2.0}"/>
@@ -153,7 +153,6 @@
         <geometry>
           <cylinder length="0.02" radius="0.035"/>
         </geometry>
-        <material name="green"/>
       </visual>
       <inertial>
         <origin rpy="0 0 0" xyz="${thigh_rotor_com_x} ${thigh_rotor_com_y} ${thigh_rotor_com_z}"/>
@@ -187,6 +186,7 @@
         <geometry>
           <mesh filename="file://$(find go1_description)/meshes/calf.dae" scale="1 1 1"/>
         </geometry>
+        <material name="light-grey"/>
       </visual>
       <collision>
         <origin rpy="0 ${PI/2.0} 0" xyz="0 0 ${-calf_length/2.0}"/>
@@ -248,6 +248,33 @@
             izz="${(2*foot_mass)/5.0*(foot_radius*foot_radius)}"/>
       </inertial>
     </link>
+
+    <gazebo reference="{name}_hip">
+      <mu1>0.2</mu1>
+      <mu2>0.2</mu2>
+    </gazebo>
+
+    <gazebo reference="{name}_thigh">
+      <mu1>0.2</mu1>
+      <mu2>0.2</mu2>
+      <self_collide>1</self_collide>
+      <kp  value="1000000.0"/>
+      <kd  value="1.0"/>
+    </gazebo>
+
+    <gazebo reference="{name}_calf">
+      <mu1>0.2</mu1>
+      <mu2>0.2</mu2>
+      <self_collide>1</self_collide>
+    </gazebo>
+
+    <gazebo reference="{name}_foot">
+      <mu1>0.6</mu1>
+      <mu2>0.6</mu2>
+      <self_collide>1</self_collide>
+      <kp  value="1000000.0"/>
+      <kd  value="1.0"/>
+    </gazebo>
 
     <xacro:leg_transmission name="${name}"/>
   </xacro:macro>

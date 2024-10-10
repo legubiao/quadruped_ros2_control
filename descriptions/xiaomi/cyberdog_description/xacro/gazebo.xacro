@@ -6,13 +6,6 @@
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>
     </hardware>
 
-    <joint name="FR_abad_joint">
-      <command_interface name="effort" initial_value="0.0"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-      <state_interface name="effort"/>
-    </joint>
-
     <joint name="FR_hip_joint">
       <command_interface name="effort" initial_value="0.0"/>
       <state_interface name="position"/>
@@ -20,14 +13,14 @@
       <state_interface name="effort"/>
     </joint>
 
-    <joint name="FR_knee_joint">
+    <joint name="FR_thigh_joint">
       <command_interface name="effort" initial_value="0.0"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
 
-    <joint name="FL_abad_joint">
+    <joint name="FR_calf_joint">
       <command_interface name="effort" initial_value="0.0"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
@@ -41,14 +34,14 @@
       <state_interface name="effort"/>
     </joint>
 
-    <joint name="FL_knee_joint">
+    <joint name="FL_thigh_joint">
       <command_interface name="effort" initial_value="0.0"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
 
-    <joint name="RR_abad_joint">
+    <joint name="FL_calf_joint">
       <command_interface name="effort" initial_value="0.0"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
@@ -62,14 +55,14 @@
       <state_interface name="effort"/>
     </joint>
 
-    <joint name="RR_knee_joint">
+    <joint name="RR_thigh_joint">
       <command_interface name="effort" initial_value="0.0"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
 
-    <joint name="RL_abad_joint">
+    <joint name="RR_calf_joint">
       <command_interface name="effort" initial_value="0.0"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
@@ -83,7 +76,14 @@
       <state_interface name="effort"/>
     </joint>
 
-    <joint name="RL_knee_joint">
+    <joint name="RL_thigh_joint">
+      <command_interface name="effort" initial_value="0.0"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="RL_calf_joint">
       <command_interface name="effort" initial_value="0.0"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
@@ -132,7 +132,7 @@
   <!-- Gazebo's ros2_control plugin  -->
   <gazebo>
     <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <parameters>$(find cyberdog_description)/config/robot_control.yaml</parameters>
+      <parameters>$(find cyberdog_description)/config/gazebo.yaml</parameters>
     </plugin>
     <plugin filename="gz-sim-imu-system"
             name="gz::sim::systems::Imu">

@@ -1,5 +1,7 @@
-# DeepRobotic Lite3 Description
+# DeepRobotics Lite3 Description
 This repository contains the urdf model of lite3.
+
+![lite3](../../../.images/lite3.png)
 
 Tested environment:
 * Ubuntu 24.04

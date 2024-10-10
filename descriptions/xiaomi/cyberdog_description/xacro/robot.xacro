@@ -3,10 +3,18 @@
 
   <xacro:arg name="ROBOT" default="cyber_dog"/>
   <xacro:arg name="USE_LIDAR" default="false"/>
+  <xacro:arg name="GAZEBO" default="false"/>
+
   <xacro:include filename="const.xacro"/>
   <xacro:include filename="leg.xacro"/>
-  <!--    <xacro:include filename="gazebo.xacro"/>-->
-  <xacro:include filename="ros2_control.xacro"/>
+
+  <xacro:if value="$(arg GAZEBO)">
+    <xacro:include filename="gazebo.xacro"/>
+  </xacro:if>
+  <xacro:unless value="$(arg GAZEBO)">
+    <xacro:include filename="ros2_control.xacro"/>
+  </xacro:unless>
+
 
   <link name="base">
     <visual>

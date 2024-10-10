@@ -29,7 +29,7 @@ def generate_launch_description():
         executable='create',
         output='screen',
         arguments=['-topic', 'robot_description', '-name',
-                   'go2', '-allow_renaming', 'true', '-z', '0.4'],
+                   'robot', '-allow_renaming', 'true', '-z', '0.4'],
     )
 
     robot_state_publisher = Node(

@@ -67,7 +67,6 @@
         <geometry>
           <mesh filename="file://$(find aliengo_description)/meshes/hip.dae" scale="1 1 1"/>
         </geometry>
-        <material name="orange"/>
       </visual>
       <collision>
         <origin rpy="${PI/2.0} 0 0" xyz="0 ${hip_offset*mirror} 0"/>
@@ -130,7 +129,6 @@
             <mesh filename="file://$(find aliengo_description)/meshes/thigh_mirror.dae" scale="1 1 1"/>
           </xacro:if>
         </geometry>
-        <material name="orange"/>
       </visual>
       <collision>
         <origin rpy="0 ${PI/2.0} 0" xyz="0 0 ${-thigh_length/2.0}"/>
@@ -249,6 +247,34 @@
             izz="${(2*foot_mass)/5.0*(foot_radius*foot_radius)}"/>
       </inertial>
     </link>
+
+    <!-- FL leg -->
+    <gazebo reference="{name}_hip">
+      <mu1>0.2</mu1>
+      <mu2>0.2</mu2>
+    </gazebo>
+
+    <gazebo reference="{name}_thigh">
+      <mu1>0.2</mu1>
+      <mu2>0.2</mu2>
+      <self_collide>1</self_collide>
+      <kp value="1000000.0"/>
+      <kd value="1.0"/>
+    </gazebo>
+
+    <gazebo reference="{name}_calf">
+      <mu1>0.2</mu1>
+      <mu2>0.2</mu2>
+      <self_collide>1</self_collide>
+    </gazebo>
+
+    <gazebo reference="{name}_foot">
+      <mu1>0.6</mu1>
+      <mu2>0.6</mu2>
+      <self_collide>1</self_collide>
+      <kp value="1000000.0"/>
+      <kd value="1.0"/>
+    </gazebo>
 
     <xacro:leg_transmission name="${name}"/>
   </xacro:macro>

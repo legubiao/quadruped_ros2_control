@@ -12,22 +12,31 @@ from launch_ros.substitutions import FindPackageShare
 package_description = "go1_description"
 
 
-def process_xacro(context):
-    robot_type_value = context.launch_configurations['robot_type']
+def process_xacro():
     pkg_path = os.path.join(get_package_share_directory(package_description))
     xacro_file = os.path.join(pkg_path, 'xacro', 'robot.xacro')
-    robot_description_config = xacro.process_file(xacro_file, mappings={'robot_type': robot_type_value})
-    return (robot_description_config.toxml(), robot_type_value)
+    robot_description_config = xacro.process_file(xacro_file)
+    return robot_description_config.toxml()
 
 
-def launch_setup(context, *args, **kwargs):
-    (robot_description, robot_type) = process_xacro(context)
+def generate_launch_description():
+    rviz_config_file = os.path.join(get_package_share_directory(package_description), "config", "visualize_urdf.rviz")
+
+    robot_description = process_xacro()
+
     robot_controllers = PathJoinSubstitution(
         [
             FindPackageShare(package_description),
             "config",
             "robot_control.yaml",
         ]
+    )
+
+    controller_manager = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[robot_controllers],
+        output="both",
     )
 
     robot_state_publisher = Node(
@@ -42,16 +51,6 @@ def launch_setup(context, *args, **kwargs):
                 'ignore_timestamp': True
             }
         ],
-    )
-
-    controller_manager = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[robot_controllers],
-        remappings=[
-            ("~/robot_description", "/robot_description"),
-        ],
-        output="both",
     )
 
     joint_state_publisher = Node(
@@ -74,41 +73,21 @@ def launch_setup(context, *args, **kwargs):
         arguments=["unitree_guide_controller", "--controller-manager", "/controller_manager"],
     )
 
-    return [
-        robot_state_publisher,
-        controller_manager,
-        joint_state_publisher,
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=joint_state_publisher,
-                on_exit=[imu_sensor_broadcaster],
-            )
-        ),
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=imu_sensor_broadcaster,
-                on_exit=[unitree_guide_controller],
-            )
-        ),
-    ]
-
-def generate_launch_description():
-    robot_type_arg = DeclareLaunchArgument(
-        'robot_type',
-        default_value='go1',
-        description='Type of the robot'
-    )
-
-    rviz_config_file = os.path.join(get_package_share_directory(package_description), "config", "visualize_urdf.rviz")
-
     return LaunchDescription([
-        robot_type_arg,
-        OpaqueFunction(function=launch_setup),
         Node(
             package='rviz2',
             executable='rviz2',
             name='rviz_ocs2',
             output='screen',
             arguments=["-d", rviz_config_file]
-        )
+        ),
+        robot_state_publisher,
+        controller_manager,
+        joint_state_publisher,
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=joint_state_publisher,
+                on_exit=[imu_sensor_broadcaster, unitree_guide_controller],
+            )
+        ),
     ])

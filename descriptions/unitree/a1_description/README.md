@@ -1,7 +1,7 @@
 # Unitree A1 Description
 This repository contains the urdf model of A1.
 
-![Aliengo](../../../.images/a1.png)
+![A1](../../../.images/a1.png)
 
 Tested environment:
 * Ubuntu 24.04
