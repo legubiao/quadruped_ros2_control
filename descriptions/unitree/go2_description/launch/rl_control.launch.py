@@ -4,33 +4,32 @@ import xacro
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription, RegisterEventHandler
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.event_handlers import OnProcessExit
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
-package_description = "a1_description"
+package_description = "go2_description"
 
 
 def process_xacro():
     pkg_path = os.path.join(get_package_share_directory(package_description))
     xacro_file = os.path.join(pkg_path, 'xacro', 'robot.xacro')
-    robot_description_config = xacro.process_file(xacro_file, mappings={'GAZEBO': 'true'})
+    robot_description_config = xacro.process_file(xacro_file)
     return robot_description_config.toxml()
 
-
 def generate_launch_description():
+
     rviz_config_file = os.path.join(get_package_share_directory(package_description), "config", "visualize_urdf.rviz")
 
     robot_description = process_xacro()
 
-    gz_spawn_entity = Node(
-        package='ros_gz_sim',
-        executable='create',
-        output='screen',
-        arguments=['-topic', 'robot_description', '-name',
-                   'a1', '-allow_renaming', 'true', '-z', '0.4'],
+    robot_controllers = PathJoinSubstitution(
+        [
+            FindPackageShare(package_description),
+            "config",
+            "robot_control.yaml",
+        ]
     )
 
     robot_state_publisher = Node(
@@ -47,6 +46,17 @@ def generate_launch_description():
         ],
     )
 
+    controller_manager = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[robot_controllers,
+                    {
+                        'config_folder': os.path.join(get_package_share_directory(package_description), 'config',
+                                                      'issacgym'),
+                    }],
+        output="both",
+    )
+
     joint_state_publisher = Node(
         package="controller_manager",
         executable="spawner",
@@ -61,22 +71,10 @@ def generate_launch_description():
                    "--controller-manager", "/controller_manager"],
     )
 
-    leg_pd_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["leg_pd_controller",
-                   "--controller-manager", "/controller_manager"],
-    )
-
     controller = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["rl_quadruped_controller", "--controller-manager", "/controller_manager"],
-        parameters=[
-            {
-                'config_folder': os.path.join(get_package_share_directory(package_description), 'config',
-                                              'issacgym'),
-            }],
     )
 
     return LaunchDescription([
@@ -87,25 +85,19 @@ def generate_launch_description():
             output='screen',
             arguments=["-d", rviz_config_file]
         ),
-        Node(
-            package='ros_gz_bridge',
-            executable='parameter_bridge',
-            arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
-            output='screen'
-        ),
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                [PathJoinSubstitution([FindPackageShare('ros_gz_sim'),
-                                       'launch',
-                                       'gz_sim.launch.py'])]),
-            launch_arguments=[('gz_args', [' -r -v 4 empty.sdf'])]),
         robot_state_publisher,
-        gz_spawn_entity,
-        leg_pd_controller,
+        controller_manager,
+        joint_state_publisher,
         RegisterEventHandler(
             event_handler=OnProcessExit(
-                target_action=leg_pd_controller,
-                on_exit=[controller, imu_sensor_broadcaster, joint_state_publisher],
+                target_action=joint_state_publisher,
+                on_exit=[imu_sensor_broadcaster],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=imu_sensor_broadcaster,
+                on_exit=[controller],
             )
         ),
     ])

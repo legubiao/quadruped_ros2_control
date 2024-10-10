@@ -2,7 +2,7 @@
 // Created by tlab-uav on 24-9-6.
 //
 
-#include "legged_gym_controller/FSM/StatePassive.h"
+#include "rl_quadruped_controller/FSM/StatePassive.h"
 
 #include <iostream>
 

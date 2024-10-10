@@ -10,8 +10,7 @@ from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
-package_description = "a1_description"
-
+package_description = "go2_description"
 
 def process_xacro():
     pkg_path = os.path.join(get_package_share_directory(package_description))
@@ -30,7 +29,7 @@ def generate_launch_description():
         executable='create',
         output='screen',
         arguments=['-topic', 'robot_description', '-name',
-                   'a1', '-allow_renaming', 'true', '-z', '0.4'],
+                   'go2', '-allow_renaming', 'true', '-z', '0.4'],
     )
 
     robot_state_publisher = Node(

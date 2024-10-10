@@ -32,7 +32,7 @@ ros2 launch a1_description visualize.launch.py
   source ~/ros2_ws/install/setup.bash
   ros2 launch a1_description ocs2_control.launch.py
   ```
-* Legged Gym Controller
+* RL Quadruped Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
   ros2 launch a1_description rl_control.launch.py
@@ -44,7 +44,7 @@ ros2 launch a1_description visualize.launch.py
   source ~/ros2_ws/install/setup.bash
   ros2 launch a1_description gazebo_unitree_guide.launch.py
   ```
-* Legged Gym Controller
+* RL Quadruped Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
   ros2 launch a1_description gazebo_rl_control.launch.py

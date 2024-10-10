@@ -2,7 +2,7 @@
 // Created by tlab-uav on 24-9-11.
 //
 
-#include "legged_gym_controller/FSM/StateFixedDown.h"
+#include "rl_quadruped_controller/FSM/StateFixedDown.h"
 
 #include <cmath>
 

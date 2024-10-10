@@ -16,8 +16,8 @@ controller_manager:
     ocs2_quadruped_controller:
       type: ocs2_quadruped_controller/Ocs2QuadrupedController
 
-    legged_gym_controller:
-      type: legged_gym_controller/LeggedGymController
+    rl_quadruped_controller:
+      type: rl_quadruped_controller/LeggedGymController
 
 imu_sensor_broadcaster:
   ros__parameters:

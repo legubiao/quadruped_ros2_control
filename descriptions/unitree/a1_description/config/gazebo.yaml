@@ -16,8 +16,8 @@ controller_manager:
     unitree_guide_controller:
       type: unitree_guide_controller/UnitreeGuideController
 
-    legged_gym_controller:
-      type: legged_gym_controller/LeggedGymController
+    rl_quadruped_controller:
+      type: rl_quadruped_controller/LeggedGymController
 
 imu_sensor_broadcaster:
   ros__parameters:
@@ -97,10 +97,10 @@ unitree_guide_controller:
       - linear_acceleration.y
       - linear_acceleration.z
 
-legged_gym_controller:
+rl_quadruped_controller:
   ros__parameters:
     update_rate: 200  # Hz
-    config_folder: "/home/tlab-uav/ros2_ws/install/a1_description/share/a1_description/config/issacgym"
+    config_folder: "/home/biao/ros2_ws/install/a1_description/share/a1_description/config/issacgym"
     command_prefix: "leg_pd_controller"
     joints:
       - FL_hip_joint

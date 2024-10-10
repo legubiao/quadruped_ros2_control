@@ -1,4 +1,4 @@
-# Legged Gym Controller
+# RL Quadruped Controller
 
 This repository contains the reinforcement learning based controllers for the quadruped robot.
 
@@ -20,10 +20,10 @@ rm -rf libtorch-shared-with-deps-latest.zip
 echo 'export Torch_DIR=~/CLionProjects/libtorch' >> ~/.bashrc
 ```
 
-### 2.2 Build Legged Gym Controller
+### 2.2 Build Controller
 ```bash
 cd ~/ros2_ws
-colcon build --packages-up-to legged_gym_controller
+colcon build --packages-up-to rl_quadruped_controller
 ```
 
 ## 3. Launch

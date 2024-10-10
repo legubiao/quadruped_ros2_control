@@ -6,7 +6,7 @@ This repository contains the urdf model of go1.
 ## Build
 ```bash
 cd ~/ros2_ws
-colcon build --packages-up-to go1_description
+colcon build --packages-up-to go1_description  --symlink-install
 ```
 
 ## Visualize the robot

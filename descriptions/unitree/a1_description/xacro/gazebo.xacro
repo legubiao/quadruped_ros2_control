@@ -117,13 +117,6 @@
     <mu1>0.6</mu1>
     <mu2>0.6</mu2>
     <self_collide>1</self_collide>
-    <visual>
-      <material>
-        <ambient>.05 .05 .05 1.0</ambient>
-        <diffuse>.05 .05 .05 1.0</diffuse>
-        <specular>.05 .05 .05 1.0</specular>
-      </material>
-    </visual>
   </gazebo>
 
   <gazebo reference="imu_link">
@@ -135,54 +128,54 @@
       <imu>
         <angular_velocity>
           <x>
-<!--            <noise type="gaussian">-->
-<!--              <mean>0.0</mean>-->
-<!--              <stddev>2e-4</stddev>-->
-<!--              <bias_mean>0.0000075</bias_mean>-->
-<!--              <bias_stddev>0.0000008</bias_stddev>-->
-<!--            </noise>-->
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
           </x>
           <y>
-<!--            <noise type="gaussian">-->
-<!--              <mean>0.0</mean>-->
-<!--              <stddev>2e-4</stddev>-->
-<!--              <bias_mean>0.0000075</bias_mean>-->
-<!--              <bias_stddev>0.0000008</bias_stddev>-->
-<!--            </noise>-->
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
           </y>
           <z>
-<!--            <noise type="gaussian">-->
-<!--              <mean>0.0</mean>-->
-<!--              <stddev>2e-4</stddev>-->
-<!--              <bias_mean>0.0000075</bias_mean>-->
-<!--              <bias_stddev>0.0000008</bias_stddev>-->
-<!--            </noise>-->
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
           </z>
         </angular_velocity>
         <linear_acceleration>
           <x>
-<!--            <noise type="gaussian">-->
-<!--              <mean>0.0</mean>-->
-<!--              <stddev>1.7e-2</stddev>-->
-<!--              <bias_mean>0.1</bias_mean>-->
-<!--              <bias_stddev>0.001</bias_stddev>-->
-<!--            </noise>-->
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
           </x>
           <y>
-<!--            <noise type="gaussian">-->
-<!--              <mean>0.0</mean>-->
-<!--              <stddev>1.7e-2</stddev>-->
-<!--              <bias_mean>0.1</bias_mean>-->
-<!--              <bias_stddev>0.001</bias_stddev>-->
-<!--            </noise>-->
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
           </y>
           <z>
-<!--            <noise type="gaussian">-->
-<!--              <mean>0.0</mean>-->
-<!--              <stddev>1.7e-2</stddev>-->
-<!--              <bias_mean>0.1</bias_mean>-->
-<!--              <bias_stddev>0.001</bias_stddev>-->
-<!--            </noise>-->
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
           </z>
         </linear_acceleration>
       </imu>

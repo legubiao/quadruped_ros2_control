@@ -106,7 +106,7 @@
 
   <gazebo>
     <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <parameters>$(find a1_description)/config/gazebo.yaml</parameters>
+      <parameters>$(find go2_description)/config/gazebo.yaml</parameters>
     </plugin>
     <plugin filename="gz-sim-imu-system"
             name="gz::sim::systems::Imu">
@@ -128,54 +128,54 @@
       <imu>
         <angular_velocity>
           <x>
-<!--            <noise type="gaussian">-->
-<!--              <mean>0.0</mean>-->
-<!--              <stddev>2e-4</stddev>-->
-<!--              <bias_mean>0.0000075</bias_mean>-->
-<!--              <bias_stddev>0.0000008</bias_stddev>-->
-<!--            </noise>-->
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
           </x>
           <y>
-<!--            <noise type="gaussian">-->
-<!--              <mean>0.0</mean>-->
-<!--              <stddev>2e-4</stddev>-->
-<!--              <bias_mean>0.0000075</bias_mean>-->
-<!--              <bias_stddev>0.0000008</bias_stddev>-->
-<!--            </noise>-->
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
           </y>
           <z>
-<!--            <noise type="gaussian">-->
-<!--              <mean>0.0</mean>-->
-<!--              <stddev>2e-4</stddev>-->
-<!--              <bias_mean>0.0000075</bias_mean>-->
-<!--              <bias_stddev>0.0000008</bias_stddev>-->
-<!--            </noise>-->
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
           </z>
         </angular_velocity>
         <linear_acceleration>
           <x>
-<!--            <noise type="gaussian">-->
-<!--              <mean>0.0</mean>-->
-<!--              <stddev>1.7e-2</stddev>-->
-<!--              <bias_mean>0.1</bias_mean>-->
-<!--              <bias_stddev>0.001</bias_stddev>-->
-<!--            </noise>-->
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
           </x>
           <y>
-<!--            <noise type="gaussian">-->
-<!--              <mean>0.0</mean>-->
-<!--              <stddev>1.7e-2</stddev>-->
-<!--              <bias_mean>0.1</bias_mean>-->
-<!--              <bias_stddev>0.001</bias_stddev>-->
-<!--            </noise>-->
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
           </y>
           <z>
-<!--            <noise type="gaussian">-->
-<!--              <mean>0.0</mean>-->
-<!--              <stddev>1.7e-2</stddev>-->
-<!--              <bias_mean>0.1</bias_mean>-->
-<!--              <bias_stddev>0.001</bias_stddev>-->
-<!--            </noise>-->
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
           </z>
         </linear_acceleration>
       </imu>

@@ -174,25 +174,12 @@
 		<gazebo reference="${name}_hip">
 			<mu1>0.2</mu1>
 			<mu2>0.2</mu2>
-			<visual>
-				<material>
-					<ambient>.5 .5 .5 1.0</ambient>
-					<diffuse>.5 .5 .5 1.0</diffuse>
-					<specular>.5 .5 .5 1.0</specular>
-				</material>
-			</visual>
 		</gazebo>
+
 		<gazebo reference="${name}_thigh">
 			<mu1>0.2</mu1>
 			<mu2>0.2</mu2>
 			<self_collide>0</self_collide>
-			<visual>
-				<material>
-					<ambient>.175 .175 .175 1.0</ambient>
-					<diffuse>.175 .175 .175 1.0</diffuse>
-					<specular>.175 .175 .175 1.0</specular>
-				</material>
-			</visual>
 			<kp value="1000000.0"/>
 			<kd value="100.0"/>
 		</gazebo>
@@ -201,26 +188,12 @@
 			<mu1>0.6</mu1>
 			<mu2>0.6</mu2>
 			<self_collide>1</self_collide>
-			<visual>
-				<material>
-					<ambient>.5 .5 .5 1.0</ambient>
-					<diffuse>.5 .5 .5 1.0</diffuse>
-					<specular>.5 .5 .5 1.0</specular>
-				</material>
-			</visual>
 		</gazebo>
 
 		<gazebo reference="${name}_foot">
 			<mu1>0.6</mu1>
 			<mu2>0.6</mu2>
 			<self_collide>1</self_collide>
-			<visual>
-				<material>
-					<ambient>.175 .175 .175 1.0</ambient>
-					<diffuse>.175 .175 .175 1.0</diffuse>
-					<specular>.175 .175 .175 1.0</specular>
-				</material>
-			</visual>
 			<kp value="1000000.0"/>
 			<kd value="100.0"/>
 		</gazebo>

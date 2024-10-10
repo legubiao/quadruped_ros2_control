@@ -2,7 +2,7 @@
 // Created by biao on 24-9-10.
 //
 
-#include "legged_gym_controller/FSM/StateFixedStand.h"
+#include "rl_quadruped_controller/FSM/StateFixedStand.h"
 
 #include <cmath>
 

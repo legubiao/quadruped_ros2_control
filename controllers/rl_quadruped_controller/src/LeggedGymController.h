@@ -5,14 +5,14 @@
 #ifndef LEGGEDGYMCONTROLLER_H
 #define LEGGEDGYMCONTROLLER_H
 #include <controller_interface/controller_interface.hpp>
-#include <legged_gym_controller/FSM/StateRL.h>
+#include <rl_quadruped_controller/FSM/StateRL.h>
 
-#include "legged_gym_controller/FSM/StateFixedStand.h"
-#include "legged_gym_controller/FSM/StateFixedDown.h"
-#include "legged_gym_controller/FSM/StatePassive.h"
-#include "legged_gym_controller/control/CtrlComponent.h"
+#include "rl_quadruped_controller/FSM/StateFixedStand.h"
+#include "rl_quadruped_controller/FSM/StateFixedDown.h"
+#include "rl_quadruped_controller/FSM/StatePassive.h"
+#include "rl_quadruped_controller/control/CtrlComponent.h"
 
-namespace legged_gym_controller {
+namespace rl_quadruped_controller {
     struct FSMStateList {
         std::shared_ptr<FSMState> invalid;
         std::shared_ptr<StatePassive> passive;

@@ -4,7 +4,7 @@
 
 #include "LeggedGymController.h"
 
-namespace legged_gym_controller {
+namespace rl_quadruped_controller {
     using config_type = controller_interface::interface_configuration_type;
 
     controller_interface::InterfaceConfiguration LeggedGymController::command_interface_configuration() const {
@@ -191,4 +191,4 @@ namespace legged_gym_controller {
 }
 
 #include "pluginlib/class_list_macros.hpp"
-PLUGINLIB_EXPORT_CLASS(legged_gym_controller::LeggedGymController, controller_interface::ControllerInterface);
+PLUGINLIB_EXPORT_CLASS(rl_quadruped_controller::LeggedGymController, controller_interface::ControllerInterface);

@@ -10,6 +10,8 @@ This folder contains the URDF and SRDF files for the quadruped robot.
     * [B2](unitree/b2_description/)
 * Xiaomi
     * [Cyberdog](xiaomi/cyberdog_description/)
+* Deep Robotics
+    * [Lite 3](deep_robotics/lite3_description/)
 
 ## Steps to transfer urdf to Mujoco model
 
@@ -27,7 +29,9 @@ This folder contains the URDF and SRDF files for the quadruped robot.
   ```
 
 ## Dependencies for Gazebo Simulation
+
 Gazebo Simulation only tested on ROS2 Jazzy. I didn't add support for ROS2 Humble because the package name is different.
+
 * Gazebo Harmonic
   ```bash
   sudo apt-get install ros-jazzy-ros-gz

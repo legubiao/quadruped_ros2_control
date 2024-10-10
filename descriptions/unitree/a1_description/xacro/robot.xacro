@@ -53,7 +53,6 @@
             <geometry>
                 <mesh filename="file://$(find a1_description)/meshes/trunk.dae" scale="1 1 1"/>
             </geometry>
-            <material name="orange"/>
         </visual>
         <collision>
             <origin rpy="0 0 0" xyz="0 0 0"/>

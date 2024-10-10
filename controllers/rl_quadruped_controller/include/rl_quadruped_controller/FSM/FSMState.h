@@ -9,8 +9,8 @@
 #include <utility>
 #include <rclcpp/time.hpp>
 
-#include "legged_gym_controller/common/enumClass.h"
-#include "legged_gym_controller/control/CtrlComponent.h"
+#include "rl_quadruped_controller/common/enumClass.h"
+#include "rl_quadruped_controller/control/CtrlComponent.h"
 
 class FSMState {
 public:

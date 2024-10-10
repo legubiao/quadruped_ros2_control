@@ -34,6 +34,11 @@ ros2 launch go2_description visualize.launch.py
   source ~/ros2_ws/install/setup.bash
   ros2 launch go2_description ocs2_control.launch.py
   ```
+* RL Quadruped Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch go2_description rl_control.launch.py
+  ```
   
 ### Gazebo Simulator
 * Unitree Guide Controller
@@ -41,7 +46,12 @@ ros2 launch go2_description visualize.launch.py
   source ~/ros2_ws/install/setup.bash
   ros2 launch go2_description gazebo_unitree_guide.launch.py
   ```
-
+* RL Quadruped Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch go2_description gazebo_rl_control.launch.py
+  ```
+  
 ## When used for isaac gym or other similiar engine 
 
 Collision parameters in urdf can be amended to better train the robot:

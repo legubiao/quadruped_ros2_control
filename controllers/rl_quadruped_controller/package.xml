@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>legged_gym_controller</name>
+  <name>rl_quadruped_controller</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="biao876990970@hotmail.com">biao</maintainer>
+  <description>A Quadruped robot controller relied on .pt RL network</description>
+  <maintainer email="biao876990970@hotmail.com">Huang Zhenbiao</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

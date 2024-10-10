@@ -2,7 +2,7 @@
 // Created by biao on 24-10-6.
 //
 
-#include "legged_gym_controller/FSM/StateRL.h"
+#include "rl_quadruped_controller/FSM/StateRL.h"
 
 #include <rclcpp/logging.hpp>
 #include <yaml-cpp/yaml.h>
