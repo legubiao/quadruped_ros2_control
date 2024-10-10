@@ -63,7 +63,7 @@ public:
      * @return feet velocity in world frame
      */
     Vec34 getFeetVel() {
-        const std::vector<KDL::Vector> feet_vel = robot_model_.getFeet2BVelocities();
+        const std::vector<KDL::Vector> feet_vel = robot_model_->getFeet2BVelocities();
         Vec34 result;
         for (int i(0); i < 4; ++i) {
             result.col(i) = Vec3(feet_vel[i].data) + getVelocity();
@@ -106,8 +106,8 @@ public:
 
 private:
     CtrlComponent &ctrl_component_;
-    QuadrupedRobot &robot_model_;
-    WaveGenerator &wave_generator_;
+    std::shared_ptr<QuadrupedRobot> &robot_model_;
+    std::shared_ptr<WaveGenerator> &wave_generator_;
 
     Eigen::Matrix<double, 18, 1> x_hat_; // The state of estimator, position(3)+velocity(3)+feet position(3x4)
 

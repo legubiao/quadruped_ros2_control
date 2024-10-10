@@ -47,10 +47,11 @@ private:
      */
     bool checkStepOrNot();
 
-    Estimator &estimator_;
-    QuadrupedRobot &robot_model_;
-    BalanceCtrl &balance_ctrl_;
-    WaveGenerator &wave_generator_;
+    std::shared_ptr<Estimator> &estimator_;
+    std::shared_ptr<QuadrupedRobot> &robot_model_;
+    std::shared_ptr<BalanceCtrl> &balance_ctrl_;
+    std::shared_ptr<WaveGenerator> &wave_generator_;
+
     GaitGenerator gait_generator_;
 
     // Robot State

@@ -17,11 +17,9 @@ inline long long getSystemTime() {
 
 class WaveGenerator {
 public:
-    WaveGenerator();
+    WaveGenerator(double period, double st_ratio, const Vec4 &bias);
 
     ~WaveGenerator() = default;
-
-    void init(double period, double st_ratio, const Vec4 &bias);
 
     void update();
 

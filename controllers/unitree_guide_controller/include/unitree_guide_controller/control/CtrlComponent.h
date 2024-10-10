@@ -41,15 +41,13 @@ struct CtrlComponent {
     control_input_msgs::msg::Inputs control_inputs_;
     int frequency_{};
 
-    QuadrupedRobot robot_model_;
-    Estimator estimator_;
-    BalanceCtrl balance_ctrl_;
+    std::shared_ptr<QuadrupedRobot> robot_model_;
+    std::shared_ptr<Estimator> estimator_;
 
-    WaveGenerator wave_generator_;
+    std::shared_ptr<BalanceCtrl> balance_ctrl_;
+    std::shared_ptr<WaveGenerator> wave_generator_;
 
-    CtrlComponent() : robot_model_(*this),
-                      estimator_(*this) {
-    }
+    CtrlComponent() = default;
 
     void clear() {
         joint_torque_command_interface_.clear();

@@ -15,10 +15,10 @@ FeetEndCalc::FeetEndCalc(CtrlComponent &ctrl_component) : ctrl_component_(ctrl_c
 }
 
 void FeetEndCalc::init() {
-    t_stance_ = ctrl_component_.wave_generator_.get_t_stance();
-    t_swing_ = ctrl_component_.wave_generator_.get_t_swing();
+    t_stance_ = ctrl_component_.wave_generator_->get_t_stance();
+    t_swing_ = ctrl_component_.wave_generator_->get_t_swing();
 
-    Vec34 feet_pos_body = estimator_.getFeetPos2Body();
+    Vec34 feet_pos_body = estimator_->getFeetPos2Body();
     // Vec34 feet_pos_body = robot_model_.feet_pos_normal_stand_;
     for (int i(0); i < 4; ++i) {
         feet_radius_(i) =
@@ -28,7 +28,7 @@ void FeetEndCalc::init() {
 }
 
 Vec3 FeetEndCalc::calcFootPos(const int index, Vec2 vxy_goal_global, const double d_yaw_global, const double phase) {
-    Vec3 body_vel_global = estimator_.getVelocity();
+    Vec3 body_vel_global = estimator_->getVelocity();
     Vec3 next_step;
 
     next_step(0) = body_vel_global(0) * (1 - phase) * t_swing_ +
@@ -39,8 +39,8 @@ Vec3 FeetEndCalc::calcFootPos(const int index, Vec2 vxy_goal_global, const doubl
                    k_y_ * (body_vel_global(1) - vxy_goal_global(1));
     next_step(2) = 0;
 
-    const double yaw = estimator_.getYaw();
-    const double d_yaw = estimator_.getDYaw();
+    const double yaw = estimator_->getYaw();
+    const double d_yaw = estimator_->getDYaw();
     const double next_yaw = d_yaw * (1 - phase) * t_swing_ + d_yaw * t_stance_ / 2 +
                             k_yaw_ * (d_yaw_global - d_yaw);
 
@@ -49,7 +49,7 @@ Vec3 FeetEndCalc::calcFootPos(const int index, Vec2 vxy_goal_global, const doubl
     next_step(1) +=
             feet_radius_(index) * sin(yaw + feet_init_angle_(index) + next_yaw);
 
-    Vec3 foot_pos = estimator_.getPosition() + next_step;
+    Vec3 foot_pos = estimator_->getPosition() + next_step;
     foot_pos(2) = 0.0;
 
     return foot_pos;

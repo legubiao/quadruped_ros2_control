@@ -5,6 +5,7 @@
 
 #ifndef FOOTENDCTRL_H
 #define FOOTENDCTRL_H
+#include <memory>
 #include <unitree_guide_controller/common/mathTypes.h>
 
 
@@ -24,14 +25,13 @@ public:
 
 private:
     CtrlComponent &ctrl_component_;
-    QuadrupedRobot &robot_model_;
-    Estimator &estimator_;
+    std::shared_ptr<QuadrupedRobot> &robot_model_;
+    std::shared_ptr<Estimator> &estimator_;
 
     Vec4 feet_radius_, feet_init_angle_;
 
     double k_x_, k_y_, k_yaw_;
     double t_stance_{}, t_swing_{};
-
 };
 
 

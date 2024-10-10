@@ -25,7 +25,7 @@ private:
 
     void torqueCtrl() const;
 
-    QuadrupedRobot &robot_model_;
+    std::shared_ptr<QuadrupedRobot> &robot_model_;
     float _xMin, _xMax;
     float _yMin, _yMax;
     float _zMin, _zMax;

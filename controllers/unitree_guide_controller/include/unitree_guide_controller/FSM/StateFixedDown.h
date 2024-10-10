@@ -5,6 +5,8 @@
 #ifndef STATEFIXEDDOWN_H
 #define STATEFIXEDDOWN_H
 
+#include <rclcpp/time.hpp>
+
 #include "FSMState.h"
 
 class StateFixedDown final : public FSMState {
@@ -18,6 +20,7 @@ public:
     void exit() override;
 
     FSMStateName checkChange() override;
+
 private:
     double target_pos_[12] = {
         0.0473455, 1.22187, -2.44375, -0.0473455,

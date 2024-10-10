@@ -24,8 +24,8 @@ void StateFreeStand::enter() {
         ctrl_comp_.joint_kd_command_interface_[i].get().set_value(5);
     }
 
-    init_joint_pos_ = robot_model_.current_joint_pos_;
-    init_foot_pos_ = robot_model_.getFeet2BPositions();
+    init_joint_pos_ = robot_model_->current_joint_pos_;
+    init_foot_pos_ = robot_model_->getFeet2BPositions();
 
 
     fr_init_pos_ = init_foot_pos_[0];
@@ -69,7 +69,7 @@ void StateFreeStand::calc_body_target(const float row, const float pitch,
     for (int i = 0; i < 4; i++) {
         goal_pos[i] = body_2_fr_pos * init_foot_pos_[i];
     }
-    target_joint_pos_ = robot_model_.getQ(goal_pos);
+    target_joint_pos_ = robot_model_->getQ(goal_pos);
 
     for (int i = 0; i < 4; i++) {
         ctrl_comp_.joint_position_command_interface_[i * 3].get().set_value(target_joint_pos_[i](0));

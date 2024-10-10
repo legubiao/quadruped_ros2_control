@@ -44,7 +44,7 @@ namespace unitree_guide_controller {
     }
 
     controller_interface::return_type UnitreeGuideController::
-    update(const rclcpp::Time &time, const rclcpp::Duration &period) {
+    update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
         // auto now = std::chrono::steady_clock::now();
         // std::chrono::duration<double> time_diff = now - last_update_time_;
         // last_update_time_ = now;
@@ -53,9 +53,13 @@ namespace unitree_guide_controller {
         // update_frequency_ = 1.0 / time_diff.count();
         // RCLCPP_INFO(get_node()->get_logger(), "Update frequency: %f Hz", update_frequency_);
 
-        ctrl_comp_.robot_model_.update();
-        ctrl_comp_.wave_generator_.update();
-        ctrl_comp_.estimator_.update();
+        if (ctrl_comp_.robot_model_ == nullptr) {
+            return controller_interface::return_type::OK;
+        }
+
+        ctrl_comp_.robot_model_->update();
+        ctrl_comp_.wave_generator_->update();
+        ctrl_comp_.estimator_->update();
 
         if (mode_ == FSMMode::NORMAL) {
             current_state_->run();
@@ -92,6 +96,11 @@ namespace unitree_guide_controller {
             command_prefix_ = auto_declare<std::string>("command_prefix", command_prefix_);
             feet_names_ =
                     auto_declare<std::vector<std::string> >("feet_names", feet_names_);
+
+            get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);
+            RCLCPP_INFO(get_node()->get_logger(), "Controller Manager Update Rate: %d Hz", ctrl_comp_.frequency_);
+
+            ctrl_comp_.estimator_ = std::make_shared<Estimator>(ctrl_comp_);
         } catch (const std::exception &e) {
             fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
             return controller_interface::CallbackReturn::ERROR;
@@ -101,7 +110,7 @@ namespace unitree_guide_controller {
     }
 
     controller_interface::CallbackReturn UnitreeGuideController::on_configure(
-        const rclcpp_lifecycle::State &previous_state) {
+        const rclcpp_lifecycle::State & /*previous_state*/) {
         control_input_subscription_ = get_node()->create_subscription<control_input_msgs::msg::Inputs>(
             "/control_input", 10, [this](const control_input_msgs::msg::Inputs::SharedPtr msg) {
                 // Handle message
@@ -115,20 +124,18 @@ namespace unitree_guide_controller {
         robot_description_subscription_ = get_node()->create_subscription<std_msgs::msg::String>(
             "/robot_description", rclcpp::QoS(rclcpp::KeepLast(1)).transient_local(),
             [this](const std_msgs::msg::String::SharedPtr msg) {
-                ctrl_comp_.robot_model_.init(msg->data, feet_names_, base_name_);
-                ctrl_comp_.balance_ctrl_.init(ctrl_comp_.robot_model_);
+                ctrl_comp_.robot_model_ = std::make_shared<QuadrupedRobot>(
+                    ctrl_comp_, msg->data, feet_names_, base_name_);
+                ctrl_comp_.balance_ctrl_ = std::make_shared<BalanceCtrl>(ctrl_comp_.robot_model_);
             });
 
-        get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);
-        RCLCPP_INFO(get_node()->get_logger(), "Controller Manager Update Rate: %d Hz", ctrl_comp_.frequency_);
-
-        ctrl_comp_.wave_generator_.init(0.45, 0.5, Vec4(0, 0.5, 0.5, 0));
+        ctrl_comp_.wave_generator_ = std::make_shared<WaveGenerator>(0.45, 0.5, Vec4(0, 0.5, 0.5, 0));
 
         return CallbackReturn::SUCCESS;
     }
 
     controller_interface::CallbackReturn
-    UnitreeGuideController::on_activate(const rclcpp_lifecycle::State &previous_state) {
+    UnitreeGuideController::on_activate(const rclcpp_lifecycle::State & /*previous_state*/) {
         // clear out vectors in case of restart
         ctrl_comp_.clear();
 
@@ -171,27 +178,27 @@ namespace unitree_guide_controller {
     }
 
     controller_interface::CallbackReturn UnitreeGuideController::on_deactivate(
-        const rclcpp_lifecycle::State &previous_state) {
+        const rclcpp_lifecycle::State & /*previous_state*/) {
         release_interfaces();
         return CallbackReturn::SUCCESS;
     }
 
     controller_interface::CallbackReturn
-    UnitreeGuideController::on_cleanup(const rclcpp_lifecycle::State &previous_state) {
+    UnitreeGuideController::on_cleanup(const rclcpp_lifecycle::State & /*previous_state*/) {
         return CallbackReturn::SUCCESS;
     }
 
     controller_interface::CallbackReturn
-    UnitreeGuideController::on_error(const rclcpp_lifecycle::State &previous_state) {
+    UnitreeGuideController::on_error(const rclcpp_lifecycle::State & /*previous_state*/) {
         return CallbackReturn::SUCCESS;
     }
 
     controller_interface::CallbackReturn
-    UnitreeGuideController::on_shutdown(const rclcpp_lifecycle::State &previous_state) {
+    UnitreeGuideController::on_shutdown(const rclcpp_lifecycle::State & /*previous_state*/) {
         return CallbackReturn::SUCCESS;
     }
 
-    std::shared_ptr<FSMState> UnitreeGuideController::getNextState(FSMStateName stateName) const {
+    std::shared_ptr<FSMState> UnitreeGuideController::getNextState(const FSMStateName stateName) const {
         switch (stateName) {
             case FSMStateName::INVALID:
                 return state_list_.invalid;

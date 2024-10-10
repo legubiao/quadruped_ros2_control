@@ -20,7 +20,7 @@ public:
     FSMStateName checkChange() override;
 
 private:
-    QuadrupedRobot &robot_model_;
+    std::shared_ptr<QuadrupedRobot> &robot_model_;
     void calc_body_target(float row, float pitch, float yaw, float height);
 
     float row_max_, row_min_;
