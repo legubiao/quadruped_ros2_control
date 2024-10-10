@@ -16,12 +16,10 @@ struct CtrlComponent;
 
 class QuadrupedRobot {
 public:
-    explicit QuadrupedRobot(CtrlComponent &ctrl_component): ctrl_component_(ctrl_component) {
-    }
+    explicit QuadrupedRobot(CtrlComponent &ctrl_component, const std::string &robot_description,
+                            const std::vector<std::string> &feet_names, const std::string &base_name);
 
     ~QuadrupedRobot() = default;
-
-    void init(const std::string &robot_description, const std::vector<std::string> &feet_names, const std::string& base_name);
 
     /**
      * Calculate the joint positions based on the foot end position

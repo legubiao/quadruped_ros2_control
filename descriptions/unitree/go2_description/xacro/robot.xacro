@@ -3,11 +3,19 @@
 <robot name="go2" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:arg name="DEBUG" default="false"/>
+    <xacro:arg name="GAZEBO" default="false"/>
 
     <xacro:include filename="$(find go2_description)/xacro/const.xacro"/>
     <xacro:include filename="$(find go2_description)/xacro/materials.xacro"/>
     <xacro:include filename="$(find go2_description)/xacro/leg.xacro"/>
-    <xacro:include filename="$(find go2_description)/xacro/ros2_control.xacro"/>
+
+    <xacro:if value="$(arg GAZEBO)">
+        <xacro:include filename="$(find go2_description)/xacro/gazebo.xacro"/>
+    </xacro:if>
+    <xacro:unless value="$(arg GAZEBO)">
+        <xacro:include filename="$(find go2_description)/xacro/ros2_control.xacro"/>
+    </xacro:unless>
+
 
     <!-- <xacro:stairs stairs="15" xpos="0" ypos="0" zpos="0" /> -->
 

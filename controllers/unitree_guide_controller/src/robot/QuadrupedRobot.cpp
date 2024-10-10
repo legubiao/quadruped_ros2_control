@@ -6,8 +6,9 @@
 #include "unitree_guide_controller/control/CtrlComponent.h"
 #include "unitree_guide_controller/robot/QuadrupedRobot.h"
 
-void QuadrupedRobot::init(const std::string &robot_description, const std::vector<std::string> &feet_names,
-                          const std::string& base_name) {
+QuadrupedRobot::QuadrupedRobot(CtrlComponent &ctrl_component, const std::string &robot_description,
+                               const std::vector<std::string> &feet_names,
+                               const std::string &base_name) : ctrl_component_(ctrl_component) {
     KDL::Tree robot_tree;
     kdl_parser::treeFromString(robot_description, robot_tree);
 

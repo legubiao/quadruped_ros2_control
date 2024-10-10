@@ -3,12 +3,19 @@
 <robot name="aliengo" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 	<xacro:arg name="DEBUG" default="false"/>
+	<xacro:arg name="GAZEBO" default="false"/>
 
 	<xacro:include filename="$(find aliengo_description)/xacro/const.xacro"/>
 	<xacro:include filename="$(find aliengo_description)/xacro/materials.xacro"/>
 	<xacro:include filename="$(find aliengo_description)/xacro/leg.xacro"/>
-	<xacro:include filename="$(find aliengo_description)/xacro/ros2_control.xacro"/>
-	<!--    <xacro:include filename="$(find aliengo_description)/xacro/gazebo.xacro"/>-->
+
+	<xacro:if value="$(arg GAZEBO)">
+		<xacro:include filename="$(find go2_description)/xacro/gazebo.xacro"/>
+	</xacro:if>
+	<xacro:unless value="$(arg GAZEBO)">
+		<xacro:include filename="$(find go2_description)/xacro/ros2_control.xacro"/>
+	</xacro:unless>
+
 
 	<!-- Rotor related joint and link is only for demonstrate location. -->
 	<!-- Actually, the rotor will rotate and the joint is not fixed. Reduction ratio should be considered. -->
@@ -44,7 +51,6 @@
 			<geometry>
 				<mesh filename="file://$(find aliengo_description)/meshes/trunk.dae" scale="1 1 1"/>
 			</geometry>
-			<material name="orange"/>
 		</visual>
 		<collision>
 			<origin rpy="0 0 0" xyz="0 0 0"/>

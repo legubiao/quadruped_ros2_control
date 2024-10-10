@@ -9,18 +9,16 @@
 
 #include "quadProgpp/QuadProg++.hh"
 
-BalanceCtrl::BalanceCtrl() {
-    mass_ = 15;
+BalanceCtrl::BalanceCtrl(const std::shared_ptr<QuadrupedRobot> &robot) {
+    mass_ = robot->mass_;
+
     alpha_ = 0.001;
     beta_ = 0.1;
     g_ << 0, 0, -9.81;
     friction_ratio_ = 0.4;
     friction_mat_ << 1, 0, friction_ratio_, -1, 0, friction_ratio_, 0, 1, friction_ratio_, 0, -1,
             friction_ratio_, 0, 0, 1;
-}
 
-void BalanceCtrl::init(const QuadrupedRobot &robot) {
-    mass_ = robot.mass_;
     pcb_ = Vec3(0.0, 0.0, 0.0);
     Ib_ = Vec3(0.0792, 0.2085, 0.2265).asDiagonal();
 

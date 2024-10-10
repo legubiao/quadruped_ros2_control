@@ -7,7 +7,6 @@
 
 #include <string>
 #include <utility>
-#include <rclcpp/time.hpp>
 #include <unitree_guide_controller/common/enumClass.h>
 #include <unitree_guide_controller/control/CtrlComponent.h>
 

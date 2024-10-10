@@ -29,10 +29,10 @@ StateBalanceTest::StateBalanceTest(CtrlComponent &ctrlComp) : FSMState(FSMStateN
 }
 
 void StateBalanceTest::enter() {
-    pcd_init_ = estimator_.getPosition();
+    pcd_init_ = estimator_->getPosition();
     pcd_ = pcd_init_;
-    init_rotation_ = estimator_.getRotation();
-    wave_generator_.status_ = WaveStatus::STANCE_ALL;
+    init_rotation_ = estimator_->getRotation();
+    wave_generator_->status_ = WaveStatus::STANCE_ALL;
 }
 
 void StateBalanceTest::run() {
@@ -52,7 +52,7 @@ void StateBalanceTest::run() {
 }
 
 void StateBalanceTest::exit() {
-    wave_generator_.status_ = WaveStatus::SWING_ALL;
+    wave_generator_->status_ = WaveStatus::SWING_ALL;
 }
 
 FSMStateName StateBalanceTest::checkChange() {
@@ -67,28 +67,28 @@ FSMStateName StateBalanceTest::checkChange() {
 }
 
 void StateBalanceTest::calcTorque() {
-    const auto B2G_Rotation = estimator_.getRotation();
+    const auto B2G_Rotation = estimator_->getRotation();
     const RotMat G2B_Rotation = B2G_Rotation.transpose();
 
-    const Vec3 pose_body = estimator_.getPosition();
-    const Vec3 vel_body = estimator_.getVelocity();
+    const Vec3 pose_body = estimator_->getPosition();
+    const Vec3 vel_body = estimator_->getVelocity();
 
     // expected body acceleration
     dd_pcd_ = Kp_p_ * (pcd_ - pose_body) + Kd_p_ * (Vec3(0, 0, 0) - vel_body);
 
     // expected body angular acceleration
     d_wbd_ = kp_w_ * rotMatToExp(Rd_ * G2B_Rotation) +
-             Kd_w_ * (Vec3(0, 0, 0) - estimator_.getGyroGlobal());
+             Kd_w_ * (Vec3(0, 0, 0) - estimator_->getGyroGlobal());
 
     // calculate foot force
-    const Vec34 pos_feet_2_body_global = estimator_.getFeetPos2Body();
-    const Vec34 force_feet_global = -balance_ctrl_.calF(dd_pcd_, d_wbd_, B2G_Rotation,
-                                                        pos_feet_2_body_global, wave_generator_.contact_);
+    const Vec34 pos_feet_2_body_global = estimator_->getFeetPos2Body();
+    const Vec34 force_feet_global = -balance_ctrl_->calF(dd_pcd_, d_wbd_, B2G_Rotation,
+                                                        pos_feet_2_body_global, wave_generator_->contact_);
     const Vec34 force_feet_body = G2B_Rotation * force_feet_global;
 
-    std::vector<KDL::JntArray> current_joints = robot_model_.current_joint_pos_;
+    std::vector<KDL::JntArray> current_joints = robot_model_->current_joint_pos_;
     for (int i = 0; i < 4; i++) {
-        KDL::JntArray torque = robot_model_.getTorque(force_feet_body.col(i), i);
+        KDL::JntArray torque = robot_model_->getTorque(force_feet_body.col(i), i);
         for (int j = 0; j < 3; j++) {
             ctrl_comp_.joint_torque_command_interface_[i * 3 + j].get().set_value(torque(j));
             ctrl_comp_.joint_position_command_interface_[i * 3 + j].get().set_value(current_joints[i](j));

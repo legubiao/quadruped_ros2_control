@@ -5,16 +5,16 @@
 #ifndef BALANCECTRL_H
 #define BALANCECTRL_H
 
+#include <memory>
+
 #include "unitree_guide_controller/common/mathTypes.h"
 class QuadrupedRobot;
 
 class BalanceCtrl {
 public:
-    explicit BalanceCtrl();
+    explicit BalanceCtrl(const std::shared_ptr<QuadrupedRobot>& robot);
 
     ~BalanceCtrl() = default;
-
-    void init(const QuadrupedRobot &robot);
 
     /**
      * Calculate the desired feet end force

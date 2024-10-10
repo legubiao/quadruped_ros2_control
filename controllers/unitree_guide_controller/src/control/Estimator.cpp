@@ -12,7 +12,9 @@ Estimator::Estimator(CtrlComponent &ctrl_component) : ctrl_component_(ctrl_compo
                                                       robot_model_(ctrl_component.robot_model_),
                                                       wave_generator_(ctrl_component.wave_generator_) {
     g_ << 0, 0, -9.81;
-    dt_ = 0.002;
+    dt_ = 1.0 / ctrl_component_.frequency_;
+
+    std::cout<<"dt: "<<dt_<<std::endl;
     large_variance_ = 100;
     for (int i(0); i < Qdig.rows(); ++i) {
         Qdig(i) = i < 6 ? 0.0003 : 0.01;
@@ -146,25 +148,25 @@ double Estimator::getYaw() const {
 }
 
 void Estimator::update() {
-    if (robot_model_.mass_ == 0) return;
+    if (robot_model_->mass_ == 0) return;
 
     Q = QInit_;
     R = RInit_;
 
-    foot_poses_ = robot_model_.getFeet2BPositions();
-    foot_vels_ = robot_model_.getFeet2BVelocities();
+    foot_poses_ = robot_model_->getFeet2BPositions();
+    foot_vels_ = robot_model_->getFeet2BVelocities();
     feet_h_.setZero();
 
     // Adjust the covariance based on foot contact and phase.
     for (int i(0); i < 4; ++i) {
-        if (wave_generator_.contact_[i] == 0) {
+        if (wave_generator_->contact_[i] == 0) {
             // foot not contact
             Q.block(6 + 3 * i, 6 + 3 * i, 3, 3) = large_variance_ * Eigen::MatrixXd::Identity(3, 3);
             R.block(12 + 3 * i, 12 + 3 * i, 3, 3) = large_variance_ * Eigen::MatrixXd::Identity(3, 3);
             R(24 + i, 24 + i) = large_variance_;
         } else {
             // foot contact
-            const double trust = windowFunc(wave_generator_.phase_[i], 0.2);
+            const double trust = windowFunc(wave_generator_->phase_[i], 0.2);
             Q.block(6 + 3 * i, 6 + 3 * i, 3, 3) =
                     (1 + (1 - trust) * large_variance_) *
                     QInit_.block(6 + 3 * i, 6 + 3 * i, 3, 3);

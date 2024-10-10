@@ -3,11 +3,19 @@
 <robot name="b2_description" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:arg name="DEBUG" default="false"/>
+  <xacro:arg name="GAZEBO" default="false"/>
 
   <xacro:include filename="$(find b2_description)/xacro/const.xacro"/>
   <xacro:include filename="$(find b2_description)/xacro/materials.xacro"/>
   <xacro:include filename="$(find b2_description)/xacro/leg.xacro"/>
-  <xacro:include filename="$(find b2_description)/xacro/ros2_control.xacro"/>
+
+  <xacro:if value="$(arg GAZEBO)">
+    <xacro:include filename="$(find b2_description)/xacro/gazebo.xacro"/>
+  </xacro:if>
+  <xacro:unless value="$(arg GAZEBO)">
+    <xacro:include filename="$(find b2_description)/xacro/ros2_control.xacro"/>
+  </xacro:unless>
+
 
   <!-- Rotor related joint and link is only for demonstrate location. -->
   <!-- Actually, the rotor will rotate and the joint is not fixed. Reduction ratio should be considered. -->
@@ -41,7 +49,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://b2_description/meshes/trunk.dae" scale="1 1 1"/>
+        <mesh filename="file://$(find b2_description)/meshes/trunk.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>

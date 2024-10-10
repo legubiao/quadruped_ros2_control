@@ -1,0 +1,9 @@
+<library path="rl_quadruped_controller">
+    <class name="rl_quadruped_controller/LeggedGymController"
+           type="rl_quadruped_controller::LeggedGymController"
+           base_class_type="controller_interface::ControllerInterface">
+        <description>
+            Quadruped Controller used RL-model trained in Legged Gym.
+        </description>
+    </class>
+</library>

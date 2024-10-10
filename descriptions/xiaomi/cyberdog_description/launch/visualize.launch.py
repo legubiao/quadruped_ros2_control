@@ -3,23 +3,30 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch_ros.actions import Node
 
 import xacro
 
 package_description = "cyberdog_description"
 
-def process_xacro(context):
-    robot_type_value = context.launch_configurations['robot_type']
+def process_xacro():
     pkg_path = os.path.join(get_package_share_directory(package_description))
     xacro_file = os.path.join(pkg_path, 'xacro', 'robot.xacro')
-    robot_description_config = xacro.process_file(xacro_file, mappings={'robot_type': robot_type_value})
+    robot_description_config = xacro.process_file(xacro_file)
     return robot_description_config.toxml()
+def generate_launch_description():
 
-def launch_setup(context, *args, **kwargs):
-    robot_description = process_xacro(context)
-    return [
+    rviz_config_file = os.path.join(get_package_share_directory(package_description), "config", "visualize_urdf.rviz")
+    robot_description = process_xacro()
+
+    return LaunchDescription([
+        Node(
+            package='rviz2',
+            executable='rviz2',
+            name='rviz_ocs2',
+            output='screen',
+            arguments=["-d", rviz_config_file]
+        ),
         Node(
             package='robot_state_publisher',
             executable='robot_state_publisher',
@@ -38,28 +45,5 @@ def launch_setup(context, *args, **kwargs):
             executable='joint_state_publisher_gui',
             name='joint_state_publisher',
             output='screen',
-        )
-    ]
-
-
-def generate_launch_description():
-
-    robot_type_arg = DeclareLaunchArgument(
-        'robot_type',
-        default_value='go1',
-        description='Type of the robot'
-    )
-    
-    rviz_config_file = os.path.join(get_package_share_directory(package_description), "config", "cyberdog.rviz")
-
-    return LaunchDescription([
-        robot_type_arg,
-        OpaqueFunction(function=launch_setup),
-        Node(
-            package='rviz2',
-            executable='rviz2',
-            name='rviz_ocs2',
-            output='screen',
-            arguments=["-d", rviz_config_file]
         )
     ])

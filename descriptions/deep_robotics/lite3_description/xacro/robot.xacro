@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<robot name="lite3" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find lite3_description)/xacro/body.xacro"/>
+  <xacro:include filename="$(find lite3_description)/xacro/transmission.xacro"/>
+
+  <xacro:arg name="GAZEBO" default="false"/>
+  <xacro:if value="$(arg GAZEBO)">
+    <xacro:include filename="$(find lite3_description)/xacro/gazebo.xacro"/>
+  </xacro:if>
+  <xacro:unless value="$(arg GAZEBO)">
+    <xacro:include filename="$(find lite3_description)/xacro/ros2_control.xacro"/>
+  </xacro:unless>
+
+</robot>

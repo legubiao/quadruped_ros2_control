@@ -5,6 +5,7 @@
 
 #ifndef GAITGENERATOR_H
 #define GAITGENERATOR_H
+#include <memory>
 #include <unitree_guide_controller/common/mathTypes.h>
 
 #include "FeetEndCalc.h"
@@ -66,8 +67,8 @@ private:
      */
     [[nodiscard]] double cycloidZVelocity(double height, double phase) const;
 
-    WaveGenerator &wave_generator_;
-    Estimator &estimator_;
+    std::shared_ptr<WaveGenerator> &wave_generator_;
+    std::shared_ptr<Estimator> &estimator_;
     FeetEndCalc feet_end_calc_;
 
     double gait_height_{};

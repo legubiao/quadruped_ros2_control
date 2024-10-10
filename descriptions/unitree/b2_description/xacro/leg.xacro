@@ -65,9 +65,8 @@
           <origin rpy="${PI} ${PI} 0" xyz="0 0 0"/>
         </xacro:if>
         <geometry>
-          <mesh filename="package://b2_description/meshes/hip.dae" scale="1 1 1"/>
+          <mesh filename="file://$(find b2_description)/meshes/hip.dae" scale="1 1 1"/>
         </geometry>
-        <material name="orange"/>
       </visual>
       <collision>
         <origin rpy="${PI/2.0} 0 0" xyz="0 ${hip_offset*mirror} 0"/>
@@ -124,13 +123,12 @@
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
           <xacro:if value="${mirror_dae == True}">
-            <mesh filename="package://b2_description/meshes/thigh.dae" scale="1 1 1"/>
+            <mesh filename="file://$(find b2_description)/meshes/thigh.dae" scale="1 1 1"/>
           </xacro:if>
           <xacro:if value="${mirror_dae == False}">
-            <mesh filename="package://b2_description/meshes/thigh_mirror.dae" scale="1 1 1"/>
+            <mesh filename="file://$(find b2_description)/meshes/thigh_mirror.dae" scale="1 1 1"/>
           </xacro:if>
         </geometry>
-        <material name="orange"/>
       </visual>
       <collision>
         <origin rpy="0 ${PI/2.0} 0" xyz="-0.025 0 ${-thigh_length/2.0}"/>
@@ -186,9 +184,8 @@
       <visual>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
-          <mesh filename="package://b2_description/meshes/calf.dae" scale="1 1 1"/>
+          <mesh filename="file://$(find b2_description)/meshes/calf.dae" scale="1 1 1"/>
         </geometry>
-        <material name="orange"/>
       </visual>
       <collision>
         <origin rpy="0 1.2 0" xyz="-0.002 0 -0.03"/>

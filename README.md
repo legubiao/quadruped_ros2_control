@@ -13,7 +13,8 @@ Todo List:
 - [x] [Leg PD Controller](controllers/leg_pd_controller)
 - [x] [Contact Sensor Simulation](https://github.com/legubiao/unitree_mujoco)
 - [x] [OCS2 Quadruped Control](controllers/ocs2_quadruped_controller)
-- [ ] Learning-based Controller
+- [x] [Learning-based Controller](controllers/rl_quadruped_controller/)
+- [ ] Fully understand the RL Workflow
 
 Video for Unitree Guide Controller:
 [![](http://i1.hdslb.com/bfs/archive/310e6208920985ac43015b2da31c01ec15e2c5f9.jpg)](https://www.bilibili.com/video/BV1aJbAeZEuo/)
@@ -54,3 +55,5 @@ For more details, please refer to the [unitree guide controller](controllers/uni
 [1] Unitree Robotics. *unitree\_guide: An open source project for controlling the quadruped robot of Unitree Robotics, and it is also the software project accompanying 《四足机器人控制算法--建模、控制与实践》 published by Unitree Robotics*. [Online]. Available: [https://github.com/unitreerobotics/unitree_guide](https://github.com/unitreerobotics/unitree_guide)
 
 [2] Qiayuan Liao. *legged\_control: An open-source NMPC, WBC, state estimation, and sim2real framework for legged robots*. [Online]. Available: [https://github.com/qiayuanl/legged_control](https://github.com/qiayuanl/legged_control)
+
+[3] Ziqi Fan. *rl\_sar: Simulation Verification and Physical Deployment of Robot Reinforcement Learning Algorithm.* 2024. Available: [https://github.com/fan-ziqi/rl_sar](https://github.com/fan-ziqi/rl_sar) 

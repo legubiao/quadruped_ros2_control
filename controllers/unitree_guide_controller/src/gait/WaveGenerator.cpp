@@ -8,14 +8,13 @@
 
 #include <iostream>
 
-WaveGenerator::WaveGenerator() {
+WaveGenerator::WaveGenerator(double period, double st_ratio, const Vec4 &bias) {
+
     phase_past_ << 0.5, 0.5, 0.5, 0.5;
     contact_past_.setZero();
     status_past_ = WaveStatus::SWING_ALL;
     status_ = WaveStatus::SWING_ALL;
-}
 
-void WaveGenerator::init(const double period, const double st_ratio, const Vec4 &bias) {
     period_ = period;
     st_ratio_ = st_ratio;
     bias_ = bias;

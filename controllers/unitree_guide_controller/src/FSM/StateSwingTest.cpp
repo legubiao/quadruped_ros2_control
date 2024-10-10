@@ -7,7 +7,9 @@
 #include "unitree_guide_controller/common/mathTools.h"
 
 StateSwingTest::StateSwingTest(CtrlComponent &ctrl_component): FSMState(
-    FSMStateName::SWINGTEST, "swing test", ctrl_component), robot_model_(ctrl_component.robot_model_) {
+                                                                   FSMStateName::SWINGTEST, "swing test",
+                                                                   ctrl_component),
+                                                               robot_model_(ctrl_component.robot_model_) {
     _xMin = -0.15;
     _xMax = 0.10;
     _yMin = -0.15;
@@ -29,8 +31,8 @@ void StateSwingTest::enter() {
     Kp = KDL::Vector(20, 20, 50);
     Kd = KDL::Vector(5, 5, 20);
 
-    init_joint_pos_ = robot_model_.current_joint_pos_;
-    init_foot_pos_ = robot_model_.getFeet2BPositions();
+    init_joint_pos_ = robot_model_->current_joint_pos_;
+    init_foot_pos_ = robot_model_->getFeet2BPositions();
 
     target_foot_pos_ = init_foot_pos_;
     fr_init_pos_ = init_foot_pos_[0];
@@ -80,7 +82,7 @@ FSMStateName StateSwingTest::checkChange() {
 
 void StateSwingTest::positionCtrl() {
     target_foot_pos_[0] = fr_goal_pos_;
-    target_joint_pos_ = robot_model_.getQ(target_foot_pos_);
+    target_joint_pos_ = robot_model_->getQ(target_foot_pos_);
     for (int i = 0; i < 4; i++) {
         ctrl_comp_.joint_position_command_interface_[i * 3].get().set_value(target_joint_pos_[i](0));
         ctrl_comp_.joint_position_command_interface_[i * 3 + 1].get().set_value(target_joint_pos_[i](1));
@@ -89,14 +91,14 @@ void StateSwingTest::positionCtrl() {
 }
 
 void StateSwingTest::torqueCtrl() const {
-    const KDL::Frame fr_current_pos = robot_model_.getFeet2BPositions(0);
+    const KDL::Frame fr_current_pos = robot_model_->getFeet2BPositions(0);
 
     const KDL::Vector pos_goal = fr_goal_pos_.p;
     const KDL::Vector pos0 = fr_current_pos.p;
-    const KDL::Vector vel0 = robot_model_.getFeet2BVelocities(0);
+    const KDL::Vector vel0 = robot_model_->getFeet2BVelocities(0);
 
     const KDL::Vector force0 = Kp * (pos_goal - pos0) + Kd * -vel0;
-    KDL::JntArray torque0 = robot_model_.getTorque(force0, 0);
+    KDL::JntArray torque0 = robot_model_->getTorque(force0, 0);
 
     for (int i = 0; i < 3; i++) {
         ctrl_comp_.joint_torque_command_interface_[i].get().set_value(torque0(i));

@@ -1,22 +1,29 @@
 # Unitree Go1 Description
+
 This repository contains the urdf model of go1.
 
 ![go1](../../../.images/go1.png)
 
 ## Build
+
 ```bash
 cd ~/ros2_ws
-colcon build --packages-up-to go1_description
+colcon build --packages-up-to go1_description  --symlink-install
 ```
 
 ## Visualize the robot
+
 To visualize and check the configuration of the robot in rviz, simply launch:
+
 ```bash
 source ~/ros2_ws/install/setup.bash
 ros2 launch go1_description visualize.launch.py
 ```
 
 ## Launch ROS2 Control
+
+### Mujoco Simulator
+
 * Unitree Guide Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
@@ -26,4 +33,12 @@ ros2 launch go1_description visualize.launch.py
   ```bash
   source ~/ros2_ws/install/setup.bash
   ros2 launch go1_description ocs2_control.launch.py
+  ```
+
+### Gazebo Simulator
+
+* Unitree Guide Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch go1_description gazebo_unitree_guide.launch.py
   ```
