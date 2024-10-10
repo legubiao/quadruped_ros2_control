@@ -12,7 +12,7 @@ Tested environment:
 ## Build
 ```bash
 cd ~/ros2_ws
-colcon build --packages-up-to go2_description
+colcon build --packages-up-to go2_description --symlink-install
 ```
 
 ## Visualize the robot
@@ -23,6 +23,7 @@ ros2 launch go2_description visualize.launch.py
 ```
 
 ## Launch ROS2 Control
+### Mujoco Simulator
 * Unitree Guide Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
@@ -32,6 +33,13 @@ ros2 launch go2_description visualize.launch.py
   ```bash
   source ~/ros2_ws/install/setup.bash
   ros2 launch go2_description ocs2_control.launch.py
+  ```
+  
+### Gazebo Simulator
+* Unitree Guide Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch go2_description gazebo_unitree_guide.launch.py
   ```
 
 ## When used for isaac gym or other similiar engine 
