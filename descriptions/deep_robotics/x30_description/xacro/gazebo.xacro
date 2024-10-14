@@ -1,0 +1,195 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+
+    <joint name="FR_HipX">
+      <command_interface name="effort" initial_value="0.0"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="FR_HipY">
+      <command_interface name="effort" initial_value="0.0"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="FR_Knee">
+      <command_interface name="effort" initial_value="0.0"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="FL_HipX">
+      <command_interface name="effort" initial_value="0.0"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="FL_HipY">
+      <command_interface name="effort" initial_value="0.0"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="FL_Knee">
+      <command_interface name="effort" initial_value="0.0"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="HR_HipX">
+      <command_interface name="effort" initial_value="0.0"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="HR_HipY">
+      <command_interface name="effort" initial_value="0.0"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="HR_Knee">
+      <command_interface name="effort" initial_value="0.0"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="HL_HipX">
+      <command_interface name="effort" initial_value="0.0"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="HL_HipY">
+      <command_interface name="effort" initial_value="0.0"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="HL_Knee">
+      <command_interface name="effort" initial_value="0.0"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <sensor name="imu_sensor">
+      <state_interface name="orientation.x"/>
+      <state_interface name="orientation.y"/>
+      <state_interface name="orientation.z"/>
+      <state_interface name="orientation.w"/>
+      <state_interface name="angular_velocity.x"/>
+      <state_interface name="angular_velocity.y"/>
+      <state_interface name="angular_velocity.z"/>
+      <state_interface name="linear_acceleration.x"/>
+      <state_interface name="linear_acceleration.y"/>
+      <state_interface name="linear_acceleration.z"/>
+    </sensor>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find x30_description)/config/gazebo.yaml</parameters>
+    </plugin>
+    <plugin filename="gz-sim-imu-system"
+            name="gz::sim::systems::Imu">
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="trunk">
+    <mu1>0.6</mu1>
+    <mu2>0.6</mu2>
+    <self_collide>1</self_collide>
+    <visual>
+      <material>
+        <ambient>.05 .05 .05 1.0</ambient>
+        <diffuse>.05 .05 .05 1.0</diffuse>
+        <specular>.05 .05 .05 1.0</specular>
+      </material>
+    </visual>
+  </gazebo>
+
+  <gazebo reference="imu_link">
+    <sensor name="imu_sensor" type="imu">
+      <always_on>1</always_on>
+      <update_rate>500</update_rate>
+      <visualize>true</visualize>
+      <topic>imu</topic>
+      <imu>
+        <angular_velocity>
+          <x>
+<!--            <noise type="gaussian">-->
+<!--              <mean>0.0</mean>-->
+<!--              <stddev>2e-4</stddev>-->
+<!--              <bias_mean>0.0000075</bias_mean>-->
+<!--              <bias_stddev>0.0000008</bias_stddev>-->
+<!--            </noise>-->
+          </x>
+          <y>
+<!--            <noise type="gaussian">-->
+<!--              <mean>0.0</mean>-->
+<!--              <stddev>2e-4</stddev>-->
+<!--              <bias_mean>0.0000075</bias_mean>-->
+<!--              <bias_stddev>0.0000008</bias_stddev>-->
+<!--            </noise>-->
+          </y>
+          <z>
+<!--            <noise type="gaussian">-->
+<!--              <mean>0.0</mean>-->
+<!--              <stddev>2e-4</stddev>-->
+<!--              <bias_mean>0.0000075</bias_mean>-->
+<!--              <bias_stddev>0.0000008</bias_stddev>-->
+<!--            </noise>-->
+          </z>
+        </angular_velocity>
+        <linear_acceleration>
+          <x>
+<!--            <noise type="gaussian">-->
+<!--              <mean>0.0</mean>-->
+<!--              <stddev>1.7e-2</stddev>-->
+<!--              <bias_mean>0.1</bias_mean>-->
+<!--              <bias_stddev>0.001</bias_stddev>-->
+<!--            </noise>-->
+          </x>
+          <y>
+<!--            <noise type="gaussian">-->
+<!--              <mean>0.0</mean>-->
+<!--              <stddev>1.7e-2</stddev>-->
+<!--              <bias_mean>0.1</bias_mean>-->
+<!--              <bias_stddev>0.001</bias_stddev>-->
+<!--            </noise>-->
+          </y>
+          <z>
+<!--            <noise type="gaussian">-->
+<!--              <mean>0.0</mean>-->
+<!--              <stddev>1.7e-2</stddev>-->
+<!--              <bias_mean>0.1</bias_mean>-->
+<!--              <bias_stddev>0.001</bias_stddev>-->
+<!--            </noise>-->
+          </z>
+        </linear_acceleration>
+      </imu>
+    </sensor>
+  </gazebo>
+  <gazebo reference="imu_joint">
+    <disableFixedJointLumping>true</disableFixedJointLumping>
+  </gazebo>
+
+</robot>

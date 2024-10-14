@@ -12,6 +12,7 @@ This folder contains the URDF and SRDF files for the quadruped robot.
     * [Cyberdog](xiaomi/cyberdog_description/)
 * Deep Robotics
     * [Lite 3](deep_robotics/lite3_description/)
+    * [X30](deep_robotics/x30_description/)
 
 ## Steps to transfer urdf to Mujoco model
 
