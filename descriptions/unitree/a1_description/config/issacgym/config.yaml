@@ -2,10 +2,10 @@ model_name: "model_0702.pt"
 framework: "isaacgym"
 rows: 4
 cols: 3
-use_history: True
 decimation: 4
 num_observations: 45
 observations: ["ang_vel", "gravity_vec", "commands", "dof_pos", "dof_vel", "actions"]
+observations_history: [0, 1, 2, 3, 4, 5]
 clip_obs: 100.0
 clip_actions_lower: [-100, -100, -100,
                      -100, -100, -100,

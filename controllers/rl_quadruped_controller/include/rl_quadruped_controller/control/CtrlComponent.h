@@ -10,6 +10,8 @@
 #include <hardware_interface/loaned_state_interface.hpp>
 #include <control_input_msgs/msg/inputs.hpp>
 
+#include "Estimator.h"
+
 struct CtrlComponent {
     std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> >
     joint_torque_command_interface_;
@@ -39,8 +41,10 @@ struct CtrlComponent {
     control_input_msgs::msg::Inputs control_inputs_;
     int frequency_{};
 
-    CtrlComponent() {
-    }
+    std::shared_ptr<QuadrupedRobot> robot_model_;
+    std::shared_ptr<Estimator> estimator_;
+
+    CtrlComponent() = default;
 
     void clear() {
         joint_torque_command_interface_.clear();

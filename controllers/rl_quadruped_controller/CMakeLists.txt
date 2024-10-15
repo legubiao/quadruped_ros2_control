@@ -25,6 +25,7 @@ set(dependencies
         controller_interface
         realtime_tools
         control_input_msgs
+        kdl_parser
 )
 
 # find dependencies
@@ -33,7 +34,7 @@ foreach (Dependency IN ITEMS ${dependencies})
 endforeach ()
 
 add_library(${PROJECT_NAME} SHARED
-        src/LeggedGymController.cpp
+        src/RlQuadrupedController.cpp
 
         src/common/ObservationBuffer.cpp
 
@@ -41,6 +42,13 @@ add_library(${PROJECT_NAME} SHARED
         src/FSM/StateFixedStand.cpp
         src/FSM/StateFixedDown.cpp
         src/FSM/StateRL.cpp
+
+        src/control/LowPassFilter.cpp
+        src/control/Estimator.cpp
+
+        src/robot/QuadrupedRobot.cpp
+        src/robot/RobotLeg.cpp
+
 )
 target_include_directories(${PROJECT_NAME}
         PUBLIC

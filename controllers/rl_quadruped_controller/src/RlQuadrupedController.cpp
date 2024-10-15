@@ -2,7 +2,7 @@
 // Created by tlab-uav on 24-10-4.
 //
 
-#include "LeggedGymController.h"
+#include "RlQuadrupedController.h"
 
 namespace rl_quadruped_controller {
     using config_type = controller_interface::interface_configuration_type;
@@ -47,6 +47,13 @@ namespace rl_quadruped_controller {
 
     controller_interface::return_type LeggedGymController::
     update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
+        if (ctrl_comp_.robot_model_ == nullptr) {
+            return controller_interface::return_type::OK;
+        }
+
+        ctrl_comp_.robot_model_->update();
+        ctrl_comp_.estimator_->update();
+
         if (mode_ == FSMMode::NORMAL) {
             current_state_->run();
             next_state_name_ = current_state_->checkChange();
@@ -77,16 +84,24 @@ namespace rl_quadruped_controller {
                     auto_declare<std::vector<std::string> >("state_interfaces", state_interface_types_);
 
             command_prefix_ = auto_declare<std::string>("command_prefix", command_prefix_);
+            base_name_ = auto_declare<std::string>("base_name", base_name_);
 
             // imu sensor
             imu_name_ = auto_declare<std::string>("imu_name", imu_name_);
             imu_interface_types_ = auto_declare<std::vector<std::string> >("imu_interfaces", state_interface_types_);
+
+            // foot_force_sensor
+            foot_force_name_ = auto_declare<std::string>("foot_force_name", foot_force_name_);
+            foot_force_interface_types_ =
+                    auto_declare<std::vector<std::string> >("foot_force_interfaces", state_interface_types_);
 
             // rl config folder
             rl_config_folder_ = auto_declare<std::string>("config_folder", rl_config_folder_);
 
             get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);
             RCLCPP_INFO(get_node()->get_logger(), "Controller Update Rate: %d Hz", ctrl_comp_.frequency_);
+
+            ctrl_comp_.estimator_ = std::make_shared<Estimator>(ctrl_comp_);
         } catch (const std::exception &e) {
             fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
             return controller_interface::CallbackReturn::ERROR;
@@ -97,6 +112,14 @@ namespace rl_quadruped_controller {
 
     controller_interface::CallbackReturn LeggedGymController::on_configure(
         const rclcpp_lifecycle::State & /*previous_state*/) {
+        robot_description_subscription_ = get_node()->create_subscription<std_msgs::msg::String>(
+            "/robot_description", rclcpp::QoS(rclcpp::KeepLast(1)).transient_local(),
+            [this](const std_msgs::msg::String::SharedPtr msg) {
+                ctrl_comp_.robot_model_ = std::make_shared<QuadrupedRobot>(
+                    ctrl_comp_, msg->data, feet_names_, base_name_);
+            });
+
+
         control_input_subscription_ = get_node()->create_subscription<control_input_msgs::msg::Inputs>(
             "/control_input", 10, [this](const control_input_msgs::msg::Inputs::SharedPtr msg) {
                 // Handle message

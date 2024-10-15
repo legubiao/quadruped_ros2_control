@@ -2,15 +2,14 @@
 // Created by biao on 24-9-14.
 //
 
-#include "unitree_guide_controller/control/Estimator.h"
+#include "rl_quadruped_controller/control/Estimator.h"
 
-#include <unitree_guide_controller/common/mathTools.h>
+#include <rl_quadruped_controller/common/mathTools.h>
 
-#include "unitree_guide_controller/control/CtrlComponent.h"
+#include "rl_quadruped_controller/control/CtrlComponent.h"
 
 Estimator::Estimator(CtrlComponent &ctrl_component) : ctrl_component_(ctrl_component),
-                                                      robot_model_(ctrl_component.robot_model_),
-                                                      wave_generator_(ctrl_component.wave_generator_) {
+                                                      robot_model_(ctrl_component.robot_model_) {
     g_ << 0, 0, -9.81;
     dt_ = 1.0 / ctrl_component_.frequency_;
 
@@ -159,14 +158,14 @@ void Estimator::update() {
 
     // Adjust the covariance based on foot contact and phase.
     for (int i(0); i < 4; ++i) {
-        if (wave_generator_->contact_[i] == 0) {
+        if (ctrl_component_.foot_force_state_interface_[i].get().get_value() < 1) {
             // foot not contact
             Q.block(6 + 3 * i, 6 + 3 * i, 3, 3) = large_variance_ * Eigen::MatrixXd::Identity(3, 3);
             R.block(12 + 3 * i, 12 + 3 * i, 3, 3) = large_variance_ * Eigen::MatrixXd::Identity(3, 3);
             R(24 + i, 24 + i) = large_variance_;
         } else {
             // foot contact
-            const double trust = windowFunc(wave_generator_->phase_[i], 0.2);
+            const double trust = windowFunc(0.5, 0.2);
             Q.block(6 + 3 * i, 6 + 3 * i, 3, 3) =
                     (1 + (1 - trust) * large_variance_) *
                     QInit_.block(6 + 3 * i, 6 + 3 * i, 3, 3);

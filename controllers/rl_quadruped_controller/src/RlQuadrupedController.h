@@ -6,11 +6,12 @@
 #define LEGGEDGYMCONTROLLER_H
 #include <controller_interface/controller_interface.hpp>
 #include <rl_quadruped_controller/FSM/StateRL.h>
+#include <std_msgs/msg/string.hpp>
 
-#include "rl_quadruped_controller/FSM/StateFixedStand.h"
-#include "rl_quadruped_controller/FSM/StateFixedDown.h"
-#include "rl_quadruped_controller/FSM/StatePassive.h"
 #include "rl_quadruped_controller/control/CtrlComponent.h"
+#include "rl_quadruped_controller/FSM/StateFixedDown.h"
+#include "rl_quadruped_controller/FSM/StateFixedStand.h"
+#include "rl_quadruped_controller/FSM/StatePassive.h"
 
 namespace rl_quadruped_controller {
     struct FSMStateList {
@@ -68,6 +69,7 @@ namespace rl_quadruped_controller {
 
         CtrlComponent ctrl_comp_;
         std::vector<std::string> joint_names_;
+        std::string base_name_ = "base";
         std::vector<std::string> feet_names_;
         std::vector<std::string> command_interface_types_;
         std::vector<std::string> state_interface_types_;
@@ -78,8 +80,8 @@ namespace rl_quadruped_controller {
         std::string imu_name_;
         std::vector<std::string> imu_interface_types_;
         // Foot Force Sensor
-        std::string foot_force_name_;
-        std::vector<std::string> foot_force_interface_types_;
+        std::string foot_force_name_ = "foot_force";
+        std::vector<std::string> foot_force_interface_types_ = {"force", "torque"};
 
         std::string rl_config_folder_;
 
@@ -102,6 +104,7 @@ namespace rl_quadruped_controller {
         };
 
         rclcpp::Subscription<control_input_msgs::msg::Inputs>::SharedPtr control_input_subscription_;
+        rclcpp::Subscription<std_msgs::msg::String>::SharedPtr robot_description_subscription_;
 
         FSMMode mode_ = FSMMode::NORMAL;
         std::string state_name_;

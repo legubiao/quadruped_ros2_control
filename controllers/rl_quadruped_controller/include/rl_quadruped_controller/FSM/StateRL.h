@@ -65,10 +65,10 @@ struct Control
 struct ModelParams {
     std::string model_name;
     std::string framework;
-    bool use_history;
     int decimation;
     int num_observations;
     std::vector<std::string> observations;
+    std::vector<int> observations_history;
     double damping;
     double stiffness;
     double action_scale;
