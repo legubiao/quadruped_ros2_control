@@ -81,7 +81,7 @@ namespace rl_quadruped_controller {
         std::vector<std::string> imu_interface_types_;
         // Foot Force Sensor
         std::string foot_force_name_ = "foot_force";
-        std::vector<std::string> foot_force_interface_types_ = {"force", "torque"};
+        std::vector<std::string> foot_force_interface_types_ = {"FL", "FR", "RL", "RR"};
 
         std::string rl_config_folder_;
 

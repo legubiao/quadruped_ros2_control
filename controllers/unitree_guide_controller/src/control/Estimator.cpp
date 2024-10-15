@@ -137,10 +137,10 @@ Estimator::Estimator(CtrlComponent &ctrl_component) : ctrl_component_(ctrl_compo
     QInit_ = Qdig.asDiagonal();
     QInit_ += B * Cu * B.transpose();
 
-    // low_pass_filters_.resize(3);
-    // low_pass_filters_[0] = std::make_shared<LowPassFilter>(dt_, 3.0);
-    // low_pass_filters_[1] = std::make_shared<LowPassFilter>(dt_, 3.0);
-    // low_pass_filters_[2] = std::make_shared<LowPassFilter>(dt_, 3.0);
+    low_pass_filters_.resize(3);
+    low_pass_filters_[0] = std::make_shared<LowPassFilter>(dt_, 3.0);
+    low_pass_filters_[1] = std::make_shared<LowPassFilter>(dt_, 3.0);
+    low_pass_filters_[2] = std::make_shared<LowPassFilter>(dt_, 3.0);
 }
 
 double Estimator::getYaw() const {

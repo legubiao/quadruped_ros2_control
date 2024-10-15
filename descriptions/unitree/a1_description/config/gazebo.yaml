@@ -100,7 +100,7 @@ unitree_guide_controller:
 rl_quadruped_controller:
   ros__parameters:
     update_rate: 200  # Hz
-    config_folder: "/home/biao/ros2_ws/install/a1_description/share/a1_description/config/issacgym"
+    config_folder: "/home/tlab-uav/ros2_ws/install/a1_description/share/a1_description/config/issacgym"
     command_prefix: "leg_pd_controller"
     joints:
       - FL_hip_joint

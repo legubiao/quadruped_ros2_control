@@ -1,7 +1,7 @@
 # Controller Manager configuration
 controller_manager:
   ros__parameters:
-    update_rate: 500  # Hz
+    update_rate: 1000  # Hz
 
     # Define the available controllers
     joint_state_broadcaster:
@@ -135,7 +135,7 @@ ocs2_quadruped_controller:
 
 rl_quadruped_controller:
   ros__parameters:
-    update_rate: 100  # Hz
+    update_rate: 200  # Hz
     joints:
       - FL_hip_joint
       - FL_thigh_joint
@@ -163,10 +163,10 @@ rl_quadruped_controller:
       - velocity
 
     feet_names:
-      - FR_foot
       - FL_foot
-      - RR_foot
+      - FR_foot
       - RL_foot
+      - RR_foot
 
     imu_name: "imu_sensor"
     base_name: "base"

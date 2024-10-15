@@ -93,7 +93,7 @@ namespace rl_quadruped_controller {
             // foot_force_sensor
             foot_force_name_ = auto_declare<std::string>("foot_force_name", foot_force_name_);
             foot_force_interface_types_ =
-                    auto_declare<std::vector<std::string> >("foot_force_interfaces", state_interface_types_);
+                    auto_declare<std::vector<std::string> >("foot_force_interfaces", foot_force_interface_types_);
 
             // rl config folder
             rl_config_folder_ = auto_declare<std::string>("config_folder", rl_config_folder_);

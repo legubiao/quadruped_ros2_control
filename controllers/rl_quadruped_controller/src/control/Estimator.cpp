@@ -217,10 +217,10 @@ void Estimator::update() {
         Ppriori * C.transpose() * SR * STC * Ppriori.transpose();
 
     // // Using low pass filter to smooth the velocity
-    low_pass_filters_[0]->addValue(x_hat_(3));
-    low_pass_filters_[1]->addValue(x_hat_(4));
-    low_pass_filters_[2]->addValue(x_hat_(5));
-    x_hat_(3) = low_pass_filters_[0]->getValue();
-    x_hat_(4) = low_pass_filters_[1]->getValue();
-    x_hat_(5) = low_pass_filters_[2]->getValue();
+    // low_pass_filters_[0]->addValue(x_hat_(3));
+    // low_pass_filters_[1]->addValue(x_hat_(4));
+    // low_pass_filters_[2]->addValue(x_hat_(5));
+    // x_hat_(3) = low_pass_filters_[0]->getValue();
+    // x_hat_(4) = low_pass_filters_[1]->getValue();
+    // x_hat_(5) = low_pass_filters_[2]->getValue();
 }

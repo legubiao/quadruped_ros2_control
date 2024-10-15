@@ -32,3 +32,9 @@ colcon build --packages-up-to rl_quadruped_controller
   source ~/ros2_ws/install/setup.bash
   ros2 launch a1_description rl_control.launch.py
   ```
+
+* Unitree Go2 Robot
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch go2_description rl_control.launch.py
+  ```

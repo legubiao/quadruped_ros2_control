@@ -161,7 +161,14 @@ rl_quadruped_controller:
       - position
       - velocity
 
+    feet_names:
+      - FL_foot
+      - FR_foot
+      - RL_foot
+      - RR_foot
+
     imu_name: "imu_sensor"
+    base_name: "base"
 
     imu_interfaces:
       - orientation.w

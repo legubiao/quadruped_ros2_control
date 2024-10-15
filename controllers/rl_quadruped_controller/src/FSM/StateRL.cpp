@@ -45,13 +45,19 @@ StateRL::StateRL(CtrlComponent &ctrl_component, const std::string &config_path) 
     loadYaml(config_path);
 
     // history
-    if (!params_.observations_history.empty())
-    {
-        history_obs_buf_ = std::make_shared<ObservationBuffer>(1, params_.num_observations, params_.observations_history.size());
+    if (!params_.observations_history.empty()) {
+        history_obs_buf_ = std::make_shared<ObservationBuffer>(1, params_.num_observations,
+                                                               params_.observations_history.size());
     }
 
     model_ = torch::jit::load(config_path + "/" + params_.model_name);
     std::cout << "Model loaded: " << config_path + "/" + params_.model_name << std::endl;
+
+
+    // for (const auto &param: model_.parameters()) {
+    //     std::cout << "Parameter dtype: " << param.dtype() << std::endl;
+    // }
+
 
     rl_thread_ = std::thread([&] {
         while (true) {
@@ -137,6 +143,8 @@ torch::Tensor StateRL::computeObservation() {
     }
 
     const torch::Tensor obs = cat(obs_list, 1);
+
+    std::cout << "Observation: " << obs << std::endl;
     torch::Tensor clamped_obs = clamp(obs, -params_.clip_obs, params_.clip_obs);
     return clamped_obs;
 }
@@ -156,12 +164,9 @@ void StateRL::loadYaml(const std::string &config_path) {
     params_.framework = config["framework"].as<std::string>();
     const int rows = config["rows"].as<int>();
     const int cols = config["cols"].as<int>();
-    if (config["observations_history"].IsNull())
-    {
+    if (config["observations_history"].IsNull()) {
         params_.observations_history = {};
-    }
-    else
-    {
+    } else {
         params_.observations_history = ReadVectorFromYaml<int>(config["observations_history"]);
     }
     params_.decimation = config["decimation"].as<int>();
@@ -226,14 +231,11 @@ torch::Tensor StateRL::forward() {
     torch::Tensor clamped_obs = computeObservation();
     torch::Tensor actions;
 
-    if (!params_.observations_history.empty())
-    {
+    if (!params_.observations_history.empty()) {
         history_obs_buf_->insert(clamped_obs);
         history_obs_ = history_obs_buf_->getObsVec(params_.observations_history);
         actions = model_.forward({history_obs_}).toTensor();
-    }
-    else
-    {
+    } else {
         actions = model_.forward({clamped_obs}).toTensor();
     }
 
@@ -278,7 +280,8 @@ void StateRL::getState() {
 }
 
 void StateRL::runModel() {
-    obs_.lin_vel = torch::tensor(ctrl_comp_.estimator_->getVelocity().data()).unsqueeze(0);
+    obs_.lin_vel = torch::from_blob(ctrl_comp_.estimator_->getVelocity().data(), {3}, torch::kDouble).clone().
+            to(torch::kFloat).unsqueeze(0);
     obs_.ang_vel = torch::tensor(robot_state_.imu.gyroscope).unsqueeze(0);
     obs_.commands = torch::tensor({{control_.x, control_.y, control_.yaw}});
     obs_.base_quat = torch::tensor(robot_state_.imu.quaternion).unsqueeze(0);
