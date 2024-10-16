@@ -13,7 +13,8 @@
 #include <ocs2_robotic_tools/common/RotationTransforms.h>
 
 namespace ocs2::legged_robot {
-    KalmanFilterEstimate::KalmanFilterEstimate(PinocchioInterface pinocchio_interface, CentroidalModelInfo info,
+    KalmanFilterEstimate::KalmanFilterEstimate(PinocchioInterface pinocchio_interface,
+                                               CentroidalModelInfo info,
                                                const PinocchioEndEffectorKinematics &ee_kinematics,
                                                CtrlComponent &ctrl_component,
                                                const rclcpp_lifecycle::LifecycleNode::SharedPtr &node)
@@ -43,7 +44,7 @@ namespace ocs2::legged_robot {
         q_.setIdentity(numState_, numState_);
         p_ = 100. * q_;
         r_.setIdentity(numObserve_, numObserve_);
-        feetHeights_.setZero(numContacts_);
+        feet_heights_.setZero(numContacts_);
 
         ee_kinematics_->setPinocchioInterface(pinocchio_interface_);
     }
@@ -85,8 +86,8 @@ namespace ocs2::legged_robot {
         const auto eeVel = ee_kinematics_->getVelocity(vector_t(), vector_t());
 
         matrix_t q = matrix_t::Identity(numState_, numState_);
-        q.block(0, 0, 3, 3) = q_.block(0, 0, 3, 3) * imuProcessNoisePosition_;
-        q.block(3, 3, 3, 3) = q_.block(3, 3, 3, 3) * imuProcessNoiseVelocity_;
+        q.block(0, 0, 3, 3) = q_.block(0, 0, 3, 3) * imu_process_noise_position_;
+        q.block(3, 3, 3, 3) = q_.block(3, 3, 3, 3) * imu_process_noise_velocity_;
         q.block(6, 6, dimContacts_, dimContacts_) =
                 q_.block(6, 6, dimContacts_, dimContacts_) * footProcessNoisePosition_;
 
@@ -114,7 +115,7 @@ namespace ocs2::legged_robot {
             r(rIndex3, rIndex3) = (isContact ? 1. : high_suspect_number) * r(rIndex3, rIndex3);
 
             ps_.segment(3 * i, 3) = -eePos[i];
-            ps_.segment(3 * i, 3)[2] += footRadius_;
+            ps_.segment(3 * i, 3)[2] += foot_radius_;
             vs_.segment(3 * i, 3) = -eeVel[i];
         }
 
@@ -122,7 +123,7 @@ namespace ocs2::legged_robot {
         vector3_t accel = getRotationMatrixFromZyxEulerAngles(quatToZyx(quat_)) * linear_accel_local_ + g;
 
         vector_t y(numObserve_);
-        y << ps_, vs_, feetHeights_;
+        y << ps_, vs_, feet_heights_;
         xHat_ = a_ * xHat_ + b_ * accel;
         matrix_t at = a_.transpose();
         matrix_t pm = a_ * p_ * at + q;
@@ -190,18 +191,18 @@ namespace ocs2::legged_robot {
         return odom;
     }
 
-    void KalmanFilterEstimate::loadSettings(const std::string &taskFile, bool verbose) {
+    void KalmanFilterEstimate::loadSettings(const std::string &task_file, const bool verbose) {
         boost::property_tree::ptree pt;
-        read_info(taskFile, pt);
+        read_info(task_file, pt);
         const std::string prefix = "kalmanFilter.";
         if (verbose) {
             std::cerr << "\n #### Kalman Filter Noise:";
             std::cerr << "\n #### =============================================================================\n";
         }
 
-        loadData::loadPtreeValue(pt, footRadius_, prefix + "footRadius", verbose);
-        loadData::loadPtreeValue(pt, imuProcessNoisePosition_, prefix + "imuProcessNoisePosition", verbose);
-        loadData::loadPtreeValue(pt, imuProcessNoiseVelocity_, prefix + "imuProcessNoiseVelocity", verbose);
+        loadData::loadPtreeValue(pt, foot_radius_, prefix + "footRadius", verbose);
+        loadData::loadPtreeValue(pt, imu_process_noise_position_, prefix + "imuProcessNoisePosition", verbose);
+        loadData::loadPtreeValue(pt, imu_process_noise_velocity_, prefix + "imuProcessNoiseVelocity", verbose);
         loadData::loadPtreeValue(pt, footProcessNoisePosition_, prefix + "footProcessNoisePosition", verbose);
         loadData::loadPtreeValue(pt, footSensorNoisePosition_, prefix + "footSensorNoisePosition", verbose);
         loadData::loadPtreeValue(pt, footSensorNoiseVelocity_, prefix + "footSensorNoiseVelocity", verbose);

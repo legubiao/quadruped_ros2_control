@@ -125,6 +125,9 @@ namespace ocs2::legged_robot {
         reference_file_ = auto_declare<std::string>("reference_file", reference_file_);
         gait_file_ = auto_declare<std::string>("gait_file", gait_file_);
 
+        get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);
+        RCLCPP_INFO(get_node()->get_logger(), "Controller Manager Update Rate: %d Hz", ctrl_comp_.frequency_);
+
         // Load verbose parameter from the task file
         verbose_ = false;
         loadData::loadCppDataType(task_file_, "legged_robot_interface.verbose", verbose_);
@@ -193,9 +196,6 @@ namespace ocs2::legged_robot {
         observation_publisher_ = get_node()->create_publisher<ocs2_msgs::msg::MpcObservation>(
             "legged_robot_mpc_observation", 10);
 
-        get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);
-        RCLCPP_INFO(get_node()->get_logger(), "Controller Manager Update Rate: %d Hz", ctrl_comp_.frequency_);
-
         return CallbackReturn::SUCCESS;
     }
 
@@ -229,7 +229,7 @@ namespace ocs2::legged_robot {
             // Initial state
             ctrl_comp_.observation_.state.setZero(
                 static_cast<long>(legged_interface_->getCentroidalModelInfo().stateDim));
-            updateStateEstimation(get_node()->now(), rclcpp::Duration(0, 200000));
+            updateStateEstimation(get_node()->now(), rclcpp::Duration(0, 1/ctrl_comp_.frequency_*1000000000));
             ctrl_comp_.observation_.input.setZero(
                 static_cast<long>(legged_interface_->getCentroidalModelInfo().inputDim));
             ctrl_comp_.observation_.mode = STANCE;

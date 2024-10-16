@@ -33,25 +33,24 @@ namespace ocs2::legged_robot {
 
         const vector_t currentPose = ctrl_component_.observation_.state.segment<6>(6);
         const Eigen::Matrix<scalar_t, 3, 1> zyx = currentPose.tail(3);
-        vector_t cmdVelRot = getRotationMatrixFromZyxEulerAngles(zyx) * cmdGoal.head(3);
+        vector_t cmd_vel_rot = getRotationMatrixFromZyxEulerAngles(zyx) * cmdGoal.head(3);
 
-        const scalar_t timeToTarget = time_to_target_;
         const vector_t targetPose = [&]() {
             vector_t target(6);
-            target(0) = currentPose(0) + cmdVelRot(0) * timeToTarget;
-            target(1) = currentPose(1) + cmdVelRot(1) * timeToTarget;
+            target(0) = currentPose(0) + cmd_vel_rot(0) * time_to_target_;
+            target(1) = currentPose(1) + cmd_vel_rot(1) * time_to_target_;
             target(2) = command_height_;
-            target(3) = currentPose(3) + cmdGoal(3) * timeToTarget;
+            target(3) = currentPose(3) + cmdGoal(3) * time_to_target_;
             target(4) = 0;
             target(5) = 0;
             return target;
         }();
 
-        const scalar_t targetReachingTime = ctrl_component_.observation_.time + timeToTarget;
+        const scalar_t targetReachingTime = ctrl_component_.observation_.time + time_to_target_;
         auto trajectories =
                 targetPoseToTargetTrajectories(targetPose, ctrl_component_.observation_, targetReachingTime);
-        trajectories.stateTrajectory[0].head(3) = cmdVelRot;
-        trajectories.stateTrajectory[1].head(3) = cmdVelRot;
+        trajectories.stateTrajectory[0].head(3) = cmd_vel_rot;
+        trajectories.stateTrajectory[1].head(3) = cmd_vel_rot;
 
         referenceManagerPtr_->setTargetTrajectories(std::move(trajectories));
     }

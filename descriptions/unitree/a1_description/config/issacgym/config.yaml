@@ -1,4 +1,4 @@
-model_name: "model_0702.pt"
+model_name: "rl_sar.pt"
 framework: "isaacgym"
 rows: 4
 cols: 3
