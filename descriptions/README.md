@@ -14,7 +14,7 @@ This folder contains the URDF and SRDF files for the quadruped robot.
     * [Lite 3](deep_robotics/lite3_description/)
     * [X30](deep_robotics/x30_description/)
 
-## Steps to transfer urdf to Mujoco model
+## 1. Steps to transfer urdf to Mujoco model
 
 * Install [Mujoco](https://github.com/google-deepmind/mujoco)
 * Transfer the mesh files to mujoco supported format, like stl.
@@ -29,9 +29,9 @@ This folder contains the URDF and SRDF files for the quadruped robot.
   compile robot.urdf robot.xml
   ```
 
-## Dependencies for Gazebo Simulation
+## 2. Dependencies for Gazebo Simulation
 
-Gazebo Simulation only tested on ROS2 Jazzy. I didn't add support for ROS2 Humble because the package name is different.
+Gazebo Simulation only tested on ROS2 Jazzy. It add support for ROS2 Humble because the package name is different.
 
 * Gazebo Harmonic
   ```bash
@@ -40,6 +40,24 @@ Gazebo Simulation only tested on ROS2 Jazzy. I didn't add support for ROS2 Humbl
 * Ros2-Control for Gazebo
   ```bash
   sudo apt-get install ros-jazzy-gz-ros2-control
+  ``` 
+* Legged PD Controller
+    ```bash
+    cd ~/ros2_ws
+    colcon build --packages-up-to leg_pd_controller
+    ```
+
+## 2. Dependencies for Gazebo Classic Simulation
+
+Gazebo Classic (Gazebo11) Simulation only tested on ROS2 Humble.
+
+* Gazebo Classic
+  ```bash
+  sudo apt-get install ros-humble-gazebo-ros
+  ```
+* Ros2-Control for Gazebo
+  ```bash
+  sudo apt-get install ros-humble-gazebo-ros2-control
   ``` 
 * Legged PD Controller
     ```bash

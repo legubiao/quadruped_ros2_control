@@ -8,26 +8,42 @@ from launch.event_handlers import OnProcessExit
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
-package_description = "a1_description"
+package_description = "go2_description"
 
-
-def process_xacro(context):
-    robot_type_value = context.launch_configurations['robot_type']
-    pkg_path = os.path.join(get_package_share_directory(package_description))
-    xacro_file = os.path.join(pkg_path, 'xacro', 'robot.xacro')
-    robot_description_config = xacro.process_file(xacro_file, mappings={'robot_type': robot_type_value})
-    return (robot_description_config.toxml(), robot_type_value)
 
 
 def launch_setup(context, *args, **kwargs):
-    (robot_description, robot_type) = process_xacro(context)
-    robot_controllers = PathJoinSubstitution(
-        [
-            FindPackageShare(package_description),
-            "config",
-            "robot_control.yaml",
-        ]
+
+    package_description = context.launch_configurations['pkg_description']
+    pkg_path = os.path.join(get_package_share_directory(package_description))
+
+    xacro_file = os.path.join(pkg_path, 'xacro', 'robot.xacro')
+    robot_description = xacro.process_file(xacro_file, mappings={'GAZEBO': 'true', 'CLASSIC': 'true'}).toxml()
+
+    rviz_config_file = os.path.join(get_package_share_directory(package_description), "config", "visualize_urdf.rviz")
+
+    rviz = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz_ocs2',
+        output='screen',
+        arguments=["-d", rviz_config_file]
+    )
+
+    gazebo = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [PathJoinSubstitution([FindPackageShare("gazebo_ros"), "launch", "gazebo.launch.py"])]
+        ),
+        launch_arguments={"verbose": "false"}.items(),
+    )
+
+    spawn_entity = Node(
+        package="gazebo_ros",
+        executable="spawn_entity.py",
+        arguments=["-topic", "robot_description", "-entity", "robot", "-z", "0.5"],
+        output="screen",
     )
 
     robot_state_publisher = Node(
@@ -44,13 +60,6 @@ def launch_setup(context, *args, **kwargs):
         ],
     )
 
-    controller_manager = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[robot_controllers],
-        output="both",
-    )
-
     joint_state_publisher = Node(
         package="controller_manager",
         executable="spawner",
@@ -65,6 +74,13 @@ def launch_setup(context, *args, **kwargs):
                    "--controller-manager", "/controller_manager"],
     )
 
+    leg_pd_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["leg_pd_controller",
+                   "--controller-manager", "/controller_manager"],
+    )
+
     unitree_guide_controller = Node(
         package="controller_manager",
         executable="spawner",
@@ -72,41 +88,28 @@ def launch_setup(context, *args, **kwargs):
     )
 
     return [
+        rviz,
         robot_state_publisher,
-        controller_manager,
-        joint_state_publisher,
+        gazebo,
+        spawn_entity,
+        leg_pd_controller,
         RegisterEventHandler(
             event_handler=OnProcessExit(
-                target_action=joint_state_publisher,
-                on_exit=[imu_sensor_broadcaster],
-            )
-        ),
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=imu_sensor_broadcaster,
-                on_exit=[unitree_guide_controller],
+                target_action=leg_pd_controller,
+                on_exit=[imu_sensor_broadcaster, joint_state_publisher, unitree_guide_controller],
             )
         ),
     ]
 
 
 def generate_launch_description():
-    robot_type_arg = DeclareLaunchArgument(
-        'robot_type',
-        default_value='a1',
-        description='Type of the robot'
+    pkg_description = DeclareLaunchArgument(
+        'pkg_description',
+        default_value='go2_description',
+        description='package for robot description'
     )
 
-    rviz_config_file = os.path.join(get_package_share_directory(package_description), "config", "visualize_urdf.rviz")
-
     return LaunchDescription([
-        robot_type_arg,
+        pkg_description,
         OpaqueFunction(function=launch_setup),
-        Node(
-            package='rviz2',
-            executable='rviz2',
-            name='rviz_ocs2',
-            output='screen',
-            arguments=["-d", rviz_config_file]
-        )
     ])

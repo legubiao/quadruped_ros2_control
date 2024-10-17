@@ -4,6 +4,7 @@
 
     <xacro:arg name="DEBUG" default="false"/>
     <xacro:arg name="GAZEBO" default="false"/>
+    <xacro:arg name="CLASSIC" default="false"/>
 
     <xacro:include filename="$(find a1_description)/xacro/const.xacro"/>
     <xacro:include filename="$(find a1_description)/xacro/materials.xacro"/>
@@ -11,7 +12,12 @@
     <xacro:include filename="$(find a1_description)/xacro/stairs.xacro"/>
 
     <xacro:if value="$(arg GAZEBO)">
-        <xacro:include filename="$(find a1_description)/xacro/gazebo.xacro"/>
+        <xacro:if value="$(arg CLASSIC)">
+            <xacro:include filename="$(find go2_description)/xacro/gazebo_classic.xacro"/>
+        </xacro:if>
+         <xacro:unless value="$(arg CLASSIC)">
+              <xacro:include filename="$(find go2_description)/xacro/gazebo.xacro"/>
+          </xacro:unless>
     </xacro:if>
     <xacro:unless value="$(arg GAZEBO)">
         <xacro:include filename="$(find a1_description)/xacro/ros2_control.xacro"/>

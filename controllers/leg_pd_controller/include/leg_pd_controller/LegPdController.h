@@ -5,10 +5,13 @@
 #ifndef LEGPDCONTROLLER_H
 #define LEGPDCONTROLLER_H
 #include <controller_interface/chainable_controller_interface.hpp>
+#include "realtime_tools/realtime_buffer.h"
 #include <controller_interface/controller_interface.hpp>
+#include "std_msgs/msg/float64_multi_array.hpp"
 
 
 namespace leg_pd_controller {
+    using DataType = std_msgs::msg::Float64MultiArray;
     class LegPdController final : public controller_interface::ChainableControllerInterface {
     public:
         controller_interface::CallbackReturn on_init() override;
@@ -34,8 +37,10 @@ namespace leg_pd_controller {
     protected:
         std::vector<hardware_interface::CommandInterface> on_export_reference_interfaces() override;
 
-        controller_interface::return_type update_reference_from_subscribers(
-            const rclcpp::Time &time, const rclcpp::Duration &period) override;
+        // controller_interface::return_type update_reference_from_subscribers(
+        //     const rclcpp::Time &time, const rclcpp::Duration &period);
+
+        controller_interface::return_type update_reference_from_subscribers() override;
 
         std::vector<double> joint_effort_command_;
         std::vector<double> joint_position_command_;
@@ -47,6 +52,7 @@ namespace leg_pd_controller {
 
         std::vector<std::string> state_interface_types_;
         std::vector<std::string> reference_interface_types_;
+        realtime_tools::RealtimeBuffer<std::shared_ptr<DataType>> rt_buffer_ptr_;
 
         std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> >
         joint_effort_command_interface_;

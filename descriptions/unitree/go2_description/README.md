@@ -34,7 +34,7 @@ ros2 launch go2_description visualize.launch.py
 * Unitree Guide Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch go2_description unitree_guide.launch.py
+  ros2 launch unitree_guide_controller mujoco.launch.py
   ```
 * OCS2 Quadruped Controller
   ```bash
@@ -47,12 +47,19 @@ ros2 launch go2_description visualize.launch.py
   ros2 launch go2_description rl_control.launch.py
   ```
 
-### Gazebo Simulator
+### Gazebo Classic 11 (ROS2 Humble)
+* Unitree Guide Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch unitree_guide_controller gazebo_classic.launch.py
+  ```
+
+### Gazebo Harmonic (ROS2 Jazzy)
 
 * Unitree Guide Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch go2_description gazebo_unitree_guide.launch.py
+  ros2 launch unitree_guide_controller gazebo.launch.py
   ```
 * RL Quadruped Controller
   ```bash

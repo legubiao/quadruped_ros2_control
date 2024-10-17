@@ -21,12 +21,18 @@ ros2 launch x30_description visualize.launch.py
 ```
 
 ## Launch ROS2 Control
+### Mujoco Simulator
+* Unitree Guide Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch unitree_guide_controller mujoco.launch.py pkg_description:=x30_description
+  ```
 
 ### Gazebo Simulator
 * Unitree Guide Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch x30_description gazebo_unitree_guide.launch.py
+  ros2 launch x30_description gazebo.launch.py
   ```
 * Legged Gym Controller
   ```bash

@@ -28,7 +28,7 @@ ros2 launch cyberdog_description visualize.launch.py
 * Unitree Guide Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch cyberdog_description unitree_guide.launch.py
+  ros2 launch unitree_guide_controller mujoco.launch.py pkg_description:=cyberdog_description
   ```
 * OCS2 Quadruped Controller
   ```bash
@@ -41,5 +41,5 @@ ros2 launch cyberdog_description visualize.launch.py
 * Unitree Guide Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch cyberdog_description gazebo_unitree_guide.launch.py
+  ros2 launch cyberdog_description gazebo.launch.py
   ```

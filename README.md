@@ -23,27 +23,62 @@ Video for OCS2 Quadruped Controller:
 [![](http://i0.hdslb.com/bfs/archive/e758ce019587032449a153cf897a543443b64bba.jpg)](https://www.bilibili.com/video/BV1UcxieuEmH/)
 
 
-## Quick Start
+## 1. Quick Start
 * rosdep
-```bash
-cd ~/ros2_ws
-rosdep install --from-paths src --ignore-src -r -y
-```
+    ```bash
+    cd ~/ros2_ws
+    rosdep install --from-paths src --ignore-src -r -y
+    ```
 * Compile the package
-```bash
-colcon build --packages-up-to unitree_guide_controller go2_description keyboard_input hardware_unitree_mujoco
-```
+    ```bash
+    colcon build --packages-up-to unitree_guide_controller go2_description keyboard_input hardware_unitree_mujoco
+    ```
+
+### 1.1 Mujoco Simulator
 * Launch the unitree mujoco go2 simulation
 * Launch the ros2-control
-```bash
-source ~/ros2_ws/install/setup.bash
-ros2 launch go2_description unitree_guide.launch.py
-```
+    ```bash
+    source ~/ros2_ws/install/setup.bash
+    ros2 launch unitree_guide_controller mujoco.launch.py
+    ```
 * Run the keyboard control node
-```bash
-source ~/ros2_ws/install/setup.bash
-ros2 run keyboard_input keyboard_input
-```
+    ```bash
+    source ~/ros2_ws/install/setup.bash
+    ros2 run keyboard_input keyboard_input
+    ```
+
+### 1.2 Gazebo Classic Simulator (ROS2 Humble)
+* Compile Leg PD Controller
+    ```bash
+    colcon build --packages-up-to leg_pd_controller
+    ```
+* Launch the ros2-control
+    ```bash
+    source ~/ros2_ws/install/setup.bash
+    ros2 launch unitree_guide_controller gazebo.launch.py
+    ```
+* Run the keyboard control node
+    ```bash
+    source ~/ros2_ws/install/setup.bash
+    ros2 run keyboard_input keyboard_input
+    ```
+
+### 1.3 Gazebo Harmonic Simulator (ROS2 Jazzy)
+* Compile Leg PD Controller
+    ```bash
+    colcon build --packages-up-to leg_pd_controller
+    ```
+* Launch the ros2-control
+    ```bash
+    source ~/ros2_ws/install/setup.bash
+    ros2 launch unitree_guide_controller gazebo_classic.launch.py
+    ```
+* Run the keyboard control node
+    ```bash
+    source ~/ros2_ws/install/setup.bash
+    ros2 run keyboard_input keyboard_input
+    ```
+
 For more details, please refer to the [unitree guide controller](controllers/unitree_guide_controller/) and [go2 description](descriptions/unitree/go2_description/).
 
 ## Reference
