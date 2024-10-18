@@ -15,6 +15,7 @@ Todo List:
 - [x] [OCS2 Quadruped Control](controllers/ocs2_quadruped_controller)
 - [x] [Learning-based Controller](controllers/rl_quadruped_controller/)
 - [ ] Fully understand the RL Workflow
+- [ ] ROS2 Humble Gazebo Classic Support
 
 Video for Unitree Guide Controller:
 [![](http://i1.hdslb.com/bfs/archive/310e6208920985ac43015b2da31c01ec15e2c5f9.jpg)](https://www.bilibili.com/video/BV1aJbAeZEuo/)
@@ -35,6 +36,10 @@ Video for OCS2 Quadruped Controller:
     ```
 
 ### 1.1 Mujoco Simulator
+Please use this [Mujoco Simulation](hardwares/hardware_unitree_mujoco) for more robot models and contact sensor.
+
+> **Warning:** CycloneDDS ROS2 RMW may conflict with unitree_sdk2. If you cannot launch unitree mujoco simulation without `sudo`, then you cannot used `unitree_mujoco_hardware`. You can switch to gazebo, or tried to solve the conflict by uninstall CycloneDDS ROS2 RMW.
+
 * Launch the unitree mujoco go2 simulation
 * Launch the ros2-control
     ```bash

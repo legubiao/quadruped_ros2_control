@@ -13,6 +13,8 @@ This folder contains the URDF and SRDF files for the quadruped robot.
 * Deep Robotics
     * [Lite 3](deep_robotics/lite3_description/)
     * [X30](deep_robotics/x30_description/)
+* Anybotics
+    * [Anymal C](anybotics/anymal_c_description/)
 
 ## 1. Steps to transfer urdf to Mujoco model
 
