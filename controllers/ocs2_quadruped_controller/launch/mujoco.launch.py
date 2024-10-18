@@ -8,21 +8,25 @@ from launch.event_handlers import OnProcessExit
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 
-package_description = "go2_description"
-
-
+package_controller = "ocs2_quadruped_controller"
 
 def launch_setup(context, *args, **kwargs):
-
     package_description = context.launch_configurations['pkg_description']
     pkg_path = os.path.join(get_package_share_directory(package_description))
 
     xacro_file = os.path.join(pkg_path, 'xacro', 'robot.xacro')
-    robot_description = xacro.process_file(xacro_file, mappings={'GAZEBO': 'true', 'CLASSIC': 'true'}).toxml()
+    robot_description = xacro.process_file(xacro_file).toxml()
 
-    rviz_config_file = os.path.join(get_package_share_directory(package_description), "config", "visualize_urdf.rviz")
+    robot_controllers = PathJoinSubstitution(
+        [
+            FindPackageShare(package_description),
+            "config",
+            "robot_control.yaml",
+        ]
+    )
+
+    rviz_config_file = os.path.join(get_package_share_directory(package_controller), "config", "visualize_ocs2.rviz")
 
     rviz = Node(
         package='rviz2',
@@ -30,20 +34,6 @@ def launch_setup(context, *args, **kwargs):
         name='rviz_ocs2',
         output='screen',
         arguments=["-d", rviz_config_file]
-    )
-
-    gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [PathJoinSubstitution([FindPackageShare("gazebo_ros"), "launch", "gazebo.launch.py"])]
-        ),
-        launch_arguments={"verbose": "false"}.items(),
-    )
-
-    spawn_entity = Node(
-        package="gazebo_ros",
-        executable="spawn_entity.py",
-        arguments=["-topic", "robot_description", "-entity", "robot", "-z", "0.5"],
-        output="screen",
     )
 
     robot_state_publisher = Node(
@@ -60,6 +50,26 @@ def launch_setup(context, *args, **kwargs):
         ],
     )
 
+    controller_manager = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[robot_controllers,
+                    {
+                        'urdf_file': os.path.join(get_package_share_directory(package_description), 'urdf',
+                                                  'robot.urdf'),
+                        'task_file': os.path.join(get_package_share_directory(package_description), 'config', 'ocs2',
+                                                  'task.info'),
+                        'reference_file': os.path.join(get_package_share_directory(package_description), 'config',
+                                                       'ocs2', 'reference.info'),
+                        'gait_file': os.path.join(get_package_share_directory(package_description), 'config',
+                                                  'ocs2', 'gait.info')
+                    }],
+        remappings=[
+            ("~/robot_description", "/robot_description"),
+        ],
+        output="both",
+    )
+
     joint_state_publisher = Node(
         package="controller_manager",
         executable="spawner",
@@ -74,29 +84,27 @@ def launch_setup(context, *args, **kwargs):
                    "--controller-manager", "/controller_manager"],
     )
 
-    leg_pd_controller = Node(
+    ocs2_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["leg_pd_controller",
-                   "--controller-manager", "/controller_manager"],
-    )
-
-    unitree_guide_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["unitree_guide_controller", "--controller-manager", "/controller_manager"],
+        arguments=["ocs2_quadruped_controller", "--controller-manager", "/controller_manager"]
     )
 
     return [
         rviz,
         robot_state_publisher,
-        gazebo,
-        spawn_entity,
-        leg_pd_controller,
+        controller_manager,
+        joint_state_publisher,
         RegisterEventHandler(
             event_handler=OnProcessExit(
-                target_action=leg_pd_controller,
-                on_exit=[imu_sensor_broadcaster, joint_state_publisher, unitree_guide_controller],
+                target_action=joint_state_publisher,
+                on_exit=[imu_sensor_broadcaster],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=imu_sensor_broadcaster,
+                on_exit=[ocs2_controller],
             )
         ),
     ]

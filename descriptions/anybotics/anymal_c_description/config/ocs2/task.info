@@ -262,10 +262,10 @@ selfCollision
   ; Self Collision pairs
   collisionLinkPairs
   {
-    [0] "LF_SHANK, RF_SHANK"
-    [1] "LH_SHANK, RH_SHANK"
-    [2] "LF_SHANK, LH_SHANK"
-    [3] "RF_SHANK, RH_SHANK"
+    [0] "LF_shank_fixed, RF_shank_fixed"
+    [1] "LH_shank_fixed, RH_shank_fixed"
+    [2] "LF_shank_fixed, LH_shank_fixed"
+    [3] "RF_shank_fixed, RH_shank_fixed"
     [4] "LF_FOOT, RF_FOOT"
     [5] "LH_FOOT, RH_FOOT"
     [6] "LF_FOOT, LH_FOOT"
@@ -308,7 +308,7 @@ weight
 ; State Estimation
 kalmanFilter
 {
-    footRadius                  0.03
+    footRadius                  0.015
     imuProcessNoisePosition     0.02
     imuProcessNoiseVelocity     0.02
     footProcessNoisePosition    0.002

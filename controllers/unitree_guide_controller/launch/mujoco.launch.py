@@ -9,12 +9,8 @@ from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
-package_description = "go2_description"
-
-
 
 def launch_setup(context, *args, **kwargs):
-
     package_description = context.launch_configurations['pkg_description']
     pkg_path = os.path.join(get_package_share_directory(package_description))
 

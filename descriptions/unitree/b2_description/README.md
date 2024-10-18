@@ -32,9 +32,9 @@ ros2 launch b2_description visualize.launch.py
 * OCS2 Quadruped Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch b2_description ocs2_control.launch.py
+  ros2 launch ocs2_quadruped_controller mujoco.launch.py pkg_description:=b2_description
   ```
-
+  
 ### Gazebo Simulator
 
 * Unitree Guide Controller

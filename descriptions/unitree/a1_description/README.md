@@ -30,7 +30,7 @@ ros2 launch a1_description visualize.launch.py
 * OCS2 Quadruped Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch a1_description ocs2_control.launch.py
+  ros2 launch ocs2_quadruped_controller mujoco.launch.py pkg_description:=a1_description
   ```
 * RL Quadruped Controller
   ```bash

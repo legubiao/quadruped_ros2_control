@@ -19,7 +19,7 @@ swing_trajectory_config
 {
   liftOffVelocity               0.05
   touchDownVelocity            -0.1
-  swingHeight                   0.1
+  swingHeight                   0.08
   swingTimeScale                0.15
 }
 
@@ -283,9 +283,9 @@ selfCollision
 ; Whole body control
 torqueLimitsTask
 {
-   (0,0)  33.5     ; HAA
-   (1,0)  33.5     ; HFE
-   (2,0)  33.5     ; KFE
+   (0,0)  12.0     ; HAA
+   (1,0)  12.0     ; HFE
+   (2,0)  12.0     ; KFE
 }
 
 frictionConeTask

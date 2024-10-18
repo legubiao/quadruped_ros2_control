@@ -5,6 +5,7 @@ found [here](https://github.com/unitreerobotics/unitree_guide). I used KDL for t
 the controller performance has difference with the original one (sometimes very unstable).
 
 Tested environment:
+
 * Ubuntu 24.04
     * ROS2 Jazzy
 * Ubuntu 22.04
@@ -27,12 +28,34 @@ Required hardware interfaces:
     * joint position
     * joint velocity
     * imu sensor
-      * linear acceleration
-      * angular velocity
-      * orientation
+        * linear acceleration
+        * angular velocity
+        * orientation
 
 ## 2. Build
+
 ```bash
 cd ~/ros2_ws
 colcon build --packages-up-to unitree_guide_controller
+```
+
+## 3. Launch
+
+### 3.1 Mujoco Simulation
+
+```bash
+source ~/ros2_ws/install/setup.bash
+ros2 launch unitree_guide_controller mujoco.launch.py pkg_description:=go2_description
+```
+
+### 3.2 Gazebo Classic 11 (ROS2 Humble)
+```bash
+source ~/ros2_ws/install/setup.bash
+ros2 launch unitree_guide_controller gazebo_classic.launch.py pkg_description:=go2_description
+```
+
+### 3.3 Gazebo Harmonic (ROS2 Jazzy)
+```bash
+source ~/ros2_ws/install/setup.bash
+ros2 launch unitree_guide_controller gazebo.launch.py pkg_description:=go2_description
 ```

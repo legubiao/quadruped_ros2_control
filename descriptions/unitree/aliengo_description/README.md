@@ -37,9 +37,9 @@ ros2 launch aliengo_description visualize.launch.py
 * OCS2 Quadruped Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch aliengo_description ocs2_control.launch.py
+  ros2 launch ocs2_quadruped_controller mujoco.launch.py pkg_description:=aliengo_description
   ```
-
+  
 ### Gazebo Simulator
 
 * Unitree Guide Controller
