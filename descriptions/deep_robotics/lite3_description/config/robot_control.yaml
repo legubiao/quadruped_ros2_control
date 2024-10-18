@@ -77,7 +77,7 @@ unitree_guide_controller:
 
 ocs2_quadruped_controller:
   ros__parameters:
-    update_rate: 500  # Hz
+    update_rate: 100  # Hz
     default_kd: 1.2
     joints:
       - FL_HipX

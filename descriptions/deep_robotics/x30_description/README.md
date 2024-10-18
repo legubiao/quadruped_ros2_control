@@ -6,6 +6,8 @@ This repository contains the urdf model of x30.
 Tested environment:
 * Ubuntu 24.04
     * ROS2 Jazzy
+* Ubuntu 22.04
+    * ROS2 Humble
 
 ## Build
 ```bash

@@ -7,6 +7,8 @@ Tested environment:
 
 * Ubuntu 24.04
     * ROS2 Jazzy
+* Ubuntu 22.04
+    * ROS2 Humble
 
 [![](http://i0.hdslb.com/bfs/archive/e758ce019587032449a153cf897a543443b64bba.jpg)](https://www.bilibili.com/video/BV1UcxieuEmH/)
 
