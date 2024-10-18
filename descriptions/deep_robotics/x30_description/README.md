@@ -27,6 +27,11 @@ ros2 launch x30_description visualize.launch.py
   source ~/ros2_ws/install/setup.bash
   ros2 launch unitree_guide_controller mujoco.launch.py pkg_description:=x30_description
   ```
+* OCS2 Quadruped Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch ocs2_quadruped_controller mujoco.launch.py pkg_description:=x30_description
+  ```
 
 ### Gazebo Simulator
 * Unitree Guide Controller

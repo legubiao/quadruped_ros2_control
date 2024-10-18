@@ -58,7 +58,7 @@
     <parent link="TORSO"/>
     <child link="FL_HIP"/>
     <axis xyz="-1 0 0"/>
-    <limit lower="-0.323" upper="0.585" effort="84" velocity="17.5"/>
+    <limit lower="-0.323" upper="0.323" effort="84" velocity="17.5"/>
   </joint>
 
   <link name="FL_THIGH">
@@ -126,7 +126,7 @@
     <parent link="FL_THIGH" />
     <child link="FL_SHANK" />
     <axis xyz="0 -1 0" />
-    <limit lower="0.349" upper="2.531" effort="180" velocity="16.1" />
+    <limit lower="0.349" upper="2.531" effort="160" velocity="16.1" />
   </joint>
 
   <link name="FL_FOOT">
@@ -166,7 +166,7 @@
     <parent link="TORSO" />
     <child link="FR_HIP" />
     <axis xyz="-1 0 0" />
-    <limit lower="-0.585" upper="0.323" effort="84" velocity="17.5" />
+    <limit lower="-0.323" upper="0.323" effort="84" velocity="17.5" />
   </joint>
 
   <link name="FR_THIGH">
@@ -234,7 +234,7 @@
     <parent link="FR_THIGH" />
     <child link="FR_SHANK" />
     <axis xyz="0 -1 0" />
-    <limit lower="0.349" upper="2.531" effort="180" velocity="16.1" />
+    <limit lower="0.349" upper="2.531" effort="160" velocity="16.1" />
   </joint>
 
   <link name="FR_FOOT">
@@ -274,7 +274,7 @@
     <parent link="TORSO" />
     <child link="HL_HIP" />
     <axis xyz="-1 0 0" />
-    <limit lower="-0.323" upper="0.585" effort="84" velocity="17.5" />
+    <limit lower="-0.323" upper="0.323" effort="84" velocity="17.5" />
   </joint>
 
   <link name="HL_THIGH">
@@ -342,7 +342,7 @@
     <parent link="HL_THIGH" />
     <child link="HL_SHANK" />
     <axis xyz="0 -1 0" />
-    <limit lower="0.349" upper="2.531" effort="180" velocity="16.1" />
+    <limit lower="0.349" upper="2.531" effort="160" velocity="16.1" />
   </joint>
 
   <link name="HL_FOOT">
@@ -382,7 +382,7 @@
     <parent link="TORSO" />
     <child link="HR_HIP" />
     <axis xyz="-1 0 0" />
-    <limit lower="-0.585" upper="0.323" effort="84" velocity="17.5" />
+    <limit lower="-0.323" upper="0.323" effort="84" velocity="17.5" />
   </joint>
 
   <link name="HR_THIGH">
@@ -450,7 +450,7 @@
     <parent link="HR_THIGH" />
     <child link="HR_SHANK" />
     <axis xyz="0 -1 0" />
-    <limit lower="0.349" upper="2.531" effort="180" velocity="16.1" />
+    <limit lower="0.349" upper="2.531" effort="160" velocity="16.1" />
   </joint>
 
   <link name="HR_FOOT">
