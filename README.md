@@ -36,9 +36,9 @@ Video for OCS2 Quadruped Controller:
     ```
 
 ### 1.1 Mujoco Simulator
-Please use this [Mujoco Simulation](hardwares/hardware_unitree_mujoco) for more robot models and contact sensor.
+Please use this [Mujoco Simulation](https://github.com/legubiao/unitree_mujoco) for more robot models and contact sensor.
 
-> **Warning:** CycloneDDS ROS2 RMW may conflict with unitree_sdk2. If you cannot launch unitree mujoco simulation without `sudo`, then you cannot used `unitree_mujoco_hardware`. You can switch to gazebo, or tried to solve the conflict by uninstall CycloneDDS ROS2 RMW.
+> **Warning:** CycloneDDS ROS2 RMW may conflict with unitree_sdk2. If you cannot launch unitree mujoco simulation without `sudo`, then you cannot used `unitree_mujoco_hardware`. You can switch to gazebo, or try to solve the conflict by uninstall CycloneDDS ROS2 RMW.
 
 * Launch the unitree mujoco go2 simulation
 * Launch the ros2-control
