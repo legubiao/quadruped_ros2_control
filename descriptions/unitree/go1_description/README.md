@@ -40,5 +40,5 @@ ros2 launch go1_description visualize.launch.py
 * Unitree Guide Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch go1_description gazebo.launch.py
+  ros2 launch unitree_guide_controller gazebo.launch.py pkg_description:=go1_description
   ```

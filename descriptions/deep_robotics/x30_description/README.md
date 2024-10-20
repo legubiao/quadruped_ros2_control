@@ -39,7 +39,7 @@ ros2 launch x30_description visualize.launch.py
 * Unitree Guide Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch x30_description gazebo.launch.py
+  ros2 launch unitree_guide_controller gazebo.launch.py pkg_description:=x30_description height:=0.64
   ```
 * Legged Gym Controller
   ```bash

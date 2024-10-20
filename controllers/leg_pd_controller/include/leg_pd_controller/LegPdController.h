@@ -37,10 +37,14 @@ namespace leg_pd_controller {
     protected:
         std::vector<hardware_interface::CommandInterface> on_export_reference_interfaces() override;
 
-        // controller_interface::return_type update_reference_from_subscribers(
-        //     const rclcpp::Time &time, const rclcpp::Duration &period);
-
+        #ifdef ROS2_CONTROL_VERSION_LT_3
         controller_interface::return_type update_reference_from_subscribers() override;
+        #else
+        controller_interface::return_type update_reference_from_subscribers(
+            const rclcpp::Time &time, const rclcpp::Duration &period);
+        #endif
+
+
 
         std::vector<double> joint_effort_command_;
         std::vector<double> joint_position_command_;

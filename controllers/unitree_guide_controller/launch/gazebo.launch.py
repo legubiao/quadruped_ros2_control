@@ -10,13 +10,10 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
-package_description = "go2_description"
-
-
 
 def launch_setup(context, *args, **kwargs):
-
     package_description = context.launch_configurations['pkg_description']
+    init_height = context.launch_configurations['height']
     pkg_path = os.path.join(get_package_share_directory(package_description))
 
     xacro_file = os.path.join(pkg_path, 'xacro', 'robot.xacro')
@@ -37,7 +34,7 @@ def launch_setup(context, *args, **kwargs):
         executable='create',
         output='screen',
         arguments=['-topic', 'robot_description', '-name',
-                   'robot', '-allow_renaming', 'true', '-z', '0.5'],
+                   'robot', '-allow_renaming', 'true', '-z', init_height],
     )
 
     robot_state_publisher = Node(
@@ -83,7 +80,6 @@ def launch_setup(context, *args, **kwargs):
 
     return [
         rviz,
-        robot_state_publisher,
         Node(
             package='ros_gz_bridge',
             executable='parameter_bridge',
@@ -115,7 +111,14 @@ def generate_launch_description():
         description='package for robot description'
     )
 
+    height = DeclareLaunchArgument(
+        'height',
+        default_value='0.5',
+        description='Init height in simulation'
+    )
+
     return LaunchDescription([
         pkg_description,
+        height,
         OpaqueFunction(function=launch_setup),
     ])

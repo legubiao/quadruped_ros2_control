@@ -45,5 +45,5 @@ ros2 launch aliengo_description visualize.launch.py
 * Unitree Guide Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch aliengo_description gazebo.launch.py
+  ros2 launch unitree_guide_controller gazebo.launch.py pkg_description:=aliengo_description height:=0.535
   ```

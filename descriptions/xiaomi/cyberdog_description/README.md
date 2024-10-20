@@ -41,5 +41,5 @@ ros2 launch cyberdog_description visualize.launch.py
 * Unitree Guide Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch cyberdog_description gazebo.launch.py
+  ros2 launch unitree_guide_controller gazebo.launch.py pkg_description:=cyberdog_description height:=0.31
   ```

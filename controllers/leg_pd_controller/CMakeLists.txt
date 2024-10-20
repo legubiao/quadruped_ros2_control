@@ -21,6 +21,15 @@ foreach (Dependency IN ITEMS ${CONTROLLER_INCLUDE_DEPENDS})
     find_package(${Dependency} REQUIRED)
 endforeach ()
 
+# check ros2 control version
+find_package(controller_manager 3.0.0)
+# Handle the case where the required version is not found
+if(NOT controller_manager_FOUND)
+    add_definitions(-DROS2_CONTROL_VERSION_LT_3)
+    message(FATAL_ERROR "ros2_control version below 3.0.0. "
+            "Change the implementation to support ros2_control version 2.")
+endif()
+
 add_library(${PROJECT_NAME} SHARED
         src/LegPdController.cpp
 )
