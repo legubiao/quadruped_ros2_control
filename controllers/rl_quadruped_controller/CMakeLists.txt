@@ -26,6 +26,7 @@ set(dependencies
         realtime_tools
         control_input_msgs
         kdl_parser
+        ament_index_cpp
 )
 
 # find dependencies

@@ -4,33 +4,37 @@ import xacro
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription, RegisterEventHandler
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.event_handlers import OnProcessExit
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
-package_description = "a1_description"
 
-
-def process_xacro():
+def launch_setup(context, *args, **kwargs):
+    package_description = context.launch_configurations['pkg_description']
+    init_height = context.launch_configurations['height']
     pkg_path = os.path.join(get_package_share_directory(package_description))
+
     xacro_file = os.path.join(pkg_path, 'xacro', 'robot.xacro')
-    robot_description_config = xacro.process_file(xacro_file, mappings={'GAZEBO': 'true'})
-    return robot_description_config.toxml()
+    robot_description = xacro.process_file(xacro_file, mappings={'GAZEBO': 'true'}).toxml()
 
-
-def generate_launch_description():
     rviz_config_file = os.path.join(get_package_share_directory(package_description), "config", "visualize_urdf.rviz")
 
-    robot_description = process_xacro()
+    rviz = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz_ocs2',
+        output='screen',
+        arguments=["-d", rviz_config_file]
+    )
 
     gz_spawn_entity = Node(
         package='ros_gz_sim',
         executable='create',
         output='screen',
         arguments=['-topic', 'robot_description', '-name',
-                   'a1', '-allow_renaming', 'true', '-z', '0.4'],
+                   'robot', '-allow_renaming', 'true', '-z', init_height]
     )
 
     robot_state_publisher = Node(
@@ -71,22 +75,12 @@ def generate_launch_description():
     controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["rl_quadruped_controller", "--controller-manager", "/controller_manager"],
-        parameters=[
-            {
-                'config_folder': os.path.join(get_package_share_directory(package_description), 'config',
-                                              'issacgym'),
-            }],
+        arguments=["rl_quadruped_controller", "--controller-manager", "/controller_manager"]
     )
 
-    return LaunchDescription([
-        Node(
-            package='rviz2',
-            executable='rviz2',
-            name='rviz_ocs2',
-            output='screen',
-            arguments=["-d", rviz_config_file]
-        ),
+
+    return [
+        rviz,
         Node(
             package='ros_gz_bridge',
             executable='parameter_bridge',
@@ -105,7 +99,27 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=leg_pd_controller,
-                on_exit=[controller, imu_sensor_broadcaster, joint_state_publisher],
+                on_exit=[imu_sensor_broadcaster, joint_state_publisher, controller],
             )
         ),
+    ]
+
+
+def generate_launch_description():
+    pkg_description = DeclareLaunchArgument(
+        'pkg_description',
+        default_value='go2_description',
+        description='package for robot description'
+    )
+
+    height = DeclareLaunchArgument(
+        'height',
+        default_value='0.5',
+        description='Init height in simulation'
+    )
+
+    return LaunchDescription([
+        pkg_description,
+        height,
+        OpaqueFunction(function=launch_setup),
     ])

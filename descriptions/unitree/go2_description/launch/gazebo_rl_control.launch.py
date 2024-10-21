@@ -74,7 +74,7 @@ def generate_launch_description():
         parameters=[
             {
                 'config_folder': os.path.join(get_package_share_directory(package_description), 'config',
-                                              'issacgym'),
+                                              'legged_gym'),
             }],
     )
 

@@ -13,10 +13,10 @@
 
     <xacro:if value="$(arg GAZEBO)">
         <xacro:if value="$(arg CLASSIC)">
-            <xacro:include filename="$(find go2_description)/xacro/gazebo_classic.xacro"/>
+            <xacro:include filename="$(find a1_description)/xacro/gazebo_classic.xacro"/>
         </xacro:if>
          <xacro:unless value="$(arg CLASSIC)">
-              <xacro:include filename="$(find go2_description)/xacro/gazebo.xacro"/>
+              <xacro:include filename="$(find a1_description)/xacro/gazebo.xacro"/>
           </xacro:unless>
     </xacro:if>
     <xacro:unless value="$(arg GAZEBO)">

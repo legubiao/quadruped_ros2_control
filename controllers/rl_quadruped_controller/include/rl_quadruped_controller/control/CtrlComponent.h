@@ -40,6 +40,7 @@ struct CtrlComponent {
 
     control_input_msgs::msg::Inputs control_inputs_;
     int frequency_{};
+    bool enable_estimator_ = false;
 
     std::shared_ptr<QuadrupedRobot> robot_model_;
     std::shared_ptr<Estimator> estimator_;

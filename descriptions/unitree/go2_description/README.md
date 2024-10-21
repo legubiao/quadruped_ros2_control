@@ -39,12 +39,12 @@ ros2 launch go2_description visualize.launch.py
 * OCS2 Quadruped Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch go2_description ocs2_control.launch.py
+  ros2 launch ocs2_quadruped_controller mujoco.launch.py
   ```
 * RL Quadruped Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch go2_description rl_control.launch.py
+  ros2 launch rl_quadruped_controller mujoco.launch.py
   ```
 
 ### Gazebo Classic 11 (ROS2 Humble)

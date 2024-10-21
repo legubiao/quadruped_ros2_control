@@ -165,6 +165,8 @@ ocs2_quadruped_controller:
 rl_quadruped_controller:
   ros__parameters:
     update_rate: 200  # Hz
+    robot_pkg: "lite3_description"
+    model_folder: "legged_gym"
     joints:
       - FL_HipX
       - FL_HipY

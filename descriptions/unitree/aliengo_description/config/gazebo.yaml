@@ -51,6 +51,8 @@ unitree_guide_controller:
   ros__parameters:
     command_prefix: "leg_pd_controller"
     update_rate: 500  # Hz
+    stand_kp: 100.0
+    stand_kd: 8.0
     joints:
       - FR_hip_joint
       - FR_thigh_joint

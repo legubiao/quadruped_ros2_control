@@ -63,5 +63,5 @@ ros2 launch a1_description visualize.launch.py
 * RL Quadruped Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch a1_description gazebo_rl_control.launch.py
+  ros2 launch rl_quadruped_controller gazebo.launch.py pkg_description:=a1_description height:=0.43
   ```

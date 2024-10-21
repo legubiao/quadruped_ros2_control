@@ -26,7 +26,6 @@ imu_sensor_broadcaster:
 
 leg_pd_controller:
   ros__parameters:
-    update_rate: 500  # Hz
     joints:
       - FR_hip_joint
       - FR_thigh_joint
@@ -51,7 +50,7 @@ leg_pd_controller:
 unitree_guide_controller:
   ros__parameters:
     command_prefix: "leg_pd_controller"
-    update_rate: 500  # Hz
+    update_rate: 200  # Hz
     joints:
       - FR_hip_joint
       - FR_thigh_joint
@@ -102,7 +101,8 @@ unitree_guide_controller:
 rl_quadruped_controller:
   ros__parameters:
     update_rate: 200  # Hz
-    config_folder: "/home/tlab-uav/ros2_ws/install/a1_description/share/a1_description/config/issacgym"
+    robot_pkg: "a1_description"
+    model_folder: "legged_gym"
     command_prefix: "leg_pd_controller"
     joints:
       - FL_hip_joint

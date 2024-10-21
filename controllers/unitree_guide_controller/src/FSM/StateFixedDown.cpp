@@ -24,6 +24,7 @@ void StateFixedDown::enter() {
     }
     ctrl_comp_.control_inputs_.command = 0;
     for (int i = 0; i < 12; i++) {
+        ctrl_comp_.joint_position_command_interface_[i].get().set_value(start_pos_[i]);
         ctrl_comp_.joint_velocity_command_interface_[i].get().set_value(0);
         ctrl_comp_.joint_torque_command_interface_[i].get().set_value(0);
         ctrl_comp_.joint_kp_command_interface_[i].get().set_value(kp_);

@@ -85,8 +85,6 @@ struct ModelParams {
     torch::Tensor torque_limits;
     torch::Tensor rl_kd;
     torch::Tensor rl_kp;
-    torch::Tensor fixed_kp;
-    torch::Tensor fixed_kd;
     torch::Tensor commands_scale;
     torch::Tensor default_dof_pos;
 };

@@ -55,8 +55,9 @@ StateRL::StateRL(CtrlComponent &ctrl_component, const std::string &config_path,
                                                                params_.observations_history.size());
     }
 
+    std::cout << "Model loading: " << config_path + "/" + params_.model_name << std::endl;
     model_ = torch::jit::load(config_path + "/" + params_.model_name);
-    std::cout << "Model loaded: " << config_path + "/" + params_.model_name << std::endl;
+
 
 
     // for (const auto &param: model_.parameters()) {
@@ -149,7 +150,7 @@ torch::Tensor StateRL::computeObservation() {
 
     const torch::Tensor obs = cat(obs_list, 1);
 
-    std::cout << "Observation: " << obs << std::endl;
+    // std::cout << "Observation: " << obs << std::endl;
     torch::Tensor clamped_obs = clamp(obs, -params_.clip_obs, params_.clip_obs);
     return clamped_obs;
 }
@@ -203,10 +204,6 @@ void StateRL::loadYaml(const std::string &config_path) {
     params_.rl_kd = torch::tensor(ReadVectorFromYaml<double>(config["rl_kd"], params_.framework, rows, cols)).view({
         1, -1
     });
-    params_.fixed_kp = torch::tensor(ReadVectorFromYaml<double>(config["fixed_kp"], params_.framework, rows, cols)).
-            view({1, -1});
-    params_.fixed_kd = torch::tensor(ReadVectorFromYaml<double>(config["fixed_kd"], params_.framework, rows, cols)).
-            view({1, -1});
     params_.torque_limits = torch::tensor(
         ReadVectorFromYaml<double>(config["torque_limits"], params_.framework, rows, cols)).view({1, -1});
 
@@ -288,8 +285,10 @@ void StateRL::getState() {
 }
 
 void StateRL::runModel() {
-    obs_.lin_vel = torch::from_blob(ctrl_comp_.estimator_->getVelocity().data(), {3}, torch::kDouble).clone().
-            to(torch::kFloat).unsqueeze(0);
+    if (ctrl_comp_.enable_estimator_) {
+        obs_.lin_vel = torch::from_blob(ctrl_comp_.estimator_->getVelocity().data(), {3}, torch::kDouble).clone().
+        to(torch::kFloat).unsqueeze(0);
+    }
     obs_.ang_vel = torch::tensor(robot_state_.imu.gyroscope).unsqueeze(0);
     obs_.commands = torch::tensor({{control_.x, control_.y, control_.yaw}});
     obs_.base_quat = torch::tensor(robot_state_.imu.quaternion).unsqueeze(0);

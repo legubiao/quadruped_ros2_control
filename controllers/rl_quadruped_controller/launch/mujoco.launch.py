@@ -12,7 +12,6 @@ from launch_ros.substitutions import FindPackageShare
 
 def launch_setup(context, *args, **kwargs):
     package_description = context.launch_configurations['pkg_description']
-    model_path = context.launch_configurations['model_folder']
     pkg_path = os.path.join(get_package_share_directory(package_description))
 
     xacro_file = os.path.join(pkg_path, 'xacro', 'robot.xacro')
@@ -53,11 +52,7 @@ def launch_setup(context, *args, **kwargs):
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[robot_controllers,
-                    {
-                        'config_folder': os.path.join(get_package_share_directory(package_description), 'config',
-                                                      model_path),
-                    }],
+        parameters=[robot_controllers],
         remappings=[
             ("~/robot_description", "/robot_description"),
         ],
@@ -111,14 +106,7 @@ def generate_launch_description():
         description='package for robot description'
     )
 
-    model_folder = DeclareLaunchArgument(
-        'model_folder',
-        default_value='issacgym',
-        description='folder name for RL model'
-    )
-
     return LaunchDescription([
         pkg_description,
-        model_folder,
         OpaqueFunction(function=launch_setup),
     ])

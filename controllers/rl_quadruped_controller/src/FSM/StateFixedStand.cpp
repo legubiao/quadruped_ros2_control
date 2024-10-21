@@ -22,6 +22,7 @@ void StateFixedStand::enter() {
         start_pos_[i] = ctrl_comp_.joint_position_state_interface_[i].get().get_value();
     }
     for (int i = 0; i < 12; i++) {
+        ctrl_comp_.joint_position_command_interface_[i].get().set_value(start_pos_[i]);
         ctrl_comp_.joint_velocity_command_interface_[i].get().set_value(0);
         ctrl_comp_.joint_torque_command_interface_[i].get().set_value(0);
         ctrl_comp_.joint_kp_command_interface_[i].get().set_value(kp_);

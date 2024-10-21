@@ -136,6 +136,8 @@ ocs2_quadruped_controller:
 rl_quadruped_controller:
   ros__parameters:
     update_rate: 200  # Hz
+    robot_pkg: "a1_description"
+    model_folder: "legged_gym"
     joints:
       - FL_hip_joint
       - FL_thigh_joint
@@ -149,6 +151,20 @@ rl_quadruped_controller:
       - RR_hip_joint
       - RR_thigh_joint
       - RR_calf_joint
+
+    stand_pos:
+      - 0.1000
+      - 0.8000
+      - -1.5000
+      - -0.1000
+      - 0.8000
+      - -1.5000
+      - 0.1000
+      - 0.8000
+      - -1.5000
+      - -0.1000
+      - 0.8000
+      - -1.5000
 
     command_interfaces:
       - effort
@@ -167,6 +183,13 @@ rl_quadruped_controller:
       - FR_foot
       - RL_foot
       - RR_foot
+
+    foot_force_name: "foot_force"
+    foot_force_interfaces:
+      - FL
+      - RL
+      - FR
+      - RR
 
     imu_name: "imu_sensor"
     base_name: "base"

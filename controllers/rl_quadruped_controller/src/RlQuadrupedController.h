@@ -80,8 +80,8 @@ namespace rl_quadruped_controller {
         std::string imu_name_;
         std::vector<std::string> imu_interface_types_;
         // Foot Force Sensor
-        std::string foot_force_name_ = "foot_force";
-        std::vector<std::string> foot_force_interface_types_ = {"FL", "FR", "RL", "RR"};
+        std::string foot_force_name_;
+        std::vector<std::string> foot_force_interface_types_;
 
         // FR FL RR RL
         std::vector<double> stand_pos_ = {
@@ -101,7 +101,8 @@ namespace rl_quadruped_controller {
         double stand_kp_ = 80.0;
         double stand_kd_ = 3.5;
 
-        std::string rl_config_folder_;
+        std::string robot_pkg_;
+        std::string model_folder_;
 
         std::unordered_map<
             std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> > *>

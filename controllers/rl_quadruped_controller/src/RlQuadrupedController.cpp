@@ -3,6 +3,7 @@
 //
 
 #include "RlQuadrupedController.h"
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 namespace rl_quadruped_controller {
     using config_type = controller_interface::interface_configuration_type;
@@ -47,12 +48,14 @@ namespace rl_quadruped_controller {
 
     controller_interface::return_type LeggedGymController::
     update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
-        if (ctrl_comp_.robot_model_ == nullptr) {
-            return controller_interface::return_type::OK;
-        }
+        if (ctrl_comp_.enable_estimator_) {
+            if (ctrl_comp_.robot_model_ == nullptr) {
+                return controller_interface::return_type::OK;
+            }
 
-        ctrl_comp_.robot_model_->update();
-        ctrl_comp_.estimator_->update();
+            ctrl_comp_.robot_model_->update();
+            ctrl_comp_.estimator_->update();
+        }
 
         if (mode_ == FSMMode::NORMAL) {
             current_state_->run();
@@ -96,7 +99,8 @@ namespace rl_quadruped_controller {
                     auto_declare<std::vector<std::string> >("foot_force_interfaces", foot_force_interface_types_);
 
             // rl config folder
-            rl_config_folder_ = auto_declare<std::string>("config_folder", rl_config_folder_);
+            robot_pkg_ = auto_declare<std::string>("robot_pkg", robot_pkg_);
+            model_folder_ = auto_declare<std::string>("model_folder", model_folder_);
 
             // pose parameters
             down_pos_ = auto_declare<std::vector<double> >("down_pos", down_pos_);
@@ -107,7 +111,10 @@ namespace rl_quadruped_controller {
             get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);
             RCLCPP_INFO(get_node()->get_logger(), "Controller Update Rate: %d Hz", ctrl_comp_.frequency_);
 
-            ctrl_comp_.estimator_ = std::make_shared<Estimator>(ctrl_comp_);
+            if (foot_force_interface_types_.size() == 4) {
+                ctrl_comp_.enable_estimator_ = true;
+                ctrl_comp_.estimator_ = std::make_shared<Estimator>(ctrl_comp_);
+            }
         } catch (const std::exception &e) {
             fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
             return controller_interface::CallbackReturn::ERROR;
@@ -121,8 +128,10 @@ namespace rl_quadruped_controller {
         robot_description_subscription_ = get_node()->create_subscription<std_msgs::msg::String>(
             "/robot_description", rclcpp::QoS(rclcpp::KeepLast(1)).transient_local(),
             [this](const std_msgs::msg::String::SharedPtr msg) {
-                ctrl_comp_.robot_model_ = std::make_shared<QuadrupedRobot>(
-                    ctrl_comp_, msg->data, feet_names_, base_name_);
+                if (ctrl_comp_.enable_estimator_) {
+                    ctrl_comp_.robot_model_ = std::make_shared<QuadrupedRobot>(
+                        ctrl_comp_, msg->data, feet_names_, base_name_);
+                }
             });
 
 
@@ -169,7 +178,12 @@ namespace rl_quadruped_controller {
         state_list_.passive = std::make_shared<StatePassive>(ctrl_comp_);
         state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_comp_, down_pos_, stand_kp_, stand_kd_);
         state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_comp_, stand_pos_, stand_kp_, stand_kd_);
-        state_list_.rl = std::make_shared<StateRL>(ctrl_comp_, rl_config_folder_, stand_pos_);
+
+
+        RCLCPP_INFO(get_node()->get_logger(), "Using robot model from %s", robot_pkg_.c_str());
+        const std::string package_share_directory = ament_index_cpp::get_package_share_directory(robot_pkg_);
+        std::string model_path = package_share_directory + "/config/" + model_folder_;
+        state_list_.rl = std::make_shared<StateRL>(ctrl_comp_, model_path, stand_pos_);
 
         // Initialize FSM
         current_state_ = state_list_.passive;

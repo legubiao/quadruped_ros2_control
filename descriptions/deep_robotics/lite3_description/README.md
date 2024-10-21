@@ -52,8 +52,3 @@ ros2 launch lite3_description visualize.launch.py
   source ~/ros2_ws/install/setup.bash
   ros2 launch unitree_guide_controller gazebo.launch.py pkg_description:=lite3_description height:=0.43
   ```
-* Legged Gym Controller
-  ```bash
-  source ~/ros2_ws/install/setup.bash
-  ros2 launch lite3_description gazebo_rl_control.launch.py
-  ```
