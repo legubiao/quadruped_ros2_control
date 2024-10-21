@@ -86,6 +86,24 @@ namespace unitree_guide_controller {
         std::vector<std::string> imu_interface_types_;
         std::vector<std::string> feet_names_;
 
+        // FR FL RR RL
+        std::vector<double> stand_pos_ = {
+            0.0, 0.67, -1.3,
+            0.0, 0.67, -1.3,
+            0.0, 0.67, -1.3,
+            0.0, 0.67, -1.3
+        };
+
+        std::vector<double> down_pos_ = {
+            0.0, 1.3, -2.4,
+            0.0, 1.3, -2.4,
+            0.0, 1.3, -2.4,
+            0.0, 1.3, -2.4
+        };
+
+        double stand_kp_ = 80.0;
+        double stand_kd_ = 3.5;
+
         rclcpp::Subscription<control_input_msgs::msg::Inputs>::SharedPtr control_input_subscription_;
         rclcpp::Subscription<std_msgs::msg::String>::SharedPtr robot_description_subscription_;
 

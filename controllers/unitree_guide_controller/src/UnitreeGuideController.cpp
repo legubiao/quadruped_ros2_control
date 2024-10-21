@@ -97,6 +97,12 @@ namespace unitree_guide_controller {
             feet_names_ =
                     auto_declare<std::vector<std::string> >("feet_names", feet_names_);
 
+            // pose parameters
+            down_pos_ = auto_declare<std::vector<double> >("down_pos", down_pos_);
+            stand_pos_ = auto_declare<std::vector<double> >("stand_pos", stand_pos_);
+            stand_kp_ = auto_declare<double>("stand_kp", stand_kp_);
+            stand_kd_ = auto_declare<double>("stand_kd", stand_kd_);
+
             get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);
             RCLCPP_INFO(get_node()->get_logger(), "Controller Manager Update Rate: %d Hz", ctrl_comp_.frequency_);
 
@@ -160,8 +166,8 @@ namespace unitree_guide_controller {
 
         // Create FSM List
         state_list_.passive = std::make_shared<StatePassive>(ctrl_comp_);
-        state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_comp_);
-        state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_comp_);
+        state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_comp_, down_pos_, stand_kp_, stand_kd_);
+        state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_comp_, stand_pos_, stand_kp_, stand_kd_);
         state_list_.swingTest = std::make_shared<StateSwingTest>(ctrl_comp_);
         state_list_.freeStand = std::make_shared<StateFreeStand>(ctrl_comp_);
         state_list_.balanceTest = std::make_shared<StateBalanceTest>(ctrl_comp_);

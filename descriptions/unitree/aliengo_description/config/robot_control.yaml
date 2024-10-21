@@ -24,6 +24,8 @@ imu_sensor_broadcaster:
 unitree_guide_controller:
   ros__parameters:
     update_rate: 500  # Hz
+    stand_kp: 100.0
+    stand_kd: 8.0
     joints:
       - FR_hip_joint
       - FR_thigh_joint
