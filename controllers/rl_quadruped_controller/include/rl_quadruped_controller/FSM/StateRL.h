@@ -105,7 +105,7 @@ struct Observations
 
 class StateRL final : public FSMState {
 public:
-    explicit StateRL(CtrlComponent &ctrl_component, const std::string &config_path);
+    explicit StateRL(CtrlComponent &ctrl_component, const std::string &config_path, const std::vector<double> &target_pos);
 
     void enter() override;
 
@@ -137,6 +137,7 @@ private:
     ModelParams params_;
     Observations obs_;
     Control control_;
+    double init_pos_[12] = {};
 
     RobotState<double> robot_state_;
     RobotCommand<double> robot_command_;

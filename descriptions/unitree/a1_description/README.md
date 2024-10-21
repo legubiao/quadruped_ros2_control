@@ -42,7 +42,7 @@ ros2 launch a1_description visualize.launch.py
 * RL Quadruped Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch a1_description rl_control.launch.py
+  ros2 launch rl_quadruped_controller mujoco.launch.py pkg_description:=a1_description
   ```
 
 ### Gazebo Classic 11 (ROS2 Humble)

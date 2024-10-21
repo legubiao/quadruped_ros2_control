@@ -83,6 +83,24 @@ namespace rl_quadruped_controller {
         std::string foot_force_name_ = "foot_force";
         std::vector<std::string> foot_force_interface_types_ = {"FL", "FR", "RL", "RR"};
 
+        // FR FL RR RL
+        std::vector<double> stand_pos_ = {
+            0.0, 0.67, -1.3,
+            0.0, 0.67, -1.3,
+            0.0, 0.67, -1.3,
+            0.0, 0.67, -1.3
+        };
+
+        std::vector<double> down_pos_ = {
+            0.0, 1.3, -2.4,
+            0.0, 1.3, -2.4,
+            0.0, 1.3, -2.4,
+            0.0, 1.3, -2.4
+        };
+
+        double stand_kp_ = 80.0;
+        double stand_kd_ = 3.5;
+
         std::string rl_config_folder_;
 
         std::unordered_map<

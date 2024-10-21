@@ -6,9 +6,16 @@
 
 #include <cmath>
 
-StateFixedDown::StateFixedDown(CtrlComponent &ctrlComp): FSMState(
-    FSMStateName::FIXEDDOWN, "fixed down", ctrlComp) {
+StateFixedDown::StateFixedDown(CtrlComponent &ctrlComp,
+                               const std::vector<double> &target_pos,
+                               const double kp,
+                               const double kd)
+    : FSMState(FSMStateName::FIXEDDOWN, "fixed down", ctrlComp),
+      kp_(kp), kd_(kd) {
     duration_ = ctrl_comp_.frequency_ * 1.2;
+    for (int i = 0; i < 12; i++) {
+        target_pos_[i] = target_pos[i];
+    }
 }
 
 void StateFixedDown::enter() {
@@ -16,6 +23,12 @@ void StateFixedDown::enter() {
         start_pos_[i] = ctrl_comp_.joint_position_state_interface_[i].get().get_value();
     }
     ctrl_comp_.control_inputs_.command = 0;
+    for (int i = 0; i < 12; i++) {
+        ctrl_comp_.joint_velocity_command_interface_[i].get().set_value(0);
+        ctrl_comp_.joint_torque_command_interface_[i].get().set_value(0);
+        ctrl_comp_.joint_kp_command_interface_[i].get().set_value(kp_*0.5);
+        ctrl_comp_.joint_kd_command_interface_[i].get().set_value(kd_*0.5);
+    }
 }
 
 void StateFixedDown::run() {
@@ -24,10 +37,6 @@ void StateFixedDown::run() {
     for (int i = 0; i < 12; i++) {
         ctrl_comp_.joint_position_command_interface_[i].get().set_value(
             phase * target_pos_[i] + (1 - phase) * start_pos_[i]);
-        ctrl_comp_.joint_velocity_command_interface_[i].get().set_value(0);
-        ctrl_comp_.joint_torque_command_interface_[i].get().set_value(0);
-        ctrl_comp_.joint_kp_command_interface_[i].get().set_value(30.0);
-        ctrl_comp_.joint_kd_command_interface_[i].get().set_value(1.5);
     }
 }
 

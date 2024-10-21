@@ -39,8 +39,13 @@ std::vector<T> ReadVectorFromYaml(const YAML::Node &node, const std::string &fra
     throw std::invalid_argument("Unsupported framework: " + framework);
 }
 
-StateRL::StateRL(CtrlComponent &ctrl_component, const std::string &config_path) : FSMState(
+StateRL::StateRL(CtrlComponent &ctrl_component, const std::string &config_path,
+                 const std::vector<double> &target_pos) : FSMState(
     FSMStateName::RL, "rl", ctrl_component) {
+    for (int i = 0; i < 12; i++) {
+        init_pos_[i] = target_pos[i];
+    }
+
     // read params from yaml
     loadYaml(config_path);
 
@@ -204,8 +209,11 @@ void StateRL::loadYaml(const std::string &config_path) {
             view({1, -1});
     params_.torque_limits = torch::tensor(
         ReadVectorFromYaml<double>(config["torque_limits"], params_.framework, rows, cols)).view({1, -1});
-    params_.default_dof_pos = torch::tensor(
-        ReadVectorFromYaml<double>(config["default_dof_pos"], params_.framework, rows, cols)).view({1, -1});
+
+    params_.default_dof_pos = torch::from_blob(init_pos_, {12}, torch::kDouble).clone().to(torch::kFloat).unsqueeze(0);
+
+    // params_.default_dof_pos = torch::tensor(
+    //     ReadVectorFromYaml<double>(config["default_dof_pos"], params_.framework, rows, cols)).view({1, -1});
 }
 
 torch::Tensor StateRL::quatRotateInverse(const torch::Tensor &q, const torch::Tensor &v, const std::string &framework) {

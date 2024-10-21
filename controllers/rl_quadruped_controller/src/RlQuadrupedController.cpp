@@ -98,6 +98,12 @@ namespace rl_quadruped_controller {
             // rl config folder
             rl_config_folder_ = auto_declare<std::string>("config_folder", rl_config_folder_);
 
+            // pose parameters
+            down_pos_ = auto_declare<std::vector<double> >("down_pos", down_pos_);
+            stand_pos_ = auto_declare<std::vector<double> >("stand_pos", stand_pos_);
+            stand_kp_ = auto_declare<double>("stand_kp", stand_kp_);
+            stand_kd_ = auto_declare<double>("stand_kd", stand_kd_);
+
             get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);
             RCLCPP_INFO(get_node()->get_logger(), "Controller Update Rate: %d Hz", ctrl_comp_.frequency_);
 
@@ -161,9 +167,9 @@ namespace rl_quadruped_controller {
 
         // Create FSM List
         state_list_.passive = std::make_shared<StatePassive>(ctrl_comp_);
-        state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_comp_);
-        state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_comp_);
-        state_list_.rl = std::make_shared<StateRL>(ctrl_comp_, rl_config_folder_);
+        state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_comp_, down_pos_, stand_kp_, stand_kd_);
+        state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_comp_, stand_pos_, stand_kp_, stand_kd_);
+        state_list_.rl = std::make_shared<StateRL>(ctrl_comp_, rl_config_folder_, stand_pos_);
 
         // Initialize FSM
         current_state_ = state_list_.passive;
