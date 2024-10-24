@@ -117,13 +117,6 @@
     <mu1>0.6</mu1>
     <mu2>0.6</mu2>
     <self_collide>1</self_collide>
-    <visual>
-      <material>
-        <ambient>.05 .05 .05 1.0</ambient>
-        <diffuse>.05 .05 .05 1.0</diffuse>
-        <specular>.05 .05 .05 1.0</specular>
-      </material>
-    </visual>
   </gazebo>
 
   <gazebo reference="imu_link">

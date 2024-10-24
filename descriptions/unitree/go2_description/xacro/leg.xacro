@@ -25,11 +25,11 @@
 			<dynamics damping="${damping}" friction="${friction}"/>
 			<xacro:if value="${(mirror_dae == True)}">
 				<limit effort="${hip_torque_max}" velocity="${hip_velocity_max}" lower="${hip_position_min}"
-				       upper="${hip_position_max}"/>
+							 upper="${hip_position_max}"/>
 			</xacro:if>
 			<xacro:if value="${(mirror_dae == False)}">
 				<limit effort="${hip_torque_max}" velocity="${hip_velocity_max}" lower="${-hip_position_max}"
-				       upper="${-hip_position_min}"/>
+							 upper="${-hip_position_min}"/>
 			</xacro:if>
 		</joint>
 
@@ -62,9 +62,9 @@
 				<origin rpy="0 0 0" xyz="${hip_com_x*front_hind} ${hip_com_y*mirror} ${hip_com_z}"/>
 				<mass value="${hip_mass}"/>
 				<inertia
-						ixx="${hip_ixx}" ixy="${hip_ixy*mirror*front_hind}" ixz="${hip_ixz*front_hind}"
-						iyy="${hip_iyy}" iyz="${hip_iyz*mirror}"
-						izz="${hip_izz}"/>
+								ixx="${hip_ixx}" ixy="${hip_ixy*mirror*front_hind}" ixz="${hip_ixz*front_hind}"
+								iyy="${hip_iyy}" iyz="${hip_iyz*mirror}"
+								izz="${hip_izz}"/>
 			</inertial>
 		</link>
 
@@ -75,7 +75,7 @@
 			<axis xyz="0 1 0"/>
 			<dynamics damping="${damping}" friction="${friction}"/>
 			<limit effort="${thigh_torque_max}" velocity="${thigh_velocity_max}" lower="${thigh_position_min}"
-			       upper="${thigh_position_max}"/>
+						 upper="${thigh_position_max}"/>
 		</joint>
 
 
@@ -101,9 +101,9 @@
 				<origin rpy="0 0 0" xyz="${thigh_com_x} ${thigh_com_y*mirror} ${thigh_com_z}"/>
 				<mass value="${thigh_mass}"/>
 				<inertia
-						ixx="${thigh_ixx}" ixy="${thigh_ixy*mirror}" ixz="${thigh_ixz}"
-						iyy="${thigh_iyy}" iyz="${thigh_iyz*mirror}"
-						izz="${thigh_izz}"/>
+								ixx="${thigh_ixx}" ixy="${thigh_ixy*mirror}" ixz="${thigh_ixz}"
+								iyy="${thigh_iyy}" iyz="${thigh_iyz*mirror}"
+								izz="${thigh_izz}"/>
 			</inertial>
 		</link>
 
@@ -115,7 +115,7 @@
 			<axis xyz="0 1 0"/>
 			<dynamics damping="${damping}" friction="${friction}"/>
 			<limit effort="${calf_torque_max}" velocity="${calf_velocity_max}" lower="${calf_position_min}"
-			       upper="${calf_position_max}"/>
+						 upper="${calf_position_max}"/>
 		</joint>
 
 
@@ -136,9 +136,9 @@
 				<origin rpy="0 0 0" xyz="${calf_com_x} ${calf_com_y} ${calf_com_z}"/>
 				<mass value="${calf_mass}"/>
 				<inertia
-						ixx="${calf_ixx}" ixy="${calf_ixy}" ixz="${calf_ixz}"
-						iyy="${calf_iyy}" iyz="${calf_iyz}"
-						izz="${calf_izz}"/>
+								ixx="${calf_ixx}" ixy="${calf_ixy}" ixz="${calf_ixz}"
+								iyy="${calf_iyy}" iyz="${calf_iyz}"
+								izz="${calf_izz}"/>
 			</inertial>
 		</link>
 
@@ -165,9 +165,9 @@
 			<inertial>
 				<mass value="${foot_mass}"/>
 				<inertia
-						ixx="${(2*foot_mass)/5.0*(foot_radius*foot_radius)}" ixy="0.0" ixz="0.0"
-						iyy="${(2*foot_mass)/5.0*(foot_radius*foot_radius)}" iyz="0.0"
-						izz="${(2*foot_mass)/5.0*(foot_radius*foot_radius)}"/>
+								ixx="${(2*foot_mass)/5.0*(foot_radius*foot_radius)}" ixy="0.0" ixz="0.0"
+								iyy="${(2*foot_mass)/5.0*(foot_radius*foot_radius)}" iyz="0.0"
+								izz="${(2*foot_mass)/5.0*(foot_radius*foot_radius)}"/>
 			</inertial>
 		</link>
 

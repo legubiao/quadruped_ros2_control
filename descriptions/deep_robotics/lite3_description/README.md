@@ -45,7 +45,15 @@ ros2 launch lite3_description visualize.launch.py
   ros2 launch rl_quadruped_controller mujoco.launch.py pkg_description:=lite3_description model_folder:=legged_gym
   ```
 
-### Gazebo Simulator
+### Gazebo Classic 11 (ROS2 Humble)
+
+* Unitree Guide Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch unitree_guide_controller gazebo_classic.launch.py pkg_description:=lite3_description
+  ```
+
+### Gazebo Harmonic (ROS2 Jazzy)
 
 * Unitree Guide Controller
   ```bash

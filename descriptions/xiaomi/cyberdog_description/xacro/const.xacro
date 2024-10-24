@@ -55,9 +55,9 @@
   <xacro:property name="abad_motorVelMax" value="30.9971"/>
   <xacro:property name="hip_motorVelMax" value="30.9971"/>
   <xacro:property name="knee_motorVelMax" value="30.9971"/>
-  <xacro:property name="abad_damping" value="0.01"/>
-  <xacro:property name="hip_damping" value="0.01"/>
-  <xacro:property name="knee_damping" value="0.01"/>
+  <xacro:property name="abad_damping" value="0.1"/>
+  <xacro:property name="hip_damping" value="0.1"/>
+  <xacro:property name="knee_damping" value="0.1"/>
   <xacro:property name="abad_friction" value="0.1"/>
   <xacro:property name="hip_friction" value="0.1"/>
   <xacro:property name="knee_friction" value="0.1"/>

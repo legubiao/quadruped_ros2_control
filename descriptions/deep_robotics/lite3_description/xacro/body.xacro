@@ -2,6 +2,9 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+  <xacro:property name="damping" value="0.1"/>
+  <xacro:property name="friction" value="0.1"/>
+
   <xacro:include filename="$(find lite3_description)/xacro/imu_link.xacro"/>
 
   <link name="base">
@@ -66,6 +69,7 @@
     <parent link="TORSO"/>
     <child link="FL_HIP"/>
     <axis xyz="-1 0 0"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
     <limit lower="-0.42" upper="0.42" effort="24" velocity="26"/>
   </joint>
 
@@ -94,6 +98,7 @@
     <parent link="FL_HIP"/>
     <child link="FL_THIGH"/>
     <axis xyz="0 -1 0"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
     <limit lower="-2.67" upper="0.314" effort="24" velocity="26"/>
   </joint>
 
@@ -122,6 +127,7 @@
     <parent link="FL_THIGH"/>
     <child link="FL_SHANK"/>
     <axis xyz="0 -1 0"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
     <limit lower="0.6" upper="2.72" effort="36" velocity="17"/>
   </joint>
 
@@ -163,6 +169,7 @@
     <parent link="TORSO"/>
     <child link="FR_HIP"/>
     <axis xyz="-1 0 0"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
     <limit lower="-0.42" upper="0.42" effort="24" velocity="26"/>
   </joint>
 
@@ -191,6 +198,7 @@
     <parent link="FR_HIP"/>
     <child link="FR_THIGH"/>
     <axis xyz="0 -1 0"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
     <limit lower="-2.67" upper="0.314" effort="24" velocity="26"/>
   </joint>
 
@@ -219,6 +227,7 @@
     <parent link="FR_THIGH"/>
     <child link="FR_SHANK"/>
     <axis xyz="0 -1 0"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
     <limit lower="0.6" upper="2.72" effort="36" velocity="17"/>
   </joint>
 
@@ -259,6 +268,7 @@
     <parent link="TORSO"/>
     <child link="HL_HIP"/>
     <axis xyz="-1 0 0"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
     <limit lower="-0.42" upper="0.42" effort="24" velocity="26"/>
   </joint>
 
@@ -287,6 +297,7 @@
     <parent link="HL_HIP"/>
     <child link="HL_THIGH"/>
     <axis xyz="0 -1 0"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
     <limit lower="-2.67" upper="0.314" effort="24" velocity="26"/>
   </joint>
 
@@ -315,6 +326,7 @@
     <parent link="HL_THIGH"/>
     <child link="HL_SHANK"/>
     <axis xyz="0 -1 0"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
     <limit lower="0.6" upper="2.72" effort="36" velocity="17"/>
   </joint>
 
@@ -355,6 +367,7 @@
     <parent link="TORSO"/>
     <child link="HR_HIP"/>
     <axis xyz="-1 0 0"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
     <limit lower="-0.42" upper="0.42" effort="24" velocity="26"/>
   </joint>
 
@@ -383,6 +396,7 @@
     <parent link="HR_HIP"/>
     <child link="HR_THIGH"/>
     <axis xyz="0 -1 0"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
     <limit lower="-2.67" upper="0.314" effort="24" velocity="26"/>
   </joint>
 
@@ -411,6 +425,7 @@
     <parent link="HR_THIGH"/>
     <child link="HR_SHANK"/>
     <axis xyz="0 -1 0"/>
+    <dynamics damping="${damping}" friction="${friction}"/>
     <limit lower="0.6" upper="2.72" effort="36" velocity="17"/>
   </joint>
 

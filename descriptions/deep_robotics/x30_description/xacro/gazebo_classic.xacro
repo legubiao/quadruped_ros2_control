@@ -6,84 +6,84 @@
 			<plugin>gazebo_ros2_control/GazeboSystem</plugin>
 		</hardware>
 
-		<joint name="FR_hip_joint">
+		<joint name="FR_HipX">
 			<command_interface name="effort" initial_value="0.0"/>
 			<state_interface name="position"/>
 			<state_interface name="velocity"/>
 			<state_interface name="effort"/>
 		</joint>
 
-		<joint name="FR_thigh_joint">
+		<joint name="FR_HipY">
 			<command_interface name="effort" initial_value="0.0"/>
 			<state_interface name="position"/>
 			<state_interface name="velocity"/>
 			<state_interface name="effort"/>
 		</joint>
 
-		<joint name="FR_calf_joint">
+		<joint name="FR_Knee">
 			<command_interface name="effort" initial_value="0.0"/>
 			<state_interface name="position"/>
 			<state_interface name="velocity"/>
 			<state_interface name="effort"/>
 		</joint>
 
-		<joint name="FL_hip_joint">
+		<joint name="FL_HipX">
 			<command_interface name="effort" initial_value="0.0"/>
 			<state_interface name="position"/>
 			<state_interface name="velocity"/>
 			<state_interface name="effort"/>
 		</joint>
 
-		<joint name="FL_thigh_joint">
+		<joint name="FL_HipY">
 			<command_interface name="effort" initial_value="0.0"/>
 			<state_interface name="position"/>
 			<state_interface name="velocity"/>
 			<state_interface name="effort"/>
 		</joint>
 
-		<joint name="FL_calf_joint">
+		<joint name="FL_Knee">
 			<command_interface name="effort" initial_value="0.0"/>
 			<state_interface name="position"/>
 			<state_interface name="velocity"/>
 			<state_interface name="effort"/>
 		</joint>
 
-		<joint name="RR_hip_joint">
+		<joint name="HR_HipX">
 			<command_interface name="effort" initial_value="0.0"/>
 			<state_interface name="position"/>
 			<state_interface name="velocity"/>
 			<state_interface name="effort"/>
 		</joint>
 
-		<joint name="RR_thigh_joint">
+		<joint name="HR_HipY">
 			<command_interface name="effort" initial_value="0.0"/>
 			<state_interface name="position"/>
 			<state_interface name="velocity"/>
 			<state_interface name="effort"/>
 		</joint>
 
-		<joint name="RR_calf_joint">
+		<joint name="HR_Knee">
 			<command_interface name="effort" initial_value="0.0"/>
 			<state_interface name="position"/>
 			<state_interface name="velocity"/>
 			<state_interface name="effort"/>
 		</joint>
 
-		<joint name="RL_hip_joint">
+		<joint name="HL_HipX">
 			<command_interface name="effort" initial_value="0.0"/>
 			<state_interface name="position"/>
 			<state_interface name="velocity"/>
 			<state_interface name="effort"/>
 		</joint>
 
-		<joint name="RL_thigh_joint">
+		<joint name="HL_HipY">
 			<command_interface name="effort" initial_value="0.0"/>
 			<state_interface name="position"/>
 			<state_interface name="velocity"/>
 			<state_interface name="effort"/>
 		</joint>
 
-		<joint name="RL_calf_joint">
+		<joint name="HL_Knee">
 			<command_interface name="effort" initial_value="0.0"/>
 			<state_interface name="position"/>
 			<state_interface name="velocity"/>
@@ -106,7 +106,7 @@
 
 	<gazebo>
 		<plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
-			<parameters>$(find go2_description)/config/gazebo.yaml</parameters>
+			<parameters>$(find x30_description)/config/gazebo.yaml</parameters>
 		</plugin>
 	</gazebo>
 
@@ -134,6 +134,113 @@
 			</plugin>
 			<pose>0 0 0 0 0 0</pose>
 		</sensor>
+	</gazebo>
+
+	<gazebo reference="TORSO">
+		<mu1>0.2</mu1>
+		<mu2>0.2</mu2>
+		<kp value="1000000.0"/>
+		<kd value="1.0"/>
+	</gazebo>
+	<gazebo reference="FL_HIP">
+		<mu1>0.2</mu1>
+		<mu2>0.2</mu2>
+		<material>Gazebo/DarkGrey</material>
+	</gazebo>
+	<gazebo reference="FL_THIGH">
+		<mu1>0.2</mu1>
+		<mu2>0.2</mu2>
+		<self_collide>1</self_collide>
+		<kp value="1000000.0"/>
+		<kd value="1.0"/>
+		<material>Gazebo/Grey</material>
+	</gazebo>
+	<gazebo reference="FL_SHANK">
+		<mu1>0.2</mu1>
+		<mu2>0.2</mu2>
+		<self_collide>1</self_collide>
+	</gazebo>
+	<gazebo reference="FL_FOOT">
+		<mu1>0.6</mu1>
+		<mu2>0.6</mu2>
+		<self_collide>1</self_collide>
+		<kp value="1000000.0"/>
+		<kd value="100.0"/>
+	</gazebo>
+	<gazebo reference="FR_HIP">
+		<mu1>0.2</mu1>
+		<mu2>0.2</mu2>
+		<material>Gazebo/DarkGrey</material>
+	</gazebo>
+	<gazebo reference="FR_THIGH">
+		<mu1>0.2</mu1>
+		<mu2>0.2</mu2>
+		<self_collide>1</self_collide>
+		<kp value="1000000.0"/>
+		<kd value="1.0"/>
+		<material>Gazebo/Grey</material>
+	</gazebo>
+	<gazebo reference="FR_SHANK">
+		<mu1>0.2</mu1>
+		<mu2>0.2</mu2>
+		<self_collide>1</self_collide>
+	</gazebo>
+	<gazebo reference="FR_FOOT">
+		<mu1>0.6</mu1>
+		<mu2>0.6</mu2>
+		<self_collide>1</self_collide>
+		<kp value="1000000.0"/>
+		<kd value="100.0"/>
+	</gazebo>
+	<gazebo reference="HL_HIP">
+		<mu1>0.2</mu1>
+		<mu2>0.2</mu2>
+		<material>Gazebo/DarkGrey</material>
+	</gazebo>
+	<gazebo reference="HL_THIGH">
+		<mu1>0.2</mu1>
+		<mu2>0.2</mu2>
+		<self_collide>1</self_collide>
+		<kp value="1000000.0"/>
+		<kd value="1.0"/>
+		<material>Gazebo/Grey</material>
+	</gazebo>
+	<gazebo reference="HL_SHANK">
+		<mu1>0.2</mu1>
+		<mu2>0.2</mu2>
+		<self_collide>1</self_collide>
+	</gazebo>
+	<gazebo reference="HL_FOOT">
+		<mu1>0.6</mu1>
+		<mu2>0.6</mu2>
+		<self_collide>1</self_collide>
+		<kp value="1000000.0"/>
+		<kd value="100.0"/>
+	</gazebo>
+	<gazebo reference="HR_HIP">
+		<mu1>0.2</mu1>
+		<mu2>0.2</mu2>
+		<material>Gazebo/DarkGrey</material>
+	</gazebo>
+	<gazebo reference="HR_THIGH">
+		<mu1>0.2</mu1>
+		<mu2>0.2</mu2>
+		<self_collide>1</self_collide>
+		<kp value="1000000.0"/>
+		<kd value="1.0"/>
+		<material>Gazebo/Grey</material>
+	</gazebo>
+	<gazebo reference="HR_SHANK">
+		<mu1>0.2</mu1>
+		<mu2>0.2</mu2>
+		<self_collide>1</self_collide>
+	</gazebo>
+	<gazebo reference="HR_FOOT">
+		<mu1>0.6</mu1>
+		<mu2>0.6</mu2>
+		<self_collide>1</self_collide>
+		<kp value="1000000.0"/>
+		<kd value="100.0"/>
 	</gazebo>
 
 </robot>

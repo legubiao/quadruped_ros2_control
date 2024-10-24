@@ -1,7 +1,7 @@
 # Controller Manager configuration
 controller_manager:
   ros__parameters:
-    update_rate: 2000  # Hz
+    update_rate: 1000  # Hz
 
     # Define the available controllers
     joint_state_broadcaster:
@@ -26,6 +26,7 @@ imu_sensor_broadcaster:
 
 leg_pd_controller:
   ros__parameters:
+    update_rate: 1000  # Hz
     joints:
       - FR_hip_joint
       - FR_thigh_joint
@@ -49,6 +50,7 @@ leg_pd_controller:
 
 unitree_guide_controller:
   ros__parameters:
+    update_rate: 200  # Hz
     command_prefix: "leg_pd_controller"
     joints:
       - FR_hip_joint
