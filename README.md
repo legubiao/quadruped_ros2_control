@@ -15,7 +15,7 @@ Todo List:
 - [x] [OCS2 Quadruped Control](controllers/ocs2_quadruped_controller)
 - [x] [Learning-based Controller](controllers/rl_quadruped_controller/)
 - [ ] Fully understand the RL Workflow
-- [ ] ROS2 Humble Gazebo Classic Support
+- [x] ROS2 Humble Gazebo Classic Support
 
 Video for Unitree Guide Controller:
 [![](http://i1.hdslb.com/bfs/archive/310e6208920985ac43015b2da31c01ec15e2c5f9.jpg)](https://www.bilibili.com/video/BV1aJbAeZEuo/)

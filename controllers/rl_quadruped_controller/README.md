@@ -11,13 +11,14 @@ Tested environment:
 ### 2.1 Installing libtorch
 ```bash
 cd ~/CLionProjects/
-wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.0.1%2Bcpu.zip
-unzip libtorch-cxx11-abi-shared-with-deps-2.0.1+cpu.zip -d ./
+wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.5.0%2Bcpu.zip
+unzip unzip libtorch-cxx11-abi-shared-with-deps-2.5.0+cpu.zip
 ```
 ```bash
 cd ~/CLionProjects/
-rm -rf libtorch-shared-with-deps-latest.zip
+rm -rf libtorch-cxx11-abi-shared-with-deps-2.5.0+cpu.zip
 echo 'export Torch_DIR=~/CLionProjects/libtorch' >> ~/.bashrc
+echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/CLionProjects/libtorch/lib' >> ~/.bashrc
 ```
 
 ### 2.2 Build Controller
@@ -27,14 +28,16 @@ colcon build --packages-up-to rl_quadruped_controller
 ```
 
 ## 3. Launch
-* Unitree A1 Robot
-  ```bash
-  source ~/ros2_ws/install/setup.bash
-  ros2 launch a1_description rl_control.launch.py
-  ```
 
-* Unitree Go2 Robot
-  ```bash
-  source ~/ros2_ws/install/setup.bash
-  ros2 launch go2_description rl_control.launch.py
-  ```
+### 3.1 Mujoco Simulation
+
+```bash
+source ~/ros2_ws/install/setup.bash
+ros2 launch rl_quadruped_controller mujoco.launch.py pkg_description:=go2_description
+```
+
+### 3.3 Gazebo Harmonic (ROS2 Jazzy)
+```bash
+source ~/ros2_ws/install/setup.bash
+ros2 launch rl_quadruped_controller gazebo.launch.py pkg_description:=go2_description
+```

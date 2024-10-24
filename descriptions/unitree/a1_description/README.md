@@ -50,9 +50,9 @@ ros2 launch a1_description visualize.launch.py
 * Unitree Guide Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch unitree_guide_controller gazebo_classic.launch.py pkg_description:=a1_description
+  ros2 launch unitree_guide_controller gazebo_classic.launch.py pkg_description:=a1_description height:=0.43
   ```
-
+  
 ### Gazebo Harmonic (ROS2 Jazzy)
 
 * Unitree Guide Controller

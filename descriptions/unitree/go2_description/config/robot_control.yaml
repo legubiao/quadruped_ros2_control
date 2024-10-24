@@ -186,8 +186,8 @@ rl_quadruped_controller:
     foot_force_name: "foot_force"
     foot_force_interfaces:
       - FL
-      - RL
       - FR
+      - RL
       - RR
 
     imu_name: "imu_sensor"
