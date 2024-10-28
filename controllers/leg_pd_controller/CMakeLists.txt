@@ -22,11 +22,11 @@ foreach (Dependency IN ITEMS ${CONTROLLER_INCLUDE_DEPENDS})
 endforeach ()
 
 # check ros2 control version
-find_package(controller_manager 3.0.0)
+find_package(controller_manager REQUIRED)
 # Handle the case where the required version is not found
-if(NOT controller_manager_FOUND)
+if(controller_manager_VERSION VERSION_LESS "3.0.0")
     add_definitions(-DROS2_CONTROL_VERSION_LT_3)
-    message(FATAL_ERROR "ros2_control version below 3.0.0. "
+    message(STATUS "ros2_control version below 3.0.0. "
             "Change the implementation to support ros2_control version 2.")
 endif()
 
