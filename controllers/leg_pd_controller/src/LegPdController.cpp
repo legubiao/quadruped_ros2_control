@@ -53,9 +53,7 @@ namespace leg_pd_controller {
 
     controller_interface::CallbackReturn LegPdController::on_configure(
         const rclcpp_lifecycle::State & /*previous_state*/) {
-#ifdef ROS2_CONTROL_VERSION_LT_3
         reference_interfaces_.resize(joint_names_.size() * 5, std::numeric_limits<double>::quiet_NaN());
-#endif
         return CallbackReturn::SUCCESS;
     }
 

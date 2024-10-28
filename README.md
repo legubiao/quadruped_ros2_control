@@ -34,18 +34,23 @@ Video for OCS2 Quadruped Controller:
     ```
 * Compile the package
     ```bash
-    colcon build --packages-up-to unitree_guide_controller go2_description keyboard_input hardware_unitree_mujoco
+    colcon build --packages-up-to unitree_guide_controller go2_description keyboard_input 
     ```
 
 ### 1.1 Mujoco Simulator
 
-Please use this [Mujoco Simulation](https://github.com/legubiao/unitree_mujoco) for more robot models and contact
+Please use **C++ Simulation** in this [Mujoco Simulation](https://github.com/legubiao/unitree_mujoco) for more robot models and contact
 sensor.
 
 > **Warning:** CycloneDDS ROS2 RMW may conflict with unitree_sdk2. If you cannot launch unitree mujoco simulation
 > without `sudo`, then you cannot used `unitree_mujoco_hardware`. You can switch to gazebo, or try to solve the conflict
 > by uninstall CycloneDDS ROS2 RMW.
 
+* Compile Unitree Hardware Interfaces
+    ```bash
+    cd ~/ros2_ws
+    colcon build --packages-up-to hardware_unitree_mujoco
+    ```
 * Launch the unitree mujoco go2 simulation
 * Launch the ros2-control
     ```bash
@@ -57,6 +62,8 @@ sensor.
     source ~/ros2_ws/install/setup.bash
     ros2 run keyboard_input keyboard_input
     ```
+
+![mujoco](.images/mujoco.png)
 
 ### 1.2 Gazebo Classic Simulator (ROS2 Humble)
 * Install Gazebo Classic
@@ -102,6 +109,7 @@ sensor.
     source ~/ros2_ws/install/setup.bash
     ros2 run keyboard_input keyboard_input
     ```
+![gazebo](.images/gazebo.png)
 
 For more details, please refer to the [unitree guide controller](controllers/unitree_guide_controller/)
 and [go2 description](descriptions/unitree/go2_description/).
