@@ -42,7 +42,7 @@ colcon build --packages-up-to unitree_guide_controller
 ## 3. Launch
 
 ### 3.1 Mujoco Simulation
-
+> **Warm Reminder**: You need to launch [Unitree Mujoco C++ Simulation](https://github.com/legubiao/unitree_mujoco) before launch the controller.
 ```bash
 source ~/ros2_ws/install/setup.bash
 ros2 launch unitree_guide_controller mujoco.launch.py pkg_description:=go2_description

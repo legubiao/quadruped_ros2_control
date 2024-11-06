@@ -25,6 +25,9 @@ Video for Unitree Guide Controller:
 Video for OCS2 Quadruped Controller:
 [![](http://i0.hdslb.com/bfs/archive/e758ce019587032449a153cf897a543443b64bba.jpg)](https://www.bilibili.com/video/BV1UcxieuEmH/)
 
+Video for RL Quadruped Controller:
+[![](http://i0.hdslb.com/bfs/archive/9886e7f9ed06d7f880b5614cb2f4c3ec1d7bf85f.jpg)](https://www.bilibili.com/video/BV1QP1pYBE47/)
+
 ## 1. Quick Start
 
 * rosdep
@@ -43,8 +46,9 @@ Please use **C++ Simulation** in this [Mujoco Simulation](https://github.com/leg
 sensor.
 
 > **Warning:** CycloneDDS ROS2 RMW may conflict with unitree_sdk2. If you cannot launch unitree mujoco simulation
-> without `sudo`, then you cannot used `unitree_mujoco_hardware`. You can switch to gazebo, or try to solve the conflict
-> by uninstall CycloneDDS ROS2 RMW.
+> without `sudo`, then you cannot used `unitree_mujoco_hardware`. This conflict could be solved by one of below two methods:
+> 1. Uninstall CycloneDDS ROS2 RMW, or
+> 2. Follow the guide in [unitree_ros2](https://github.com/unitreerobotics/unitree_ros2) to configure the ROS2 RMW by compiling cyclone dds. 
 
 * Compile Unitree Hardware Interfaces
     ```bash

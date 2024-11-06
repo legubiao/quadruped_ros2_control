@@ -61,10 +61,17 @@ supported robot description:
     * b2_description
 * Xiaomi
     * cyberdog_description
+* DeepRobotics
+    * lite3_description
+    * x30_description
+* Anybotics
+    * anymal_c_description
 
 ### 3.1 Mujoco Simulation
-
+> **Warm Reminder**: You need to launch [Unitree Mujoco C++ Simulation](https://github.com/legubiao/unitree_mujoco) before launch the controller.
 ```bash
 source ~/ros2_ws/install/setup.bash
 ros2 launch ocs2_quadruped_controller mujoco.launch.py pkg_description:=go2_description
 ```
+
+At the first launch, controller may compile the OCS2 model and generate the shared library. The compilation process may take a few minutes. After the compilation, restart the controller and the robot should stand up. Then you can use the keyboard or joystick to control the robot (Keyboard 2 or Joystick LB+A to Trot mode).
