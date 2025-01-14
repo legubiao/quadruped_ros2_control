@@ -42,8 +42,8 @@ Video for RL Quadruped Controller:
 
 ### 1.1 Mujoco Simulator
 
-Please use **C++ Simulation** in this [Mujoco Simulation](https://github.com/legubiao/unitree_mujoco) for more robot models and contact
-sensor.
+Please use **C++ Simulation** in this [Mujoco Simulation](https://github.com/legubiao/unitree_mujoco) for more robot models and contact sensor. 
+* **Python Simulation** is also supported, but you still need to install [unitree_sdk2](https://github.com/unitreerobotics/unitree_sdk2)
 
 > **Warning:** CycloneDDS ROS2 RMW may conflict with unitree_sdk2. If you cannot launch unitree mujoco simulation
 > without `sudo`, then you cannot used `unitree_mujoco_hardware`. This conflict could be solved by one of below two methods:
