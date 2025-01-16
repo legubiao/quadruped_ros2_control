@@ -12,15 +12,11 @@
 #include "ocs2_quadruped_controller/control/CtrlComponent.h"
 
 namespace ocs2::legged_robot {
-
-    StateEstimateBase::StateEstimateBase(PinocchioInterface pinocchio_interface, CentroidalModelInfo info,
-                                         const PinocchioEndEffectorKinematics &ee_kinematics,
+    StateEstimateBase::StateEstimateBase(CentroidalModelInfo info,
                                          CtrlComponent &ctrl_component,
                                          rclcpp_lifecycle::LifecycleNode::SharedPtr node)
         : ctrl_component_(ctrl_component),
-          pinocchio_interface_(std::move(pinocchio_interface)),
           info_(std::move(info)),
-          ee_kinematics_(ee_kinematics.clone()),
           rbd_state_(vector_t::Zero(2 * info_.generalizedCoordinatesNum)), node_(std::move(node)) {
         odom_pub_ = node_->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
         pose_pub_ = node_->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("pose", 10);

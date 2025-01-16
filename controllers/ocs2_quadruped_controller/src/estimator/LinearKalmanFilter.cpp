@@ -18,8 +18,10 @@ namespace ocs2::legged_robot {
                                                const PinocchioEndEffectorKinematics &ee_kinematics,
                                                CtrlComponent &ctrl_component,
                                                const rclcpp_lifecycle::LifecycleNode::SharedPtr &node)
-        : StateEstimateBase(std::move(pinocchio_interface), std::move(info), ee_kinematics, ctrl_component,
+        : StateEstimateBase(std::move(info), ctrl_component,
                             node),
+          pinocchio_interface_(std::move(pinocchio_interface)),
+          ee_kinematics_(ee_kinematics.clone()),
           numContacts_(info_.numThreeDofContacts + info_.numSixDofContacts),
           dimContacts_(3 * numContacts_),
           numState_(6 + dimContacts_),
@@ -167,7 +169,6 @@ namespace ocs2::legged_robot {
         odom.pose.pose.orientation.y = quat_.y();
         odom.pose.pose.orientation.z = quat_.z();
         odom.pose.pose.orientation.w = quat_.w();
-        odom.pose.pose.orientation.x = quat_.x();
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
                 odom.pose.covariance[i * 6 + j] = p_(i, j);

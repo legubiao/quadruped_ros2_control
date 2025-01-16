@@ -8,6 +8,7 @@
 
 #define TOPIC_LOWCMD "rt/lowcmd"
 #define TOPIC_LOWSTATE "rt/lowstate"
+#define TOPIC_HIGHSTATE "rt/sportmodestate"
 
 using namespace unitree::robot;
 using hardware_interface::return_type;
@@ -30,6 +31,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Hardwa
 
     imu_states_.assign(10, 0);
     foot_force_.assign(4, 0);
+    high_states_.assign(6, 0);
 
     for (const auto &joint: info_.joints) {
         for (const auto &interface: joint.state_interfaces) {
@@ -38,12 +40,12 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Hardwa
     }
 
     ChannelFactory::Instance()->Init(1, "lo");
+
     low_cmd_publisher_ =
             std::make_shared<ChannelPublisher<unitree_go::msg::dds_::LowCmd_> >(
                 TOPIC_LOWCMD);
     low_cmd_publisher_->InitChannel();
 
-    /*create subscriber*/
     lows_tate_subscriber_ =
             std::make_shared<ChannelSubscriber<unitree_go::msg::dds_::LowState_> >(
                 TOPIC_LOWSTATE);
@@ -53,6 +55,15 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Hardwa
         },
         1);
     initLowCmd();
+
+    high_state_subscriber_ =
+            std::make_shared<ChannelSubscriber<unitree_go::msg::dds_::SportModeState_> >(
+                TOPIC_HIGHSTATE);
+    high_state_subscriber_->InitChannel(
+        [this](auto &&PH1) {
+            highStateMessageHandle(std::forward<decltype(PH1)>(PH1));
+        },
+        1);
 
 
     return SystemInterface::on_init(info);
@@ -83,13 +94,25 @@ std::vector<hardware_interface::StateInterface> HardwareUnitree::export_state_in
     }
 
     // export foot force sensor state interface
-    for (uint i = 0; i < info_.sensors[1].state_interfaces.size(); i++) {
-        state_interfaces.emplace_back(
-            info_.sensors[1].name, info_.sensors[1].state_interfaces[i].name, &foot_force_[i]);
+    if (info_.sensors.size() > 1) {
+        for (uint i = 0; i < info_.sensors[1].state_interfaces.size(); i++) {
+            state_interfaces.emplace_back(
+                info_.sensors[1].name, info_.sensors[1].state_interfaces[i].name, &foot_force_[i]);
+        }
+    }
+
+    // export odometer state interface
+    if (info_.sensors.size() > 2) {
+        // export high state interface
+        for (uint i = 0; i < info_.sensors[2].state_interfaces.size(); i++) {
+            state_interfaces.emplace_back(
+                info_.sensors[2].name, info_.sensors[2].state_interfaces[i].name, &high_states_[i]);
+        }
     }
 
 
-    return state_interfaces;
+    return
+            state_interfaces;
 }
 
 std::vector<hardware_interface::CommandInterface> HardwareUnitree::export_command_interfaces() {
@@ -141,6 +164,17 @@ return_type HardwareUnitree::read(const rclcpp::Time & /*time*/, const rclcpp::D
     foot_force_[2] = low_state_.foot_force()[2];
     foot_force_[3] = low_state_.foot_force()[3];
 
+    // high states
+    high_states_[0] = high_state_.position()[0];
+    high_states_[1] = high_state_.position()[1];
+    high_states_[2] = high_state_.position()[2];
+    high_states_[3] = high_state_.velocity()[0];
+    high_states_[4] = high_state_.velocity()[1];
+    high_states_[5] = high_state_.velocity()[2];
+
+    // RCLCPP_INFO(get_logger(), "high state: %f %f %f %f %f %f", high_states_[0], high_states_[1], high_states_[2],
+    //             high_states_[3], high_states_[4], high_states_[5]);
+
     return return_type::OK;
 }
 
@@ -180,6 +214,10 @@ void HardwareUnitree::initLowCmd() {
 
 void HardwareUnitree::lowStateMessageHandle(const void *messages) {
     low_state_ = *static_cast<const unitree_go::msg::dds_::LowState_ *>(messages);
+}
+
+void HardwareUnitree::highStateMessageHandle(const void *messages) {
+    high_state_ = *static_cast<const unitree_go::msg::dds_::SportModeState_ *>(messages);
 }
 
 #include "pluginlib/class_list_macros.hpp"

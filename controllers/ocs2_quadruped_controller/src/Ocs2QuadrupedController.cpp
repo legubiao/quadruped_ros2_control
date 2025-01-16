@@ -15,6 +15,7 @@
 #include <ocs2_sqp/SqpMpc.h>
 #include <angles/angles.h>
 #include <ocs2_quadruped_controller/control/GaitManager.h>
+#include <ocs2_quadruped_controller/estimator/GroundTruth.h>
 
 namespace ocs2::legged_robot {
     using config_type = controller_interface::interface_configuration_type;
@@ -46,8 +47,14 @@ namespace ocs2::legged_robot {
             conf.names.push_back(imu_name_ + "/" += interface_type);
         }
 
-        for (const auto &interface_type: foot_force_interface_types_) {
-            conf.names.push_back(foot_force_name_ + "/" += interface_type);
+        if (use_odom_) {
+            for (const auto &interface_type: odom_interface_types_) {
+                conf.names.push_back(odom_name_ + "/" += interface_type);
+            }
+        } else {
+            for (const auto &interface_type: foot_force_interface_types_) {
+                conf.names.push_back(foot_force_name_ + "/" += interface_type);
+            }
         }
 
         return conf;
@@ -139,11 +146,22 @@ namespace ocs2::legged_robot {
                 auto_declare<std::vector<std::string> >("command_interfaces", command_interface_types_);
         state_interface_types_ =
                 auto_declare<std::vector<std::string> >("state_interfaces", state_interface_types_);
+
+        // IMU Sensor
         imu_name_ = auto_declare<std::string>("imu_name", imu_name_);
         imu_interface_types_ = auto_declare<std::vector<std::string> >("imu_interfaces", state_interface_types_);
-        foot_force_name_ = auto_declare<std::string>("foot_force_name", foot_force_name_);
-        foot_force_interface_types_ =
-                auto_declare<std::vector<std::string> >("foot_force_interfaces", state_interface_types_);
+
+        // Odometer Sensor (Ground Truth)
+        use_odom_ = auto_declare<bool>("use_odom", use_odom_);
+        if (use_odom_) {
+            odom_name_ = auto_declare<std::string>("odom_name", odom_name_);
+            odom_interface_types_ = auto_declare<std::vector<std::string> >("odom_interfaces", state_interface_types_);
+        } else {
+            // Foot Force Sensor
+            foot_force_name_ = auto_declare<std::string>("foot_force_name", foot_force_name_);
+            foot_force_interface_types_ =
+                    auto_declare<std::vector<std::string> >("foot_force_interfaces", state_interface_types_);
+        }
 
         // PD gains
         default_kp_ = auto_declare<double>("default_kp", default_kp_);
@@ -220,6 +238,8 @@ namespace ocs2::legged_robot {
                 ctrl_comp_.imu_state_interface_.emplace_back(interface);
             } else if (interface.get_prefix_name() == foot_force_name_) {
                 ctrl_comp_.foot_force_state_interface_.emplace_back(interface);
+            } else if (interface.get_prefix_name() == odom_name_) {
+                ctrl_comp_.odom_state_interface_.emplace_back(interface);
             } else {
                 state_interface_map_[interface.get_interface_name()]->push_back(interface);
             }
@@ -229,7 +249,7 @@ namespace ocs2::legged_robot {
             // Initial state
             ctrl_comp_.observation_.state.setZero(
                 static_cast<long>(legged_interface_->getCentroidalModelInfo().stateDim));
-            updateStateEstimation(get_node()->now(), rclcpp::Duration(0, 1/ctrl_comp_.frequency_*1000000000));
+            updateStateEstimation(get_node()->now(), rclcpp::Duration(0, 1 / ctrl_comp_.frequency_ * 1000000000));
             ctrl_comp_.observation_.input.setZero(
                 static_cast<long>(legged_interface_->getCentroidalModelInfo().inputDim));
             ctrl_comp_.observation_.mode = STANCE;
@@ -330,10 +350,19 @@ namespace ocs2::legged_robot {
     }
 
     void Ocs2QuadrupedController::setupStateEstimate() {
-        ctrl_comp_.estimator_ = std::make_shared<KalmanFilterEstimate>(legged_interface_->getPinocchioInterface(),
-                                                                       legged_interface_->getCentroidalModelInfo(),
-                                                                       *eeKinematicsPtr_, ctrl_comp_, this->get_node());
-        dynamic_cast<KalmanFilterEstimate &>(*ctrl_comp_.estimator_).loadSettings(task_file_, verbose_);
+        if (use_odom_) {
+            ctrl_comp_.estimator_ = std::make_shared<GroundTruth>(legged_interface_->getCentroidalModelInfo(),
+                                                                  ctrl_comp_,
+                                                                  get_node());
+            RCLCPP_INFO(get_node()->get_logger(), "Using Ground Truth Estimator");
+        } else {
+            ctrl_comp_.estimator_ = std::make_shared<KalmanFilterEstimate>(legged_interface_->getPinocchioInterface(),
+                                                                           legged_interface_->getCentroidalModelInfo(),
+                                                                           *eeKinematicsPtr_, ctrl_comp_,
+                                                                           get_node());
+            dynamic_cast<KalmanFilterEstimate &>(*ctrl_comp_.estimator_).loadSettings(task_file_, verbose_);
+            RCLCPP_INFO(get_node()->get_logger(), "Using Kalman Filter Estimator");
+        }
         ctrl_comp_.observation_.time = 0;
     }
 
@@ -344,7 +373,7 @@ namespace ocs2::legged_robot {
         ctrl_comp_.observation_.state = rbd_conversions_->computeCentroidalStateFromRbdModel(measured_rbd_state_);
         ctrl_comp_.observation_.state(9) = yaw_last + angles::shortest_angular_distance(
                                                yaw_last, ctrl_comp_.observation_.state(9));
-        ctrl_comp_.observation_.mode = ctrl_comp_.estimator_->getMode();
+        // ctrl_comp_.observation_.mode = ctrl_comp_.estimator_->getMode();
     }
 }
 

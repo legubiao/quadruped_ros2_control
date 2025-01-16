@@ -22,9 +22,7 @@ namespace ocs2::legged_robot {
     public:
         virtual ~StateEstimateBase() = default;
 
-        StateEstimateBase(PinocchioInterface pinocchio_interface, CentroidalModelInfo info,
-                          const PinocchioEndEffectorKinematics &ee_kinematics,
-                          CtrlComponent &ctrl_component,
+        StateEstimateBase(CentroidalModelInfo info, CtrlComponent &ctrl_component,
                           rclcpp_lifecycle::LifecycleNode::SharedPtr node);
 
         virtual void updateJointStates();
@@ -45,10 +43,7 @@ namespace ocs2::legged_robot {
         void publishMsgs(const nav_msgs::msg::Odometry &odom) const;
 
         CtrlComponent &ctrl_component_;
-
-        PinocchioInterface pinocchio_interface_;
         CentroidalModelInfo info_;
-        std::unique_ptr<PinocchioEndEffectorKinematics> ee_kinematics_;
 
         vector3_t zyx_offset_ = vector3_t::Zero();
         vector_t rbd_state_;

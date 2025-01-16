@@ -26,6 +26,9 @@ namespace ocs2::legged_robot {
     protected:
         nav_msgs::msg::Odometry getOdomMsg();
 
+        PinocchioInterface pinocchio_interface_;
+        std::unique_ptr<PinocchioEndEffectorKinematics> ee_kinematics_;
+
         vector_t feet_heights_;
 
         // Config
@@ -43,4 +46,4 @@ namespace ocs2::legged_robot {
         matrix_t a_, b_, c_, q_, p_, r_;
         vector_t xHat_, ps_, vs_;
     };
-} // namespace legged
+}

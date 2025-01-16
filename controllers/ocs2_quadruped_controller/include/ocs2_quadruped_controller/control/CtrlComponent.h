@@ -41,9 +41,13 @@ struct CtrlComponent {
     std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> >
     foot_force_state_interface_;
 
+    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> >
+    odom_state_interface_;
+
     control_input_msgs::msg::Inputs control_inputs_;
     ocs2::SystemObservation observation_;
     int frequency_{};
+    bool reset = true;
 
     std::shared_ptr<ocs2::legged_robot::StateEstimateBase> estimator_;
     std::shared_ptr<ocs2::legged_robot::TargetManager> target_manager_;

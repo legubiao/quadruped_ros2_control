@@ -4,6 +4,8 @@ This package contains the hardware interface based on [unitree_sdk2](https://git
 
 In theory, it also can communicate with real robot, but it is not tested yet. You can use go2 simulation in [unitree_mujoco](https://github.com/legubiao/unitree_mujoco). In this simulation, I add foot force sensor support.
 
+*[x] **[2025-01-16]** Add odometer states for simulation. 
+
 ## 1. Interfaces
 
 Required hardware interfaces:

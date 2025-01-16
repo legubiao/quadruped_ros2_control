@@ -12,7 +12,6 @@ set(CONTROLLER_INCLUDE_DEPENDS
         pluginlib
         rcpputils
         controller_interface
-        realtime_tools
 
         ocs2_legged_robot_ros
         ocs2_self_collision
@@ -31,7 +30,7 @@ endforeach ()
 add_library(${PROJECT_NAME} SHARED
         src/Ocs2QuadrupedController.cpp
 
-        #        src/estimator/FromTopicEstimate.cpp
+        src/estimator/GroundTruth.cpp
         src/estimator/LinearKalmanFilter.cpp
         src/estimator/StateEstimateBase.cpp
 

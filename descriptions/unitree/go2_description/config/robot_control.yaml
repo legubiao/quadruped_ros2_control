@@ -125,6 +125,16 @@ ocs2_quadruped_controller:
       - linear_acceleration.y
       - linear_acceleration.z
 
+    use_odom: True
+    odom_name: "odometer"
+    odom_interfaces:
+      - position.x
+      - position.y
+      - position.z
+      - velocity.x
+      - velocity.y
+      - velocity.z
+
     foot_force_name: "foot_force"
     foot_force_interfaces:
       - FL

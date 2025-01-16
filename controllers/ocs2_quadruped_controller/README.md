@@ -10,6 +10,9 @@ Tested environment:
 * Ubuntu 22.04
     * ROS2 Humble
 
+*[x] **[2025-01-16]** Add support for ground truth estimator.
+
+
 [![](http://i0.hdslb.com/bfs/archive/e758ce019587032449a153cf897a543443b64bba.jpg)](https://www.bilibili.com/video/BV1UcxieuEmH/)
 
 ## 1. Interfaces

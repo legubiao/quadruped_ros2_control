@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:macro name="ft_sensor" params="name">
+        <gazebo reference="${name}_foot_fixed">
+            <!-- Enable feedback for this joint -->
+            <provideFeedback>true</provideFeedback>
+            <!-- Prevent ros2_control from lumping this fixed joint with others -->
+            <disableFixedJointLumping>true</disableFixedJointLumping>
+            <sensor name="${name}_ft_sensor" type="force_torque">
+                <always_on>1</always_on>
+                <update_rate>500</update_rate>
+                <visualize>true</visualize>
+                <force_torque>
+                    <frame>child</frame>
+                    <!--                <measure_direction>child_to_parent</measure_direction>-->
+                </force_torque>
+            </sensor>
+        </gazebo>
+    </xacro:macro>
+</robot>

@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:include filename="$(find go1_description)/xacro/ft_sensor.xacro"/>
 
 	<ros2_control name="GazeboSystem" type="system">
 		<hardware>
@@ -184,5 +185,10 @@
 	<gazebo reference="imu_joint">
 		<disableFixedJointLumping>true</disableFixedJointLumping>
 	</gazebo>
+
+	<xacro:ft_sensor name="FR"/>
+	<xacro:ft_sensor name="FL"/>
+	<xacro:ft_sensor name="RR"/>
+	<xacro:ft_sensor name="RL"/>
 
 </robot>

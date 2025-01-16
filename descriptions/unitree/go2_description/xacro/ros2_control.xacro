@@ -171,6 +171,15 @@
 			<state_interface name="RL"/>
 		</sensor>
 
+		<sensor name="odometer">
+			<state_interface name="position.x"/>
+			<state_interface name="position.y"/>
+			<state_interface name="position.z"/>
+			<state_interface name="velocity.x"/>
+			<state_interface name="velocity.y"/>
+			<state_interface name="velocity.z"/>
+		</sensor>
+
 	</ros2_control>
 
 </robot>

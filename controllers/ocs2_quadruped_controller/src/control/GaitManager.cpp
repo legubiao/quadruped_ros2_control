@@ -48,5 +48,6 @@ namespace ocs2::legged_robot {
         RCLCPP_INFO(rclcpp::get_logger("GaitManager"), "Switch to gait: %s",
                     gait_name_list_[ctrl_component_.control_inputs_.command - 1].c_str());
         gait_updated_ = true;
+        ctrl_component_.reset = false;
     }
 }

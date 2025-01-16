@@ -25,6 +25,7 @@ namespace ocs2::legged_robot {
     }
 
     void TargetManager::update() {
+        if (ctrl_component_.reset) return;
         vector_t cmdGoal = vector_t::Zero(6);
         cmdGoal[0] = ctrl_component_.control_inputs_.ly * target_displacement_velocity_;
         cmdGoal[1] = -ctrl_component_.control_inputs_.lx * target_displacement_velocity_;
