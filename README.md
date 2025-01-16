@@ -16,7 +16,7 @@ Todo List:
 - [x] [Contact Sensor Simulation](https://github.com/legubiao/unitree_mujoco)
 - [x] [OCS2 Quadruped Control](controllers/ocs2_quadruped_controller)
 - [x] [Learning-based Controller](controllers/rl_quadruped_controller/)
-- [ ] Fully understand the RL Workflow
+- [x] Fully understand the RL Workflow
 - [x] ROS2 Humble Gazebo Classic Support
 
 Video for Unitree Guide Controller:

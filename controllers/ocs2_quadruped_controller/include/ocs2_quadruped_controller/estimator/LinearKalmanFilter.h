@@ -9,9 +9,7 @@
 #include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
 
-#include <tf2_geometry_msgs/tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <tf2_ros/transform_broadcaster.h>
-#include <tf2_ros/transform_listener.h>
 
 namespace ocs2::legged_robot {
     class KalmanFilterEstimate final : public StateEstimateBase {

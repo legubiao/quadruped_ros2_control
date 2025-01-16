@@ -22,13 +22,18 @@ ros2 launch anymal_c_description visualize.launch.py
 
 ## Launch ROS2 Control
 ### Mujoco Simulator
+* Unitree Guide Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch unitree_guide_controller mujoco.launch.py pkg_description:=anymal_c_description
+  ```
 * OCS2 Quadruped Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
   ros2 launch ocs2_quadruped_controller mujoco.launch.py pkg_description:=anymal_c_description
   ```
 * Legged Gym Controller
-  ```bash
+    ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch anymal_c_description rl_control.launch.py
+  ros2 launch rl_quadruped_controller mujoco.launch.py pkg_description:=anymal_c_description
   ```

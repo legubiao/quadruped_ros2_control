@@ -1,7 +1,7 @@
 # Controller Manager configuration
 controller_manager:
   ros__parameters:
-    update_rate: 200  # Hz
+    update_rate: 1000  # Hz
 
     # Define the available controllers
     joint_state_broadcaster:
