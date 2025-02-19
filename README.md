@@ -55,7 +55,7 @@ Please use **C++ Simulation** in this [Mujoco Simulation](https://github.com/leg
     cd ~/ros2_ws
     colcon build --packages-up-to hardware_unitree_mujoco
     ```
-* Launch the unitree mujoco go2 simulation
+* Follow the guide in [unitree_mujoco](https://github.com/legubiao/unitree_mujoco) to launch the unitree mujoco go2 simulation
 * Launch the ros2-control
     ```bash
     source ~/ros2_ws/install/setup.bash

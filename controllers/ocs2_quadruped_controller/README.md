@@ -38,6 +38,7 @@ Required hardware interfaces:
 ## 2. Build
 
 ### 2.1 Build Dependencies
+Before install OCS2 ROS2, please follow the guide to install [Pinocchio](https://stack-of-tasks.github.io/pinocchio/download.html), don't use the pinocchio install by rosdep!
 
 * OCS2 ROS2 Libraries
   ```bash
