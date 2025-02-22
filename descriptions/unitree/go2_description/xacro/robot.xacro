@@ -121,33 +121,16 @@
 			</geometry>
 		</collision>
 	</link>
-	<!--
-	<joint name="load_joint" type="fixed">
-			<parent link="trunk"/>
-			<child link="load_link"/>
-			<origin rpy="0 0 0" xyz="0 0 0"/>
+
+	<joint name="front_camera_joint" type="fixed">
+		<parent link="trunk"/>
+		<child link="front_camera"/>
+		<origin rpy="0 0 0" xyz="0.32715 0 0.04297"/>
 	</joint>
 
-	<link name="load_link">
-			<inertial>
-					<mass value="5"/>
-					<origin rpy="0 0 0" xyz="0 0 0"/>
-					<inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
-			</inertial>
-			<visual>
-					<origin rpy="0 0 0" xyz="0 0 0.2"/>
-					<geometry>
-							<box size="0.5 0.3 0.2"/>
-					</geometry>
-			</visual>
-			<collision>
-					<origin rpy="0 0 0" xyz="0 0 0"/>
-					<geometry>
-							<box size=".001 .001 .001"/>
-					</geometry>
-			</collision>
+	<link name="front_camera">
 	</link>
--->
+
 	<xacro:leg name="FR" mirror="-1" mirror_dae="False" front_hind="1" front_hind_dae="True"/>
 	<xacro:leg name="FL" mirror="1" mirror_dae="True" front_hind="1" front_hind_dae="True"/>
 	<xacro:leg name="RR" mirror="-1" mirror_dae="False" front_hind="-1" front_hind_dae="False"/>

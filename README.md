@@ -18,6 +18,9 @@ Todo List:
 - [x] [Learning-based Controller](controllers/rl_quadruped_controller/)
 - [x] Fully understand the RL Workflow
 - [x] ROS2 Humble Gazebo Classic Support
+- [x] **[2025-02-23]** Add Gazebo Playground
+- [ ] OCS2 controller for Gazebo Simulation
+- [ ] Refactor FSM and Unitree Guide Controller
 
 Video for Unitree Guide Controller:
 [![](http://i1.hdslb.com/bfs/archive/310e6208920985ac43015b2da31c01ec15e2c5f9.jpg)](https://www.bilibili.com/video/BV1aJbAeZEuo/)
@@ -37,7 +40,7 @@ Video for RL Quadruped Controller:
     ```
 * Compile the package
     ```bash
-    colcon build --packages-up-to unitree_guide_controller go2_description keyboard_input 
+    colcon build --packages-up-to unitree_guide_controller go2_description keyboard_input --symlink-install
     ```
 
 ### 1.1 Mujoco Simulator
