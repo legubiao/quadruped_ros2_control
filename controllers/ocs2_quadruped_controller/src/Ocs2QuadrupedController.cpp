@@ -3,6 +3,7 @@
 //
 
 #include "Ocs2QuadrupedController.h"
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 #include <ocs2_core/misc/LoadData.h>
 #include <ocs2_core/thread_support/ExecuteAndSleep.h>
@@ -16,43 +17,59 @@
 #include <angles/angles.h>
 #include <ocs2_quadruped_controller/control/GaitManager.h>
 #include <ocs2_quadruped_controller/estimator/GroundTruth.h>
+#include <ocs2_quadruped_controller/estimator/FromOdomTopic.h>
 
-namespace ocs2::legged_robot {
+namespace ocs2::legged_robot
+{
     using config_type = controller_interface::interface_configuration_type;
 
-    controller_interface::InterfaceConfiguration Ocs2QuadrupedController::command_interface_configuration() const {
+    controller_interface::InterfaceConfiguration Ocs2QuadrupedController::command_interface_configuration() const
+    {
         controller_interface::InterfaceConfiguration conf = {config_type::INDIVIDUAL, {}};
 
         conf.names.reserve(joint_names_.size() * command_interface_types_.size());
         for (const auto &joint_name: joint_names_) {
             for (const auto &interface_type: command_interface_types_) {
-                conf.names.push_back(joint_name + "/" += interface_type);
+                if (!command_prefix_.empty()) {
+                    conf.names.push_back(command_prefix_ + "/" + joint_name + "/" += interface_type);
+                } else {
+                    conf.names.push_back(joint_name + "/" += interface_type);
+                }
             }
         }
 
         return conf;
     }
 
-    controller_interface::InterfaceConfiguration Ocs2QuadrupedController::state_interface_configuration() const {
+    controller_interface::InterfaceConfiguration Ocs2QuadrupedController::state_interface_configuration() const
+    {
         controller_interface::InterfaceConfiguration conf = {config_type::INDIVIDUAL, {}};
 
         conf.names.reserve(joint_names_.size() * state_interface_types_.size());
-        for (const auto &joint_name: joint_names_) {
-            for (const auto &interface_type: state_interface_types_) {
+        for (const auto& joint_name : joint_names_)
+        {
+            for (const auto& interface_type : state_interface_types_)
+            {
                 conf.names.push_back(joint_name + "/" += interface_type);
             }
         }
 
-        for (const auto &interface_type: imu_interface_types_) {
+        for (const auto& interface_type : imu_interface_types_)
+        {
             conf.names.push_back(imu_name_ + "/" += interface_type);
         }
 
-        if (use_odom_) {
-            for (const auto &interface_type: odom_interface_types_) {
+        if (estimator_type_ == "ground_truth")
+        {
+            for (const auto& interface_type : odom_interface_types_)
+            {
                 conf.names.push_back(odom_name_ + "/" += interface_type);
             }
-        } else {
-            for (const auto &interface_type: foot_force_interface_types_) {
+        }
+        else if (estimator_type_ == "linear_kalman")
+        {
+            for (const auto& interface_type : foot_force_interface_types_)
+            {
                 conf.names.push_back(foot_force_name_ + "/" += interface_type);
             }
         }
@@ -60,10 +77,11 @@ namespace ocs2::legged_robot {
         return conf;
     }
 
-    controller_interface::return_type Ocs2QuadrupedController::update(const rclcpp::Time &time,
-                                                                      const rclcpp::Duration &period) {
+    controller_interface::return_type Ocs2QuadrupedController::update(const rclcpp::Time& time,
+                                                                      const rclcpp::Duration& period)
+    {
         // State Estimate
-        updateStateEstimation(time, period);
+        updateStateEstimation(period);
 
         // Compute target trajectory
         ctrl_comp_.target_manager_->update();
@@ -73,6 +91,7 @@ namespace ocs2::legged_robot {
 
         // Load the latest MPC policy
         mpc_mrt_interface_->updatePolicy();
+        mpc_need_updated_ = true;
 
         // Evaluate the current policy
         vector_t optimized_state, optimized_input;
@@ -96,9 +115,11 @@ namespace ocs2::legged_robot {
                                                                 legged_interface_->getCentroidalModelInfo());
 
         // Safety check, if failed, stop the controller
-        if (!safety_checker_->check(ctrl_comp_.observation_, optimized_state, optimized_input)) {
+        if (!safety_checker_->check(ctrl_comp_.observation_, optimized_state, optimized_input))
+        {
             RCLCPP_ERROR(get_node()->get_logger(), "[Legged Controller] Safety check failed, stopping the controller.");
-            for (int i = 0; i < joint_names_.size(); i++) {
+            for (int i = 0; i < joint_names_.size(); i++)
+            {
                 ctrl_comp_.joint_torque_command_interface_[i].get().set_value(0);
                 ctrl_comp_.joint_position_command_interface_[i].get().set_value(0);
                 ctrl_comp_.joint_velocity_command_interface_[i].get().set_value(0);
@@ -108,7 +129,8 @@ namespace ocs2::legged_robot {
             return controller_interface::return_type::ERROR;
         }
 
-        for (int i = 0; i < joint_names_.size(); i++) {
+        for (int i = 0; i < joint_names_.size(); i++)
+        {
             ctrl_comp_.joint_torque_command_interface_[i].get().set_value(torque(i));
             ctrl_comp_.joint_position_command_interface_[i].get().set_value(pos_des(i));
             ctrl_comp_.joint_velocity_command_interface_[i].get().set_value(vel_des(i));
@@ -125,12 +147,16 @@ namespace ocs2::legged_robot {
         return controller_interface::return_type::OK;
     }
 
-    controller_interface::CallbackReturn Ocs2QuadrupedController::on_init() {
+    controller_interface::CallbackReturn Ocs2QuadrupedController::on_init()
+    {
         // Initialize OCS2
-        urdf_file_ = auto_declare<std::string>("urdf_file", urdf_file_);
-        task_file_ = auto_declare<std::string>("task_file", task_file_);
-        reference_file_ = auto_declare<std::string>("reference_file", reference_file_);
-        gait_file_ = auto_declare<std::string>("gait_file", gait_file_);
+        robot_pkg_ = auto_declare<std::string>("robot_pkg", robot_pkg_);
+        const std::string package_share_directory = ament_index_cpp::get_package_share_directory(robot_pkg_);
+
+        urdf_file_ = package_share_directory + "/urdf/robot.urdf";
+        task_file_ = package_share_directory + "/config/ocs2/task.info";
+        reference_file_ = package_share_directory + "/config/ocs2/reference.info";
+        gait_file_ = package_share_directory + "/config/ocs2/gait.info";
 
         get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);
         RCLCPP_INFO(get_node()->get_logger(), "Controller Manager Update Rate: %d Hz", ctrl_comp_.frequency_);
@@ -140,27 +166,31 @@ namespace ocs2::legged_robot {
         loadData::loadCppDataType(task_file_, "legged_robot_interface.verbose", verbose_);
 
         // Hardware Parameters
-        joint_names_ = auto_declare<std::vector<std::string> >("joints", joint_names_);
-        feet_names_ = auto_declare<std::vector<std::string> >("feet", feet_names_);
+        command_prefix_ = auto_declare<std::string>("command_prefix", command_prefix_);
+        joint_names_ = auto_declare<std::vector<std::string>>("joints", joint_names_);
+        feet_names_ = auto_declare<std::vector<std::string>>("feet", feet_names_);
         command_interface_types_ =
-                auto_declare<std::vector<std::string> >("command_interfaces", command_interface_types_);
+            auto_declare<std::vector<std::string>>("command_interfaces", command_interface_types_);
         state_interface_types_ =
-                auto_declare<std::vector<std::string> >("state_interfaces", state_interface_types_);
+            auto_declare<std::vector<std::string>>("state_interfaces", state_interface_types_);
 
         // IMU Sensor
         imu_name_ = auto_declare<std::string>("imu_name", imu_name_);
-        imu_interface_types_ = auto_declare<std::vector<std::string> >("imu_interfaces", state_interface_types_);
+        imu_interface_types_ = auto_declare<std::vector<std::string>>("imu_interfaces", state_interface_types_);
 
         // Odometer Sensor (Ground Truth)
-        use_odom_ = auto_declare<bool>("use_odom", use_odom_);
-        if (use_odom_) {
+        estimator_type_ = auto_declare<std::string>("estimator_type", estimator_type_);
+        if (estimator_type_ == "ground_truth")
+        {
             odom_name_ = auto_declare<std::string>("odom_name", odom_name_);
-            odom_interface_types_ = auto_declare<std::vector<std::string> >("odom_interfaces", state_interface_types_);
-        } else {
+            odom_interface_types_ = auto_declare<std::vector<std::string>>("odom_interfaces", state_interface_types_);
+        }
+        else
+        {
             // Foot Force Sensor
             foot_force_name_ = auto_declare<std::string>("foot_force_name", foot_force_name_);
             foot_force_interface_types_ =
-                    auto_declare<std::vector<std::string> >("foot_force_interfaces", state_interface_types_);
+                auto_declare<std::vector<std::string>>("foot_force_interfaces", state_interface_types_);
         }
 
         // PD gains
@@ -200,9 +230,11 @@ namespace ocs2::legged_robot {
     }
 
     controller_interface::CallbackReturn Ocs2QuadrupedController::on_configure(
-        const rclcpp_lifecycle::State & /*previous_state*/) {
+        const rclcpp_lifecycle::State& /*previous_state*/)
+    {
         control_input_subscription_ = get_node()->create_subscription<control_input_msgs::msg::Inputs>(
-            "/control_input", 10, [this](const control_input_msgs::msg::Inputs::SharedPtr msg) {
+            "/control_input", 10, [this](const control_input_msgs::msg::Inputs::SharedPtr msg)
+            {
                 // Handle message
                 ctrl_comp_.control_inputs_.command = msg->command;
                 ctrl_comp_.control_inputs_.lx = msg->lx;
@@ -218,38 +250,52 @@ namespace ocs2::legged_robot {
     }
 
     controller_interface::CallbackReturn Ocs2QuadrupedController::on_activate(
-        const rclcpp_lifecycle::State & /*previous_state*/) {
+        const rclcpp_lifecycle::State& /*previous_state*/)
+    {
         // clear out vectors in case of restart
         ctrl_comp_.clear();
 
         // assign command interfaces
-        for (auto &interface: command_interfaces_) {
+        for (auto& interface : command_interfaces_)
+        {
             std::string interface_name = interface.get_interface_name();
-            if (const size_t pos = interface_name.find('/'); pos != std::string::npos) {
+            if (const size_t pos = interface_name.find('/'); pos != std::string::npos)
+            {
                 command_interface_map_[interface_name.substr(pos + 1)]->push_back(interface);
-            } else {
+            }
+            else
+            {
                 command_interface_map_[interface_name]->push_back(interface);
             }
         }
 
         // assign state interfaces
-        for (auto &interface: state_interfaces_) {
-            if (interface.get_prefix_name() == imu_name_) {
+        for (auto& interface : state_interfaces_)
+        {
+            if (interface.get_prefix_name() == imu_name_)
+            {
                 ctrl_comp_.imu_state_interface_.emplace_back(interface);
-            } else if (interface.get_prefix_name() == foot_force_name_) {
+            }
+            else if (interface.get_prefix_name() == foot_force_name_)
+            {
                 ctrl_comp_.foot_force_state_interface_.emplace_back(interface);
-            } else if (interface.get_prefix_name() == odom_name_) {
+            }
+            else if (interface.get_prefix_name() == odom_name_)
+            {
                 ctrl_comp_.odom_state_interface_.emplace_back(interface);
-            } else {
+            }
+            else
+            {
                 state_interface_map_[interface.get_interface_name()]->push_back(interface);
             }
         }
 
-        if (mpc_running_ == false) {
+        if (mpc_running_ == false)
+        {
             // Initial state
             ctrl_comp_.observation_.state.setZero(
                 static_cast<long>(legged_interface_->getCentroidalModelInfo().stateDim));
-            updateStateEstimation(get_node()->now(), rclcpp::Duration(0, 1 / ctrl_comp_.frequency_ * 1000000000));
+            updateStateEstimation(rclcpp::Duration(0, 1 / ctrl_comp_.frequency_ * 1000000000));
             ctrl_comp_.observation_.input.setZero(
                 static_cast<long>(legged_interface_->getCentroidalModelInfo().inputDim));
             ctrl_comp_.observation_.mode = STANCE;
@@ -262,7 +308,8 @@ namespace ocs2::legged_robot {
             mpc_mrt_interface_->setCurrentObservation(ctrl_comp_.observation_);
             mpc_mrt_interface_->getReferenceManager().setTargetTrajectories(target_trajectories);
             RCLCPP_INFO(get_node()->get_logger(), "Waiting for the initial policy ...");
-            while (!mpc_mrt_interface_->initialPolicyReceived()) {
+            while (!mpc_mrt_interface_->initialPolicyReceived())
+            {
                 mpc_mrt_interface_->advanceMpc();
                 rclcpp::WallRate(legged_interface_->mpcSettings().mrtDesiredFrequency_).sleep();
             }
@@ -275,33 +322,39 @@ namespace ocs2::legged_robot {
     }
 
     controller_interface::CallbackReturn Ocs2QuadrupedController::on_deactivate(
-        const rclcpp_lifecycle::State & /*previous_state*/) {
+        const rclcpp_lifecycle::State& /*previous_state*/)
+    {
         release_interfaces();
         return CallbackReturn::SUCCESS;
     }
 
     controller_interface::CallbackReturn Ocs2QuadrupedController::on_cleanup(
-        const rclcpp_lifecycle::State & /*previous_state*/) {
+        const rclcpp_lifecycle::State& /*previous_state*/)
+    {
         return CallbackReturn::SUCCESS;
     }
 
     controller_interface::CallbackReturn Ocs2QuadrupedController::on_shutdown(
-        const rclcpp_lifecycle::State & /*previous_state*/) {
+        const rclcpp_lifecycle::State& /*previous_state*/)
+    {
         return CallbackReturn::SUCCESS;
     }
 
     controller_interface::CallbackReturn Ocs2QuadrupedController::on_error(
-        const rclcpp_lifecycle::State & /*previous_state*/) {
+        const rclcpp_lifecycle::State& /*previous_state*/)
+    {
         return CallbackReturn::SUCCESS;
     }
 
-    void Ocs2QuadrupedController::setupLeggedInterface() {
+    void Ocs2QuadrupedController::setupLeggedInterface()
+    {
         legged_interface_ = std::make_shared<LeggedInterface>(task_file_, urdf_file_, reference_file_);
         legged_interface_->setupJointNames(joint_names_, feet_names_);
         legged_interface_->setupOptimalControlProblem(task_file_, urdf_file_, reference_file_, verbose_);
     }
 
-    void Ocs2QuadrupedController::setupMpc() {
+    void Ocs2QuadrupedController::setupMpc()
+    {
         mpc_ = std::make_shared<SqpMpc>(legged_interface_->mpcSettings(), legged_interface_->sqpSettings(),
                                         legged_interface_->getOptimalControlProblem(),
                                         legged_interface_->getInitializer());
@@ -311,7 +364,7 @@ namespace ocs2::legged_robot {
         // Initialize the reference manager
         const auto gait_manager_ptr = std::make_shared<GaitManager>(
             ctrl_comp_, legged_interface_->getSwitchedModelReferenceManagerPtr()->
-            getGaitSchedule());
+                                           getGaitSchedule());
         gait_manager_ptr->init(gait_file_);
         mpc_->getSolverPtr()->addSynchronizedModule(gait_manager_ptr);
         mpc_->getSolverPtr()->setReferenceManager(legged_interface_->getReferenceManagerPtr());
@@ -321,25 +374,34 @@ namespace ocs2::legged_robot {
                                                                      task_file_, reference_file_);
     }
 
-    void Ocs2QuadrupedController::setupMrt() {
+    void Ocs2QuadrupedController::setupMrt()
+    {
         mpc_mrt_interface_ = std::make_shared<MPC_MRT_Interface>(*mpc_);
         mpc_mrt_interface_->initRollout(&legged_interface_->getRollout());
         mpc_timer_.reset();
 
         controller_running_ = true;
-        mpc_thread_ = std::thread([&] {
-            while (controller_running_) {
-                try {
+        mpc_thread_ = std::thread([&]
+        {
+            while (controller_running_)
+            {
+                try
+                {
                     executeAndSleep(
-                        [&] {
-                            if (mpc_running_) {
+                        [&]
+                        {
+                            if (mpc_running_ && mpc_need_updated_)
+                            {
+                                mpc_need_updated_ = false;
                                 mpc_timer_.startTimer();
                                 mpc_mrt_interface_->advanceMpc();
                                 mpc_timer_.endTimer();
                             }
                         },
                         legged_interface_->mpcSettings().mpcDesiredFrequency_);
-                } catch (const std::exception &e) {
+                }
+                catch (const std::exception& e)
+                {
                     controller_running_ = false;
                     RCLCPP_WARN(get_node()->get_logger(), "[Ocs2 MPC thread] Error : %s", e.what());
                 }
@@ -349,30 +411,40 @@ namespace ocs2::legged_robot {
         RCLCPP_INFO(get_node()->get_logger(), "MRT initialized. MPC thread started.");
     }
 
-    void Ocs2QuadrupedController::setupStateEstimate() {
-        if (use_odom_) {
+    void Ocs2QuadrupedController::setupStateEstimate()
+    {
+        if (estimator_type_ == "ground_truth")
+        {
             ctrl_comp_.estimator_ = std::make_shared<GroundTruth>(legged_interface_->getCentroidalModelInfo(),
                                                                   ctrl_comp_,
                                                                   get_node());
             RCLCPP_INFO(get_node()->get_logger(), "Using Ground Truth Estimator");
-        } else {
+        }
+        else if (estimator_type_ == "linear_kalman")
+        {
             ctrl_comp_.estimator_ = std::make_shared<KalmanFilterEstimate>(legged_interface_->getPinocchioInterface(),
                                                                            legged_interface_->getCentroidalModelInfo(),
                                                                            *eeKinematicsPtr_, ctrl_comp_,
                                                                            get_node());
-            dynamic_cast<KalmanFilterEstimate &>(*ctrl_comp_.estimator_).loadSettings(task_file_, verbose_);
+            dynamic_cast<KalmanFilterEstimate&>(*ctrl_comp_.estimator_).loadSettings(task_file_, verbose_);
             RCLCPP_INFO(get_node()->get_logger(), "Using Kalman Filter Estimator");
+        }
+        else
+        {
+            ctrl_comp_.estimator_ = std::make_shared<FromOdomTopic>(legged_interface_->getCentroidalModelInfo(),ctrl_comp_,get_node());
+            RCLCPP_INFO(get_node()->get_logger(), "Using Odom Topic Based Estimator");
         }
         ctrl_comp_.observation_.time = 0;
     }
 
-    void Ocs2QuadrupedController::updateStateEstimation(const rclcpp::Time &time, const rclcpp::Duration &period) {
-        measured_rbd_state_ = ctrl_comp_.estimator_->update(time, period);
+    void Ocs2QuadrupedController::updateStateEstimation(const rclcpp::Duration& period)
+    {
+        measured_rbd_state_ = ctrl_comp_.estimator_->update(get_node()->now(), period);
         ctrl_comp_.observation_.time += period.seconds();
         const scalar_t yaw_last = ctrl_comp_.observation_.state(9);
         ctrl_comp_.observation_.state = rbd_conversions_->computeCentroidalStateFromRbdModel(measured_rbd_state_);
         ctrl_comp_.observation_.state(9) = yaw_last + angles::shortest_angular_distance(
-                                               yaw_last, ctrl_comp_.observation_.state(9));
+            yaw_last, ctrl_comp_.observation_.state(9));
         // ctrl_comp_.observation_.mode = ctrl_comp_.estimator_->getMode();
     }
 }

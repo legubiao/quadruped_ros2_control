@@ -49,6 +49,7 @@ namespace ocs2::legged_robot {
         feet_heights_.setZero(numContacts_);
 
         ee_kinematics_->setPinocchioInterface(pinocchio_interface_);
+        initPublishers();
     }
 
     vector_t KalmanFilterEstimate::update(const rclcpp::Time &time, const rclcpp::Duration &period) {

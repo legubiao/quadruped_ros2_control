@@ -59,8 +59,7 @@ namespace ocs2::legged_robot {
 
         void setupStateEstimate();
 
-        void updateStateEstimation(const rclcpp::Time &time,
-                                   const rclcpp::Duration &period);
+        void updateStateEstimation(const rclcpp::Duration &period);
 
         CtrlComponent ctrl_comp_;
         std::vector<std::string> joint_names_;
@@ -85,6 +84,9 @@ namespace ocs2::legged_robot {
             {"velocity", &ctrl_comp_.joint_velocity_state_interface_}
         };
 
+        std::string robot_pkg_;
+        std::string command_prefix_;
+
         // IMU Sensor
         std::string imu_name_;
         std::vector<std::string> imu_interface_types_;
@@ -94,7 +96,7 @@ namespace ocs2::legged_robot {
         std::vector<std::string> foot_force_interface_types_;
 
         // Odometer Sensor (Ground Truth)
-        bool use_odom_ = false;
+        std::string estimator_type_ = "linear_kalman";
         std::string odom_name_;
         std::vector<std::string> odom_interface_types_;
 
@@ -110,6 +112,7 @@ namespace ocs2::legged_robot {
         std::string gait_file_;
 
         bool verbose_;
+        bool mpc_need_updated_;
 
         std::shared_ptr<LeggedInterface> legged_interface_;
         std::shared_ptr<PinocchioEndEffectorKinematics> eeKinematicsPtr_;

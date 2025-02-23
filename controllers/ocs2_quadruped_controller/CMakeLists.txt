@@ -19,6 +19,7 @@ set(CONTROLLER_INCLUDE_DEPENDS
         angles
         nav_msgs
         qpoases_colcon
+        ament_index_cpp
 )
 
 # find dependencies
@@ -33,6 +34,7 @@ add_library(${PROJECT_NAME} SHARED
         src/estimator/GroundTruth.cpp
         src/estimator/LinearKalmanFilter.cpp
         src/estimator/StateEstimateBase.cpp
+        src/estimator/FromOdomTopic.cpp
 
         src/wbc/HierarchicalWbc.cpp
         src/wbc/HoQp.cpp

@@ -18,8 +18,7 @@ namespace ocs2::legged_robot {
         : ctrl_component_(ctrl_component),
           info_(std::move(info)),
           rbd_state_(vector_t::Zero(2 * info_.generalizedCoordinatesNum)), node_(std::move(node)) {
-        odom_pub_ = node_->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
-        pose_pub_ = node_->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("pose", 10);
+
     }
 
     void StateEstimateBase::updateJointStates() {
@@ -70,6 +69,12 @@ namespace ocs2::legged_robot {
         const vector3_t angularVelGlobal = getGlobalAngularVelocityFromEulerAnglesZyxDerivatives<scalar_t>(
             zyx, getEulerAnglesZyxDerivativesFromLocalAngularVelocity<scalar_t>(quatToZyx(quat_), angular_vel_local_));
         updateAngular(zyx, angularVelGlobal);
+    }
+
+    void StateEstimateBase::initPublishers()
+    {
+        odom_pub_ = node_->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
+        pose_pub_ = node_->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("pose", 10);
     }
 
     void StateEstimateBase::updateAngular(const vector3_t &zyx, const vector_t &angularVel) {

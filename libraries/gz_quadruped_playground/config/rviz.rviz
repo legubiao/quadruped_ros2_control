@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /Grid1
         - /RobotModel1
       Splitter Ratio: 0.5
     Tree Height: 216
@@ -31,9 +32,9 @@ Visualization Manager:
   Class: ""
   Displays:
     - Alpha: 0.5
-      Cell Size: 1
+      Cell Size: 0.5
       Class: rviz_default_plugins/Grid
-      Color: 160; 160; 164
+      Color: 0; 255; 255
       Enabled: true
       Line Style:
         Line Width: 0.029999999329447746
@@ -45,8 +46,8 @@ Visualization Manager:
         Y: 0
         Z: 0
       Plane: XY
-      Plane Cell Count: 10
-      Reference Frame: <Fixed Frame>
+      Plane Cell Count: 100
+      Reference Frame: odom
       Value: true
     - Alpha: 1
       Class: rviz_default_plugins/RobotModel
@@ -189,8 +190,8 @@ Visualization Manager:
       Value: true
   Enabled: true
   Global Options:
-    Background Color: 48; 48; 48
-    Fixed Frame: base
+    Background Color: 0; 0; 0
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -233,25 +234,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 0.9871627688407898
+      Distance: 2.8712024688720703
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.011728689074516296
-        Y: 0.011509218253195286
-        Z: -0.10348724573850632
+        X: -0.004370270296931267
+        Y: 0.06990259140729904
+        Z: -0.18453647196292877
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5053979158401489
+      Pitch: 0.310397744178772
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.8203961253166199
+      Yaw: 0.8653964400291443
     Saved: ~
 Window Geometry:
   Displays:
@@ -271,5 +272,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1165
-  X: 1159
-  Y: 219
+  X: 1283
+  Y: 199

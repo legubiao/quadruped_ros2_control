@@ -110,6 +110,16 @@
         <plugin filename="gz-sim-imu-system"
                 name="gz::sim::systems::Imu">
         </plugin>
+        <plugin filename="gz-sim-odometry-publisher-system"
+                name="gz::sim::systems::OdometryPublisher">
+            <odom_frame>odom</odom_frame>
+            <robot_base_frame>base</robot_base_frame>
+            <odom_publish_frequency>200</odom_publish_frequency>
+            <odom_topic>odom</odom_topic>
+            <dimensions>3</dimensions>
+            <odom_covariance_topic>odom_with_covariance</odom_covariance_topic>
+            <tf_topic>tf</tf_topic>
+        </plugin>
     </gazebo>
 
     <gazebo reference="trunk">
@@ -185,6 +195,7 @@
         <disableFixedJointLumping>true</disableFixedJointLumping>
     </gazebo>
 
+    <xacro:arg name="EXTERNAL_SENSORS" default="false"/>
 	<xacro:if value="$(arg EXTERNAL_SENSORS)">
         <gazebo reference="front_camera">
             <sensor name="front_camera" type="camera">

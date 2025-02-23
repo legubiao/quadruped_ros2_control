@@ -6,17 +6,20 @@
 
 #include <ocs2_quadruped_controller/control/CtrlComponent.h>
 
-namespace ocs2::legged_robot {
-    GroundTruth::GroundTruth(CentroidalModelInfo info, CtrlComponent &ctrl_component,
-                             const rclcpp_lifecycle::LifecycleNode::SharedPtr &node)
+namespace ocs2::legged_robot
+{
+    GroundTruth::GroundTruth(CentroidalModelInfo info, CtrlComponent& ctrl_component,
+                             const rclcpp_lifecycle::LifecycleNode::SharedPtr& node)
         : StateEstimateBase(
             std::move(info), ctrl_component,
-            node) {
+            node)
+    {
+        initPublishers();
     }
 
-    vector_t GroundTruth::update(const rclcpp::Time &time, const rclcpp::Duration &period) {
+    vector_t GroundTruth::update(const rclcpp::Time& time, const rclcpp::Duration& period)
+    {
         updateJointStates();
-        updateContact();
         updateImu();
 
         position_ = {
@@ -42,7 +45,8 @@ namespace ocs2::legged_robot {
         return rbd_state_;
     }
 
-    nav_msgs::msg::Odometry GroundTruth::getOdomMsg() {
+    nav_msgs::msg::Odometry GroundTruth::getOdomMsg()
+    {
         nav_msgs::msg::Odometry odom;
         odom.pose.pose.position.x = position_(0);
         odom.pose.pose.position.y = position_(1);

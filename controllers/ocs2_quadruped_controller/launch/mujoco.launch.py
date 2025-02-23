@@ -53,17 +53,7 @@ def launch_setup(context, *args, **kwargs):
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[robot_controllers,
-                    {
-                        'urdf_file': os.path.join(get_package_share_directory(package_description), 'urdf',
-                                                  'robot.urdf'),
-                        'task_file': os.path.join(get_package_share_directory(package_description), 'config', 'ocs2',
-                                                  'task.info'),
-                        'reference_file': os.path.join(get_package_share_directory(package_description), 'config',
-                                                       'ocs2', 'reference.info'),
-                        'gait_file': os.path.join(get_package_share_directory(package_description), 'config',
-                                                  'ocs2', 'gait.info')
-                    }],
+        parameters=[robot_controllers],
         remappings=[
             ("~/robot_description", "/robot_description"),
         ],

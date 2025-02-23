@@ -9,13 +9,15 @@
 
 #include "ocs2_quadruped_controller/control/CtrlComponent.h"
 
-namespace ocs2::legged_robot {
-    TargetManager::TargetManager(CtrlComponent &ctrl_component,
-                                 const std::shared_ptr<ReferenceManagerInterface> &referenceManagerPtr,
-                                 const std::string &task_file,
-                                 const std::string &reference_file)
+namespace ocs2::legged_robot
+{
+    TargetManager::TargetManager(CtrlComponent& ctrl_component,
+                                 const std::shared_ptr<ReferenceManagerInterface>& referenceManagerPtr,
+                                 const std::string& task_file,
+                                 const std::string& reference_file)
         : ctrl_component_(ctrl_component),
-          referenceManagerPtr_(referenceManagerPtr) {
+          referenceManagerPtr_(referenceManagerPtr)
+    {
         default_joint_state_ = vector_t::Zero(12);
         loadData::loadCppDataType(reference_file, "comHeight", command_height_);
         loadData::loadEigenMatrix(reference_file, "defaultJointState", default_joint_state_);
@@ -24,7 +26,8 @@ namespace ocs2::legged_robot {
         loadData::loadCppDataType(reference_file, "targetDisplacementVelocity", target_displacement_velocity_);
     }
 
-    void TargetManager::update() {
+    void TargetManager::update()
+    {
         if (ctrl_component_.reset) return;
         vector_t cmdGoal = vector_t::Zero(6);
         cmdGoal[0] = ctrl_component_.control_inputs_.ly * target_displacement_velocity_;
@@ -36,7 +39,8 @@ namespace ocs2::legged_robot {
         const Eigen::Matrix<scalar_t, 3, 1> zyx = currentPose.tail(3);
         vector_t cmd_vel_rot = getRotationMatrixFromZyxEulerAngles(zyx) * cmdGoal.head(3);
 
-        const vector_t targetPose = [&]() {
+        const vector_t targetPose = [&]()
+        {
             vector_t target(6);
             target(0) = currentPose(0) + cmd_vel_rot(0) * time_to_target_;
             target(1) = currentPose(1) + cmd_vel_rot(1) * time_to_target_;
@@ -49,7 +53,7 @@ namespace ocs2::legged_robot {
 
         const scalar_t targetReachingTime = ctrl_component_.observation_.time + time_to_target_;
         auto trajectories =
-                targetPoseToTargetTrajectories(targetPose, ctrl_component_.observation_, targetReachingTime);
+            targetPoseToTargetTrajectories(targetPose, ctrl_component_.observation_, targetReachingTime);
         trajectories.stateTrajectory[0].head(3) = cmd_vel_rot;
         trajectories.stateTrajectory[1].head(3) = cmd_vel_rot;
 

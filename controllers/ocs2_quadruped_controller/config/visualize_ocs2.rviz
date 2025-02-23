@@ -4,15 +4,17 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /Global Options1
+        - /Grid1
+        - /RobotModel1
         - /TF1/Frames1
-        - /Optimized State Trajectory1
         - /Target Trajectories1/Target Feet Trajectories1/Marker1
         - /Target Trajectories1/Target Feet Trajectories1/Marker2
         - /Target Trajectories1/Target Feet Trajectories1/Marker3
         - /Target Trajectories1/Target Feet Trajectories1/Marker4
         - /Target Trajectories1/Target Base Trajectory1
       Splitter Ratio: 0.5
-    Tree Height: 477
+    Tree Height: 372
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -37,14 +39,14 @@ Panels:
     Property Tree Widget:
       Expanded: ~
       Splitter Ratio: 0.8294117450714111
-    Tree Height: 301
+    Tree Height: 305
 Visualization Manager:
   Class: ""
   Displays:
     - Alpha: 0.5
       Cell Size: 1
       Class: rviz_default_plugins/Grid
-      Color: 160; 160; 164
+      Color: 0; 170; 255
       Enabled: true
       Line Style:
         Line Width: 0.029999999329447746
@@ -56,10 +58,10 @@ Visualization Manager:
         Y: 0
         Z: 0
       Plane: XY
-      Plane Cell Count: 10
+      Plane Cell Count: 100
       Reference Frame: odom
       Value: true
-    - Alpha: 0.4000000059604645
+    - Alpha: 0.800000011920929
       Class: rviz_default_plugins/RobotModel
       Collision Enabled: false
       Description File: ""
@@ -81,11 +83,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        FL_calf_rotor:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         FL_foot:
           Alpha: 1
           Show Axes: false
@@ -96,27 +93,12 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        FL_hip_rotor:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         FL_thigh:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        FL_thigh_rotor:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         FR_calf:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        FR_calf_rotor:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -131,28 +113,13 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        FR_hip_rotor:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         FR_thigh:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        FR_thigh_rotor:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
         Link Tree Style: Links in Alphabetic Order
         RL_calf:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        RL_calf_rotor:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -167,27 +134,12 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        RL_hip_rotor:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         RL_thigh:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        RL_thigh_rotor:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         RR_calf:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        RR_calf_rotor:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -202,17 +154,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        RR_hip_rotor:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         RR_thigh:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        RR_thigh_rotor:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -222,22 +164,11 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        head_Link:
+        front_camera:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         imu_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        lidar_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        tail_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -264,71 +195,43 @@ Visualization Manager:
         All Enabled: false
         FL_calf:
           Value: true
-        FL_calf_rotor:
-          Value: true
         FL_foot:
           Value: true
         FL_hip:
           Value: true
-        FL_hip_rotor:
-          Value: true
         FL_thigh:
           Value: true
-        FL_thigh_rotor:
-          Value: true
         FR_calf:
-          Value: true
-        FR_calf_rotor:
           Value: true
         FR_foot:
           Value: true
         FR_hip:
           Value: true
-        FR_hip_rotor:
-          Value: true
         FR_thigh:
           Value: true
-        FR_thigh_rotor:
-          Value: true
         RL_calf:
-          Value: true
-        RL_calf_rotor:
           Value: true
         RL_foot:
           Value: true
         RL_hip:
           Value: true
-        RL_hip_rotor:
-          Value: true
         RL_thigh:
           Value: true
-        RL_thigh_rotor:
-          Value: true
         RR_calf:
-          Value: true
-        RR_calf_rotor:
           Value: true
         RR_foot:
           Value: true
         RR_hip:
           Value: true
-        RR_hip_rotor:
-          Value: true
         RR_thigh:
-          Value: true
-        RR_thigh_rotor:
           Value: true
         base:
           Value: false
-        head_Link:
+        front_camera:
           Value: true
         imu_link:
           Value: false
-        lidar_link:
-          Value: true
         odom:
-          Value: false
-        tail_link:
           Value: true
         trunk:
           Value: true
@@ -346,52 +249,24 @@ Visualization Manager:
                   FL_calf:
                     FL_foot:
                       {}
-                  FL_calf_rotor:
-                    {}
-                FL_thigh_rotor:
-                  {}
-              FL_hip_rotor:
-                {}
               FR_hip:
                 FR_thigh:
                   FR_calf:
                     FR_foot:
                       {}
-                  FR_calf_rotor:
-                    {}
-                FR_thigh_rotor:
-                  {}
-              FR_hip_rotor:
-                {}
               RL_hip:
                 RL_thigh:
                   RL_calf:
                     RL_foot:
                       {}
-                  RL_calf_rotor:
-                    {}
-                RL_thigh_rotor:
-                  {}
-              RL_hip_rotor:
-                {}
               RR_hip:
                 RR_thigh:
                   RR_calf:
                     RR_foot:
                       {}
-                  RR_calf_rotor:
-                    {}
-                RR_thigh_rotor:
-                  {}
-              RR_hip_rotor:
-                {}
-              head_Link:
+              front_camera:
                 {}
               imu_link:
-                {}
-              lidar_link:
-                {}
-              tail_link:
                 {}
       Update Interval: 0
       Value: true
@@ -525,7 +400,7 @@ Visualization Manager:
       Value: true
   Enabled: true
   Global Options:
-    Background Color: 238; 238; 238
+    Background Color: 0; 0; 0
     Fixed Frame: odom
     Frame Rate: 30
   Name: root
@@ -593,7 +468,7 @@ Window Geometry:
   Height: 655
   Hide Left Dock: true
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd00000004000000000000032c000002a7fc020000000afb0000001200530065006c0065006300740069006f006e000000006e000000b00000005d00fffffffb0000001e0054006f006f006c002000500072006f0070006500720074006900650073000000006e000004770000005d00fffffffb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073000000003f000002a7000000cc00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000c00430061006d00650072006101000001be000001900000000000000000fb000000100044006900730070006c006100790073000000006e00000247000000cc00ffffff000000010000010f000002e2fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000028000002e2000000a900fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000006400000003efc0100000002fb0000000800540069006d00650000000000000006400000026f00fffffffb0000000800540069006d00650100000000000004500000000000000000000004000000023100000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001d500000239fc020000000afb0000001200530065006c0065006300740069006f006e000000006e000000b00000005c00fffffffb0000001e0054006f006f006c002000500072006f0070006500720074006900650073000000006e000004770000005c00fffffffb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073000000003b00000239000000c700fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000c00430061006d00650072006101000001be000001900000000000000000fb000000100044006900730070006c006100790073000000006e00000247000000c700ffffff000000010000010f000002e2fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730000000028000002e2000000a000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000006400000003efc0100000002fb0000000800540069006d00650000000000000006400000025300fffffffb0000000800540069006d00650100000000000004500000000000000000000004000000023900000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -603,5 +478,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1024
-  X: 828
-  Y: 212
+  X: 764
+  Y: 148

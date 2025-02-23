@@ -36,6 +36,8 @@ namespace ocs2::legged_robot {
         size_t getMode() { return stanceLeg2ModeNumber(contact_flag_); }
 
     protected:
+        void initPublishers();
+
         void updateAngular(const vector3_t &zyx, const vector_t &angularVel);
 
         void updateLinear(const vector_t &pos, const vector_t &linearVel);

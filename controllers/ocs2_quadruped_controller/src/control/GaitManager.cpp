@@ -8,19 +8,23 @@
 
 #include <ocs2_core/misc/LoadData.h>
 
-namespace ocs2::legged_robot {
-    GaitManager::GaitManager(CtrlComponent &ctrl_component,
+namespace ocs2::legged_robot
+{
+    GaitManager::GaitManager(CtrlComponent& ctrl_component,
                              std::shared_ptr<GaitSchedule> gait_schedule_ptr)
         : ctrl_component_(ctrl_component),
           gait_schedule_ptr_(std::move(gait_schedule_ptr)),
-          target_gait_({0.0, 1.0}, {STANCE}) {
+          target_gait_({0.0, 1.0}, {STANCE})
+    {
     }
 
     void GaitManager::preSolverRun(const scalar_t initTime, const scalar_t finalTime,
-                                   const vector_t &currentState,
-                                   const ReferenceManagerInterface &referenceManager) {
+                                   const vector_t& currentState,
+                                   const ReferenceManagerInterface& referenceManager)
+    {
         getTargetGait();
-        if (gait_updated_) {
+        if (gait_updated_)
+        {
             const auto timeHorizon = finalTime - initTime;
             gait_schedule_ptr_->insertModeSequenceTemplate(target_gait_, finalTime,
                                                            timeHorizon);
@@ -28,19 +32,22 @@ namespace ocs2::legged_robot {
         }
     }
 
-    void GaitManager::init(const std::string &gait_file) {
+    void GaitManager::init(const std::string& gait_file)
+    {
         gait_name_list_.clear();
         loadData::loadStdVector(gait_file, "list", gait_name_list_, verbose_);
 
         gait_list_.clear();
-        for (const auto &name: gait_name_list_) {
+        for (const auto& name : gait_name_list_)
+        {
             gait_list_.push_back(loadModeSequenceTemplate(gait_file, name, verbose_));
         }
 
         RCLCPP_INFO(rclcpp::get_logger("gait_manager"), "GaitManager is ready.");
     }
 
-    void GaitManager::getTargetGait() {
+    void GaitManager::getTargetGait()
+    {
         if (ctrl_component_.control_inputs_.command == 0) return;
         if (ctrl_component_.control_inputs_.command == last_command_) return;
         last_command_ = ctrl_component_.control_inputs_.command;

@@ -9,6 +9,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from launch.event_handlers import OnProcessExit
 
 import xacro
 
@@ -34,8 +35,7 @@ def launch_setup(context, *args, **kwargs):
     pkg_path = os.path.join(get_package_share_directory(pkg_description))
     xacro_file = os.path.join(pkg_path, 'xacro', 'robot.xacro')
     robot_description = xacro.process_file(xacro_file, mappings={
-        'GAZEBO': 'true',
-        'EXTERNAL_SENSORS': 'true'
+        'GAZEBO': 'true'
     }).toxml()
     robot_state_publisher = Node(
         package='robot_state_publisher',
@@ -60,21 +60,33 @@ def launch_setup(context, *args, **kwargs):
         arguments=["-d", rviz_config_file]
     )
 
-    # Controllers
-    controller = context.launch_configurations['controller']
-    if controller == 'ocs2':
-        controller_launch = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('gz_quadruped_playground'),
-                                                                 'launch',
-                                                                 'ocs2.launch.py'])])
-        )
-    else:
-        controller_launch = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('gz_quadruped_playground'),
-                                                                 'launch',
-                                                                 'unitree_guide.launch.py'])])
-        )
+    joint_state_publisher = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_state_broadcaster",
+                   "--controller-manager", "/controller_manager"]
+    )
 
+    imu_sensor_broadcaster = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["imu_sensor_broadcaster",
+                   "--controller-manager", "/controller_manager"]
+    )
+
+    leg_pd_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["leg_pd_controller",
+                   "--controller-manager", "/controller_manager"]
+    )
+
+    ocs2_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["ocs2_quadruped_controller", "--controller-manager", "/controller_manager"]
+    )
+    
     return [
         rviz,
         robot_state_publisher,
@@ -85,7 +97,13 @@ def launch_setup(context, *args, **kwargs):
                                        'launch',
                                        'gz_sim.launch.py'])]),
             launch_arguments=[('gz_args', [' -r -v 4 ', default_sdf_path])]),
-        controller_launch
+        leg_pd_controller,
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=leg_pd_controller,
+                on_exit=[imu_sensor_broadcaster, joint_state_publisher, ocs2_controller],
+            )
+        ),
     ]
 
 
@@ -119,7 +137,6 @@ def generate_launch_description():
         executable="parameter_bridge",
         arguments=[
             "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock",
-            "/camera/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo",
             "/odom@nav_msgs/msg/Odometry@gz.msgs.Odometry",
             "/odom_with_covariance@nav_msgs/msg/Odometry@gz.msgs.OdometryWithCovariance",
             "/tf@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V"
@@ -130,25 +147,11 @@ def generate_launch_description():
         ]
     )
 
-    gz_image_bridge_node = Node(
-        package="ros_gz_image",
-        executable="image_bridge",
-        arguments=[
-            "/camera/image",
-        ],
-        output="screen",
-        parameters=[
-            {'use_sim_time': True,
-             'camera.image.compressed.jpeg_quality': 75},
-        ],
-    )
-
     return LaunchDescription([
         world,
         pkg_description,
         height,
         controller,
         gz_bridge_node,
-        gz_image_bridge_node,
         OpaqueFunction(function=launch_setup),
     ])

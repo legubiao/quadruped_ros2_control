@@ -14,7 +14,16 @@ colcon build --packages-up-to gz_quadruped_playground --symlink-install
 ```
 
 ## Launch Simulation
-```bash
-source ~/ros2_ws/install/setup.bash
-ros2 launch gz_quadruped_playground gazebo.launch.py
-```
+* Unitree Guide Controller
+    ```bash
+    source ~/ros2_ws/install/setup.bash
+    ros2 launch gz_quadruped_playground gazebo.launch.py controller:=unitree_guide
+    ```
+* Unitree Guide Controller
+    ```bash
+    source ~/ros2_ws/install/setup.bash
+    ros2 launch gz_quadruped_playground gazebo.launch.py controller:=ocs2
+    ```
+
+## Related Materials
+* [Gazebo OdometryPublisher Plugin](https://gazebosim.org/api/sim/8/classgz_1_1sim_1_1systems_1_1OdometryPublisher.html#details)

@@ -38,19 +38,26 @@ Required hardware interfaces:
 ## 2. Build
 
 ### 2.1 Build Dependencies
-Before install OCS2 ROS2, please follow the guide to install [Pinocchio](https://stack-of-tasks.github.io/pinocchio/download.html), don't use the pinocchio install by rosdep!
+Before install OCS2 ROS2, please follow the guide to install [Pinocchio](https://stack-of-tasks.github.io/pinocchio/download.html). **Don't use the pinocchio install by rosdep**!
 
-* OCS2 ROS2 Libraries
-  ```bash
-  colcon build --packages-up-to ocs2_legged_robot_ros
-  colcon build --packages-up-to ocs2_self_collision
-  ```
+**After installed Pinocchio**, follow below step to clone ocs2 ros2 library to src folder.
+
+```bash
+cd ~/ros2_ws/src
+git clone https://github.com/legubiao/ocs2_ros2
+
+cd ocs2_ros2
+git submodule update --init --recursive
+
+cd ..
+rosdep install --from-paths src --ignore-src -r -y
+```
 
 ### 2.2 Build OCS2 Quadruped Controller
 
 ```bash
 cd ~/ros2_ws
-colcon build --packages-up-to ocs2_quadruped_controller
+colcon build --packages-up-to ocs2_quadruped_controller  --symlink-install
 ```
 
 ## 3. Launch

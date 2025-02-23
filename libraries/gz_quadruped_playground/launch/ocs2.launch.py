@@ -3,8 +3,8 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, RegisterEventHandler
 from launch.event_handlers import OnProcessExit
 from launch_ros.actions import Node
-
 def generate_launch_description():
+
     joint_state_publisher = Node(
         package="controller_manager",
         executable="spawner",
@@ -26,18 +26,19 @@ def generate_launch_description():
                    "--controller-manager", "/controller_manager"]
     )
 
-    unitree_guide_controller = Node(
+    ocs2_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["unitree_guide_controller", "--controller-manager", "/controller_manager"]
+        arguments=["ocs2_quadruped_controller", "--controller-manager", "/controller_manager"]
     )
+
 
     return LaunchDescription([
         leg_pd_controller,
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=leg_pd_controller,
-                on_exit=[imu_sensor_broadcaster, joint_state_publisher, unitree_guide_controller],
+                on_exit=[imu_sensor_broadcaster, joint_state_publisher, ocs2_controller],
             )
         ),
     ])
