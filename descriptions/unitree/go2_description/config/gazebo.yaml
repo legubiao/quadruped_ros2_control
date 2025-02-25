@@ -10,9 +10,6 @@ controller_manager:
     imu_sensor_broadcaster:
       type: imu_sensor_broadcaster/IMUSensorBroadcaster
 
-    leg_pd_controller:
-      type: leg_pd_controller/LegPdController
-
     unitree_guide_controller:
       type: unitree_guide_controller/UnitreeGuideController
 
@@ -27,35 +24,10 @@ imu_sensor_broadcaster:
     sensor_name: "imu_sensor"
     frame_id: "imu_link"
 
-leg_pd_controller:
-  ros__parameters:
-    update_rate: 1000  # Hz
-    joints:
-      - FR_hip_joint
-      - FR_thigh_joint
-      - FR_calf_joint
-      - FL_hip_joint
-      - FL_thigh_joint
-      - FL_calf_joint
-      - RR_hip_joint
-      - RR_thigh_joint
-      - RR_calf_joint
-      - RL_hip_joint
-      - RL_thigh_joint
-      - RL_calf_joint
-
-    command_interfaces:
-      - effort
-
-    state_interfaces:
-      - position
-      - velocity
-
 ocs2_quadruped_controller:
   ros__parameters:
     update_rate: 100  # Hz
     robot_pkg: "go2_description"
-    command_prefix: "leg_pd_controller"
     joints:
       - FL_hip_joint
       - FL_thigh_joint
@@ -108,7 +80,6 @@ ocs2_quadruped_controller:
 unitree_guide_controller:
   ros__parameters:
     update_rate: 200  # Hz
-    command_prefix: "leg_pd_controller"
     joints:
       - FR_hip_joint
       - FR_thigh_joint

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>gz_quadruped_hardware</name>
+  <version>2.0.6</version>
+  <description>Gazebo ros2_control package for quadruped robot.</description>
+  <maintainer email="alejandro@openrobotics.com">Alejandro Hernández</maintainer>
+  <maintainer email="bence.magyar.robotics@gmail.com">Bence Magyar</maintainer>
+  <author>Alejandro Hernández</author>
+  <license>Apache 2</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>ament_index_cpp</depend>
+  <!-- default version to use in official ROS 2 packages is Gazebo Harmonic for ROS 2 Rolling -->
+  <depend>gz_sim_vendor</depend>
+  <depend>gz_plugin_vendor</depend>
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+  <depend>yaml_cpp_vendor</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>hardware_interface</depend>
+  <depend>controller_manager</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+      <build_type>ament_cmake</build_type>
+  </export>
+</package>

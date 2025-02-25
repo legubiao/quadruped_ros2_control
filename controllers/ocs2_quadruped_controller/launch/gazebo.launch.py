@@ -101,7 +101,13 @@ def launch_setup(context, *args, **kwargs):
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=leg_pd_controller,
-                on_exit=[imu_sensor_broadcaster, joint_state_publisher, ocs2_controller],
+                on_exit=[imu_sensor_broadcaster, joint_state_publisher],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=joint_state_publisher,
+                on_exit=[ocs2_controller],
             )
         ),
     ]

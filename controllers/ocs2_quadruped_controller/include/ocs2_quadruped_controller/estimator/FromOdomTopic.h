@@ -4,6 +4,7 @@
 
 #pragma once
 #include "StateEstimateBase.h"
+#include <realtime_tools/realtime_buffer.h>
 
 namespace ocs2::legged_robot
 {
@@ -17,7 +18,6 @@ namespace ocs2::legged_robot
 
     protected:
         rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
-        vector3_t position_;
-        vector3_t linear_velocity_;
+        realtime_tools::RealtimeBuffer<nav_msgs::msg::Odometry> buffer_;
     };
 };

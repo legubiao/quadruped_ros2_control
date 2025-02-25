@@ -1,0 +1,10 @@
+<library path="gz_quadruped_plugins">
+  <class
+    name="gz_quadruped_hardware/GazeboSimSystem"
+    type="gz_quadruped_hardware::GazeboSimSystem"
+    base_class_type="gz_quadruped_hardware::GazeboSimSystemInterface">
+    <description>
+      Gazebo ros2_control plugin for quadruped robot.
+    </description>
+  </class>
+</library>
