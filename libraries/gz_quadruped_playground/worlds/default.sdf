@@ -82,10 +82,6 @@ gz service -s /world/empty/create \
       filename="gz-sim-scene-broadcaster-system"
       name="gz::sim::systems::SceneBroadcaster">
     </plugin>
-    <plugin
-      filename="gz-sim-contact-system"
-      name="gz::sim::systems::Contact">
-    </plugin>
 
     <light type="directional" name="sun">
       <cast_shadows>true</cast_shadows>

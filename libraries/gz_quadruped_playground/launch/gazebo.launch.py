@@ -120,9 +120,9 @@ def generate_launch_description():
         arguments=[
             "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock",
             "/camera/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo",
-            "/odom@nav_msgs/msg/Odometry@gz.msgs.Odometry",
-            "/odom_with_covariance@nav_msgs/msg/Odometry@gz.msgs.OdometryWithCovariance",
-            "/tf@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V"
+            # "/odom@nav_msgs/msg/Odometry@gz.msgs.Odometry",
+            # "/odom_with_covariance@nav_msgs/msg/Odometry@gz.msgs.OdometryWithCovariance",
+            # "/tf@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V"
         ],
         output="screen",
         parameters=[

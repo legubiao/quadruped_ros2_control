@@ -1,279 +1,294 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <ros2_control name="GazeboSystem" type="system">
-    <hardware>
-      <plugin>gz_quadruped_hardware/GazeboSimSystem</plugin>
-    </hardware>
+    <xacro:include filename="$(find go2_description)/xacro/ft_sensor.xacro"/>
+    <ros2_control name="GazeboSystem" type="system">
+        <hardware>
+            <plugin>gz_quadruped_hardware/GazeboSimSystem</plugin>
+        </hardware>
 
-    <joint name="FR_hip_joint">
-      <command_interface name="position"/>
-      <command_interface name="velocity"/>
-      <command_interface name="effort"/>
-      <command_interface name="kp"/>
-      <command_interface name="kd"/>
+        <joint name="FR_hip_joint">
+            <command_interface name="position"/>
+            <command_interface name="velocity"/>
+            <command_interface name="effort"/>
+            <command_interface name="kp"/>
+            <command_interface name="kd"/>
 
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-      <state_interface name="effort"/>
-    </joint>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
 
-    <joint name="FR_thigh_joint">
-      <command_interface name="position"/>
-      <command_interface name="velocity"/>
-      <command_interface name="effort"/>
-      <command_interface name="kp"/>
-      <command_interface name="kd"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-      <state_interface name="effort"/>
-    </joint>
+        <joint name="FR_thigh_joint">
+            <command_interface name="position"/>
+            <command_interface name="velocity"/>
+            <command_interface name="effort"/>
+            <command_interface name="kp"/>
+            <command_interface name="kd"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
 
-    <joint name="FR_calf_joint">
-      <command_interface name="position"/>
-      <command_interface name="velocity"/>
-      <command_interface name="effort"/>
-      <command_interface name="kp"/>
-      <command_interface name="kd"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-      <state_interface name="effort"/>
-    </joint>
+        <joint name="FR_calf_joint">
+            <command_interface name="position"/>
+            <command_interface name="velocity"/>
+            <command_interface name="effort"/>
+            <command_interface name="kp"/>
+            <command_interface name="kd"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
 
-    <joint name="FL_hip_joint">
-      <command_interface name="position"/>
-      <command_interface name="velocity"/>
-      <command_interface name="effort"/>
-      <command_interface name="kp"/>
-      <command_interface name="kd"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-      <state_interface name="effort"/>
-    </joint>
+        <joint name="FL_hip_joint">
+            <command_interface name="position"/>
+            <command_interface name="velocity"/>
+            <command_interface name="effort"/>
+            <command_interface name="kp"/>
+            <command_interface name="kd"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
 
-    <joint name="FL_thigh_joint">
-      <command_interface name="position"/>
-      <command_interface name="velocity"/>
-      <command_interface name="effort"/>
-      <command_interface name="kp"/>
-      <command_interface name="kd"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-      <state_interface name="effort"/>
-    </joint>
+        <joint name="FL_thigh_joint">
+            <command_interface name="position"/>
+            <command_interface name="velocity"/>
+            <command_interface name="effort"/>
+            <command_interface name="kp"/>
+            <command_interface name="kd"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
 
-    <joint name="FL_calf_joint">
-      <command_interface name="position"/>
-      <command_interface name="velocity"/>
-      <command_interface name="effort"/>
-      <command_interface name="kp"/>
-      <command_interface name="kd"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-      <state_interface name="effort"/>
-    </joint>
+        <joint name="FL_calf_joint">
+            <command_interface name="position"/>
+            <command_interface name="velocity"/>
+            <command_interface name="effort"/>
+            <command_interface name="kp"/>
+            <command_interface name="kd"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
 
-    <joint name="RR_hip_joint">
-      <command_interface name="position"/>
-      <command_interface name="velocity"/>
-      <command_interface name="effort"/>
-      <command_interface name="kp"/>
-      <command_interface name="kd"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-      <state_interface name="effort"/>
-    </joint>
+        <joint name="RR_hip_joint">
+            <command_interface name="position"/>
+            <command_interface name="velocity"/>
+            <command_interface name="effort"/>
+            <command_interface name="kp"/>
+            <command_interface name="kd"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
 
-    <joint name="RR_thigh_joint">
-      <command_interface name="position"/>
-      <command_interface name="velocity"/>
-      <command_interface name="effort"/>
-      <command_interface name="kp"/>
-      <command_interface name="kd"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-      <state_interface name="effort"/>
-    </joint>
+        <joint name="RR_thigh_joint">
+            <command_interface name="position"/>
+            <command_interface name="velocity"/>
+            <command_interface name="effort"/>
+            <command_interface name="kp"/>
+            <command_interface name="kd"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
 
-    <joint name="RR_calf_joint">
-      <command_interface name="position"/>
-      <command_interface name="velocity"/>
-      <command_interface name="effort"/>
-      <command_interface name="kp"/>
-      <command_interface name="kd"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-      <state_interface name="effort"/>
-    </joint>
+        <joint name="RR_calf_joint">
+            <command_interface name="position"/>
+            <command_interface name="velocity"/>
+            <command_interface name="effort"/>
+            <command_interface name="kp"/>
+            <command_interface name="kd"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
 
-    <joint name="RL_hip_joint">
-      <command_interface name="position"/>
-      <command_interface name="velocity"/>
-      <command_interface name="effort"/>
-      <command_interface name="kp"/>
-      <command_interface name="kd"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-      <state_interface name="effort"/>
-    </joint>
+        <joint name="RL_hip_joint">
+            <command_interface name="position"/>
+            <command_interface name="velocity"/>
+            <command_interface name="effort"/>
+            <command_interface name="kp"/>
+            <command_interface name="kd"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
 
-    <joint name="RL_thigh_joint">
-      <command_interface name="position"/>
-      <command_interface name="velocity"/>
-      <command_interface name="effort"/>
-      <command_interface name="kp"/>
-      <command_interface name="kd"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-      <state_interface name="effort"/>
-    </joint>
+        <joint name="RL_thigh_joint">
+            <command_interface name="position"/>
+            <command_interface name="velocity"/>
+            <command_interface name="effort"/>
+            <command_interface name="kp"/>
+            <command_interface name="kd"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
 
-    <joint name="RL_calf_joint">
-      <command_interface name="position"/>
-      <command_interface name="velocity"/>
-      <command_interface name="effort"/>
-      <command_interface name="kp"/>
-      <command_interface name="kd"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-      <state_interface name="effort"/>
-    </joint>
+        <joint name="RL_calf_joint">
+            <command_interface name="position"/>
+            <command_interface name="velocity"/>
+            <command_interface name="effort"/>
+            <command_interface name="kp"/>
+            <command_interface name="kd"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
 
-    <sensor name="imu_sensor">
-      <state_interface name="orientation.x"/>
-      <state_interface name="orientation.y"/>
-      <state_interface name="orientation.z"/>
-      <state_interface name="orientation.w"/>
-      <state_interface name="angular_velocity.x"/>
-      <state_interface name="angular_velocity.y"/>
-      <state_interface name="angular_velocity.z"/>
-      <state_interface name="linear_acceleration.x"/>
-      <state_interface name="linear_acceleration.y"/>
-      <state_interface name="linear_acceleration.z"/>
-    </sensor>
-  </ros2_control>
+        <sensor name="imu_sensor">
+            <state_interface name="orientation.x"/>
+            <state_interface name="orientation.y"/>
+            <state_interface name="orientation.z"/>
+            <state_interface name="orientation.w"/>
+            <state_interface name="angular_velocity.x"/>
+            <state_interface name="angular_velocity.y"/>
+            <state_interface name="angular_velocity.z"/>
+            <state_interface name="linear_acceleration.x"/>
+            <state_interface name="linear_acceleration.y"/>
+            <state_interface name="linear_acceleration.z"/>
+        </sensor>
 
-  <gazebo>
-    <plugin filename="gz_quadruped_hardware-system" name="gz_quadruped_hardware::GazeboSimQuadrupedPlugin">
-      <parameters>$(find go2_description)/config/gazebo.yaml</parameters>
-    </plugin>
-    <plugin filename="gz-sim-imu-system"
-            name="gz::sim::systems::Imu">
-    </plugin>
-    <plugin filename="gz-sim-odometry-publisher-system"
-            name="gz::sim::systems::OdometryPublisher">
-      <odom_frame>odom</odom_frame>
-      <robot_base_frame>base</robot_base_frame>
-      <odom_publish_frequency>1000</odom_publish_frequency>
-      <odom_topic>odom</odom_topic>
-      <dimensions>3</dimensions>
-      <odom_covariance_topic>odom_with_covariance</odom_covariance_topic>
-      <tf_topic>tf</tf_topic>
-    </plugin>
-  </gazebo>
+        <sensor name="foot_force">
+            <state_interface name="FR_ft_sensor"/>
+            <state_interface name="FL_ft_sensor"/>
+            <state_interface name="RR_ft_sensor"/>
+            <state_interface name="RL_ft_sensor"/>
+        </sensor>
 
-  <gazebo reference="trunk">
-    <mu1>0.6</mu1>
-    <mu2>0.6</mu2>
-    <self_collide>1</self_collide>
-  </gazebo>
+    </ros2_control>
 
-  <gazebo reference="imu_link">
-    <sensor name="imu_sensor" type="imu">
-      <always_on>1</always_on>
-      <update_rate>500</update_rate>
-      <visualize>true</visualize>
-      <topic>imu</topic>
-      <imu>
-        <angular_velocity>
-          <x>
-            <noise type="gaussian">
-              <mean>0.0</mean>
-              <stddev>2e-4</stddev>
-              <bias_mean>0.0000075</bias_mean>
-              <bias_stddev>0.0000008</bias_stddev>
-            </noise>
-          </x>
-          <y>
-            <noise type="gaussian">
-              <mean>0.0</mean>
-              <stddev>2e-4</stddev>
-              <bias_mean>0.0000075</bias_mean>
-              <bias_stddev>0.0000008</bias_stddev>
-            </noise>
-          </y>
-          <z>
-            <noise type="gaussian">
-              <mean>0.0</mean>
-              <stddev>2e-4</stddev>
-              <bias_mean>0.0000075</bias_mean>
-              <bias_stddev>0.0000008</bias_stddev>
-            </noise>
-          </z>
-        </angular_velocity>
-        <linear_acceleration>
-          <x>
-            <noise type="gaussian">
-              <mean>0.0</mean>
-              <stddev>1.7e-2</stddev>
-              <bias_mean>0.1</bias_mean>
-              <bias_stddev>0.001</bias_stddev>
-            </noise>
-          </x>
-          <y>
-            <noise type="gaussian">
-              <mean>0.0</mean>
-              <stddev>1.7e-2</stddev>
-              <bias_mean>0.1</bias_mean>
-              <bias_stddev>0.001</bias_stddev>
-            </noise>
-          </y>
-          <z>
-            <noise type="gaussian">
-              <mean>0.0</mean>
-              <stddev>1.7e-2</stddev>
-              <bias_mean>0.1</bias_mean>
-              <bias_stddev>0.001</bias_stddev>
-            </noise>
-          </z>
-        </linear_acceleration>
-      </imu>
-    </sensor>
-  </gazebo>
-
-  <gazebo reference="imu_joint">
-    <disableFixedJointLumping>true</disableFixedJointLumping>
-  </gazebo>
-
-  <xacro:arg name="EXTERNAL_SENSORS" default="false"/>
-  <xacro:if value="$(arg EXTERNAL_SENSORS)">
-    <gazebo reference="front_camera">
-      <sensor name="front_camera" type="camera">
-        <camera>
-          <horizontal_fov>2.094</horizontal_fov>
-          <image>
-            <width>1280</width>
-            <height>720</height>
-          </image>
-          <clip>
-            <near>0.1</near>
-            <far>15</far>
-          </clip>
-          <noise>
-            <type>gaussian</type>
-            <!-- Noise is sampled independently per pixel on each frame.
-                That pixel's noise value is added to each of its color
-                channels, which at that point lie in the range [0,1]. -->
-            <mean>0.0</mean>
-            <stddev>0.007</stddev>
-          </noise>
-          <optical_frame_id>front_camera</optical_frame_id>
-          <camera_info_topic>camera/camera_info</camera_info_topic>
-        </camera>
-        <always_on>true</always_on>
-        <update_rate>15</update_rate>
-        <visualize>true</visualize>
-        <topic>camera/image</topic>
-      </sensor>
+    <gazebo>
+        <plugin filename="gz_quadruped_hardware-system" name="gz_quadruped_hardware::GazeboSimQuadrupedPlugin">
+            <parameters>$(find go2_description)/config/gazebo.yaml</parameters>
+        </plugin>
+        <plugin filename="gz-sim-imu-system"
+                name="gz::sim::systems::Imu">
+        </plugin>
+        <plugin filename="gz-sim-forcetorque-system" name="gz::sim::systems::ForceTorque"/>
+        <plugin filename="gz-sim-odometry-publisher-system"
+                name="gz::sim::systems::OdometryPublisher">
+            <odom_frame>odom</odom_frame>
+            <robot_base_frame>base</robot_base_frame>
+            <odom_publish_frequency>1000</odom_publish_frequency>
+            <odom_topic>odom</odom_topic>
+            <dimensions>3</dimensions>
+            <odom_covariance_topic>odom_with_covariance</odom_covariance_topic>
+            <tf_topic>tf</tf_topic>
+        </plugin>
     </gazebo>
-  </xacro:if>
+
+    <gazebo reference="trunk">
+        <mu1>0.6</mu1>
+        <mu2>0.6</mu2>
+        <self_collide>1</self_collide>
+    </gazebo>
+
+    <gazebo reference="imu_link">
+        <sensor name="imu_sensor" type="imu">
+            <always_on>1</always_on>
+            <update_rate>500</update_rate>
+            <visualize>true</visualize>
+            <topic>imu</topic>
+            <imu>
+                <angular_velocity>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-4</stddev>
+                            <bias_mean>0.0000075</bias_mean>
+                            <bias_stddev>0.0000008</bias_stddev>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-4</stddev>
+                            <bias_mean>0.0000075</bias_mean>
+                            <bias_stddev>0.0000008</bias_stddev>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-4</stddev>
+                            <bias_mean>0.0000075</bias_mean>
+                            <bias_stddev>0.0000008</bias_stddev>
+                        </noise>
+                    </z>
+                </angular_velocity>
+                <linear_acceleration>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>1.7e-2</stddev>
+                            <bias_mean>0.1</bias_mean>
+                            <bias_stddev>0.001</bias_stddev>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>1.7e-2</stddev>
+                            <bias_mean>0.1</bias_mean>
+                            <bias_stddev>0.001</bias_stddev>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>1.7e-2</stddev>
+                            <bias_mean>0.1</bias_mean>
+                            <bias_stddev>0.001</bias_stddev>
+                        </noise>
+                    </z>
+                </linear_acceleration>
+            </imu>
+        </sensor>
+    </gazebo>
+
+    <gazebo reference="imu_joint">
+        <disableFixedJointLumping>true</disableFixedJointLumping>
+    </gazebo>
+
+    <xacro:ft_sensor name="FR"/>
+    <xacro:ft_sensor name="FL"/>
+    <xacro:ft_sensor name="RR"/>
+    <xacro:ft_sensor name="RL"/>
+
+    <xacro:arg name="EXTERNAL_SENSORS" default="false"/>
+    <xacro:if value="$(arg EXTERNAL_SENSORS)">
+        <gazebo reference="front_camera">
+            <sensor name="front_camera" type="camera">
+                <camera>
+                    <horizontal_fov>2.094</horizontal_fov>
+                    <image>
+                        <width>1280</width>
+                        <height>720</height>
+                    </image>
+                    <clip>
+                        <near>0.1</near>
+                        <far>15</far>
+                    </clip>
+                    <noise>
+                        <type>gaussian</type>
+                        <!-- Noise is sampled independently per pixel on each frame.
+                            That pixel's noise value is added to each of its color
+                            channels, which at that point lie in the range [0,1]. -->
+                        <mean>0.0</mean>
+                        <stddev>0.007</stddev>
+                    </noise>
+                    <optical_frame_id>front_camera</optical_frame_id>
+                    <camera_info_topic>camera/camera_info</camera_info_topic>
+                </camera>
+                <always_on>true</always_on>
+                <update_rate>15</update_rate>
+                <visualize>true</visualize>
+                <topic>camera/image</topic>
+            </sensor>
+        </gazebo>
+    </xacro:if>
 </robot>
