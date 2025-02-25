@@ -36,7 +36,6 @@
 
 #include <hardware_interface/resource_manager.hpp>
 #include <hardware_interface/component_parser.hpp>
-#include <hardware_interface/types/hardware_interface_type_values.hpp>
 
 #include <pluginlib/class_loader.hpp>
 
@@ -52,7 +51,7 @@ namespace gz_quadruped_hardware {
             rclcpp::Node::SharedPtr &node,
             sim::EntityComponentManager &ecm,
             std::map<std::string, sim::Entity> enabledJoints)
-            : hardware_interface::ResourceManager(
+            : ResourceManager(
                   node->get_node_clock_interface(), node->get_node_logging_interface()),
               gz_system_loader_("gz_quadruped_hardware", "gz_quadruped_hardware::GazeboSimSystemInterface"),
               logger_(node->get_logger().get_child("GZResourceManager")) {
@@ -160,7 +159,7 @@ namespace gz_quadruped_hardware {
 
         /// \brief Last time the update method was called
         rclcpp::Time last_update_sim_time_ros_ =
-                rclcpp::Time((int64_t) 0, RCL_ROS_TIME);
+                rclcpp::Time(static_cast<int64_t>(0), RCL_ROS_TIME);
 
         /// \brief ECM pointer
         sim::EntityComponentManager *ecm{nullptr};
@@ -295,18 +294,6 @@ namespace gz_quadruped_hardware {
 
         std::string ns = "/";
 
-        // Hold joints if no control mode is active?
-        bool hold_joints = true; // default
-        if (sdfPtr->HasElement("hold_joints")) {
-            hold_joints =
-                    sdfPtr->GetElement("hold_joints")->Get<bool>();
-        }
-        double position_proportional_gain = 0.1; // default
-        if (sdfPtr->HasElement("position_proportional_gain")) {
-            position_proportional_gain =
-                    sdfPtr->GetElement("position_proportional_gain")->Get<double>();
-        }
-
         if (sdfPtr->HasElement("ros")) {
             sdf::ElementPtr sdfRos = sdfPtr->GetElement("ros");
 
@@ -344,7 +331,7 @@ namespace gz_quadruped_hardware {
                 rclcpp::SignalHandlerOptions::None);
         }
 
-        std::string node_name = "gz_quadruped";
+        std::string node_name = "gz_quadruped_control";
 
         this->dataPtr->node_ = rclcpp::Node::make_shared(node_name, ns);
         this->dataPtr->executor_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
@@ -368,52 +355,6 @@ namespace gz_quadruped_hardware {
                 this->dataPtr->node_->get_logger(),
                 "[Gazebo Quadruped ROS2 Control] There are no available Joints.");
             return;
-        }
-
-        try {
-            this->dataPtr->node_->declare_parameter("hold_joints", rclcpp::ParameterValue(hold_joints));
-        } catch (const rclcpp::exceptions::ParameterAlreadyDeclaredException &e) {
-            RCLCPP_ERROR(
-                this->dataPtr->node_->get_logger(), "Parameter 'hold_joints' has already been declared, %s",
-                e.what());
-        } catch (const rclcpp::exceptions::InvalidParametersException &e) {
-            RCLCPP_ERROR(
-                this->dataPtr->node_->get_logger(), "Parameter 'hold_joints' has invalid name, %s",
-                e.what());
-        } catch (const rclcpp::exceptions::InvalidParameterValueException &e) {
-            RCLCPP_ERROR(
-                this->dataPtr->node_->get_logger(), "Parameter 'hold_joints' value is invalid, %s",
-                e.what());
-        } catch (const rclcpp::exceptions::InvalidParameterTypeException &e) {
-            RCLCPP_ERROR(
-                this->dataPtr->node_->get_logger(), "Parameter 'hold_joints' value has wrong type, %s",
-                e.what());
-        }
-
-        try {
-            this->dataPtr->node_->declare_parameter(
-                "position_proportional_gain",
-                rclcpp::ParameterValue(position_proportional_gain));
-        } catch (const rclcpp::exceptions::ParameterAlreadyDeclaredException &e) {
-            RCLCPP_ERROR(
-                this->dataPtr->node_->get_logger(),
-                "Parameter 'position_proportional_gain' has already been declared, %s",
-                e.what());
-        } catch (const rclcpp::exceptions::InvalidParametersException &e) {
-            RCLCPP_ERROR(
-                this->dataPtr->node_->get_logger(),
-                "Parameter 'position_proportional_gain' has invalid name, %s",
-                e.what());
-        } catch (const rclcpp::exceptions::InvalidParameterValueException &e) {
-            RCLCPP_ERROR(
-                this->dataPtr->node_->get_logger(),
-                "Parameter 'position_proportional_gain' value is invalid, %s",
-                e.what());
-        } catch (const rclcpp::exceptions::InvalidParameterTypeException &e) {
-            RCLCPP_ERROR(
-                this->dataPtr->node_->get_logger(),
-                "Parameter 'position_proportional_gain' value has wrong type, %s",
-                e.what());
         }
 
         std::unique_ptr<hardware_interface::ResourceManager> resource_manager_ =

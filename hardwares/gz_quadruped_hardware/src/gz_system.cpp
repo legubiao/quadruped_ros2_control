@@ -394,7 +394,7 @@ namespace gz_quadruped_hardware {
             }
 
             // check if joint is actuated (has command interfaces) or passive
-            this->dataPtr->joints_[j].is_actuated = (joint_info.command_interfaces.size() > 0);
+            this->dataPtr->joints_[j].is_actuated = joint_info.command_interfaces.size() > 0;
         }
 
         registerSensors(hardware_info);
@@ -469,8 +469,7 @@ namespace gz_quadruped_hardware {
             });
     }
 
-    CallbackReturn
-    GazeboSimSystem::on_init(const hardware_interface::HardwareInfo &info) {
+    CallbackReturn GazeboSimSystem::on_init(const hardware_interface::HardwareInfo &info) {
         if (SystemInterface::on_init(info) != CallbackReturn::SUCCESS) {
             return CallbackReturn::ERROR;
         }
@@ -506,6 +505,7 @@ namespace gz_quadruped_hardware {
     hardware_interface::return_type GazeboSimSystem::read(
         const rclcpp::Time & /*time*/,
         const rclcpp::Duration & /*period*/) {
+
         for (unsigned int i = 0; i < this->dataPtr->joints_.size(); ++i) {
             if (this->dataPtr->joints_[i].sim_joint == sim::kNullEntity) {
                 continue;
@@ -599,35 +599,6 @@ namespace gz_quadruped_hardware {
 
                 *jointEffortCmd = sim::components::JointForceCmd(
                     {torque});
-            }
-        }
-
-        // set values of all mimic joints with respect to mimicked joint
-        for (const auto &mimic_joint: this->info_.mimic_joints) {
-            // Get the joint position
-            double position_mimicked_joint =
-                    this->dataPtr->ecm->Component<sim::components::JointPosition>(
-                        this->dataPtr->joints_[mimic_joint.mimicked_joint_index].sim_joint)->Data()[0];
-
-            double position_mimic_joint =
-                    this->dataPtr->ecm->Component<sim::components::JointPosition>(
-                        this->dataPtr->joints_[mimic_joint.joint_index].sim_joint)->Data()[0];
-
-            double position_error =
-                    position_mimic_joint - position_mimicked_joint * mimic_joint.multiplier;
-
-            double velocity_sp = (-1.0) * position_error * this->dataPtr->update_rate;
-
-            auto vel =
-                    this->dataPtr->ecm->Component<sim::components::JointVelocityCmd>(
-                        this->dataPtr->joints_[mimic_joint.joint_index].sim_joint);
-
-            if (vel == nullptr) {
-                this->dataPtr->ecm->CreateComponent(
-                    this->dataPtr->joints_[mimic_joint.joint_index].sim_joint,
-                    sim::components::JointVelocityCmd({velocity_sp}));
-            } else if (!vel->Data().empty()) {
-                vel->Data()[0] = velocity_sp;
             }
         }
 
