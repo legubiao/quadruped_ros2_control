@@ -37,7 +37,7 @@ namespace ocs2::legged_robot {
     void StateEstimateBase::updateContact() {
         const size_t size = ctrl_component_.foot_force_state_interface_.size();
         for (int i = 0; i < size; i++) {
-            contact_flag_[i] = ctrl_component_.foot_force_state_interface_[i].get().get_value() > 0.1;
+            contact_flag_[i] = ctrl_component_.foot_force_state_interface_[i].get().get_value() > 10.0;
         }
     }
 

@@ -26,7 +26,7 @@ imu_sensor_broadcaster:
 
 ocs2_quadruped_controller:
   ros__parameters:
-    update_rate: 100  # Hz
+    update_rate: 200  # Hz
     robot_pkg: "go2_description"
     joints:
       - FL_hip_joint

@@ -336,7 +336,8 @@ namespace gz_quadruped_hardware {
         this->dataPtr->node_ = rclcpp::Node::make_shared(node_name, ns);
         this->dataPtr->executor_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
         this->dataPtr->executor_->add_node(this->dataPtr->node_);
-        auto spin = [this]() {
+        auto spin = [this]
+        {
             this->dataPtr->executor_->spin();
         };
         this->dataPtr->thread_executor_spin_ = std::thread(spin);

@@ -4,7 +4,7 @@ from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription, RegisterEventHandler
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription, RegisterEventHandler, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
@@ -18,7 +18,6 @@ def launch_setup(context, *args, **kwargs):
     # Gazebo World
     world = context.launch_configurations['world']
     default_sdf_path = os.path.join(get_package_share_directory('gz_quadruped_playground'), 'worlds', world + '.sdf')
-    print(default_sdf_path)
 
     # Init Height When spawn the model
     init_height = context.launch_configurations['height']
@@ -51,7 +50,7 @@ def launch_setup(context, *args, **kwargs):
         ],
     )
 
-    rviz_config_file = os.path.join(get_package_share_directory('gz_quadruped_playground'), "config", "rviz.rviz")
+    rviz_config_file = os.path.join(get_package_share_directory("ocs2_quadruped_controller"), "config", "visualize_ocs2.rviz")
     rviz = Node(
         package='rviz2',
         executable='rviz2',
@@ -74,13 +73,6 @@ def launch_setup(context, *args, **kwargs):
                    "--controller-manager", "/controller_manager"]
     )
 
-    leg_pd_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["leg_pd_controller",
-                   "--controller-manager", "/controller_manager"]
-    )
-
     ocs2_controller = Node(
         package="controller_manager",
         executable="spawner",
@@ -97,17 +89,20 @@ def launch_setup(context, *args, **kwargs):
                                        'launch',
                                        'gz_sim.launch.py'])]),
             launch_arguments=[('gz_args', [' -r -v 4 ', default_sdf_path])]),
-        leg_pd_controller,
+        imu_sensor_broadcaster,
         RegisterEventHandler(
             event_handler=OnProcessExit(
-                target_action=leg_pd_controller,
-                on_exit=[imu_sensor_broadcaster, joint_state_publisher],
+                target_action=imu_sensor_broadcaster,
+                on_exit=[joint_state_publisher],
             )
         ),
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=joint_state_publisher,
-                on_exit=[ocs2_controller],
+                on_exit=[TimerAction(
+                    period=10.0,  # 延迟5秒启动
+                    actions=[ocs2_controller]
+                )],
             )
         ),
     ]
@@ -132,32 +127,22 @@ def generate_launch_description():
         description='Init height in simulation'
     )
 
-    controller = DeclareLaunchArgument(
-        'controller',
-        default_value='unitree_guide',
-        description='The ROS2-Control Controllers'
-    )
-
     gz_bridge_node = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
         arguments=[
             "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock",
-            "/odom@nav_msgs/msg/Odometry@gz.msgs.Odometry",
-            "/odom_with_covariance@nav_msgs/msg/Odometry@gz.msgs.OdometryWithCovariance",
-            "/tf@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V"
+            # "/odom@nav_msgs/msg/Odometry@gz.msgs.Odometry",
+            # "/odom_with_covariance@nav_msgs/msg/Odometry@gz.msgs.OdometryWithCovariance",
+            # "/tf@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V"
         ],
-        output="screen",
-        parameters=[
-            {'use_sim_time': True},
-        ]
+        output="screen"
     )
 
     return LaunchDescription([
         world,
         pkg_description,
         height,
-        controller,
         gz_bridge_node,
         OpaqueFunction(function=launch_setup),
     ])

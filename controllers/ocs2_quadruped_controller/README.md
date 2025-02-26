@@ -85,4 +85,10 @@ source ~/ros2_ws/install/setup.bash
 ros2 launch ocs2_quadruped_controller mujoco.launch.py pkg_description:=go2_description
 ```
 
+### 3.2 Gazebo Launch
+```bash
+source ~/ros2_ws/install/setup.bash
+ros2 launch ocs2_quadruped_controller gazebo.launch.py pkg_description:=go2_description
+```
+
 At the first launch, controller may compile the OCS2 model and generate the shared library. The compilation process may take a few minutes. After the compilation, restart the controller and the robot should stand up. Then you can use the keyboard or joystick to control the robot (Keyboard 2 or Joystick LB+A to Trot mode).

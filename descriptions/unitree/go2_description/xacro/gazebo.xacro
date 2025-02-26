@@ -254,10 +254,10 @@
         <disableFixedJointLumping>true</disableFixedJointLumping>
     </gazebo>
 
-    <xacro:ft_sensor name="FR"/>
     <xacro:ft_sensor name="FL"/>
-    <xacro:ft_sensor name="RR"/>
     <xacro:ft_sensor name="RL"/>
+    <xacro:ft_sensor name="FR"/>
+    <xacro:ft_sensor name="RR"/>
 
     <xacro:arg name="EXTERNAL_SENSORS" default="false"/>
     <xacro:if value="$(arg EXTERNAL_SENSORS)">
