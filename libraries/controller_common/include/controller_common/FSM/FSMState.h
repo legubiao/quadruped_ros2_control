@@ -7,17 +7,17 @@
 
 #include <string>
 #include <utility>
-#include <unitree_guide_controller/common/enumClass.h>
-#include <unitree_guide_controller/control/CtrlComponent.h>
+#include <controller_common/common/enumClass.h>
+#include <controller_common/CtrlInterfaces.h>
 
 class FSMState {
 public:
     virtual ~FSMState() = default;
 
-    FSMState(const FSMStateName &state_name, std::string state_name_string, CtrlComponent &ctrl_comp)
+    FSMState(const FSMStateName &state_name, std::string state_name_string, CtrlInterfaces &ctrl_interfaces)
         : state_name(state_name),
           state_name_string(std::move(state_name_string)),
-          ctrl_comp_(ctrl_comp) {
+          ctrl_interfaces_(ctrl_interfaces) {
     }
 
     virtual void enter() = 0;
@@ -32,7 +32,7 @@ public:
     std::string state_name_string;
 
 protected:
-    CtrlComponent &ctrl_comp_;
+    CtrlInterfaces &ctrl_interfaces_;
 };
 
 #endif //FSMSTATE_H

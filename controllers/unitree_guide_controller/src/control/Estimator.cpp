@@ -5,14 +5,15 @@
 #include "unitree_guide_controller/control/Estimator.h"
 
 #include <unitree_guide_controller/common/mathTools.h>
+#include <unitree_guide_controller/control/CtrlComponent.h>
 
-#include "unitree_guide_controller/control/CtrlComponent.h"
+#include "controller_common/CtrlInterfaces.h"
 
-Estimator::Estimator(CtrlComponent &ctrl_component) : ctrl_component_(ctrl_component),
+Estimator::Estimator(CtrlInterfaces &ctrl_interfaces, CtrlComponent &ctrl_component) : ctrl_interfaces_(ctrl_interfaces),
                                                       robot_model_(ctrl_component.robot_model_),
                                                       wave_generator_(ctrl_component.wave_generator_) {
     g_ << 0, 0, -9.81;
-    dt_ = 1.0 / ctrl_component_.frequency_;
+    dt_ = 1.0 / ctrl_interfaces.frequency_;
 
     std::cout << "dt: " << dt_ << std::endl;
     large_variance_ = 100;
@@ -181,19 +182,19 @@ void Estimator::update() {
     }
 
     Quat quat;
-    quat << ctrl_component_.imu_state_interface_[0].get().get_value(),
-            ctrl_component_.imu_state_interface_[1].get().get_value(),
-            ctrl_component_.imu_state_interface_[2].get().get_value(),
-            ctrl_component_.imu_state_interface_[3].get().get_value();
+    quat << ctrl_interfaces_.imu_state_interface_[0].get().get_value(),
+            ctrl_interfaces_.imu_state_interface_[1].get().get_value(),
+            ctrl_interfaces_.imu_state_interface_[2].get().get_value(),
+            ctrl_interfaces_.imu_state_interface_[3].get().get_value();
     rotation_ = quatToRotMat(quat);
 
-    gyro_ << ctrl_component_.imu_state_interface_[4].get().get_value(),
-            ctrl_component_.imu_state_interface_[5].get().get_value(),
-            ctrl_component_.imu_state_interface_[6].get().get_value();
+    gyro_ << ctrl_interfaces_.imu_state_interface_[4].get().get_value(),
+            ctrl_interfaces_.imu_state_interface_[5].get().get_value(),
+            ctrl_interfaces_.imu_state_interface_[6].get().get_value();
 
-    acceleration_ << ctrl_component_.imu_state_interface_[7].get().get_value(),
-            ctrl_component_.imu_state_interface_[8].get().get_value(),
-            ctrl_component_.imu_state_interface_[9].get().get_value();
+    acceleration_ << ctrl_interfaces_.imu_state_interface_[7].get().get_value(),
+            ctrl_interfaces_.imu_state_interface_[8].get().get_value(),
+            ctrl_interfaces_.imu_state_interface_[9].get().get_value();
 
     u_ = rotation_ * acceleration_ + g_;
     x_hat_ = A * x_hat_ + B * u_;

@@ -4,14 +4,21 @@
 
 #include "unitree_guide_controller/FSM/StateBalanceTest.h"
 
-#include "unitree_guide_controller/common/mathTools.h"
+#include <unitree_guide_controller/UnitreeGuideController.h>
 
-StateBalanceTest::StateBalanceTest(CtrlComponent &ctrlComp) : FSMState(FSMStateName::BALANCETEST, "balance test",
-                                                                       ctrlComp),
-                                                              estimator_(ctrlComp.estimator_),
-                                                              robot_model_(ctrlComp.robot_model_),
-                                                              balance_ctrl_(ctrlComp.balance_ctrl_),
-                                                              wave_generator_(ctrl_comp_.wave_generator_) {
+#include "unitree_guide_controller/common/mathTools.h"
+#include "unitree_guide_controller/gait/WaveGenerator.h"
+
+StateBalanceTest::StateBalanceTest(CtrlInterfaces &ctrl_interfaces,
+                                   CtrlComponent &ctrl_component)
+    : FSMState(FSMStateName::BALANCETEST,
+               "balance test",
+               ctrl_interfaces),
+      estimator_(ctrl_component.estimator_),
+      robot_model_(ctrl_component.robot_model_),
+      balance_ctrl_(ctrl_component.balance_ctrl_),
+      wave_generator_(
+          ctrl_component.wave_generator_) {
     _xMax = 0.05;
     _xMin = -_xMax;
     _yMax = 0.05;
@@ -36,16 +43,16 @@ void StateBalanceTest::enter() {
 }
 
 void StateBalanceTest::run() {
-    pcd_(0) = pcd_init_(0) + invNormalize(ctrl_comp_.control_inputs_.ly, _xMin, _xMax);
-    pcd_(1) = pcd_init_(1) - invNormalize(ctrl_comp_.control_inputs_.lx, _yMin, _yMax);
-    pcd_(2) = pcd_init_(2) + invNormalize(ctrl_comp_.control_inputs_.ry, _zMin, _zMax);
+    pcd_(0) = pcd_init_(0) + invNormalize(ctrl_interfaces_.control_inputs_.ly, _xMin, _xMax);
+    pcd_(1) = pcd_init_(1) - invNormalize(ctrl_interfaces_.control_inputs_.lx, _yMin, _yMax);
+    pcd_(2) = pcd_init_(2) + invNormalize(ctrl_interfaces_.control_inputs_.ry, _zMin, _zMax);
 
-    const float yaw = - invNormalize(ctrl_comp_.control_inputs_.rx, _yawMin, _yawMax);
+    const float yaw = -invNormalize(ctrl_interfaces_.control_inputs_.rx, _yawMin, _yawMax);
     Rd_ = rotz(yaw) * init_rotation_;
 
     for (int i = 0; i < 12; i++) {
-        ctrl_comp_.joint_kp_command_interface_[i].get().set_value(0.8);
-        ctrl_comp_.joint_kd_command_interface_[i].get().set_value(0.8);
+        std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(0.8);
+        std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(0.8);
     }
 
     calcTorque();
@@ -56,7 +63,7 @@ void StateBalanceTest::exit() {
 }
 
 FSMStateName StateBalanceTest::checkChange() {
-    switch (ctrl_comp_.control_inputs_.command) {
+    switch (ctrl_interfaces_.control_inputs_.command) {
         case 1:
             return FSMStateName::FIXEDDOWN;
         case 2:
@@ -83,15 +90,16 @@ void StateBalanceTest::calcTorque() {
     // calculate foot force
     const Vec34 pos_feet_2_body_global = estimator_->getFeetPos2Body();
     const Vec34 force_feet_global = -balance_ctrl_->calF(dd_pcd_, d_wbd_, B2G_Rotation,
-                                                        pos_feet_2_body_global, wave_generator_->contact_);
+                                                         pos_feet_2_body_global, wave_generator_->contact_);
     const Vec34 force_feet_body = G2B_Rotation * force_feet_global;
 
     std::vector<KDL::JntArray> current_joints = robot_model_->current_joint_pos_;
     for (int i = 0; i < 4; i++) {
         KDL::JntArray torque = robot_model_->getTorque(force_feet_body.col(i), i);
         for (int j = 0; j < 3; j++) {
-            ctrl_comp_.joint_torque_command_interface_[i * 3 + j].get().set_value(torque(j));
-            ctrl_comp_.joint_position_command_interface_[i * 3 + j].get().set_value(current_joints[i](j));
+            std::ignore = ctrl_interfaces_.joint_torque_command_interface_[i * 3 + j].get().set_value(torque(j));
+            std::ignore = ctrl_interfaces_.joint_position_command_interface_[i * 3 + j].get().set_value(
+                current_joints[i](j));
         }
     }
 }

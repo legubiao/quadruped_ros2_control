@@ -2,13 +2,11 @@
 // Created by biao on 24-9-18.
 //
 
-#include <utility>
-
 #include "unitree_guide_controller/gait/WaveGenerator.h"
 
 #include <iostream>
 
-WaveGenerator::WaveGenerator(double period, double st_ratio, const Vec4 &bias) {
+WaveGenerator::WaveGenerator(const double period, const double st_ratio, const Vec4 &bias) {
 
     phase_past_ << 0.5, 0.5, 0.5, 0.5;
     contact_past_.setZero();

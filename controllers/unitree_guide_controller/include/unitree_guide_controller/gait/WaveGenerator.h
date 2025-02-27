@@ -6,7 +6,7 @@
 #ifndef WAVEGENERATOR_H
 #define WAVEGENERATOR_H
 #include <chrono>
-#include <unitree_guide_controller/common/enumClass.h>
+#include <controller_common/common/enumClass.h>
 #include <unitree_guide_controller/common/mathTypes.h>
 
 inline long long getSystemTime() {

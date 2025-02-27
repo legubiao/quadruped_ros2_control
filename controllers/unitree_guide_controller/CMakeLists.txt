@@ -15,6 +15,7 @@ set(CONTROLLER_INCLUDE_DEPENDS
         realtime_tools
         std_msgs
         control_input_msgs
+        controller_common
         kdl_parser
 )
 
@@ -28,8 +29,6 @@ add_library(${PROJECT_NAME} SHARED
 
         src/UnitreeGuideController.cpp
 
-        src/FSM/StatePassive.cpp
-        src/FSM/StateFixedDown.cpp
         src/FSM/StateFixedStand.cpp
         src/FSM/StateSwingTest.cpp
         src/FSM/StateFreeStand.cpp

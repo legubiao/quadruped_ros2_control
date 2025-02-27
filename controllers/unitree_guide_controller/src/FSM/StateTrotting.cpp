@@ -5,13 +5,18 @@
 #include "unitree_guide_controller/FSM/StateTrotting.h"
 
 #include <unitree_guide_controller/common/mathTools.h>
+#include <unitree_guide_controller/control/CtrlComponent.h>
+#include <unitree_guide_controller/control/Estimator.h>
+#include <unitree_guide_controller/gait/WaveGenerator.h>
 
-StateTrotting::StateTrotting(CtrlComponent &ctrlComp) : FSMState(FSMStateName::TROTTING, "trotting", ctrlComp),
-                                                        estimator_(ctrlComp.estimator_),
-                                                        robot_model_(ctrlComp.robot_model_),
-                                                        balance_ctrl_(ctrlComp.balance_ctrl_),
-                                                        wave_generator_(ctrl_comp_.wave_generator_),
-                                                        gait_generator_(ctrlComp) {
+StateTrotting::StateTrotting(CtrlInterfaces &ctrl_interfaces,
+                            CtrlComponent &ctrl_component) : FSMState(FSMStateName::TROTTING, "trotting",
+                                                                               ctrl_interfaces),
+                                                                           estimator_(ctrl_component.estimator_),
+                                                                           robot_model_(ctrl_component.robot_model_),
+                                                                           balance_ctrl_(ctrl_component.balance_ctrl_),
+                                                                           wave_generator_(ctrl_component.wave_generator_),
+                                                                           gait_generator_(ctrl_component) {
     gait_height_ = 0.08;
     Kpp = Vec3(70, 70, 70).asDiagonal();
     Kdp = Vec3(10, 10, 10).asDiagonal();
@@ -23,7 +28,7 @@ StateTrotting::StateTrotting(CtrlComponent &ctrlComp) : FSMState(FSMStateName::T
     v_x_limit_ << -0.4, 0.4;
     v_y_limit_ << -0.3, 0.3;
     w_yaw_limit_ << -0.5, 0.5;
-    dt_ = 1.0 / ctrl_comp_.frequency_;
+    dt_ = 1.0 / ctrl_interfaces_.frequency_;
 }
 
 void StateTrotting::enter() {
@@ -34,7 +39,7 @@ void StateTrotting::enter() {
     Rd = rotz(yaw_cmd_);
     w_cmd_global_.setZero();
 
-    ctrl_comp_.control_inputs_.command = 0;
+    ctrl_interfaces_.control_inputs_.command = 0;
     gait_generator_.restart();
 }
 
@@ -68,7 +73,7 @@ void StateTrotting::exit() {
 }
 
 FSMStateName StateTrotting::checkChange() {
-    switch (ctrl_comp_.control_inputs_.command) {
+    switch (ctrl_interfaces_.control_inputs_.command) {
         case 1:
             return FSMStateName::PASSIVE;
         case 2:
@@ -80,12 +85,12 @@ FSMStateName StateTrotting::checkChange() {
 
 void StateTrotting::getUserCmd() {
     /* Movement */
-    v_cmd_body_(0) = invNormalize(ctrl_comp_.control_inputs_.ly, v_x_limit_(0), v_x_limit_(1));
-    v_cmd_body_(1) = -invNormalize(ctrl_comp_.control_inputs_.lx, v_y_limit_(0), v_y_limit_(1));
+    v_cmd_body_(0) = invNormalize(ctrl_interfaces_.control_inputs_.ly, v_x_limit_(0), v_x_limit_(1));
+    v_cmd_body_(1) = -invNormalize(ctrl_interfaces_.control_inputs_.lx, v_y_limit_(0), v_y_limit_(1));
     v_cmd_body_(2) = 0;
 
     /* Turning */
-    d_yaw_cmd_ = -invNormalize(ctrl_comp_.control_inputs_.rx, w_yaw_limit_(0), w_yaw_limit_(1));
+    d_yaw_cmd_ = -invNormalize(ctrl_interfaces_.control_inputs_.rx, w_yaw_limit_(0), w_yaw_limit_(1));
     d_yaw_cmd_ = 0.9 * d_yaw_cmd_past_ + (1 - 0.9) * d_yaw_cmd_;
     d_yaw_cmd_past_ = d_yaw_cmd_;
 }
@@ -139,8 +144,8 @@ void StateTrotting::calcTau() {
     for (int i(0); i < 4; ++i) {
         if (wave_generator_->contact_(i) == 0) {
             force_feet_global.col(i) =
-                Kp_swing_ * (pos_feet_global_goal_.col(i) - pos_feet_global.col(i)) +
-                Kd_swing_ * (vel_feet_global_goal_.col(i) - vel_feet_global.col(i));
+                    Kp_swing_ * (pos_feet_global_goal_.col(i) - pos_feet_global.col(i)) +
+                    Kd_swing_ * (vel_feet_global_goal_.col(i) - vel_feet_global.col(i));
         }
     }
 
@@ -150,7 +155,7 @@ void StateTrotting::calcTau() {
     for (int i = 0; i < 4; i++) {
         KDL::JntArray torque = robot_model_->getTorque(force_feet_body_.col(i), i);
         for (int j = 0; j < 3; j++) {
-            ctrl_comp_.joint_torque_command_interface_[i * 3 + j].get().set_value(torque(j));
+            std::ignore = ctrl_interfaces_.joint_torque_command_interface_[i * 3 + j].get().set_value(torque(j));
         }
     }
 }
@@ -167,8 +172,8 @@ void StateTrotting::calcQQd() {
     Vec12 q_goal = robot_model_->getQ(pos_feet_target);
     Vec12 qd_goal = robot_model_->getQd(pos_feet_body, vel_feet_target);
     for (int i = 0; i < 12; i++) {
-        ctrl_comp_.joint_position_command_interface_[i].get().set_value(q_goal(i));
-        ctrl_comp_.joint_velocity_command_interface_[i].get().set_value(qd_goal(i));
+        std::ignore = ctrl_interfaces_.joint_position_command_interface_[i].get().set_value(q_goal(i));
+        std::ignore = ctrl_interfaces_.joint_velocity_command_interface_[i].get().set_value(qd_goal(i));
     }
 }
 
@@ -177,14 +182,14 @@ void StateTrotting::calcGain() const {
         if (wave_generator_->contact_(i) == 0) {
             // swing gain
             for (int j = 0; j < 3; j++) {
-                ctrl_comp_.joint_kp_command_interface_[i * 3 + j].get().set_value(3);
-                ctrl_comp_.joint_kd_command_interface_[i * 3 + j].get().set_value(2);
+                std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i * 3 + j].get().set_value(3);
+                std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i * 3 + j].get().set_value(2);
             }
         } else {
             // stable gain
             for (int j = 0; j < 3; j++) {
-                ctrl_comp_.joint_kp_command_interface_[i * 3 + j].get().set_value(0.8);
-                ctrl_comp_.joint_kd_command_interface_[i * 3 + j].get().set_value(0.8);
+                std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i * 3 + j].get().set_value(0.8);
+                std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i * 3 + j].get().set_value(0.8);
             }
         }
     }

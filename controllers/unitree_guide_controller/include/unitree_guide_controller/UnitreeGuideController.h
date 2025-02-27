@@ -7,14 +7,15 @@
 
 #include <controller_interface/controller_interface.hpp>
 #include <std_msgs/msg/string.hpp>
-#include <unitree_guide_controller/FSM/FSMState.h>
-#include <unitree_guide_controller/common/enumClass.h>
+#include <controller_common/FSM/FSMState.h>
+#include <controller_common/FSM/StatePassive.h>
+#include <controller_common/FSM/StateFixedDown.h>
+#include <controller_common/common/enumClass.h>
 
+#include "control/CtrlComponent.h"
 #include "FSM/StateBalanceTest.h"
-#include "FSM/StateFixedDown.h"
 #include "FSM/StateFixedStand.h"
 #include "FSM/StateFreeStand.h"
-#include "FSM/StatePassive.h"
 #include "FSM/StateSwingTest.h"
 #include "FSM/StateTrotting.h"
 
@@ -62,7 +63,8 @@ namespace unitree_guide_controller {
         controller_interface::CallbackReturn on_shutdown(
             const rclcpp_lifecycle::State &previous_state) override;
 
-        CtrlComponent ctrl_comp_;
+        CtrlComponent ctrl_component_;
+        CtrlInterfaces ctrl_interfaces_;
 
     protected:
         std::vector<std::string> joint_names_;
@@ -99,11 +101,11 @@ namespace unitree_guide_controller {
         std::unordered_map<
             std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> > *>
         command_interface_map_ = {
-            {"effort", &ctrl_comp_.joint_torque_command_interface_},
-            {"position", &ctrl_comp_.joint_position_command_interface_},
-            {"velocity", &ctrl_comp_.joint_velocity_command_interface_},
-            {"kp", &ctrl_comp_.joint_kp_command_interface_},
-            {"kd", &ctrl_comp_.joint_kd_command_interface_}
+            {"effort", &ctrl_interfaces_.joint_torque_command_interface_},
+            {"position", &ctrl_interfaces_.joint_position_command_interface_},
+            {"velocity", &ctrl_interfaces_.joint_velocity_command_interface_},
+            {"kp", &ctrl_interfaces_.joint_kp_command_interface_},
+            {"kd", &ctrl_interfaces_.joint_kd_command_interface_}
         };
 
         FSMMode mode_ = FSMMode::NORMAL;
@@ -121,9 +123,9 @@ namespace unitree_guide_controller {
         std::unordered_map<
             std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> > *>
         state_interface_map_ = {
-            {"position", &ctrl_comp_.joint_position_state_interface_},
-            {"effort", &ctrl_comp_.joint_effort_state_interface_},
-            {"velocity", &ctrl_comp_.joint_velocity_state_interface_}
+            {"position", &ctrl_interfaces_.joint_position_state_interface_},
+            {"effort", &ctrl_interfaces_.joint_effort_state_interface_},
+            {"velocity", &ctrl_interfaces_.joint_velocity_state_interface_}
         };
     };
 }

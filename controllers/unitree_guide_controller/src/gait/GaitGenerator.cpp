@@ -5,12 +5,14 @@
 #include "unitree_guide_controller/gait/GaitGenerator.h"
 
 #include <utility>
+#include <unitree_guide_controller/control/CtrlComponent.h>
+#include <unitree_guide_controller/control/Estimator.h>
+#include <unitree_guide_controller/gait/WaveGenerator.h>
 
-#include "unitree_guide_controller/control/CtrlComponent.h"
-
-GaitGenerator::GaitGenerator(CtrlComponent &ctrl_component) : wave_generator_(ctrl_component.wave_generator_),
-                                                              estimator_(ctrl_component.estimator_),
-                                                              feet_end_calc_(ctrl_component) {
+GaitGenerator::GaitGenerator(CtrlComponent &ctrl_component)
+    : wave_generator_(ctrl_component.wave_generator_),
+      estimator_(ctrl_component.estimator_),
+      feet_end_calc_(ctrl_component) {
     first_run_ = true;
 }
 

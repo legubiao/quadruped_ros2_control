@@ -3,11 +3,17 @@
 //
 
 #include "unitree_guide_controller/FSM/StateFreeStand.h"
+
+#include <unitree_guide_controller/UnitreeGuideController.h>
+
 #include "unitree_guide_controller/common/mathTools.h"
 
-StateFreeStand::StateFreeStand(CtrlComponent &ctrl_component) : FSMState(FSMStateName::FREESTAND, "free stand",
-                                                                         ctrl_component),
-                                                                robot_model_(ctrl_component.robot_model_) {
+StateFreeStand::StateFreeStand(CtrlInterfaces &ctrl_interfaces,
+                               CtrlComponent &ctrl_component)
+    : FSMState(
+          FSMStateName::FREESTAND, "free stand",
+          ctrl_interfaces),
+      robot_model_(ctrl_component.robot_model_) {
     row_max_ = 20 * M_PI / 180;
     row_min_ = -row_max_;
     pitch_max_ = 15 * M_PI / 180;
@@ -20,8 +26,8 @@ StateFreeStand::StateFreeStand(CtrlComponent &ctrl_component) : FSMState(FSMStat
 
 void StateFreeStand::enter() {
     for (int i = 0; i < 12; i++) {
-        ctrl_comp_.joint_kp_command_interface_[i].get().set_value(100);
-        ctrl_comp_.joint_kd_command_interface_[i].get().set_value(5);
+        std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(100);
+        std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(5);
     }
 
     init_joint_pos_ = robot_model_->current_joint_pos_;
@@ -33,21 +39,21 @@ void StateFreeStand::enter() {
         foot_pos.p -= fr_init_pos_.p;
         foot_pos.M = KDL::Rotation::RPY(0, 0, 0);
     }
-    ctrl_comp_.control_inputs_.command = 0;
+    ctrl_interfaces_.control_inputs_.command = 0;
 }
 
 void StateFreeStand::run() {
-    calc_body_target(invNormalize(ctrl_comp_.control_inputs_.lx, row_min_, row_max_),
-                     invNormalize(ctrl_comp_.control_inputs_.ly, pitch_min_, pitch_max_),
-                     invNormalize(ctrl_comp_.control_inputs_.rx, yaw_min_, yaw_max_),
-                     invNormalize(ctrl_comp_.control_inputs_.ry, height_min_, height_max_));
+    calc_body_target(invNormalize(ctrl_interfaces_.control_inputs_.lx, row_min_, row_max_),
+                     invNormalize(ctrl_interfaces_.control_inputs_.ly, pitch_min_, pitch_max_),
+                     invNormalize(ctrl_interfaces_.control_inputs_.rx, yaw_min_, yaw_max_),
+                     invNormalize(ctrl_interfaces_.control_inputs_.ry, height_min_, height_max_));
 }
 
 void StateFreeStand::exit() {
 }
 
 FSMStateName StateFreeStand::checkChange() {
-    switch (ctrl_comp_.control_inputs_.command) {
+    switch (ctrl_interfaces_.control_inputs_.command) {
         case 1:
             return FSMStateName::PASSIVE;
         case 2:
@@ -72,8 +78,11 @@ void StateFreeStand::calc_body_target(const float row, const float pitch,
     target_joint_pos_ = robot_model_->getQ(goal_pos);
 
     for (int i = 0; i < 4; i++) {
-        ctrl_comp_.joint_position_command_interface_[i * 3].get().set_value(target_joint_pos_[i](0));
-        ctrl_comp_.joint_position_command_interface_[i * 3 + 1].get().set_value(target_joint_pos_[i](1));
-        ctrl_comp_.joint_position_command_interface_[i * 3 + 2].get().set_value(target_joint_pos_[i](2));
+        std::ignore = ctrl_interfaces_.joint_position_command_interface_[i * 3].get().set_value(
+            target_joint_pos_[i](0));
+        std::ignore = ctrl_interfaces_.joint_position_command_interface_[i * 3 + 1].get().set_value(
+            target_joint_pos_[i](1));
+        std::ignore = ctrl_interfaces_.joint_position_command_interface_[i * 3 + 2].get().set_value(
+            target_joint_pos_[i](2));
     }
 }

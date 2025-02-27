@@ -5,12 +5,17 @@
 
 #ifndef STATESWINGTEST_H
 #define STATESWINGTEST_H
-#include "FSMState.h"
+#include <unitree_guide_controller/robot/QuadrupedRobot.h>
 
+#include "controller_common/FSM/FSMState.h"
+
+
+struct CtrlComponent;
 
 class StateSwingTest final : public FSMState {
 public:
-    explicit StateSwingTest(CtrlComponent &ctrl_component);
+    explicit StateSwingTest(CtrlInterfaces &ctrl_interfaces,
+                            CtrlComponent &ctrl_component);
 
     void enter() override;
 

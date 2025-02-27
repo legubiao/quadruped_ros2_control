@@ -4,11 +4,13 @@
 
 #include "unitree_guide_controller/gait/FeetEndCalc.h"
 
-#include "unitree_guide_controller/control/CtrlComponent.h"
+#include <unitree_guide_controller/control/CtrlComponent.h>
+#include <unitree_guide_controller/control/Estimator.h>
 
-FeetEndCalc::FeetEndCalc(CtrlComponent &ctrl_component) : ctrl_component_(ctrl_component),
-                                                          robot_model_(ctrl_component.robot_model_),
-                                                          estimator_(ctrl_component.estimator_) {
+FeetEndCalc::FeetEndCalc(CtrlComponent &ctrl_component)
+    : ctrl_component_(ctrl_component),
+      robot_model_(ctrl_component.robot_model_),
+      estimator_(ctrl_component.estimator_) {
     k_x_ = 0.005;
     k_y_ = 0.005;
     k_yaw_ = 0.005;

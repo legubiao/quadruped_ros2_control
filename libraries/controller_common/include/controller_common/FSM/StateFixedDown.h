@@ -11,7 +11,7 @@
 
 class StateFixedDown final : public FSMState {
 public:
-    explicit StateFixedDown(CtrlComponent &ctrlComp,
+    explicit StateFixedDown(CtrlInterfaces &ctrl_interfaces,
                             const std::vector<double> &target_pos,
                             double kp,
                             double kd

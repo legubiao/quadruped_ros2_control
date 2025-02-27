@@ -77,10 +77,10 @@ ocs2_quadruped_controller:
 
     foot_force_name: "foot_force"
     foot_force_interfaces:
-      - FL_ft_sensor
-      - RL_ft_sensor
-      - FR_ft_sensor
-      - RR_ft_sensor
+      - FL_foot_force
+      - RL_foot_force
+      - FR_foot_force
+      - RR_foot_force
 
 unitree_guide_controller:
   ros__parameters:

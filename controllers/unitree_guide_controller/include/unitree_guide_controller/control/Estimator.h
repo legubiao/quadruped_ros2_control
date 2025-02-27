@@ -8,16 +8,16 @@
 #include <kdl/frames.hpp>
 #include <unitree_guide_controller/common/mathTypes.h>
 #include <unitree_guide_controller/robot/QuadrupedRobot.h>
-
 #include "LowPassFilter.h"
 
+struct CtrlInterfaces;
 class WaveGenerator;
 class QuadrupedRobot;
 struct CtrlComponent;
 
 class Estimator {
 public:
-    explicit Estimator(CtrlComponent &ctrl_component);
+    explicit Estimator(CtrlInterfaces &ctrl_interfaces, CtrlComponent &ctrl_component);
 
     ~Estimator() = default;
 
@@ -105,7 +105,7 @@ public:
     void update();
 
 private:
-    CtrlComponent &ctrl_component_;
+    CtrlInterfaces &ctrl_interfaces_;
     std::shared_ptr<QuadrupedRobot> &robot_model_;
     std::shared_ptr<WaveGenerator> &wave_generator_;
 

@@ -4,14 +4,14 @@
 
 #ifndef STATETROTTING_H
 #define STATETROTTING_H
+#include <unitree_guide_controller/control/BalanceCtrl.h>
 #include <unitree_guide_controller/gait/GaitGenerator.h>
-
-#include "FSMState.h"
-
+#include "controller_common/FSM/FSMState.h"
 
 class StateTrotting final : public FSMState {
 public:
-    explicit StateTrotting(CtrlComponent &ctrlComp);
+    explicit StateTrotting(CtrlInterfaces &ctrl_interfaces,
+                           CtrlComponent &ctrl_component);
 
     void enter() override;
 

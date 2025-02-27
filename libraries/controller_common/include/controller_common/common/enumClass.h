@@ -16,6 +16,9 @@ enum class FSMStateName {
 
     SWINGTEST,
     BALANCETEST,
+
+    OCS2,
+    RL
 };
 
 enum class FSMMode {

@@ -4,12 +4,16 @@
 
 #ifndef STATEFREESTAND_H
 #define STATEFREESTAND_H
-#include "FSMState.h"
+#include <unitree_guide_controller/robot/QuadrupedRobot.h>
 
+#include "controller_common/FSM/FSMState.h"
+
+struct CtrlComponent;
 
 class StateFreeStand final : public FSMState {
 public:
-    explicit StateFreeStand(CtrlComponent &ctrl_component);
+    explicit StateFreeStand(CtrlInterfaces &ctrl_interfaces,
+                            CtrlComponent &ctrl_component);
 
     void enter() override;
 
@@ -21,6 +25,7 @@ public:
 
 private:
     std::shared_ptr<QuadrupedRobot> &robot_model_;
+
     void calc_body_target(float row, float pitch, float yaw, float height);
 
     float row_max_, row_min_;
@@ -34,6 +39,5 @@ private:
     KDL::Frame fr_init_pos_;
     std::vector<KDL::Frame> init_foot_pos_; // 4 feet position in fr-foot frame
 };
-
 
 #endif //STATEFREESTAND_H

@@ -4,12 +4,22 @@
 
 #ifndef STATEBALANCETEST_H
 #define STATEBALANCETEST_H
-#include "FSMState.h"
 
+#include <unitree_guide_controller/common/mathTypes.h>
+
+#include "controller_common/FSM/FSMState.h"
+
+
+class WaveGenerator;
+class BalanceCtrl;
+class QuadrupedRobot;
+class Estimator;
+struct CtrlComponent;
 
 class StateBalanceTest final : public FSMState {
 public:
-    explicit StateBalanceTest(CtrlComponent &ctrlComp);
+    explicit StateBalanceTest(CtrlInterfaces &ctrl_interfaces,
+                              CtrlComponent &ctrl_component);
 
     void enter() override;
 
