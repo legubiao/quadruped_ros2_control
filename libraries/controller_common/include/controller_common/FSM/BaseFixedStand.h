@@ -5,8 +5,6 @@
 #ifndef BASEFIXEDSTAND_H
 #define BASEFIXEDSTAND_H
 
-#include <rclcpp/time.hpp>
-
 #include "FSMState.h"
 
 class BaseFixedStand : public FSMState {
@@ -18,7 +16,8 @@ public:
 
     void enter() override;
 
-    void run() override;
+    void run(const rclcpp::Time &time,
+             const rclcpp::Duration &period) override;
 
     void exit() override;
 

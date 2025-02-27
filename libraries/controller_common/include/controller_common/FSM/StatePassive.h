@@ -6,14 +6,14 @@
 #define STATEPASSIVE_H
 #include "FSMState.h"
 
-
 class StatePassive final : public FSMState {
 public:
     explicit StatePassive(CtrlInterfaces &ctrl_interfaces);
 
     void enter() override;
 
-    void run() override;
+    void run(const rclcpp::Time &time,
+             const rclcpp::Duration &period) override;
 
     void exit() override;
 

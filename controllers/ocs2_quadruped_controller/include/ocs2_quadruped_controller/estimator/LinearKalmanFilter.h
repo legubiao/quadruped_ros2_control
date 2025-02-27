@@ -16,7 +16,7 @@ namespace ocs2::legged_robot {
     public:
         KalmanFilterEstimate(PinocchioInterface pinocchio_interface, CentroidalModelInfo info,
                              const PinocchioEndEffectorKinematics &ee_kinematics,
-                             CtrlComponent &ctrl_component,
+                             CtrlInterfaces &ctrl_component,
                              const rclcpp_lifecycle::LifecycleNode::SharedPtr &node);
 
         vector_t update(const rclcpp::Time &time, const rclcpp::Duration &period) override;

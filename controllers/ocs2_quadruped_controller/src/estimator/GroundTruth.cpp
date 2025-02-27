@@ -4,11 +4,9 @@
 
 #include "ocs2_quadruped_controller/estimator/GroundTruth.h"
 
-#include <ocs2_quadruped_controller/control/CtrlComponent.h>
-
 namespace ocs2::legged_robot
 {
-    GroundTruth::GroundTruth(CentroidalModelInfo info, CtrlComponent& ctrl_component,
+    GroundTruth::GroundTruth(CentroidalModelInfo info, CtrlInterfaces& ctrl_component,
                              const rclcpp_lifecycle::LifecycleNode::SharedPtr& node)
         : StateEstimateBase(
             std::move(info), ctrl_component,

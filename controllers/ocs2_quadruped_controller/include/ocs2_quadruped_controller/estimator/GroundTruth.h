@@ -11,7 +11,7 @@
 namespace ocs2::legged_robot {
     class GroundTruth final : public StateEstimateBase {
     public:
-        GroundTruth(CentroidalModelInfo info, CtrlComponent &ctrl_component,
+        GroundTruth(CentroidalModelInfo info, CtrlInterfaces &ctrl_component,
                     const rclcpp_lifecycle::LifecycleNode::SharedPtr &node);
 
         vector_t update(const rclcpp::Time &time, const rclcpp::Duration &period) override;

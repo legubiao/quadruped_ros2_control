@@ -9,11 +9,10 @@
 #include <ocs2_robotic_tools/common/RotationDerivativesTransforms.h>
 
 #include <memory>
-#include "ocs2_quadruped_controller/control/CtrlComponent.h"
 
 namespace ocs2::legged_robot {
     StateEstimateBase::StateEstimateBase(CentroidalModelInfo info,
-                                         CtrlComponent &ctrl_component,
+                                         CtrlInterfaces &ctrl_component,
                                          rclcpp_lifecycle::LifecycleNode::SharedPtr node)
         : ctrl_component_(ctrl_component),
           info_(std::move(info)),

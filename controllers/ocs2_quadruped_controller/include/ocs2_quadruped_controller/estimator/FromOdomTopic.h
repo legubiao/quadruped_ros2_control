@@ -11,7 +11,7 @@ namespace ocs2::legged_robot
     class FromOdomTopic final : public StateEstimateBase
     {
     public:
-        FromOdomTopic(CentroidalModelInfo info, CtrlComponent& ctrl_component,
+        FromOdomTopic(CentroidalModelInfo info, CtrlInterfaces& ctrl_component,
                       const rclcpp_lifecycle::LifecycleNode::SharedPtr& node);
 
         vector_t update(const rclcpp::Time& time, const rclcpp::Duration& period) override;

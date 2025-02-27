@@ -32,7 +32,7 @@ void StateFixedDown::enter() {
     }
 }
 
-void StateFixedDown::run() {
+void StateFixedDown::run(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/) {
     percent_ += 1 / duration_;
     phase = std::tanh(percent_);
     for (int i = 0; i < 12; i++) {

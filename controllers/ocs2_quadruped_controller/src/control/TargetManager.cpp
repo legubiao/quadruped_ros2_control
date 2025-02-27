@@ -7,11 +7,9 @@
 #include <ocs2_core/misc/LoadData.h>
 #include <ocs2_robotic_tools/common/RotationTransforms.h>
 
-#include "ocs2_quadruped_controller/control/CtrlComponent.h"
-
 namespace ocs2::legged_robot
 {
-    TargetManager::TargetManager(CtrlComponent& ctrl_component,
+    TargetManager::TargetManager(CtrlInterfaces& ctrl_component,
                                  const std::shared_ptr<ReferenceManagerInterface>& referenceManagerPtr,
                                  const std::string& task_file,
                                  const std::string& reference_file)
@@ -26,16 +24,15 @@ namespace ocs2::legged_robot
         loadData::loadCppDataType(reference_file, "targetDisplacementVelocity", target_displacement_velocity_);
     }
 
-    void TargetManager::update()
+    void TargetManager::update(SystemObservation &observation)
     {
-        if (ctrl_component_.reset) return;
         vector_t cmdGoal = vector_t::Zero(6);
         cmdGoal[0] = ctrl_component_.control_inputs_.ly * target_displacement_velocity_;
         cmdGoal[1] = -ctrl_component_.control_inputs_.lx * target_displacement_velocity_;
         cmdGoal[2] = ctrl_component_.control_inputs_.ry;
         cmdGoal[3] = -ctrl_component_.control_inputs_.rx * target_rotation_velocity_;
 
-        const vector_t currentPose = ctrl_component_.observation_.state.segment<6>(6);
+        const vector_t currentPose = observation.state.segment<6>(6);
         const Eigen::Matrix<scalar_t, 3, 1> zyx = currentPose.tail(3);
         vector_t cmd_vel_rot = getRotationMatrixFromZyxEulerAngles(zyx) * cmdGoal.head(3);
 
@@ -51,9 +48,9 @@ namespace ocs2::legged_robot
             return target;
         }();
 
-        const scalar_t targetReachingTime = ctrl_component_.observation_.time + time_to_target_;
+        const scalar_t targetReachingTime = observation.time + time_to_target_;
         auto trajectories =
-            targetPoseToTargetTrajectories(targetPose, ctrl_component_.observation_, targetReachingTime);
+            targetPoseToTargetTrajectories(targetPose, observation, targetReachingTime);
         trajectories.stateTrajectory[0].head(3) = cmd_vel_rot;
         trajectories.stateTrajectory[1].head(3) = cmd_vel_rot;
 

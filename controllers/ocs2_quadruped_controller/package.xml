@@ -11,6 +11,7 @@
 
   <depend>backward_ros</depend>
   <depend>controller_interface</depend>
+  <depend>controller_common</depend>
   <depend>pluginlib</depend>
   <depend>control_input_msgs</depend>
   <depend>qpoases_colcon</depend>

@@ -9,6 +9,7 @@
 #include <utility>
 #include <controller_common/common/enumClass.h>
 #include <controller_common/CtrlInterfaces.h>
+#include <rclcpp/time.hpp>
 
 class FSMState {
 public:
@@ -22,7 +23,8 @@ public:
 
     virtual void enter() = 0;
 
-    virtual void run() = 0;
+    virtual void run(const rclcpp::Time &time,
+                     const rclcpp::Duration &period) = 0;
 
     virtual void exit() = 0;
 

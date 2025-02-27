@@ -31,7 +31,7 @@ void BaseFixedStand::enter() {
     ctrl_interfaces_.control_inputs_.command = 0;
 }
 
-void BaseFixedStand::run() {
+void BaseFixedStand::run(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/) {
     percent_ += 1 / duration_;
     phase = std::tanh(percent_);
     for (int i = 0; i < 12; i++) {

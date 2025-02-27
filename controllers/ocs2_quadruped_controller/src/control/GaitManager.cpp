@@ -10,9 +10,9 @@
 
 namespace ocs2::legged_robot
 {
-    GaitManager::GaitManager(CtrlComponent& ctrl_component,
+    GaitManager::GaitManager(CtrlInterfaces& ctrl_interfaces,
                              std::shared_ptr<GaitSchedule> gait_schedule_ptr)
-        : ctrl_component_(ctrl_component),
+        : ctrl_interfaces_(ctrl_interfaces),
           gait_schedule_ptr_(std::move(gait_schedule_ptr)),
           target_gait_({0.0, 1.0}, {STANCE})
     {
@@ -48,13 +48,12 @@ namespace ocs2::legged_robot
 
     void GaitManager::getTargetGait()
     {
-        if (ctrl_component_.control_inputs_.command == 0) return;
-        if (ctrl_component_.control_inputs_.command == last_command_) return;
-        last_command_ = ctrl_component_.control_inputs_.command;
-        target_gait_ = gait_list_[ctrl_component_.control_inputs_.command - 1];
+        if (ctrl_interfaces_.control_inputs_.command == 0) return;
+        if (ctrl_interfaces_.control_inputs_.command == last_command_) return;
+        last_command_ = ctrl_interfaces_.control_inputs_.command;
+        target_gait_ = gait_list_[ctrl_interfaces_.control_inputs_.command -2];
         RCLCPP_INFO(rclcpp::get_logger("GaitManager"), "Switch to gait: %s",
-                    gait_name_list_[ctrl_component_.control_inputs_.command - 1].c_str());
+                    gait_name_list_[ctrl_interfaces_.control_inputs_.command - 2].c_str());
         gait_updated_ = true;
-        ctrl_component_.reset = false;
     }
 }

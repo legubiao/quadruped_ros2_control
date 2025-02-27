@@ -5,7 +5,7 @@
 #include "ocs2_quadruped_controller/estimator/FromOdomTopic.h"
 
 namespace ocs2::legged_robot {
-    FromOdomTopic::FromOdomTopic(CentroidalModelInfo info, CtrlComponent &ctrl_component,
+    FromOdomTopic::FromOdomTopic(CentroidalModelInfo info, CtrlInterfaces &ctrl_component,
                                  const rclcpp_lifecycle::LifecycleNode::SharedPtr &node) : StateEstimateBase(
         std::move(info), ctrl_component,
         node) {

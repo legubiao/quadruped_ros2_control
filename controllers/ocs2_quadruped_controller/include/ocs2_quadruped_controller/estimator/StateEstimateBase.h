@@ -3,6 +3,7 @@
 //
 #pragma once
 
+#include <controller_common/CtrlInterfaces.h>
 #include <rclcpp/rclcpp.hpp>
 
 #include <geometry_msgs/msg/pose_with_covariance_stamped.hpp>
@@ -15,14 +16,12 @@
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 
-struct CtrlComponent;
-
 namespace ocs2::legged_robot {
     class StateEstimateBase {
     public:
         virtual ~StateEstimateBase() = default;
 
-        StateEstimateBase(CentroidalModelInfo info, CtrlComponent &ctrl_component,
+        StateEstimateBase(CentroidalModelInfo info, CtrlInterfaces &ctrl_component,
                           rclcpp_lifecycle::LifecycleNode::SharedPtr node);
 
         virtual void updateJointStates();
@@ -44,7 +43,7 @@ namespace ocs2::legged_robot {
 
         void publishMsgs(const nav_msgs::msg::Odometry &odom) const;
 
-        CtrlComponent &ctrl_component_;
+        CtrlInterfaces &ctrl_component_;
         CentroidalModelInfo info_;
 
         vector3_t zyx_offset_ = vector3_t::Zero();

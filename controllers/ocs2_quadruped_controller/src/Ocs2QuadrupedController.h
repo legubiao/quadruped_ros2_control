@@ -5,18 +5,22 @@
 #ifndef OCS2QUADRUPEDCONTROLLER_H
 #define OCS2QUADRUPEDCONTROLLER_H
 
+#include <controller_common/FSM/StatePassive.h>
 #include <controller_interface/controller_interface.hpp>
 #include <control_input_msgs/msg/inputs.hpp>
-#include <ocs2_centroidal_model/CentroidalModelRbdConversions.h>
 #include <ocs2_mpc/MPC_MRT_Interface.h>
 #include <ocs2_quadruped_controller/estimator/StateEstimateBase.h>
 #include <ocs2_quadruped_controller/interface/LeggedInterface.h>
 #include <ocs2_quadruped_controller/wbc/WbcBase.h>
-#include <ocs2_msgs/msg/mpc_observation.hpp>
-#include "SafetyChecker.h"
-#include "ocs2_quadruped_controller/control/CtrlComponent.h"
+#include <ocs2_quadruped_controller/FSM/StateOCS2.h>
 
 namespace ocs2::legged_robot {
+    struct FSMStateList {
+        std::shared_ptr<FSMState> invalid;
+        std::shared_ptr<StatePassive> passive;
+        std::shared_ptr<StateOCS2> fixedDown;
+    };
+
     class Ocs2QuadrupedController final : public controller_interface::ControllerInterface {
     public:
         Ocs2QuadrupedController() = default;
@@ -51,17 +55,17 @@ namespace ocs2::legged_robot {
             const rclcpp_lifecycle::State &previous_state) override;
 
     protected:
-        void setupLeggedInterface();
 
-        void setupMpc();
+        std::shared_ptr<FSMState> getNextState(FSMStateName stateName) const;
 
-        void setupMrt();
+        FSMMode mode_ = FSMMode::NORMAL;
+        std::string state_name_;
+        FSMStateName next_state_name_ = FSMStateName::INVALID;
+        FSMStateList state_list_;
+        std::shared_ptr<FSMState> current_state_;
+        std::shared_ptr<FSMState> next_state_;
 
-        void setupStateEstimate();
-
-        void updateStateEstimation(const rclcpp::Duration &period);
-
-        CtrlComponent ctrl_comp_;
+        CtrlInterfaces ctrl_interfaces_;
         std::vector<std::string> joint_names_;
         std::vector<std::string> feet_names_;
         std::vector<std::string> command_interface_types_;
@@ -70,18 +74,18 @@ namespace ocs2::legged_robot {
         std::unordered_map<
             std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> > *>
         command_interface_map_ = {
-            {"effort", &ctrl_comp_.joint_torque_command_interface_},
-            {"position", &ctrl_comp_.joint_position_command_interface_},
-            {"velocity", &ctrl_comp_.joint_velocity_command_interface_},
-            {"kp", &ctrl_comp_.joint_kp_command_interface_},
-            {"kd", &ctrl_comp_.joint_kd_command_interface_}
+            {"effort", &ctrl_interfaces_.joint_torque_command_interface_},
+            {"position", &ctrl_interfaces_.joint_position_command_interface_},
+            {"velocity", &ctrl_interfaces_.joint_velocity_command_interface_},
+            {"kp", &ctrl_interfaces_.joint_kp_command_interface_},
+            {"kd", &ctrl_interfaces_.joint_kd_command_interface_}
         };
         std::unordered_map<
             std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> > *>
         state_interface_map_ = {
-            {"position", &ctrl_comp_.joint_position_state_interface_},
-            {"effort", &ctrl_comp_.joint_effort_state_interface_},
-            {"velocity", &ctrl_comp_.joint_velocity_state_interface_}
+            {"position", &ctrl_interfaces_.joint_position_state_interface_},
+            {"effort", &ctrl_interfaces_.joint_effort_state_interface_},
+            {"velocity", &ctrl_interfaces_.joint_velocity_state_interface_}
         };
 
         std::string robot_pkg_;
@@ -104,35 +108,6 @@ namespace ocs2::legged_robot {
         double default_kd_ = 6;
 
         rclcpp::Subscription<control_input_msgs::msg::Inputs>::SharedPtr control_input_subscription_;
-        rclcpp::Publisher<ocs2_msgs::msg::MpcObservation>::SharedPtr observation_publisher_;
-
-        std::string task_file_;
-        std::string urdf_file_;
-        std::string reference_file_;
-        std::string gait_file_;
-
-        bool verbose_;
-        bool mpc_need_updated_;
-
-        std::shared_ptr<LeggedInterface> legged_interface_;
-        std::shared_ptr<PinocchioEndEffectorKinematics> eeKinematicsPtr_;
-
-        // Whole Body Control
-        std::shared_ptr<WbcBase> wbc_;
-        std::shared_ptr<SafetyChecker> safety_checker_;
-
-        // Nonlinear MPC
-        std::shared_ptr<MPC_BASE> mpc_;
-        std::shared_ptr<MPC_MRT_Interface> mpc_mrt_interface_;
-
-        std::shared_ptr<CentroidalModelRbdConversions> rbd_conversions_;
-
-    private:
-        vector_t measured_rbd_state_;
-        std::thread mpc_thread_;
-        std::atomic_bool controller_running_{}, mpc_running_{};
-        benchmark::RepeatedTimer mpc_timer_;
-        benchmark::RepeatedTimer wbc_timer_;
     };
 }
 

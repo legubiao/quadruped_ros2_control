@@ -29,7 +29,7 @@ void StatePassive::enter() {
     ctrl_interfaces_.control_inputs_.command = 0;
 }
 
-void StatePassive::run() {
+void StatePassive::run(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/) {
 }
 
 void StatePassive::exit() {

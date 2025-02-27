@@ -4,15 +4,14 @@
 
 #ifndef GAITMANAGER_H
 #define GAITMANAGER_H
+#include <controller_common/CtrlInterfaces.h>
 #include <ocs2_legged_robot/gait/GaitSchedule.h>
 #include <ocs2_oc/synchronized_module/SolverSynchronizedModule.h>
-
-#include "CtrlComponent.h"
 
 namespace ocs2::legged_robot {
     class GaitManager final : public SolverSynchronizedModule {
     public:
-        GaitManager(CtrlComponent &ctrl_component,
+        GaitManager(CtrlInterfaces &ctrl_interfaces,
                     std::shared_ptr<GaitSchedule> gait_schedule_ptr);
 
         void preSolverRun(scalar_t initTime, scalar_t finalTime,
@@ -27,7 +26,7 @@ namespace ocs2::legged_robot {
     private:
         void getTargetGait();
 
-        CtrlComponent &ctrl_component_;
+        CtrlInterfaces &ctrl_interfaces_;
         std::shared_ptr<GaitSchedule> gait_schedule_ptr_;
 
         ModeSequenceTemplate target_gait_;
