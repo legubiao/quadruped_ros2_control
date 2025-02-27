@@ -16,15 +16,23 @@ colcon build --packages-up-to gz_quadruped_playground --symlink-install
 ## Launch Simulation
 
 * Unitree Guide Controller
-    ```bash
-    source ~/ros2_ws/install/setup.bash
-    ros2 launch gz_quadruped_playground gazebo.launch.py controller:=unitree_guide
-    ```
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch gz_quadruped_playground gazebo.launch.py
+  ```
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch gz_quadruped_playground gazebo.launch.py world:=warehouse
+   ```
 * OCS2 Quadruped Controller
-    ```bash
-    source ~/ros2_ws/install/setup.bash
-    ros2 launch gz_quadruped_playground gazebo.launch.py controller:=ocs2
-    ```
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch gz_quadruped_playground gazebo.launch.py controller:=ocs2
+  ```
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch gz_quadruped_playground gazebo.launch.py controller:=ocs2 world:=warehouse
+   ```
 
 ## Related Materials
 

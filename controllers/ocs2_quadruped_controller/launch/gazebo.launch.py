@@ -89,20 +89,16 @@ def launch_setup(context, *args, **kwargs):
                                        'launch',
                                        'gz_sim.launch.py'])]),
             launch_arguments=[('gz_args', [' -r -v 4 ', default_sdf_path])]),
-        imu_sensor_broadcaster,
         RegisterEventHandler(
             event_handler=OnProcessExit(
-                target_action=imu_sensor_broadcaster,
-                on_exit=[joint_state_publisher],
+                target_action=gz_spawn_entity,
+                on_exit=[joint_state_publisher,imu_sensor_broadcaster],
             )
         ),
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=joint_state_publisher,
-                on_exit=[TimerAction(
-                    period=10.0,  # 延迟5秒启动
-                    actions=[ocs2_controller]
-                )],
+                on_exit=[ocs2_controller],
             )
         ),
     ]

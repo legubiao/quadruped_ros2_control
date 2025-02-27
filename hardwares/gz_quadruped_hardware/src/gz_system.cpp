@@ -572,12 +572,12 @@ namespace gz_quadruped_hardware
         return std::move(this->dataPtr->command_interfaces_);
     }
 
-    CallbackReturn GazeboSimSystem::on_activate(const rclcpp_lifecycle::State& previous_state)
+    CallbackReturn GazeboSimSystem::on_activate(const rclcpp_lifecycle::State& /*previous_state*/)
     {
         return CallbackReturn::SUCCESS;
     }
 
-    CallbackReturn GazeboSimSystem::on_deactivate(const rclcpp_lifecycle::State& previous_state)
+    CallbackReturn GazeboSimSystem::on_deactivate(const rclcpp_lifecycle::State& /*previous_state*/)
     {
         return CallbackReturn::SUCCESS;
     }

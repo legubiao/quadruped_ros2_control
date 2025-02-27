@@ -65,13 +65,6 @@ def launch_setup(context, *args, **kwargs):
                    "--controller-manager", "/controller_manager"],
     )
 
-    leg_pd_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["leg_pd_controller",
-                   "--controller-manager", "/controller_manager"],
-    )
-
     unitree_guide_controller = Node(
         package="controller_manager",
         executable="spawner",
@@ -94,11 +87,16 @@ def launch_setup(context, *args, **kwargs):
             launch_arguments=[('gz_args', [' -r -v 4 empty.sdf'])]),
         robot_state_publisher,
         gz_spawn_entity,
-        leg_pd_controller,
         RegisterEventHandler(
             event_handler=OnProcessExit(
-                target_action=leg_pd_controller,
-                on_exit=[imu_sensor_broadcaster, joint_state_publisher, unitree_guide_controller],
+                target_action=gz_spawn_entity,
+                on_exit=[imu_sensor_broadcaster, joint_state_publisher],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=joint_state_publisher,
+                on_exit=[ unitree_guide_controller],
             )
         ),
     ]

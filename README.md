@@ -9,15 +9,6 @@ This repository contains the ros2-control based controllers for the quadruped ro
 
 Todo List:
 
-- [x] [Mujoco Simulation](hardwares/hardware_unitree_mujoco)
-- [x] [Unitree Guide Controller](controllers/unitree_guide_controller)
-- [x] [Gazebo Simulation](descriptions/quadruped_gazebo)
-- [x] [Leg PD Controller](controllers/leg_pd_controller)
-- [x] [Contact Sensor Simulation](https://github.com/legubiao/unitree_mujoco)
-- [x] [OCS2 Quadruped Control](controllers/ocs2_quadruped_controller)
-- [x] [Learning-based Controller](controllers/rl_quadruped_controller/)
-- [x] Fully understand the RL Workflow
-- [x] ROS2 Humble Gazebo Classic Support
 - [x] **[2025-02-23]** Add Gazebo Playground
 - [ ] OCS2 controller for Gazebo Simulation
 - [ ] Refactor FSM and Unitree Guide Controller
@@ -45,20 +36,26 @@ Video for RL Quadruped Controller:
 
 ### 1.1 Mujoco Simulator
 
-Please use **C++ Simulation** in this [Mujoco Simulation](https://github.com/legubiao/unitree_mujoco) for more robot models and contact sensor. 
-* **Python Simulation** is also supported, but you still need to install [unitree_sdk2](https://github.com/unitreerobotics/unitree_sdk2)
+Please use **C++ Simulation** in this [Mujoco Simulation](https://github.com/legubiao/unitree_mujoco) for more robot
+models and contact sensor.
+
+* **Python Simulation** is also supported, but you still need to
+  install [unitree_sdk2](https://github.com/unitreerobotics/unitree_sdk2)
 
 > **Warning:** CycloneDDS ROS2 RMW may conflict with unitree_sdk2. If you cannot launch unitree mujoco simulation
-> without `sudo`, then you cannot used `unitree_mujoco_hardware`. This conflict could be solved by one of below two methods:
+> without `sudo`, then you cannot used `unitree_mujoco_hardware`. This conflict could be solved by one of below two
+> methods:
 > 1. Uninstall CycloneDDS ROS2 RMW, or
-> 2. Follow the guide in [unitree_ros2](https://github.com/unitreerobotics/unitree_ros2) to configure the ROS2 RMW by compiling cyclone dds. 
+> 2. Follow the guide in [unitree_ros2](https://github.com/unitreerobotics/unitree_ros2) to configure the ROS2 RMW by
+     compiling cyclone dds.
 
 * Compile Unitree Hardware Interfaces
     ```bash
     cd ~/ros2_ws
     colcon build --packages-up-to hardware_unitree_mujoco
     ```
-* Follow the guide in [unitree_mujoco](https://github.com/legubiao/unitree_mujoco) to launch the unitree mujoco go2 simulation
+* Follow the guide in [unitree_mujoco](https://github.com/legubiao/unitree_mujoco) to launch the unitree mujoco go2
+  simulation
 * Launch the ros2-control
     ```bash
     source ~/ros2_ws/install/setup.bash
@@ -73,6 +70,7 @@ Please use **C++ Simulation** in this [Mujoco Simulation](https://github.com/leg
 ![mujoco](.images/mujoco.png)
 
 ### 1.2 Gazebo Classic Simulator (ROS2 Humble)
+
 * Install Gazebo Classic
   ```bash
   sudo apt-get install ros-humble-gazebo-ros ros-humble-gazebo-ros2-control
@@ -94,7 +92,6 @@ Please use **C++ Simulation** in this [Mujoco Simulation](https://github.com/leg
 
 ![gazebo classic](.images/gazebo_classic.png)
 
-
 ### 1.3 Gazebo Harmonic Simulator (ROS2 Jazzy)
 
 * Install Gazebo
@@ -102,24 +99,34 @@ Please use **C++ Simulation** in this [Mujoco Simulation](https://github.com/leg
   sudo apt-get install ros-jazzy-ros-gz ros-jazzy-gz-ros2-control
   ```
 
-* Compile Leg PD Controller
-    ```bash
-    colcon build --packages-up-to leg_pd_controller
-    ```
+* Compile Gazebo Playground
+  ```bash
+  colcon build --packages-up-to gz_quadruped_playground --symlink-install
+  ```
 * Launch the ros2-control
-    ```bash
-    source ~/ros2_ws/install/setup.bash
-    ros2 launch unitree_guide_controller gazebo.launch.py
-    ```
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch unitree_guide_controller gazebo.launch.py
+  ```
 * Run the keyboard control node
     ```bash
     source ~/ros2_ws/install/setup.bash
     ros2 run keyboard_input keyboard_input
     ```
+
 ![gazebo](.images/gazebo.png)
 
 For more details, please refer to the [unitree guide controller](controllers/unitree_guide_controller/)
 and [go2 description](descriptions/unitree/go2_description/).
+
+## What's Next
+Congratulations! You have successfully launched the quadruped robot in the simulation. Here are some suggestions for you to have a try:
+* **More Robot Models** could be found at [description](descriptions/)
+* **Try more controllers**. 
+  * [OCS2 Quadruped Controller](controllers/ocs2_quadruped_controller): Robust MPC-based controller for quadruped robot
+  * [RL Quadruped Controller](controllers/rl_quadruped_controller): Reinforcement learning controller for quadruped robot
+* **Simulate with more sensors**
+  * [Gazebo Quadruped Playground](libraries/gz_quadruped_playground): Provide gazebo simulation with lidar or depth camera.
 
 ## Reference
 
@@ -140,4 +147,5 @@ Available: [https://github.com/unitreerobotics/unitree_guide](https://github.com
 robots*. [Online]. Available: [https://github.com/qiayuanl/legged_control](https://github.com/qiayuanl/legged_control)
 
 [3] Ziqi Fan. *rl\_sar: Simulation Verification and Physical Deployment of Robot Reinforcement Learning Algorithm.*
+
 2024. Available: [https://github.com/fan-ziqi/rl_sar](https://github.com/fan-ziqi/rl_sar) 

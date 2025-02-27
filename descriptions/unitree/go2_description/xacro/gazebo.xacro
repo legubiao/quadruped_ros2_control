@@ -290,5 +290,35 @@
                 <topic>camera/image</topic>
             </sensor>
         </gazebo>
+        <gazebo reference="lidar">
+            <sensor name='L1_lidar' type='gpu_lidar'>
+                <topic>scan</topic>
+                <update_rate>10</update_rate>
+                <gz_frame_id>lidar</gz_frame_id>
+                <lidar>
+                    <scan>
+                        <horizontal>
+                            <samples>640</samples>
+                            <resolution>1</resolution>
+                            <min_angle>1.396263</min_angle>
+                            <max_angle>4.8869</max_angle>
+                        </horizontal>
+                        <vertical>
+                            <samples>16</samples>
+                            <resolution>1</resolution>
+                            <min_angle>-0.261799</min_angle>
+                            <max_angle>0.261799</max_angle>
+                        </vertical>
+                    </scan>
+                    <range>
+                        <min>0.05</min>
+                        <max>10.0</max>
+                        <resolution>0.01</resolution>
+                    </range>
+                </lidar>
+                <alwaysOn>1</alwaysOn>
+                <visualize>true</visualize>
+            </sensor>
+        </gazebo>
     </xacro:if>
 </robot>
