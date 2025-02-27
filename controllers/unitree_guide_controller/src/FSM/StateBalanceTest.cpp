@@ -42,7 +42,7 @@ void StateBalanceTest::enter() {
     wave_generator_->status_ = WaveStatus::STANCE_ALL;
 }
 
-void StateBalanceTest::run() {
+void StateBalanceTest::run(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/) {
     pcd_(0) = pcd_init_(0) + invNormalize(ctrl_interfaces_.control_inputs_.ly, _xMin, _xMax);
     pcd_(1) = pcd_init_(1) - invNormalize(ctrl_interfaces_.control_inputs_.lx, _yMin, _yMax);
     pcd_(2) = pcd_init_(2) + invNormalize(ctrl_interfaces_.control_inputs_.ry, _zMin, _zMax);

@@ -42,7 +42,7 @@ void StateFreeStand::enter() {
     ctrl_interfaces_.control_inputs_.command = 0;
 }
 
-void StateFreeStand::run() {
+void StateFreeStand::run(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/) {
     calc_body_target(invNormalize(ctrl_interfaces_.control_inputs_.lx, row_min_, row_max_),
                      invNormalize(ctrl_interfaces_.control_inputs_.ly, pitch_min_, pitch_max_),
                      invNormalize(ctrl_interfaces_.control_inputs_.rx, yaw_min_, yaw_max_),

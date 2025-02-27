@@ -10,13 +10,13 @@
 #include <unitree_guide_controller/gait/WaveGenerator.h>
 
 StateTrotting::StateTrotting(CtrlInterfaces &ctrl_interfaces,
-                            CtrlComponent &ctrl_component) : FSMState(FSMStateName::TROTTING, "trotting",
-                                                                               ctrl_interfaces),
-                                                                           estimator_(ctrl_component.estimator_),
-                                                                           robot_model_(ctrl_component.robot_model_),
-                                                                           balance_ctrl_(ctrl_component.balance_ctrl_),
-                                                                           wave_generator_(ctrl_component.wave_generator_),
-                                                                           gait_generator_(ctrl_component) {
+                             CtrlComponent &ctrl_component) : FSMState(FSMStateName::TROTTING, "trotting",
+                                                                       ctrl_interfaces),
+                                                              estimator_(ctrl_component.estimator_),
+                                                              robot_model_(ctrl_component.robot_model_),
+                                                              balance_ctrl_(ctrl_component.balance_ctrl_),
+                                                              wave_generator_(ctrl_component.wave_generator_),
+                                                              gait_generator_(ctrl_component) {
     gait_height_ = 0.08;
     Kpp = Vec3(70, 70, 70).asDiagonal();
     Kdp = Vec3(10, 10, 10).asDiagonal();
@@ -43,7 +43,7 @@ void StateTrotting::enter() {
     gait_generator_.restart();
 }
 
-void StateTrotting::run() {
+void StateTrotting::run(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/) {
     pos_body_ = estimator_->getPosition();
     vel_body_ = estimator_->getVelocity();
 

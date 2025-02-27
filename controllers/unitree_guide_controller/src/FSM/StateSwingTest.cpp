@@ -44,7 +44,7 @@ void StateSwingTest::enter() {
     fr_goal_pos_ = fr_init_pos_;
 }
 
-void StateSwingTest::run() {
+void StateSwingTest::run(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/) {
     if (ctrl_interfaces_.control_inputs_.ly > 0) {
         fr_goal_pos_.p.x(invNormalize(ctrl_interfaces_.control_inputs_.ly, fr_init_pos_.p.x(),
                                       fr_init_pos_.p.x() + _xMax, 0, 1));
