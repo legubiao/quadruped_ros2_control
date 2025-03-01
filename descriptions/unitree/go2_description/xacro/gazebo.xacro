@@ -261,6 +261,12 @@
 
   <xacro:arg name="EXTERNAL_SENSORS" default="false"/>
   <xacro:if value="$(arg EXTERNAL_SENSORS)">
+    <xacro:include filename="$(find gz_quadruped_playground)/models/D435/model.xacro"/>
+
+    <xacro:d435 camID="1" name="d435">
+      <origin rpy="0 0.1 0" xyz="0.28 0 0.093"/>
+    </xacro:d435>
+
     <gazebo reference="front_camera">
       <sensor name="front_camera" type="camera">
         <camera>
@@ -316,7 +322,7 @@
             <resolution>0.01</resolution>
           </range>
         </lidar>
-        <alwaysOn>1</alwaysOn>
+        <always_on>true</always_on>
         <visualize>true</visualize>
       </sensor>
     </gazebo>

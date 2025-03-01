@@ -122,7 +122,7 @@
     </collision>
   </link>
 
-  <joint name="front_camera_joint" type="fixed">
+  <joint name="camera_joint_front" type="fixed">
     <parent link="trunk"/>
     <child link="front_camera"/>
     <origin rpy="0 0 0" xyz="0.32715 0 0.04297"/>

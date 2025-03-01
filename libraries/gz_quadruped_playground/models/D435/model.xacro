@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="d435" params="camID name *origin">
+    <joint name="camera_joint_${name}" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="trunk"/>
+      <child link="camera_${name}"/>
+    </joint>
+
+    <link name="camera_${name}">
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size=".001 .001 .001"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.0615752"/>
+        <inertia ixx="9.108e-05" ixy="0" ixz="0" iyy="2.51e-06" iyz="0" izz="8.931e-05"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </inertial>
+
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 1.57"/>
+        <geometry>
+          <mesh filename="file://$(find gz_quadruped_playground)/models/D435/meshes/realsense.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+      <material>
+        <diffuse>1.0 1.0 1.0</diffuse>
+        <specular>1.0 1.0 1.0</specular>
+      </material>
+    </link>
+
+    <gazebo reference="camera_${name}">
+      <sensor name="realsense_d435" type="rgbd_camera">
+        <camera name="d435">
+          <horizontal_fov>1.0472</horizontal_fov>
+          <lens>
+            <intrinsics>
+              <fx>554.25469</fx>
+              <fy>554.25469</fy>
+              <cx>320.5</cx>
+              <cy>240.5</cy>
+              <s>0</s>
+            </intrinsics>
+          </lens>
+          <distortion>
+            <k1>0.0</k1>
+            <k2>0.0</k2>
+            <k3>0.0</k3>
+            <p1>0.0</p1>
+            <p2>0.0</p2>
+            <center>0.5 0.5</center>
+          </distortion>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.01</near>
+            <far>300</far>
+          </clip>
+          <depth_camera>
+            <clip>
+              <near>0.1</near>
+              <far>10</far>
+            </clip>
+          </depth_camera>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+          <optical_frame_id>camera_${name}</optical_frame_id>
+        </camera>
+        <always_on>true</always_on>
+        <update_rate>15</update_rate>
+        <visualize>true</visualize>
+        <topic>rgbd_${name}</topic>
+        <plugin
+            filename="RosGzPointCloud"
+            name="ros_gz_point_cloud::PointCloud">
+        </plugin>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+</robot>

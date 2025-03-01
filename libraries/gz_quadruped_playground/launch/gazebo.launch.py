@@ -122,6 +122,7 @@ def generate_launch_description():
             "/camera/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo",
             "/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan",
             "/scan/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked",
+            "/rgbd_d435/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked"
             # "/odom@nav_msgs/msg/Odometry@gz.msgs.Odometry",
             # "/odom_with_covariance@nav_msgs/msg/Odometry@gz.msgs.OdometryWithCovariance",
             # "/tf@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V"
@@ -137,6 +138,8 @@ def generate_launch_description():
         executable="image_bridge",
         arguments=[
             "/camera/image",
+            '/rgbd_d435/depth_image',
+            '/rgbd_d435/image',
         ],
         output="screen",
         parameters=[

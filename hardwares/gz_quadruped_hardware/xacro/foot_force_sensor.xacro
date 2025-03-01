@@ -4,7 +4,7 @@
   <xacro:macro name="foot_force_sensor" params="name">
     <gazebo reference="${name}_foot_fixed">
       <!-- Enable feedback for this joint -->
-      <provideFeedback>true</provideFeedback>
+      <provide_feedback>true</provide_feedback>
       <!-- Prevent ros2_control from lumping this fixed joint with others -->
       <disableFixedJointLumping>true</disableFixedJointLumping>
       <sensor name="${name}_foot_force" type="force_torque">

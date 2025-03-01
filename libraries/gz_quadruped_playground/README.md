@@ -37,3 +37,4 @@ colcon build --packages-up-to gz_quadruped_playground --symlink-install
 ## Related Materials
 
 * [Gazebo OdometryPublisher Plugin](https://gazebosim.org/api/sim/8/classgz_1_1sim_1_1systems_1_1OdometryPublisher.html#details)
+* [Gazebo Intel Realsense D435 RGBD camera](https://app.gazebosim.org/OpenRobotics/fuel/models/Intel%20RealSense%20D435)

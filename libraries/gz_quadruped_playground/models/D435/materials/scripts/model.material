@@ -1,0 +1,14 @@
+
+material UrbanTile/RealSense_Diffuse
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture RealSense_Albedo.png
+        }
+      }
+    }
+  }
