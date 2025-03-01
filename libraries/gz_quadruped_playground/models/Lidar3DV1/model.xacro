@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="Lidar3D" params="vertical name *origin">
+    <joint name="lidar_joint_${name}" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="base"/>
+      <child link="lidar_${name}"/>
+    </joint>
+    <link name="lidar_${name}">
+      <collision>
+        <origin xyz="0 0 0.03585" rpy="0 0 0"/>
+        <geometry>
+          <box size=".001 .001 .001"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.83"/>
+        <inertia ixx="9.108e-05" ixy="0" ixz="0" iyy="2.51e-06" iyz="0" izz="8.931e-05"/>
+        <origin xyz="0 0 0.03585" rpy="0 0 0"/>
+      </inertial>
+      <visual>
+        <geometry>
+          <mesh filename="file://$(find gz_quadruped_playground)/models/Lidar3DV1/meshes/lidar_3d_v1.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+    </link>
+
+    <gazebo reference="lidar_${name}">
+      <sensor name='${name}' type='gpu_lidar'>
+        <topic>scan</topic>
+        <update_rate>10</update_rate>
+        <gz_frame_id>lidar_${name}</gz_frame_id>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>640</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>6.28</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>${vertical}</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.261799</min_angle>
+              <max_angle>0.261799</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.5</min>
+            <max>10.0</max>
+            <resolution>0.01</resolution>
+          </range>
+        </lidar>
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+</robot>

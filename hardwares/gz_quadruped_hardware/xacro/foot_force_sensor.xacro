@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="foot_force_sensor" params="name">
-    <gazebo reference="${name}_foot_fixed">
+  <xacro:macro name="foot_force_sensor" params="name suffix">
+    <gazebo reference="${name}_${suffix}">
       <!-- Enable feedback for this joint -->
       <provide_feedback>true</provide_feedback>
       <!-- Prevent ros2_control from lumping this fixed joint with others -->

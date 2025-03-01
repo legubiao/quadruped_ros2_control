@@ -60,3 +60,15 @@ ros2 launch lite3_description visualize.launch.py
   source ~/ros2_ws/install/setup.bash
   ros2 launch unitree_guide_controller gazebo.launch.py pkg_description:=lite3_description height:=0.43
   ```
+* OCS2 Quadruped Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch ocs2_quadruped_controller gazebo.launch.py pkg_description:=lite3_description height:=0.43
+  ```
+  
+### Gazebo Playground (ROS2 Jazzy)
+* OCS2 Quadruped Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch gz_quadruped_playground gazebo.launch.py pkg_description:=lite3_description controller:=ocs2 world:=warehouse
+   ```

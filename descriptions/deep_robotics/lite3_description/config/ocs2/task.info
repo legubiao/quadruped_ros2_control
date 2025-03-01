@@ -154,24 +154,24 @@ initialState
    ;; Base Pose: [position, orientation] ;;
    (6,0)  0.0     ; p_base_x
    (7,0)  0.0     ; p_base_y
-   (8,0)  0.39     ; p_base_z
+   (8,0)  0.3     ; p_base_z
    (9,0)  0.0     ; theta_base_z
    (10,0) 0.0     ; theta_base_y
    (11,0) 0.0     ; theta_base_x
 
    ;; Leg Joint Positions: [FL, HL, FR, HR] ;;
    (12,0)   0.1    ; FL_HipX
-   (13,0)   -0.732 ; FL_HipY
-   (14,0)   1.361  ; FL_Knee
+   (13,0)   -0.985 ; FL_HipY
+   (14,0)   2.084  ; FL_Knee
    (15,0)   0.1    ; HL_HipX
-   (16,0)   -0.732 ; HL_HipY
-   (17,0)   1.361  ; HL_Knee
+   (16,0)   -0.985 ; HL_HipY
+   (17,0)   2.084  ; HL_Knee
    (18,0)   -0.1   ; FR_HipX
-   (19,0)   -0.732 ; FR_HipY
-   (20,0)   1.361  ; FR_Knee
+   (19,0)   -0.985 ; FR_HipY
+   (20,0)   2.084  ; FR_Knee
    (21,0)   -0.1   ; HR_HipX
-   (22,0)   -0.732 ; HR_HipY
-   (23,0)   1.361  ; HR_Knee
+   (22,0)   -0.985 ; HR_HipY
+   (23,0)   2.084  ; HR_Knee
 }
 
 ; standard state weight matrix
@@ -180,12 +180,12 @@ Q
   scaling 1e+0
 
   ;; Normalized Centroidal Momentum: [linear, angular] ;;
-  (0,0)   15.0     ; vcom_x
-  (1,1)   15.0     ; vcom_y
-  (2,2)   100.0    ; vcom_z
-  (3,3)   10.0     ; L_x / robotMass
-  (4,4)   30.0     ; L_y / robotMass
-  (5,5)   30.0     ; L_z / robotMass
+  (0,0)   10.0     ; vcom_x
+  (1,1)   10.0     ; vcom_y
+  (2,2)   80.0    ; vcom_z
+  (3,3)   8.0     ; L_x / robotMass
+  (4,4)   20.0     ; L_y / robotMass
+  (5,5)   20.0     ; L_z / robotMass
 
   ;; Base Pose: [position, orientation] ;;
   (6,6)   1000.0   ; p_base_x
@@ -295,8 +295,8 @@ frictionConeTask
 
 swingLegTask
 {
-    kp                   350
-    kd                   37
+    kp                   300
+    kd                   20
 }
 
 weight

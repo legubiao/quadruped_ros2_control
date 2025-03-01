@@ -51,15 +51,6 @@ def launch_setup(context, *args, **kwargs):
         ],
     )
 
-    rviz_config_file = os.path.join(get_package_share_directory('gz_quadruped_playground'), "config", "rviz.rviz")
-    rviz = Node(
-        package='rviz2',
-        executable='rviz2',
-        name='rviz',
-        output='screen',
-        arguments=["-d", rviz_config_file]
-    )
-
     # Controllers
     controller = context.launch_configurations['controller']
     if controller == 'ocs2':
@@ -68,12 +59,22 @@ def launch_setup(context, *args, **kwargs):
                                                                  'launch',
                                                                  'ocs2.launch.py'])])
         )
+        rviz_config_file = os.path.join(get_package_share_directory('gz_quadruped_playground'), "config", "ocs2.rviz")
     else:
         controller_launch = IncludeLaunchDescription(
             PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare('gz_quadruped_playground'),
                                                                  'launch',
                                                                  'unitree_guide.launch.py'])])
         )
+        rviz_config_file = os.path.join(get_package_share_directory('gz_quadruped_playground'), "config", "rviz.rviz")
+
+    rviz = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz',
+        output='screen',
+        arguments=["-d", rviz_config_file]
+    )
 
     return [
         rviz,
