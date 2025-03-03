@@ -112,6 +112,7 @@ namespace rl_quadruped_controller {
             RCLCPP_INFO(get_node()->get_logger(), "Controller Update Rate: %d Hz", ctrl_interfaces_.frequency_);
 
             if (foot_force_interface_types_.size() == 4) {
+                RCLCPP_INFO(get_node()->get_logger(), "Enable Estimator");
                 ctrl_component_.enable_estimator_ = true;
                 ctrl_component_.estimator_ = std::make_shared<Estimator>(ctrl_interfaces_, ctrl_component_);
             }

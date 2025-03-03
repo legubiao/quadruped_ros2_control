@@ -12,17 +12,17 @@ QuadrupedRobot::QuadrupedRobot(CtrlInterfaces &ctrl_interfaces, const std::strin
     KDL::Tree robot_tree;
     kdl_parser::treeFromString(robot_description, robot_tree);
 
-    robot_tree.getChain(base_name, feet_names[0], fr_chain_);
-    robot_tree.getChain(base_name, feet_names[1], fl_chain_);
-    robot_tree.getChain(base_name, feet_names[2], rr_chain_);
-    robot_tree.getChain(base_name, feet_names[3], rl_chain_);
+    robot_tree.getChain(base_name, feet_names[0], fl_chain_);
+    robot_tree.getChain(base_name, feet_names[1], fr_chain_);
+    robot_tree.getChain(base_name, feet_names[2], rl_chain_);
+    robot_tree.getChain(base_name, feet_names[3], rr_chain_);
 
 
     robot_legs_.resize(4);
-    robot_legs_[0] = std::make_shared<RobotLeg>(fr_chain_);
-    robot_legs_[1] = std::make_shared<RobotLeg>(fl_chain_);
-    robot_legs_[2] = std::make_shared<RobotLeg>(rr_chain_);
-    robot_legs_[3] = std::make_shared<RobotLeg>(rl_chain_);
+    robot_legs_[0] = std::make_shared<RobotLeg>(fl_chain_);
+    robot_legs_[1] = std::make_shared<RobotLeg>(fr_chain_);
+    robot_legs_[2] = std::make_shared<RobotLeg>(rl_chain_);
+    robot_legs_[3] = std::make_shared<RobotLeg>(rr_chain_);
 
     current_joint_pos_.resize(4);
     current_joint_vel_.resize(4);
