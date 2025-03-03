@@ -4,14 +4,15 @@
 
 #include "rl_quadruped_controller/control/Estimator.h"
 
-#include <rl_quadruped_controller/common/mathTools.h>
+#include <controller_common/CtrlInterfaces.h>
+#include <controller_common/common/mathTools.h>
 
 #include "rl_quadruped_controller/control/CtrlComponent.h"
 
-Estimator::Estimator(CtrlComponent &ctrl_component) : ctrl_component_(ctrl_component),
-                                                      robot_model_(ctrl_component.robot_model_) {
+Estimator::Estimator(CtrlInterfaces &ctrl_interfaces, CtrlComponent &ctrl_component) : ctrl_interfaces_(ctrl_interfaces),
+                                                      robot_model_(ctrl_component.robot_model_){
     g_ << 0, 0, -9.81;
-    dt_ = 1.0 / ctrl_component_.frequency_;
+    dt_ = 1.0 / ctrl_interfaces_.frequency_;
 
     std::cout << "dt: " << dt_ << std::endl;
     large_variance_ = 100;
@@ -158,7 +159,7 @@ void Estimator::update() {
 
     // Adjust the covariance based on foot contact and phase.
     for (int i(0); i < 4; ++i) {
-        if (ctrl_component_.foot_force_state_interface_[i].get().get_value() < 1) {
+        if (ctrl_interfaces_.foot_force_state_interface_[i].get().get_value() < 1) {
             // foot not contact
             Q.block(6 + 3 * i, 6 + 3 * i, 3, 3) = large_variance_ * Eigen::MatrixXd::Identity(3, 3);
             R.block(12 + 3 * i, 12 + 3 * i, 3, 3) = large_variance_ * Eigen::MatrixXd::Identity(3, 3);
@@ -180,19 +181,19 @@ void Estimator::update() {
     }
 
     Quat quat;
-    quat << ctrl_component_.imu_state_interface_[0].get().get_value(),
-            ctrl_component_.imu_state_interface_[1].get().get_value(),
-            ctrl_component_.imu_state_interface_[2].get().get_value(),
-            ctrl_component_.imu_state_interface_[3].get().get_value();
+    quat << ctrl_interfaces_.imu_state_interface_[0].get().get_value(),
+           ctrl_interfaces_.imu_state_interface_[1].get().get_value(),
+           ctrl_interfaces_.imu_state_interface_[2].get().get_value(),
+           ctrl_interfaces_.imu_state_interface_[3].get().get_value();
     rotation_ = quatToRotMat(quat);
 
-    gyro_ << ctrl_component_.imu_state_interface_[4].get().get_value(),
-            ctrl_component_.imu_state_interface_[5].get().get_value(),
-            ctrl_component_.imu_state_interface_[6].get().get_value();
+    gyro_ <<ctrl_interfaces_.imu_state_interface_[4].get().get_value(),
+           ctrl_interfaces_.imu_state_interface_[5].get().get_value(),
+           ctrl_interfaces_.imu_state_interface_[6].get().get_value();
 
-    acceleration_ << ctrl_component_.imu_state_interface_[7].get().get_value(),
-            ctrl_component_.imu_state_interface_[8].get().get_value(),
-            ctrl_component_.imu_state_interface_[9].get().get_value();
+    acceleration_ <<ctrl_interfaces_.imu_state_interface_[7].get().get_value(),
+           ctrl_interfaces_.imu_state_interface_[8].get().get_value(),
+           ctrl_interfaces_.imu_state_interface_[9].get().get_value();
 
     u_ = rotation_ * acceleration_ + g_;
     x_hat_ = A * x_hat_ + B * u_;

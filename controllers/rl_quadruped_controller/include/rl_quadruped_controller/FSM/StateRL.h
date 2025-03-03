@@ -6,12 +6,16 @@
 #define STATERL_H
 
 #include <common/ObservationBuffer.h>
+#include <rl_quadruped_controller/control/CtrlComponent.h>
 #include <torch/script.h>
 
-#include "FSMState.h"
+#include "controller_common/FSM/FSMState.h"
+
+struct CtrlComponent;
 
 template <typename Functor>
-void executeAndSleep(Functor f, const double frequency) {
+void executeAndSleep(Functor f, const double frequency)
+{
     using clock = std::chrono::high_resolution_clock;
     const auto start = clock::now();
 
@@ -27,9 +31,28 @@ void executeAndSleep(Functor f, const double frequency) {
     std::this_thread::sleep_until(sleepTill);
 }
 
-template<typename T>
-struct RobotCommand {
-    struct MotorCommand {
+inline void setThreadPriority(int priority, std::thread& thread)
+{
+    sched_param sched{};
+    sched.sched_priority = priority;
+
+    if (priority != 0)
+    {
+        if (pthread_setschedparam(thread.native_handle(), SCHED_FIFO, &sched) != 0)
+        {
+            std::cerr << "WARNING: Failed to set threads priority (one possible reason could be "
+                "that the user and the group permissions are not set properly.)"
+                << std::endl;
+        }
+    }
+}
+
+
+template <typename T>
+struct RobotCommand
+{
+    struct MotorCommand
+    {
         std::vector<T> q = std::vector<T>(32, 0.0);
         std::vector<T> dq = std::vector<T>(32, 0.0);
         std::vector<T> tau = std::vector<T>(32, 0.0);
@@ -38,15 +61,18 @@ struct RobotCommand {
     } motor_command;
 };
 
-template<typename T>
-struct RobotState {
-    struct IMU {
+template <typename T>
+struct RobotState
+{
+    struct IMU
+    {
         std::vector<T> quaternion = {1.0, 0.0, 0.0, 0.0}; // w, x, y, z
         std::vector<T> gyroscope = {0.0, 0.0, 0.0};
         std::vector<T> accelerometer = {0.0, 0.0, 0.0};
     } imu;
 
-    struct MotorState {
+    struct MotorState
+    {
         std::vector<T> q = std::vector<T>(32, 0.0);
         std::vector<T> dq = std::vector<T>(32, 0.0);
         std::vector<T> ddq = std::vector<T>(32, 0.0);
@@ -62,7 +88,8 @@ struct Control
     double yaw = 0.0;
 };
 
-struct ModelParams {
+struct ModelParams
+{
     std::string model_name;
     std::string framework;
     int decimation;
@@ -101,13 +128,17 @@ struct Observations
     torch::Tensor actions;
 };
 
-class StateRL final : public FSMState {
+class StateRL final : public FSMState
+{
 public:
-    explicit StateRL(CtrlComponent &ctrl_component, const std::string &config_path, const std::vector<double> &target_pos);
+    explicit StateRL(CtrlInterfaces& ctrl_interfaces,
+                     CtrlComponent& ctrl_component, const std::string& config_path,
+                     const std::vector<double>& target_pos);
 
     void enter() override;
 
-    void run() override;
+    void run(const rclcpp::Time& time,
+             const rclcpp::Duration& period) override;
 
     void exit() override;
 
@@ -116,9 +147,10 @@ public:
 private:
     torch::Tensor computeObservation();
 
-    void loadYaml(const std::string &config_path);
+    void loadYaml(const std::string& config_path);
 
-    static torch::Tensor quatRotateInverse(const torch::Tensor &q, const torch::Tensor& v, const std::string& framework);
+    static torch::Tensor quatRotateInverse(const torch::Tensor& q, const torch::Tensor& v,
+                                           const std::string& framework);
 
     /**
     * @brief Forward the RL model to get the action
@@ -130,6 +162,9 @@ private:
     void runModel();
 
     void setCommand() const;
+
+    bool enable_estimator_;
+    std::shared_ptr<Estimator>& estimator_;
 
     // Parameters
     ModelParams params_;

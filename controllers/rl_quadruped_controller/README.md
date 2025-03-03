@@ -32,7 +32,7 @@ echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/CLionProjects/libtorch/lib' >> ~
 
 ```bash
 cd ~/ros2_ws
-colcon build --packages-up-to rl_quadruped_controller
+colcon build --packages-up-to rl_quadruped_controller --symlink-install
 ```
 
 ## 3. Launch

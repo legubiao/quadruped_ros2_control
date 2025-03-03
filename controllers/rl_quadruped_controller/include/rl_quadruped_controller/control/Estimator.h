@@ -6,7 +6,7 @@
 #define ESTIMATOR_H
 #include <memory>
 #include <kdl/frames.hpp>
-#include <rl_quadruped_controller/common/mathTypes.h>
+#include <controller_common/common/mathTypes.h>
 #include <rl_quadruped_controller/robot/QuadrupedRobot.h>
 
 #include "LowPassFilter.h"
@@ -16,7 +16,7 @@ struct CtrlComponent;
 
 class Estimator {
 public:
-    explicit Estimator(CtrlComponent &ctrl_component);
+    explicit Estimator(CtrlInterfaces &ctrl_interfaces, CtrlComponent &ctrl_component);
 
     ~Estimator() = default;
 
@@ -104,7 +104,7 @@ public:
     void update();
 
 private:
-    CtrlComponent &ctrl_component_;
+    CtrlInterfaces &ctrl_interfaces_;
     std::shared_ptr<QuadrupedRobot> &robot_model_;
 
     Eigen::Matrix<double, 18, 1> x_hat_; // The state of estimator, position(3)+velocity(3)+feet position(3x4)

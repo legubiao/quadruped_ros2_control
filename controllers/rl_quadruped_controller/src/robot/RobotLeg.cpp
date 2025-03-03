@@ -5,8 +5,6 @@
 #include <memory>
 #include "rl_quadruped_controller/robot/RobotLeg.h"
 
-#include <rl_quadruped_controller/common/mathTypes.h>
-
 RobotLeg::RobotLeg(const KDL::Chain &chain) {
     chain_ = chain;
 

@@ -9,9 +9,9 @@
 #include <std_msgs/msg/string.hpp>
 
 #include "rl_quadruped_controller/control/CtrlComponent.h"
-#include "rl_quadruped_controller/FSM/StateFixedDown.h"
+#include "controller_common/FSM/StateFixedDown.h"
 #include "rl_quadruped_controller/FSM/StateFixedStand.h"
-#include "rl_quadruped_controller/FSM/StatePassive.h"
+#include "controller_common//FSM/StatePassive.h"
 
 namespace rl_quadruped_controller {
     struct FSMStateList {
@@ -56,7 +56,8 @@ namespace rl_quadruped_controller {
     private:
         std::shared_ptr<FSMState> getNextState(FSMStateName stateName) const;
 
-        CtrlComponent ctrl_comp_;
+        CtrlComponent ctrl_component_;
+        CtrlInterfaces ctrl_interfaces_;
         std::vector<std::string> joint_names_;
         std::string base_name_ = "base";
         std::vector<std::string> feet_names_;
@@ -96,19 +97,19 @@ namespace rl_quadruped_controller {
         std::unordered_map<
             std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> > *>
         command_interface_map_ = {
-            {"effort", &ctrl_comp_.joint_torque_command_interface_},
-            {"position", &ctrl_comp_.joint_position_command_interface_},
-            {"velocity", &ctrl_comp_.joint_velocity_command_interface_},
-            {"kp", &ctrl_comp_.joint_kp_command_interface_},
-            {"kd", &ctrl_comp_.joint_kd_command_interface_}
+            {"effort", &ctrl_interfaces_.joint_torque_command_interface_},
+            {"position", &ctrl_interfaces_.joint_position_command_interface_},
+            {"velocity", &ctrl_interfaces_.joint_velocity_command_interface_},
+            {"kp", &ctrl_interfaces_.joint_kp_command_interface_},
+            {"kd", &ctrl_interfaces_.joint_kd_command_interface_}
         };
 
         std::unordered_map<
             std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> > *>
         state_interface_map_ = {
-            {"position", &ctrl_comp_.joint_position_state_interface_},
-            {"effort", &ctrl_comp_.joint_effort_state_interface_},
-            {"velocity", &ctrl_comp_.joint_velocity_state_interface_}
+            {"position", &ctrl_interfaces_.joint_position_state_interface_},
+            {"effort", &ctrl_interfaces_.joint_effort_state_interface_},
+            {"velocity", &ctrl_interfaces_.joint_velocity_state_interface_}
         };
 
         rclcpp::Subscription<control_input_msgs::msg::Inputs>::SharedPtr control_input_subscription_;

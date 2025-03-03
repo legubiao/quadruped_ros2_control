@@ -34,7 +34,7 @@ def launch_setup(context, *args, **kwargs):
         executable='create',
         output='screen',
         arguments=['-topic', 'robot_description', '-name',
-                   'robot', '-allow_renaming', 'true', '-z', init_height]
+                   'robot', '-allow_renaming', 'true', '-z', init_height],
     )
 
     robot_state_publisher = Node(
@@ -65,19 +65,11 @@ def launch_setup(context, *args, **kwargs):
                    "--controller-manager", "/controller_manager"],
     )
 
-    leg_pd_controller = Node(
+    rl_quadruped_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["leg_pd_controller",
-                   "--controller-manager", "/controller_manager"],
+        arguments=["rl_quadruped_controller", "--controller-manager", "/controller_manager"],
     )
-
-    controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["rl_quadruped_controller", "--controller-manager", "/controller_manager"]
-    )
-
 
     return [
         rviz,
@@ -95,11 +87,16 @@ def launch_setup(context, *args, **kwargs):
             launch_arguments=[('gz_args', [' -r -v 4 empty.sdf'])]),
         robot_state_publisher,
         gz_spawn_entity,
-        leg_pd_controller,
         RegisterEventHandler(
             event_handler=OnProcessExit(
-                target_action=leg_pd_controller,
-                on_exit=[imu_sensor_broadcaster, joint_state_publisher, controller],
+                target_action=gz_spawn_entity,
+                on_exit=[imu_sensor_broadcaster, joint_state_publisher],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=joint_state_publisher,
+                on_exit=[rl_quadruped_controller],
             )
         ),
     ]

@@ -9,7 +9,7 @@
 #include <kdl/chainfksolverpos_recursive.hpp>
 #include <kdl/chainiksolverpos_lma.hpp>
 #include <kdl/chainjnttojacsolver.hpp>
-#include <rl_quadruped_controller/common/mathTypes.h>
+#include <controller_common/common/mathTypes.h>
 
 class RobotLeg {
 public:

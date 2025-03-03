@@ -47,18 +47,18 @@ namespace rl_quadruped_controller {
     }
 
     controller_interface::return_type LeggedGymController::
-    update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
-        if (ctrl_comp_.enable_estimator_) {
-            if (ctrl_comp_.robot_model_ == nullptr) {
+    update(const rclcpp::Time & time, const rclcpp::Duration & period) {
+        if (ctrl_component_.enable_estimator_) {
+            if (ctrl_component_.robot_model_ == nullptr) {
                 return controller_interface::return_type::OK;
             }
 
-            ctrl_comp_.robot_model_->update();
-            ctrl_comp_.estimator_->update();
+            ctrl_component_.robot_model_->update();
+            ctrl_component_.estimator_->update();
         }
 
         if (mode_ == FSMMode::NORMAL) {
-            current_state_->run();
+            current_state_->run(time, period);
             next_state_name_ = current_state_->checkChange();
             if (next_state_name_ != current_state_->state_name) {
                 mode_ = FSMMode::CHANGE;
@@ -108,12 +108,12 @@ namespace rl_quadruped_controller {
             stand_kp_ = auto_declare<double>("stand_kp", stand_kp_);
             stand_kd_ = auto_declare<double>("stand_kd", stand_kd_);
 
-            get_node()->get_parameter("update_rate", ctrl_comp_.frequency_);
-            RCLCPP_INFO(get_node()->get_logger(), "Controller Update Rate: %d Hz", ctrl_comp_.frequency_);
+            get_node()->get_parameter("update_rate", ctrl_interfaces_.frequency_);
+            RCLCPP_INFO(get_node()->get_logger(), "Controller Update Rate: %d Hz", ctrl_interfaces_.frequency_);
 
             if (foot_force_interface_types_.size() == 4) {
-                ctrl_comp_.enable_estimator_ = true;
-                ctrl_comp_.estimator_ = std::make_shared<Estimator>(ctrl_comp_);
+                ctrl_component_.enable_estimator_ = true;
+                ctrl_component_.estimator_ = std::make_shared<Estimator>(ctrl_interfaces_, ctrl_component_);
             }
         } catch (const std::exception &e) {
             fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
@@ -128,9 +128,9 @@ namespace rl_quadruped_controller {
         robot_description_subscription_ = get_node()->create_subscription<std_msgs::msg::String>(
             "/robot_description", rclcpp::QoS(rclcpp::KeepLast(1)).transient_local(),
             [this](const std_msgs::msg::String::SharedPtr msg) {
-                if (ctrl_comp_.enable_estimator_) {
-                    ctrl_comp_.robot_model_ = std::make_shared<QuadrupedRobot>(
-                        ctrl_comp_, msg->data, feet_names_, base_name_);
+                if (ctrl_component_.enable_estimator_) {
+                    ctrl_component_.robot_model_ = std::make_shared<QuadrupedRobot>(
+                        ctrl_interfaces_, msg->data, feet_names_, base_name_);
                 }
             });
 
@@ -138,11 +138,11 @@ namespace rl_quadruped_controller {
         control_input_subscription_ = get_node()->create_subscription<control_input_msgs::msg::Inputs>(
             "/control_input", 10, [this](const control_input_msgs::msg::Inputs::SharedPtr msg) {
                 // Handle message
-                ctrl_comp_.control_inputs_.command = msg->command;
-                ctrl_comp_.control_inputs_.lx = msg->lx;
-                ctrl_comp_.control_inputs_.ly = msg->ly;
-                ctrl_comp_.control_inputs_.rx = msg->rx;
-                ctrl_comp_.control_inputs_.ry = msg->ry;
+                ctrl_interfaces_.control_inputs_.command = msg->command;
+                ctrl_interfaces_.control_inputs_.lx = msg->lx;
+                ctrl_interfaces_.control_inputs_.ly = msg->ly;
+                ctrl_interfaces_.control_inputs_.rx = msg->rx;
+                ctrl_interfaces_.control_inputs_.ry = msg->ry;
             });
 
         return CallbackReturn::SUCCESS;
@@ -151,7 +151,7 @@ namespace rl_quadruped_controller {
     controller_interface::CallbackReturn LeggedGymController::on_activate(
         const rclcpp_lifecycle::State & /*previous_state*/) {
         // clear out vectors in case of restart
-        ctrl_comp_.clear();
+        ctrl_interfaces_.clear();
 
         // assign command interfaces
         for (auto &interface: command_interfaces_) {
@@ -166,24 +166,24 @@ namespace rl_quadruped_controller {
         // assign state interfaces
         for (auto &interface: state_interfaces_) {
             if (interface.get_prefix_name() == imu_name_) {
-                ctrl_comp_.imu_state_interface_.emplace_back(interface);
+                ctrl_interfaces_.imu_state_interface_.emplace_back(interface);
             } else if (interface.get_prefix_name() == foot_force_name_) {
-                ctrl_comp_.foot_force_state_interface_.emplace_back(interface);
+                ctrl_interfaces_.foot_force_state_interface_.emplace_back(interface);
             } else {
                 state_interface_map_[interface.get_interface_name()]->push_back(interface);
             }
         }
 
         // Create FSM List
-        state_list_.passive = std::make_shared<StatePassive>(ctrl_comp_);
-        state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_comp_, down_pos_, stand_kp_, stand_kd_);
-        state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_comp_, stand_pos_, stand_kp_, stand_kd_);
+        state_list_.passive = std::make_shared<StatePassive>(ctrl_interfaces_);
+        state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_interfaces_, down_pos_, stand_kp_, stand_kd_);
+        state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_interfaces_, stand_pos_, stand_kp_, stand_kd_);
 
 
         RCLCPP_INFO(get_node()->get_logger(), "Using robot model from %s", robot_pkg_.c_str());
         const std::string package_share_directory = ament_index_cpp::get_package_share_directory(robot_pkg_);
         std::string model_path = package_share_directory + "/config/" + model_folder_;
-        state_list_.rl = std::make_shared<StateRL>(ctrl_comp_, model_path, stand_pos_);
+        state_list_.rl = std::make_shared<StateRL>(ctrl_interfaces_, ctrl_component_, model_path, stand_pos_);
 
         // Initialize FSM
         current_state_ = state_list_.passive;

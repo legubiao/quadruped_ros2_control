@@ -27,6 +27,7 @@ set(dependencies
         control_input_msgs
         kdl_parser
         ament_index_cpp
+        controller_common
 )
 
 # find dependencies
@@ -39,9 +40,7 @@ add_library(${PROJECT_NAME} SHARED
 
         src/common/ObservationBuffer.cpp
 
-        src/FSM/StatePassive.cpp
         src/FSM/StateFixedStand.cpp
-        src/FSM/StateFixedDown.cpp
         src/FSM/StateRL.cpp
 
         src/control/LowPassFilter.cpp

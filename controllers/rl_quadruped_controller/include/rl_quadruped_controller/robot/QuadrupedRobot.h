@@ -7,16 +7,16 @@
 #define QUADRUPEDROBOT_H
 #include <string>
 #include <kdl_parser/kdl_parser.hpp>
-#include <rl_quadruped_controller/common/mathTypes.h>
+#include <controller_common/common/mathTypes.h>
 
 #include "RobotLeg.h"
 
 
-struct CtrlComponent;
+struct CtrlInterfaces;
 
 class QuadrupedRobot {
 public:
-    explicit QuadrupedRobot(CtrlComponent &ctrl_component, const std::string &robot_description,
+    explicit QuadrupedRobot(CtrlInterfaces &ctrl_interfaces, const std::string &robot_description,
                             const std::vector<std::string> &feet_names, const std::string &base_name);
 
     ~QuadrupedRobot() = default;
@@ -91,7 +91,7 @@ public:
     void update();
 
 private:
-    CtrlComponent &ctrl_component_;
+    CtrlInterfaces &ctrl_interfaces_;
     std::vector<std::shared_ptr<RobotLeg> > robot_legs_;
 
     KDL::Chain fr_chain_;

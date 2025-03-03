@@ -135,8 +135,8 @@ unitree_guide_controller:
 rl_quadruped_controller:
   ros__parameters:
     update_rate: 200  # Hz
-    command_prefix: "leg_pd_controller"
     robot_pkg: "go2_description"
+    model_folder: "legged_gym"
     joints:
       - FL_hip_joint
       - FL_thigh_joint
