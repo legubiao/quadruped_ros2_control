@@ -39,12 +39,6 @@ ros2 launch x30_description visualize.launch.py
   source ~/ros2_ws/install/setup.bash
   ros2 launch rl_quadruped_controller mujoco.launch.py pkg_description:=x30_description model_folder:=legged_gym
   ```
-* RL Quadruped Controller
-  ```bash
-  source ~/ros2_ws/install/setup.bash
-  ros2 launch rl_quadruped_controller mujoco.launch.py pkg_description:=x30_description
-  ```
-
 
 
 ### Gazebo Classic 11 (ROS2 Humble)

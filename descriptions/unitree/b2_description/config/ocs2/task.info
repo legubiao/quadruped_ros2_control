@@ -12,7 +12,7 @@ model_settings
 
   verboseCppAd                  true
   recompileLibrariesCppAd       false
-  modelFolderCppAd              /tmp/ocs2_quadruped_controller/b2
+  modelFolderCppAd              ocs2_cpp_ad/b2
 }
 
 swing_trajectory_config

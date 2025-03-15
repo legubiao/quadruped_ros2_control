@@ -38,11 +38,11 @@ namespace ocs2::legged_robot
         void init();
 
         std::shared_ptr<rclcpp_lifecycle::LifecycleNode> node_;
-        std::shared_ptr<LeggedInterface> legged_interface_;
-        std::shared_ptr<PinocchioEndEffectorKinematics> ee_kinematics_;
-        std::shared_ptr<LeggedRobotVisualizer> visualizer_;
+        std::unique_ptr<LeggedInterface> legged_interface_;
+        std::unique_ptr<PinocchioEndEffectorKinematics> ee_kinematics_;
+        std::unique_ptr<LeggedRobotVisualizer> visualizer_;
         std::shared_ptr<MPC_BASE> mpc_;
-        std::shared_ptr<MPC_MRT_Interface> mpc_mrt_interface_;
+        std::unique_ptr<MPC_MRT_Interface> mpc_mrt_interface_;
 
         SystemObservation observation_;
         vector_t measured_rbd_state_;
@@ -61,9 +61,9 @@ namespace ocs2::legged_robot
         void setupMrt();
 
         CtrlInterfaces& ctrl_interfaces_;
-        std::shared_ptr<StateEstimateBase> estimator_;
-        std::shared_ptr<CentroidalModelRbdConversions> rbd_conversions_;
-        std::shared_ptr<TargetManager> target_manager_;
+        std::unique_ptr<StateEstimateBase> estimator_;
+        std::unique_ptr<CentroidalModelRbdConversions> rbd_conversions_;
+        std::unique_ptr<TargetManager> target_manager_;
 
         std::vector<std::string> joint_names_;
         std::vector<std::string> feet_names_;

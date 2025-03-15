@@ -79,17 +79,41 @@ supported robot description:
 * Anybotics
     * anymal_c_description
 
-### 3.1 Mujoco Simulation
+### 3.1 About OCS2 Shared Library
+OCS2 Quadruped controller depends on the OCS2 library, it required c++ automatic differentiation shared library. When first launch the controller, it will compile the OCS2 model and generate the shared library. 
+
+You may see something similar to:
+```
+[gazebo-5] [CppAdInterface] Compiling Shared Library: /home/biao/ocs2_cpp_ad/b2/RR_foot_position/cppad_generated/RR_foot_position_libcppadcg_tmp-27918274.so
+[gazebo-5] [CppAdInterface] Renaming /home/biao/ocs2_cpp_ad/b2/RR_foot_position/cppad_generated/RR_foot_position_libcppadcg_tmp-27918274.so to /home/biao/ocs2_cpp_ad/b2/RR_foot_position/cppad_generated/RR_foot_position_lib.so
+[gazebo-5] [CppAdInterface] Compiling Shared Library: /home/biao/ocs2_cpp_ad/b2/RR_foot_velocity/cppad_generated/RR_foot_velocity_libcppadcg_tmp-94918274.so
+[gazebo-5] [CppAdInterface] Renaming /home/biao/ocs2_cpp_ad/b2/RR_foot_velocity/cppad_generated/RR_foot_velocity_libcppadcg_tmp-94918274.so to /home/biao/ocs2_cpp_ad/b2/RR_foot_velocity/cppad_generated/RR_foot_velocity_lib.so
+[gazebo-5] [CppAdInterface] Compiling Shared Library: /home/biao/ocs2_cpp_ad/b2/RR_foot_orientation/cppad_generated/RR_foot_orientation_libcppadcg_tmp-83618274.so
+[gazebo-5] [CppAdInterface] Renaming /home/biao/ocs2_cpp_ad/b2/RR_foot_orientation/cppad_generated/RR_foot_orientation_libcppadcg_tmp-83618274.so to /home/biao/ocs2_cpp_ad/b2/RR_foot_orientation/cppad_generated/RR_foot_orientation_lib.so
+```
+The compilation process may take a few minutes. After the compilation, restart the controller and the robot should stand up.
+
+To config the path for the cppAD shared library, you can modify the `modelFolderCppAd` item in `task.info` file, which located at the `config/ocs2` folder under robot description package. If the path is not start with `/`, it will be considered as **relative path to the Linux Home folder**.
+
+### 3.2 Usage
+#### Keyboard State Switch
+* Keyboard 1 : Passive Mode
+* Keyboard 2 : OCS2 MPC Mode
+  * Keyboard 2: stance
+  * Keyboard 3: trot
+  * Keyboard 4: standing_trot
+  * Keyboard 5: flying_trot
+
+### 3.3 Launch Controller
+#### Mujoco Simulation
 > **Warm Reminder**: You need to launch [Unitree Mujoco C++ Simulation](https://github.com/legubiao/unitree_mujoco) before launch the controller.
 ```bash
 source ~/ros2_ws/install/setup.bash
 ros2 launch ocs2_quadruped_controller mujoco.launch.py pkg_description:=go2_description
 ```
 
-### 3.2 Gazebo Launch
+#### Gazebo Launch
 ```bash
 source ~/ros2_ws/install/setup.bash
 ros2 launch ocs2_quadruped_controller gazebo.launch.py pkg_description:=go2_description
 ```
-
-At the first launch, controller may compile the OCS2 model and generate the shared library. The compilation process may take a few minutes. After the compilation, restart the controller and the robot should stand up. Then you can use the keyboard or joystick to control the robot (Keyboard 2 or Joystick LB+A to Trot mode).

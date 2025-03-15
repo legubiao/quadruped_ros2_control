@@ -9,8 +9,6 @@
 #include <ocs2_core/Types.h>
 #include <ocs2_core/initialization/Initializer.h>
 #include <ocs2_core/penalties/Penalties.h>
-#include <ocs2_ddp/DDP_Settings.h>
-#include <ocs2_ipm/IpmSettings.h>
 #include <ocs2_legged_robot/common/ModelSettings.h>
 #include <ocs2_mpc/MPC_Settings.h>
 #include <ocs2_oc/rollout/TimeTriggeredRollout.h>
@@ -45,7 +43,6 @@ namespace ocs2::legged_robot
         const OptimalControlProblem& getOptimalControlProblem() const override { return *problem_ptr_; }
 
         const ModelSettings& modelSettings() const { return model_settings_; }
-        const ddp::Settings& ddpSettings() const { return ddp_settings_; }
         const mpc::Settings& mpcSettings() const { return mpc_settings_; }
         const sqp::Settings& sqpSettings() { return sqp_settings_; }
 
@@ -72,10 +69,6 @@ namespace ocs2::legged_robot
         void setupReferenceManager(const std::string& taskFile, const std::string& urdfFile,
                                    const std::string& referenceFile,
                                    bool verbose);
-
-        void setupPreComputation(const std::string& taskFile, const std::string& urdfFile,
-                                 const std::string& referenceFile,
-                                 bool verbose);
 
         std::shared_ptr<GaitSchedule> loadGaitSchedule(const std::string& file, bool verbose) const;
 
@@ -108,9 +101,7 @@ namespace ocs2::legged_robot
 
         ModelSettings model_settings_;
         mpc::Settings mpc_settings_;
-        ddp::Settings ddp_settings_;
         sqp::Settings sqp_settings_;
-        ipm::Settings ipm_settings_;
         const bool use_hard_friction_cone_constraint_;
 
         std::unique_ptr<PinocchioInterface> pinocchio_interface_ptr_;

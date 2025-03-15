@@ -44,15 +44,15 @@ namespace ocs2::legged_robot
         setupMrt();
 
         CentroidalModelPinocchioMapping pinocchio_mapping(legged_interface_->getCentroidalModelInfo());
-        ee_kinematics_ = std::make_shared<PinocchioEndEffectorKinematics>(
+        ee_kinematics_ = std::make_unique<PinocchioEndEffectorKinematics>(
             legged_interface_->getPinocchioInterface(), pinocchio_mapping,
             legged_interface_->modelSettings().contactNames3DoF);
 
-        rbd_conversions_ = std::make_shared<CentroidalModelRbdConversions>(legged_interface_->getPinocchioInterface(),
+        rbd_conversions_ = std::make_unique<CentroidalModelRbdConversions>(legged_interface_->getPinocchioInterface(),
                                                                            legged_interface_->getCentroidalModelInfo());
 
-        // Init visulaizer
-        visualizer_ = std::make_shared<LeggedRobotVisualizer>(
+        // Init visualizer
+        visualizer_ = std::make_unique<LeggedRobotVisualizer>(
             legged_interface_->getPinocchioInterface(),
             legged_interface_->getCentroidalModelInfo(),
             *ee_kinematics_,
@@ -69,14 +69,14 @@ namespace ocs2::legged_robot
     {
         if (estimator_type == "ground_truth")
         {
-            estimator_ = std::make_shared<GroundTruth>(legged_interface_->getCentroidalModelInfo(),
+            estimator_ = std::make_unique<GroundTruth>(legged_interface_->getCentroidalModelInfo(),
                                                        ctrl_interfaces_,
                                                        node_);
             RCLCPP_INFO(node_->get_logger(), "Using Ground Truth Estimator");
         }
         else if (estimator_type == "linear_kalman")
         {
-            estimator_ = std::make_shared<KalmanFilterEstimate>(
+            estimator_ = std::make_unique<KalmanFilterEstimate>(
                 legged_interface_->getPinocchioInterface(),
                 legged_interface_->getCentroidalModelInfo(),
                 *ee_kinematics_, ctrl_interfaces_,
@@ -86,7 +86,7 @@ namespace ocs2::legged_robot
         }
         else
         {
-            estimator_ = std::make_shared<FromOdomTopic>(
+            estimator_ = std::make_unique<FromOdomTopic>(
                 legged_interface_->getCentroidalModelInfo(), ctrl_interfaces_, node_);
             RCLCPP_INFO(node_->get_logger(), "Using Odom Topic Based Estimator");
         }
@@ -137,7 +137,7 @@ namespace ocs2::legged_robot
 
     void CtrlComponent::setupLeggedInterface()
     {
-        legged_interface_ = std::make_shared<LeggedInterface>(task_file_, urdf_file_, reference_file_);
+        legged_interface_ = std::make_unique<LeggedInterface>(task_file_, urdf_file_, reference_file_);
         legged_interface_->setupJointNames(joint_names_, feet_names_);
         legged_interface_->setupOptimalControlProblem(task_file_, urdf_file_, reference_file_, verbose_);
     }
@@ -161,7 +161,7 @@ namespace ocs2::legged_robot
         mpc_->getSolverPtr()->addSynchronizedModule(gait_manager_ptr);
         mpc_->getSolverPtr()->setReferenceManager(legged_interface_->getReferenceManagerPtr());
 
-        target_manager_ = std::make_shared<TargetManager>(ctrl_interfaces_,
+        target_manager_ = std::make_unique<TargetManager>(ctrl_interfaces_,
                                                           legged_interface_->getReferenceManagerPtr(),
                                                           task_file_,
                                                           reference_file_);
@@ -169,7 +169,7 @@ namespace ocs2::legged_robot
 
     void CtrlComponent::setupMrt()
     {
-        mpc_mrt_interface_ = std::make_shared<MPC_MRT_Interface>(*mpc_);
+        mpc_mrt_interface_ = std::make_unique<MPC_MRT_Interface>(*mpc_);
         mpc_mrt_interface_->initRollout(&legged_interface_->getRollout());
         mpc_timer_.reset();
 
