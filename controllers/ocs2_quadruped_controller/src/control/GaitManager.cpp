@@ -19,8 +19,8 @@ namespace ocs2::legged_robot
     }
 
     void GaitManager::preSolverRun(const scalar_t initTime, const scalar_t finalTime,
-                                   const vector_t& currentState,
-                                   const ReferenceManagerInterface& referenceManager)
+                                   const vector_t& /**currentState**/,
+                                   const ReferenceManagerInterface& /**referenceManager**/)
     {
         getTargetGait();
         if (gait_updated_)
@@ -51,9 +51,10 @@ namespace ocs2::legged_robot
         if (ctrl_interfaces_.control_inputs_.command == 0) return;
         if (ctrl_interfaces_.control_inputs_.command == last_command_) return;
         last_command_ = ctrl_interfaces_.control_inputs_.command;
-        target_gait_ = gait_list_[ctrl_interfaces_.control_inputs_.command -2];
+        const int command = std::max(0, ctrl_interfaces_.control_inputs_.command - 2);
+        target_gait_ = gait_list_[command];
         RCLCPP_INFO(rclcpp::get_logger("GaitManager"), "Switch to gait: %s",
-                    gait_name_list_[ctrl_interfaces_.control_inputs_.command - 2].c_str());
+                    gait_name_list_[command].c_str());
         gait_updated_ = true;
     }
 }

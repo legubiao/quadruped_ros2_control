@@ -4,7 +4,7 @@
 
 #pragma once
 #include "StateEstimateBase.h"
-#include <realtime_tools/realtime_buffer.h>
+#include <realtime_tools/realtime_buffer.hpp>
 
 namespace ocs2::legged_robot
 {

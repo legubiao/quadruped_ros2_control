@@ -52,7 +52,7 @@ ros2 launch a1_description visualize.launch.py
   source ~/ros2_ws/install/setup.bash
   ros2 launch unitree_guide_controller gazebo_classic.launch.py pkg_description:=a1_description height:=0.43
   ```
-  
+
 ### Gazebo Harmonic (ROS2 Jazzy)
 
 * Unitree Guide Controller
@@ -63,7 +63,7 @@ ros2 launch a1_description visualize.launch.py
 * OCS2 Quadruped Controller
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch ocs2_quadruped_controller gazebo.launch.py pkg_description:=a1_description
+  ros2 launch ocs2_quadruped_controller gazebo.launch.py pkg_description:=a1_description  height:=0.43
   ```
 * RL Quadruped Controller
   ```bash

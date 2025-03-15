@@ -23,48 +23,6 @@ swing_trajectory_config
   swingTimeScale                0.15
 }
 
-; DDP settings
-ddp
-{
-  algorithm                       SLQ
-
-  nThreads                        3
-  threadPriority                  50
-
-  maxNumIterations                1
-  minRelCost                      1e-1
-  constraintTolerance             5e-3
-
-  displayInfo                     false
-  displayShortSummary             false
-  checkNumericalStability         false
-  debugPrintRollout               false
-  debugCaching                    false
-
-  AbsTolODE                       1e-5
-  RelTolODE                       1e-3
-  maxNumStepsPerSecond            10000
-  timeStep                        0.015
-  backwardPassIntegratorType      ODE45
-
-  constraintPenaltyInitialValue   20.0
-  constraintPenaltyIncreaseRate   2.0
-
-  preComputeRiccatiTerms          true
-
-  useFeedbackPolicy               false
-
-  strategy                        LINE_SEARCH
-  lineSearch
-  {
-    minStepLength                 1e-2
-    maxStepLength                 1.0
-    hessianCorrectionStrategy     DIAGONAL_SHIFT
-    hessianCorrectionMultiple     1e-5
-  }
-}
-
-
 ; Multiple_Shooting SQP settings
 sqp
 {
@@ -83,39 +41,6 @@ sqp
   useFeedbackPolicy                     false
   integratorType                        RK2
   threadPriority                        50
-}
-
-; Multiple_Shooting IPM settings
-ipm
-{
-  nThreads                              3
-  dt                                    0.015
-  ipmIteration                          1
-  deltaTol                              1e-4
-  g_max                                 10.0
-  g_min                                 1e-6
-  computeLagrangeMultipliers            true
-  printSolverStatistics                 true
-  printSolverStatus                     false
-  printLinesearch                       false
-  useFeedbackPolicy                     false
-  integratorType                        RK2
-  threadPriority                        50
-
-  initialBarrierParameter               1e-4
-  targetBarrierParameter                1e-4
-  barrierLinearDecreaseFactor           0.2
-  barrierSuperlinearDecreasePower       1.5
-  barrierReductionCostTol               1e-3
-  barrierReductionConstraintTol         1e-3
-
-  fractionToBoundaryMargin              0.995
-  usePrimalStepSizeForDual              false
-
-  initialSlackLowerBound                1e-4
-  initialDualLowerBound                 1e-4
-  initialSlackMarginRate                1e-2
-  initialDualMarginRate                 1e-2
 }
 
 ; Rollout settings
@@ -160,18 +85,18 @@ initialState
    (11,0) 0.0     ; theta_base_x
 
    ;; Leg Joint Positions: [FL, RL, FR, RR] ;;
-   (12,0) -0.20   ; FL_hip_joint
-   (13,0)  0.72   ; FL_thigh_joint
-   (14,0) -1.44   ; FL_calf_joint
-   (15,0) -0.20   ; RL_hip_joint
-   (16,0)  0.72   ; RL_thigh_joint
-   (17,0) -1.44   ; RL_calf_joint
-   (18,0)  0.20   ; FR_hip_joint
-   (19,0)  0.72   ; FR_thigh_joint
-   (20,0) -1.44   ; FR_calf_joint
-   (21,0)  0.20   ; RR_hip_joint
-   (22,0)  0.72   ; RR_thigh_joint
-   (23,0) -1.44   ; RR_calf_joint
+   (12,0) -0.107   ; FL_hip_joint
+   (13,0)  0.77   ; FL_thigh_joint
+   (14,0) -1.68   ; FL_calf_joint
+   (15,0) -0.107   ; RL_hip_joint
+   (16,0)  0.77   ; RL_thigh_joint
+   (17,0) -1.68   ; RL_calf_joint
+   (18,0)  0.107   ; FR_hip_joint
+   (19,0)  0.77   ; FR_thigh_joint
+   (20,0) -1.68   ; FR_calf_joint
+   (21,0)  0.107   ; RR_hip_joint
+   (22,0)  0.77   ; RR_thigh_joint
+   (23,0) -1.68   ; RR_calf_joint
 }
 
 ; standard state weight matrix
@@ -295,15 +220,15 @@ frictionConeTask
 
 swingLegTask
 {
-    kp                   350
-    kd                   37
+    kp                   300
+    kd                   30
 }
 
 weight
 {
     swingLeg        100
     baseAccel       1
-    contactForce    0.01
+    contactForce    0.05
 }
 
 ; State Estimation

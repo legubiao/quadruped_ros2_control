@@ -10,10 +10,12 @@
 #include <boost/property_tree/ptree.hpp>
 #include <ocs2_core/misc/LoadData.h>
 
-namespace ocs2::legged_robot {
-    vector_t WeightedWbc::update(const vector_t &stateDesired, const vector_t &inputDesired,
-                                 const vector_t &rbdStateMeasured, size_t mode,
-                                 scalar_t period) {
+namespace ocs2::legged_robot
+{
+    vector_t WeightedWbc::update(const vector_t& stateDesired, const vector_t& inputDesired,
+                                 const vector_t& rbdStateMeasured, size_t mode,
+                                 scalar_t period)
+    {
         WbcBase::update(stateDesired, inputDesired, rbdStateMeasured, mode, period);
 
         // Constraints
@@ -33,7 +35,7 @@ namespace ocs2::legged_robot {
         // Cost
         Task weighedTask = formulateWeightedTasks(stateDesired, inputDesired, period);
         Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> H =
-                weighedTask.a_.transpose() * weighedTask.a_;
+            weighedTask.a_.transpose() * weighedTask.a_;
         vector_t g = -weighedTask.a_.transpose() * weighedTask.b_;
 
         // Solve
@@ -52,25 +54,29 @@ namespace ocs2::legged_robot {
         return qpSol;
     }
 
-    Task WeightedWbc::formulateConstraints() {
+    Task WeightedWbc::formulateConstraints()
+    {
         return formulateFloatingBaseEomTask() + formulateTorqueLimitsTask() + formulateFrictionConeTask() +
-               formulateNoContactMotionTask();
+            formulateNoContactMotionTask();
     }
 
-    Task WeightedWbc::formulateWeightedTasks(const vector_t &stateDesired, const vector_t &inputDesired,
-                                             scalar_t period) {
+    Task WeightedWbc::formulateWeightedTasks(const vector_t& stateDesired, const vector_t& inputDesired,
+                                             scalar_t period)
+    {
         return formulateSwingLegTask() * weightSwingLeg_ + formulateBaseAccelTask(stateDesired, inputDesired, period) *
-               weightBaseAccel_ +
-               formulateContactForceTask(inputDesired) * weightContactForce_;
+            weightBaseAccel_ +
+            formulateContactForceTask(inputDesired) * weightContactForce_;
     }
 
-    void WeightedWbc::loadTasksSetting(const std::string &taskFile, bool verbose) {
+    void WeightedWbc::loadTasksSetting(const std::string& taskFile, bool verbose)
+    {
         WbcBase::loadTasksSetting(taskFile, verbose);
 
         boost::property_tree::ptree pt;
         read_info(taskFile, pt);
         const std::string prefix = "weight.";
-        if (verbose) {
+        if (verbose)
+        {
             std::cerr << "\n #### WBC weight:";
             std::cerr << "\n #### =============================================================================\n";
         }

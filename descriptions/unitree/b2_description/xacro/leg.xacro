@@ -90,7 +90,6 @@
         <geometry>
           <cylinder length="0.02" radius="0.05"/>
         </geometry>
-        <material name="green"/>
       </visual>
       <inertial>
         <origin rpy="0 0 0" xyz="${hip_rotor_com_x} ${hip_rotor_com_y} ${hip_rotor_com_z}"/>
@@ -152,7 +151,6 @@
         <geometry>
           <cylinder length="0.02" radius="0.05"/>
         </geometry>
-        <material name="green"/>
       </visual>
       <inertial>
         <origin rpy="0 0 0" xyz="${thigh_rotor_com_x} ${thigh_rotor_com_y} ${thigh_rotor_com_z}"/>
@@ -227,7 +225,6 @@
         <geometry>
           <cylinder length="0.02" radius="0.05"/>
         </geometry>
-        <material name="green"/>
       </visual>
       <inertial>
         <origin rpy="0 0 0" xyz="${calf_rotor_com_x} ${calf_rotor_com_y} ${calf_rotor_com_z}"/>

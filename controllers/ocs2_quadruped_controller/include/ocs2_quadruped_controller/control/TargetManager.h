@@ -11,22 +11,25 @@
 #include <ocs2_mpc/SystemObservation.h>
 #include <ocs2_oc/synchronized_module/ReferenceManagerInterface.h>
 
-namespace ocs2::legged_robot {
-    class TargetManager {
+namespace ocs2::legged_robot
+{
+    class TargetManager
+    {
     public:
-        TargetManager(CtrlInterfaces &ctrl_component,
-                      const std::shared_ptr<ReferenceManagerInterface> &referenceManagerPtr,
-                      const std::string &task_file,
-                      const std::string &reference_file);
+        TargetManager(CtrlInterfaces& ctrl_component,
+                      const std::shared_ptr<ReferenceManagerInterface>& referenceManagerPtr,
+                      const std::string& task_file,
+                      const std::string& reference_file);
 
         ~TargetManager() = default;
 
-        void update(SystemObservation &observation);
+        void update(SystemObservation& observation);
 
     private:
-        TargetTrajectories targetPoseToTargetTrajectories(const vector_t &targetPose,
-                                                          const SystemObservation &observation,
-                                                          const scalar_t &targetReachingTime) {
+        TargetTrajectories targetPoseToTargetTrajectories(const vector_t& targetPose,
+                                                          const SystemObservation& observation,
+                                                          const scalar_t& targetReachingTime)
+        {
             // desired time trajectory
             const scalar_array_t timeTrajectory{observation.time, targetReachingTime};
 
@@ -45,7 +48,7 @@ namespace ocs2::legged_robot {
             return {timeTrajectory, stateTrajectory, inputTrajectory};
         }
 
-        CtrlInterfaces &ctrl_component_;
+        CtrlInterfaces& ctrl_component_;
         std::shared_ptr<ReferenceManagerInterface> referenceManagerPtr_;
 
         vector_t default_joint_state_{};

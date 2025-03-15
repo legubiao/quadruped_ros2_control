@@ -4,22 +4,25 @@
 //
 // Ref: https://github.com/bernhardpg/quadruped_locomotion
 //
-
-#pragma once
+#ifndef HOQP_H
+#define HOQP_H
 
 #include "Task.h"
 
 #include <memory>
 
-namespace ocs2::legged_robot{
+namespace ocs2::legged_robot
+{
     // Hierarchical Optimization Quadratic Program
-    class HoQp {
+    class HoQp
+    {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
         using HoQpPtr = std::shared_ptr<HoQp>;
 
-        explicit HoQp(const Task &task) : HoQp(task, nullptr) {
+        explicit HoQp(const Task& task) : HoQp(task, nullptr)
+        {
         }
 
         HoQp(Task task, HoQpPtr higherProblem);
@@ -30,7 +33,8 @@ namespace ocs2::legged_robot{
 
         vector_t getStackedSlackSolutions() const { return stackedSlackVars_; }
 
-        vector_t getSolutions() const {
+        vector_t getSolutions() const
+        {
             vector_t x = xPrev_ + stackedZPrev_ * decisionVarsSolutions_;
             return x;
         }
@@ -74,3 +78,4 @@ namespace ocs2::legged_robot{
         matrix_t zeroNvNx_;
     };
 } // namespace legged
+#endif // HOQP_H

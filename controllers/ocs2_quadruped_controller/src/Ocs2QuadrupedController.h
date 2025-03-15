@@ -8,11 +8,8 @@
 #include <controller_common/FSM/StatePassive.h>
 #include <controller_interface/controller_interface.hpp>
 #include <control_input_msgs/msg/inputs.hpp>
-#include <ocs2_mpc/MPC_MRT_Interface.h>
-#include <ocs2_quadruped_controller/estimator/StateEstimateBase.h>
-#include <ocs2_quadruped_controller/interface/LeggedInterface.h>
-#include <ocs2_quadruped_controller/wbc/WbcBase.h>
 #include <ocs2_quadruped_controller/FSM/StateOCS2.h>
+#include <ocs2_quadruped_controller/control/CtrlComponent.h>
 
 namespace ocs2::legged_robot {
     struct FSMStateList {
@@ -66,8 +63,8 @@ namespace ocs2::legged_robot {
         std::shared_ptr<FSMState> next_state_;
 
         CtrlInterfaces ctrl_interfaces_;
+        std::shared_ptr<CtrlComponent> ctrl_comp_;
         std::vector<std::string> joint_names_;
-        std::vector<std::string> feet_names_;
         std::vector<std::string> command_interface_types_;
         std::vector<std::string> state_interface_types_;
 
@@ -88,7 +85,6 @@ namespace ocs2::legged_robot {
             {"velocity", &ctrl_interfaces_.joint_velocity_state_interface_}
         };
 
-        std::string robot_pkg_;
         std::string command_prefix_;
 
         // IMU Sensor
@@ -103,9 +99,6 @@ namespace ocs2::legged_robot {
         std::string estimator_type_ = "linear_kalman";
         std::string odom_name_;
         std::vector<std::string> odom_interface_types_;
-
-        double default_kp_ = 0;
-        double default_kd_ = 6;
 
         rclcpp::Subscription<control_input_msgs::msg::Inputs>::SharedPtr control_input_subscription_;
     };

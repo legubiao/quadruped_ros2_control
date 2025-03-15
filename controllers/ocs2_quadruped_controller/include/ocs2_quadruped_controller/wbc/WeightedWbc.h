@@ -5,22 +5,24 @@
 
 #include "WbcBase.h"
 
-namespace ocs2::legged_robot {
-    class WeightedWbc : public WbcBase {
+namespace ocs2::legged_robot
+{
+    class WeightedWbc final : public WbcBase
+    {
     public:
         using WbcBase::WbcBase;
 
-        vector_t update(const vector_t &stateDesired, const vector_t &inputDesired, const vector_t &rbdStateMeasured,
+        vector_t update(const vector_t& stateDesired, const vector_t& inputDesired, const vector_t& rbdStateMeasured,
                         size_t mode,
                         scalar_t period) override;
 
-        void loadTasksSetting(const std::string &taskFile, bool verbose) override;
+        void loadTasksSetting(const std::string& taskFile, bool verbose) override;
 
     protected:
-        virtual Task formulateConstraints();
+        Task formulateConstraints();
 
-        virtual Task formulateWeightedTasks(const vector_t &stateDesired, const vector_t &inputDesired,
-                                            scalar_t period);
+        Task formulateWeightedTasks(const vector_t& stateDesired, const vector_t& inputDesired,
+                                    scalar_t period);
 
     private:
         scalar_t weightSwingLeg_, weightBaseAccel_, weightContactForce_;

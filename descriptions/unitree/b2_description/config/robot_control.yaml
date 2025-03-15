@@ -75,8 +75,8 @@ unitree_guide_controller:
 
 ocs2_quadruped_controller:
   ros__parameters:
-    update_rate: 100  # Hz
-
+    update_rate: 500  # Hz
+    robot_pkg: "b2_description"
     default_kd: 8.0
 
     joints:

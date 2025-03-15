@@ -1,7 +1,7 @@
 # Controller Manager configuration
 controller_manager:
   ros__parameters:
-    update_rate: 200  # Hz
+    update_rate: 1000  # Hz
 
     # Define the available controllers
     joint_state_broadcaster:
@@ -73,8 +73,8 @@ unitree_guide_controller:
 
 ocs2_quadruped_controller:
   ros__parameters:
-    update_rate: 100  # Hz
-
+    update_rate: 500  # Hz
+    robot_pkg: "go1_description"
     joints:
       - FL_hip_joint
       - FL_thigh_joint

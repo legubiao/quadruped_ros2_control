@@ -50,3 +50,8 @@ ros2 launch b2_description visualize.launch.py
   source ~/ros2_ws/install/setup.bash
   ros2 launch unitree_guide_controller gazebo.launch.py pkg_description:=b2_description height:=0.68
   ```
+* OCS2 Quadruped Controller
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 launch ocs2_quadruped_controller gazebo.launch.py pkg_description:=b2_description height:=0.68
+  ```

@@ -16,12 +16,14 @@
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 
-namespace ocs2::legged_robot {
-    class StateEstimateBase {
+namespace ocs2::legged_robot
+{
+    class StateEstimateBase
+    {
     public:
         virtual ~StateEstimateBase() = default;
 
-        StateEstimateBase(CentroidalModelInfo info, CtrlInterfaces &ctrl_component,
+        StateEstimateBase(CentroidalModelInfo info, CtrlInterfaces& ctrl_component,
                           rclcpp_lifecycle::LifecycleNode::SharedPtr node);
 
         virtual void updateJointStates();
@@ -30,25 +32,27 @@ namespace ocs2::legged_robot {
 
         virtual void updateImu();
 
-        virtual vector_t update(const rclcpp::Time &time, const rclcpp::Duration &period) = 0;
+        virtual vector_t update(const rclcpp::Time& time, const rclcpp::Duration& period) = 0;
 
-        size_t getMode() { return stanceLeg2ModeNumber(contact_flag_); }
+        [[nodiscard]] size_t getMode() const { return stanceLeg2ModeNumber(contact_flag_); }
 
     protected:
         void initPublishers();
 
-        void updateAngular(const vector3_t &zyx, const vector_t &angularVel);
+        void updateAngular(const vector3_t& zyx, const vector_t& angularVel);
 
-        void updateLinear(const vector_t &pos, const vector_t &linearVel);
+        void updateLinear(const vector_t& pos, const vector_t& linearVel);
 
-        void publishMsgs(const nav_msgs::msg::Odometry &odom) const;
+        void publishMsgs(const nav_msgs::msg::Odometry& odom) const;
 
-        CtrlInterfaces &ctrl_component_;
+        CtrlInterfaces& ctrl_component_;
         CentroidalModelInfo info_;
+
+        contact_flag_t contact_flag_{};
+        double feet_force_threshold_ = 5.0;
 
         vector3_t zyx_offset_ = vector3_t::Zero();
         vector_t rbd_state_;
-        contact_flag_t contact_flag_{};
         Eigen::Quaternion<scalar_t> quat_;
         vector3_t angular_vel_local_, linear_accel_local_;
         matrix3_t orientationCovariance_, angularVelCovariance_, linearAccelCovariance_;
@@ -58,13 +62,15 @@ namespace ocs2::legged_robot {
         rclcpp_lifecycle::LifecycleNode::SharedPtr node_;
     };
 
-    template<typename T>
-    T square(T a) {
+    template <typename T>
+    T square(T a)
+    {
         return a * a;
     }
 
-    template<typename SCALAR_T>
-    Eigen::Matrix<SCALAR_T, 3, 1> quatToZyx(const Eigen::Quaternion<SCALAR_T> &q) {
+    template <typename SCALAR_T>
+    Eigen::Matrix<SCALAR_T, 3, 1> quatToZyx(const Eigen::Quaternion<SCALAR_T>& q)
+    {
         Eigen::Matrix<SCALAR_T, 3, 1> zyx;
 
         SCALAR_T as = std::min(-2. * (q.x() * q.z() - q.w() * q.y()), .99999);

@@ -24,7 +24,7 @@ namespace ocs2::legged_robot
         loadData::loadCppDataType(reference_file, "targetDisplacementVelocity", target_displacement_velocity_);
     }
 
-    void TargetManager::update(SystemObservation &observation)
+    void TargetManager::update(SystemObservation& observation)
     {
         vector_t cmdGoal = vector_t::Zero(6);
         cmdGoal[0] = ctrl_component_.control_inputs_.ly * target_displacement_velocity_;

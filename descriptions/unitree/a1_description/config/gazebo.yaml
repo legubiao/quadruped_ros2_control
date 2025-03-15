@@ -10,9 +10,6 @@ controller_manager:
     imu_sensor_broadcaster:
       type: imu_sensor_broadcaster/IMUSensorBroadcaster
 
-    leg_pd_controller:
-      type: leg_pd_controller/LegPdController
-
     unitree_guide_controller:
       type: unitree_guide_controller/UnitreeGuideController
 
@@ -27,33 +24,9 @@ imu_sensor_broadcaster:
     sensor_name: "imu_sensor"
     frame_id: "imu_link"
 
-leg_pd_controller:
-  ros__parameters:
-    joints:
-      - FR_hip_joint
-      - FR_thigh_joint
-      - FR_calf_joint
-      - FL_hip_joint
-      - FL_thigh_joint
-      - FL_calf_joint
-      - RR_hip_joint
-      - RR_thigh_joint
-      - RR_calf_joint
-      - RL_hip_joint
-      - RL_thigh_joint
-      - RL_calf_joint
-
-    command_interfaces:
-      - effort
-
-    state_interfaces:
-      - position
-      - velocity
-
 unitree_guide_controller:
   ros__parameters:
-    command_prefix: "leg_pd_controller"
-    update_rate: 200  # Hz
+    update_rate: 500  # Hz
     joints:
       - FR_hip_joint
       - FR_thigh_joint
@@ -105,7 +78,9 @@ ocs2_quadruped_controller:
   ros__parameters:
     update_rate: 500  # Hz
     robot_pkg: "a1_description"
-    command_prefix: "leg_pd_controller"
+    feet_force_threshold: 5.0
+#    default_kp: 1.0
+    default_kd: 0.5
     joints:
       - FL_hip_joint
       - FL_thigh_joint
@@ -153,7 +128,12 @@ ocs2_quadruped_controller:
       - linear_acceleration.y
       - linear_acceleration.z
 
-    estimator_type: "odom_topic"
+    foot_force_name: "foot_force"
+    foot_force_interfaces:
+      - FL_foot_force
+      - RL_foot_force
+      - FR_foot_force
+      - RR_foot_force
 
 rl_quadruped_controller:
   ros__parameters:
@@ -164,12 +144,12 @@ rl_quadruped_controller:
       - FL_hip_joint
       - FL_thigh_joint
       - FL_calf_joint
-      - RL_hip_joint
-      - RL_thigh_joint
-      - RL_calf_joint
       - FR_hip_joint
       - FR_thigh_joint
       - FR_calf_joint
+      - RL_hip_joint
+      - RL_thigh_joint
+      - RL_calf_joint
       - RR_hip_joint
       - RR_thigh_joint
       - RR_calf_joint

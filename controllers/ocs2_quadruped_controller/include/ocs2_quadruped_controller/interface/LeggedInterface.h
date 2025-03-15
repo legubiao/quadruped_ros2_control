@@ -1,11 +1,9 @@
-#pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "misc-non-private-member-variables-in-classes"
 //
 // Created by qiayuan on 2022/7/16.
 //
+#ifndef LEGGEDINTERFACE_H
+#define LEGGEDINTERFACE_H
 
-#pragma once
 
 #include <ocs2_centroidal_model/CentroidalModelInfo.h>
 #include <ocs2_core/Types.h>
@@ -24,85 +22,89 @@
 
 #include "SwitchedModelReferenceManager.h"
 
-namespace ocs2::legged_robot {
-    class LeggedInterface final : public RobotInterface {
+namespace ocs2::legged_robot
+{
+    class LeggedInterface final : public RobotInterface
+    {
     public:
-        LeggedInterface(const std::string &task_file,
-                        const std::string &urdf_file,
-                        const std::string &reference_file,
+        LeggedInterface(const std::string& task_file,
+                        const std::string& urdf_file,
+                        const std::string& reference_file,
                         bool use_hard_friction_cone_constraint = false);
 
         ~LeggedInterface() override = default;
 
-        void setupJointNames(const std::vector<std::string> &joint_names,
-                             const std::vector<std::string> &foot_names);
+        void setupJointNames(const std::vector<std::string>& joint_names,
+                             const std::vector<std::string>& foot_names);
 
-        void setupOptimalControlProblem(const std::string &task_file,
-                                        const std::string &urdf_file,
-                                        const std::string &reference_file,
+        void setupOptimalControlProblem(const std::string& task_file,
+                                        const std::string& urdf_file,
+                                        const std::string& reference_file,
                                         bool verbose);
 
-        const OptimalControlProblem &getOptimalControlProblem() const override { return *problem_ptr_; }
+        const OptimalControlProblem& getOptimalControlProblem() const override { return *problem_ptr_; }
 
-        const ModelSettings &modelSettings() const { return model_settings_; }
-        const ddp::Settings &ddpSettings() const { return ddp_settings_; }
-        const mpc::Settings &mpcSettings() const { return mpc_settings_; }
-        const sqp::Settings &sqpSettings() { return sqp_settings_; }
+        const ModelSettings& modelSettings() const { return model_settings_; }
+        const ddp::Settings& ddpSettings() const { return ddp_settings_; }
+        const mpc::Settings& mpcSettings() const { return mpc_settings_; }
+        const sqp::Settings& sqpSettings() { return sqp_settings_; }
 
-        const RolloutBase &getRollout() const { return *rollout_ptr_; }
-        PinocchioInterface &getPinocchioInterface() { return *pinocchio_interface_ptr_; }
-        const CentroidalModelInfo &getCentroidalModelInfo() const { return centroidal_model_info_; }
+        const RolloutBase& getRollout() const { return *rollout_ptr_; }
+        PinocchioInterface& getPinocchioInterface() { return *pinocchio_interface_ptr_; }
+        const CentroidalModelInfo& getCentroidalModelInfo() const { return centroidal_model_info_; }
 
-        std::shared_ptr<SwitchedModelReferenceManager> getSwitchedModelReferenceManagerPtr() const {
+        std::shared_ptr<SwitchedModelReferenceManager> getSwitchedModelReferenceManagerPtr() const
+        {
             return reference_manager_ptr_;
         }
 
-        const Initializer &getInitializer() const override { return *initializer_ptr_; }
+        const Initializer& getInitializer() const override { return *initializer_ptr_; }
 
-        std::shared_ptr<ReferenceManagerInterface> getReferenceManagerPtr() const override {
+        std::shared_ptr<ReferenceManagerInterface> getReferenceManagerPtr() const override
+        {
             return reference_manager_ptr_;
         }
 
     protected:
-        void setupModel(const std::string &task_file, const std::string &urdf_file,
-                        const std::string &reference_file);
+        void setupModel(const std::string& task_file, const std::string& urdf_file,
+                        const std::string& reference_file);
 
-        void setupReferenceManager(const std::string &taskFile, const std::string &urdfFile,
-                                   const std::string &referenceFile,
+        void setupReferenceManager(const std::string& taskFile, const std::string& urdfFile,
+                                   const std::string& referenceFile,
                                    bool verbose);
 
-        void setupPreComputation(const std::string &taskFile, const std::string &urdfFile,
-                                 const std::string &referenceFile,
+        void setupPreComputation(const std::string& taskFile, const std::string& urdfFile,
+                                 const std::string& referenceFile,
                                  bool verbose);
 
-        std::shared_ptr<GaitSchedule> loadGaitSchedule(const std::string &file, bool verbose) const;
+        std::shared_ptr<GaitSchedule> loadGaitSchedule(const std::string& file, bool verbose) const;
 
-        std::unique_ptr<StateInputCost> getBaseTrackingCost(const std::string &taskFile,
-                                                            const CentroidalModelInfo &info, bool verbose);
+        std::unique_ptr<StateInputCost> getBaseTrackingCost(const std::string& taskFile,
+                                                            const CentroidalModelInfo& info, bool verbose);
 
-        matrix_t initializeInputCostWeight(const std::string &taskFile, const CentroidalModelInfo &info);
+        matrix_t initializeInputCostWeight(const std::string& taskFile, const CentroidalModelInfo& info);
 
         static std::pair<scalar_t, RelaxedBarrierPenalty::Config> loadFrictionConeSettings(
-            const std::string &taskFile, bool verbose);
+            const std::string& taskFile, bool verbose);
 
         std::unique_ptr<StateInputConstraint> getFrictionConeConstraint(size_t contactPointIndex,
                                                                         scalar_t frictionCoefficient);
 
         std::unique_ptr<StateInputCost> getFrictionConeSoftConstraint(size_t contactPointIndex,
                                                                       scalar_t frictionCoefficient,
-                                                                      const RelaxedBarrierPenalty::Config &
+                                                                      const RelaxedBarrierPenalty::Config&
                                                                       barrierPenaltyConfig);
 
-        std::unique_ptr<EndEffectorKinematics<scalar_t> > getEeKinematicsPtr(const std::vector<std::string> &foot_names,
-                                                                             const std::string &model_name);
+        std::unique_ptr<EndEffectorKinematics<scalar_t>> getEeKinematicsPtr(const std::vector<std::string>& foot_names,
+                                                                            const std::string& model_name);
 
         std::unique_ptr<StateInputConstraint> getZeroVelocityConstraint(
-            const EndEffectorKinematics<scalar_t> &end_effector_kinematics,
+            const EndEffectorKinematics<scalar_t>& end_effector_kinematics,
             size_t contact_point_index);
 
-        std::unique_ptr<StateCost> getSelfCollisionConstraint(const PinocchioInterface &pinocchioInterface,
-                                                              const std::string &taskFile,
-                                                              const std::string &prefix, bool verbose);
+        std::unique_ptr<StateCost> getSelfCollisionConstraint(const PinocchioInterface& pinocchioInterface,
+                                                              const std::string& taskFile,
+                                                              const std::string& prefix, bool verbose);
 
         ModelSettings model_settings_;
         mpc::Settings mpc_settings_;
@@ -125,5 +127,4 @@ namespace ocs2::legged_robot {
         vector_t initial_state_;
     };
 } // namespace legged
-
-#pragma clang diagnostic pop
+#endif // LEGGEDINTERFACE_H
