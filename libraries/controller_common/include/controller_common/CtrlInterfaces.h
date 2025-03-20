@@ -10,33 +10,34 @@
 #include <hardware_interface/loaned_state_interface.hpp>
 #include <control_input_msgs/msg/inputs.hpp>
 
-struct CtrlInterfaces {
-    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> >
+struct CtrlInterfaces
+{
+    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
     joint_torque_command_interface_;
-    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> >
+    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
     joint_position_command_interface_;
-    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> >
+    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
     joint_velocity_command_interface_;
-    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> >
+    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
     joint_kp_command_interface_;
-    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> >
+    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>
     joint_kd_command_interface_;
 
 
-    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> >
+    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
     joint_effort_state_interface_;
-    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> >
+    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
     joint_position_state_interface_;
-    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> >
+    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
     joint_velocity_state_interface_;
 
-    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> >
+    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
     imu_state_interface_;
 
-    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> >
+    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
     foot_force_state_interface_;
 
-    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> >
+    std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>
     odom_state_interface_;
 
 
@@ -45,7 +46,8 @@ struct CtrlInterfaces {
 
     CtrlInterfaces() = default;
 
-    void clear() {
+    void clear()
+    {
         joint_torque_command_interface_.clear();
         joint_position_command_interface_.clear();
         joint_velocity_command_interface_.clear();

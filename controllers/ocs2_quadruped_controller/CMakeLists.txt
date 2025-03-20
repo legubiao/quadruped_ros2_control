@@ -21,6 +21,11 @@ set(CONTROLLER_INCLUDE_DEPENDS
         nav_msgs
         qpoases_colcon
         ament_index_cpp
+
+        convex_plane_decomposition_msgs
+        convex_plane_decomposition_ros
+        grid_map_sdf
+        ocs2_sphere_approximation
 )
 
 # find dependencies
@@ -58,6 +63,13 @@ add_library(${PROJECT_NAME} SHARED
         src/control/TargetManager.cpp
         src/control/CtrlComponent.cpp
 
+        src/perceptive_interface/constraint/FootCollisionConstraint.cpp
+        src/perceptive_interface/constraint/FootPlacementConstraint.cpp
+        src/perceptive_interface/constraint/SphereSdfConstraint.cpp
+        src/perceptive_interface/ConvexRegionSelector.cpp
+        src/perceptive_interface/PerceptiveLeggedInterface.cpp
+        src/perceptive_interface/PerceptiveLeggedPrecomputation.cpp
+        src/perceptive_interface/PerceptiveLeggedReferenceManager.cpp
 )
 target_include_directories(${PROJECT_NAME}
         PUBLIC

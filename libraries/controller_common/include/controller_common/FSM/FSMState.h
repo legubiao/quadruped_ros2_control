@@ -11,20 +11,22 @@
 #include <controller_common/CtrlInterfaces.h>
 #include <rclcpp/time.hpp>
 
-class FSMState {
+class FSMState
+{
 public:
     virtual ~FSMState() = default;
 
-    FSMState(const FSMStateName &state_name, std::string state_name_string, CtrlInterfaces &ctrl_interfaces)
+    FSMState(const FSMStateName& state_name, std::string state_name_string, CtrlInterfaces& ctrl_interfaces)
         : state_name(state_name),
           state_name_string(std::move(state_name_string)),
-          ctrl_interfaces_(ctrl_interfaces) {
+          ctrl_interfaces_(ctrl_interfaces)
+    {
     }
 
     virtual void enter() = 0;
 
-    virtual void run(const rclcpp::Time &time,
-                     const rclcpp::Duration &period) = 0;
+    virtual void run(const rclcpp::Time& time,
+                     const rclcpp::Duration& period) = 0;
 
     virtual void exit() = 0;
 
@@ -34,7 +36,7 @@ public:
     std::string state_name_string;
 
 protected:
-    CtrlInterfaces &ctrl_interfaces_;
+    CtrlInterfaces& ctrl_interfaces_;
 };
 
 #endif //FSMSTATE_H

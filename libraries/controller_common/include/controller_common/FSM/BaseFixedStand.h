@@ -1,23 +1,22 @@
 //
 // Created by biao on 24-9-10.
 //
-
-#ifndef BASEFIXEDSTAND_H
-#define BASEFIXEDSTAND_H
+#pragma once
 
 #include "FSMState.h"
 
-class BaseFixedStand : public FSMState {
+class BaseFixedStand : public FSMState
+{
 public:
-    BaseFixedStand(CtrlInterfaces &ctrl_interfaces,
-                   const std::vector<double> &target_pos,
+    BaseFixedStand(CtrlInterfaces& ctrl_interfaces,
+                   const std::vector<double>& target_pos,
                    double kp,
                    double kd);
 
     void enter() override;
 
-    void run(const rclcpp::Time &time,
-             const rclcpp::Duration &period) override;
+    void run(const rclcpp::Time& time,
+             const rclcpp::Duration& period) override;
 
     void exit() override;
 
@@ -34,6 +33,3 @@ protected:
     double percent_ = 0; //%
     double phase = 0.0;
 };
-
-
-#endif //BASEFIXEDSTAND_H

@@ -10,8 +10,9 @@ This repository contains the ros2-control based controllers for the quadruped ro
 Todo List:
 
 - [x] **[2025-02-23]** Add Gazebo Playground
-- [ ] OCS2 controller for Gazebo Simulation
-- [ ] Refactor FSM and Unitree Guide Controller
+  - [x] OCS2 controller for Gazebo Simulation
+  - [x] Refactor FSM and Unitree Guide Controller
+- [ ] OCS2 Perceptive locomotion demo
 
 Video for Unitree Guide Controller:
 [![](http://i1.hdslb.com/bfs/archive/310e6208920985ac43015b2da31c01ec15e2c5f9.jpg)](https://www.bilibili.com/video/BV1aJbAeZEuo/)

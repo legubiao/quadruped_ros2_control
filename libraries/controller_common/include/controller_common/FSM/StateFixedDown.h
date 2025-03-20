@@ -7,18 +7,19 @@
 
 #include "FSMState.h"
 
-class StateFixedDown final : public FSMState {
+class StateFixedDown final : public FSMState
+{
 public:
-    explicit StateFixedDown(CtrlInterfaces &ctrl_interfaces,
-                            const std::vector<double> &target_pos,
+    explicit StateFixedDown(CtrlInterfaces& ctrl_interfaces,
+                            const std::vector<double>& target_pos,
                             double kp,
                             double kd
     );
 
     void enter() override;
 
-    void run(const rclcpp::Time &time,
-             const rclcpp::Duration &period) override;
+    void run(const rclcpp::Time& time,
+             const rclcpp::Duration& period) override;
 
     void exit() override;
 

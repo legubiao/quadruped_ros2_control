@@ -22,7 +22,7 @@
 
 namespace ocs2::legged_robot
 {
-    class LeggedInterface final : public RobotInterface
+    class LeggedInterface : public RobotInterface
     {
     public:
         LeggedInterface(const std::string& task_file,
@@ -35,10 +35,10 @@ namespace ocs2::legged_robot
         void setupJointNames(const std::vector<std::string>& joint_names,
                              const std::vector<std::string>& foot_names);
 
-        void setupOptimalControlProblem(const std::string& task_file,
-                                        const std::string& urdf_file,
-                                        const std::string& reference_file,
-                                        bool verbose);
+        virtual void setupOptimalControlProblem(const std::string& task_file,
+                                                const std::string& urdf_file,
+                                                const std::string& reference_file,
+                                                bool verbose);
 
         const OptimalControlProblem& getOptimalControlProblem() const override { return *problem_ptr_; }
 
@@ -66,9 +66,9 @@ namespace ocs2::legged_robot
         void setupModel(const std::string& task_file, const std::string& urdf_file,
                         const std::string& reference_file);
 
-        void setupReferenceManager(const std::string& taskFile, const std::string& urdfFile,
-                                   const std::string& referenceFile,
-                                   bool verbose);
+        virtual void setupReferenceManager(const std::string& taskFile, const std::string& urdfFile,
+                                           const std::string& referenceFile,
+                                           bool verbose);
 
         std::shared_ptr<GaitSchedule> loadGaitSchedule(const std::string& file, bool verbose) const;
 

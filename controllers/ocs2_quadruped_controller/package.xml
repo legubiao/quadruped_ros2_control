@@ -19,6 +19,12 @@
   <depend>ocs2_legged_robot_ros</depend>
   <depend>angles</depend>
 
+  <!--/ Dependencies for Perceptive Mode -->
+  <depend>convex_plane_decomposition_msgs</depend>
+  <depend>convex_plane_decomposition_ros</depend>
+  <depend>grid_map_sdf</depend>
+  <depend>ocs2_sphere_approximation</depend>
+
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 

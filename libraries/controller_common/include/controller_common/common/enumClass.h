@@ -5,7 +5,8 @@
 #ifndef ENUMCLASS_H
 #define ENUMCLASS_H
 
-enum class FSMStateName {
+enum class FSMStateName
+{
     // EXIT,
     INVALID,
     PASSIVE,
@@ -21,18 +22,21 @@ enum class FSMStateName {
     RL
 };
 
-enum class FSMMode {
+enum class FSMMode
+{
     NORMAL,
     CHANGE
 };
 
-enum class FrameType {
+enum class FrameType
+{
     BODY,
     HIP,
     GLOBAL
 };
 
-enum class WaveStatus {
+enum class WaveStatus
+{
     STANCE_ALL,
     SWING_ALL,
     WAVE_ALL
