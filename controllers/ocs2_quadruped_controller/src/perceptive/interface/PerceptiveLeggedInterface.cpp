@@ -1,15 +1,15 @@
 //
-// Created by qiayuan on 22-12-27.
+// Created by biao on 3/21/25.
 //
 
-#include "ocs2_quadruped_controller/perceptive_interface/constraint/FootCollisionConstraint.h"
-#include "ocs2_quadruped_controller/perceptive_interface/constraint/SphereSdfConstraint.h"
 #include <ocs2_core/misc/LoadData.h>
+#include "ocs2_quadruped_controller/perceptive/constraint/FootCollisionConstraint.h"
+#include "ocs2_quadruped_controller/perceptive/constraint/SphereSdfConstraint.h"
 
-#include "ocs2_quadruped_controller/perceptive_interface/ConvexRegionSelector.h"
-#include "ocs2_quadruped_controller/perceptive_interface/PerceptiveLeggedInterface.h"
-#include "ocs2_quadruped_controller/perceptive_interface/PerceptiveLeggedPrecomputation.h"
-#include "ocs2_quadruped_controller/perceptive_interface/PerceptiveLeggedReferenceManager.h"
+#include "ocs2_quadruped_controller/perceptive/interface/ConvexRegionSelector.h"
+#include "ocs2_quadruped_controller/perceptive/interface/PerceptiveLeggedInterface.h"
+#include "ocs2_quadruped_controller/perceptive/interface/PerceptiveLeggedPrecomputation.h"
+#include "ocs2_quadruped_controller/perceptive/interface/PerceptiveLeggedReferenceManager.h"
 
 #include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
 #include <ocs2_core/soft_constraint/StateSoftConstraint.h>

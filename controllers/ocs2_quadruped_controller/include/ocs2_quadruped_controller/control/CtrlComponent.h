@@ -13,6 +13,8 @@
 #include <ocs2_core/misc/Benchmark.h>
 #include <ocs2_mpc/MPC_MRT_Interface.h>
 #include <ocs2_legged_robot_ros/visualization/LeggedRobotVisualizer.h>
+#include <ocs2_quadruped_controller/perceptive/visualize/FootPlacementVisualization.h>
+#include <ocs2_quadruped_controller/perceptive/visualize/SphereVisualization.h>
 
 #include "TargetManager.h"
 
@@ -60,10 +62,14 @@ namespace ocs2::legged_robot
         void setupMpc();
         void setupMrt();
 
+        bool enable_perceptive_ = false;
         CtrlInterfaces& ctrl_interfaces_;
         std::unique_ptr<StateEstimateBase> estimator_;
         std::unique_ptr<CentroidalModelRbdConversions> rbd_conversions_;
         std::unique_ptr<TargetManager> target_manager_;
+
+        std::unique_ptr<FootPlacementVisualization> footPlacementVisualizationPtr_;
+        std::unique_ptr<SphereVisualization> sphereVisualizationPtr_;
 
         std::vector<std::string> joint_names_;
         std::vector<std::string> feet_names_;

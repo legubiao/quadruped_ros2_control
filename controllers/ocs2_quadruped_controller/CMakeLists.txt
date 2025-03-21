@@ -63,13 +63,16 @@ add_library(${PROJECT_NAME} SHARED
         src/control/TargetManager.cpp
         src/control/CtrlComponent.cpp
 
-        src/perceptive_interface/constraint/FootCollisionConstraint.cpp
-        src/perceptive_interface/constraint/FootPlacementConstraint.cpp
-        src/perceptive_interface/constraint/SphereSdfConstraint.cpp
-        src/perceptive_interface/ConvexRegionSelector.cpp
-        src/perceptive_interface/PerceptiveLeggedInterface.cpp
-        src/perceptive_interface/PerceptiveLeggedPrecomputation.cpp
-        src/perceptive_interface/PerceptiveLeggedReferenceManager.cpp
+        src/perceptive/constraint/FootCollisionConstraint.cpp
+        src/perceptive/constraint/FootPlacementConstraint.cpp
+        src/perceptive/constraint/SphereSdfConstraint.cpp
+        src/perceptive/interface/ConvexRegionSelector.cpp
+        src/perceptive/interface/PerceptiveLeggedInterface.cpp
+        src/perceptive/interface/PerceptiveLeggedPrecomputation.cpp
+        src/perceptive/interface/PerceptiveLeggedReferenceManager.cpp
+        src/perceptive/visualize/FootPlacementVisualization.cpp
+        src/perceptive/visualize/SphereVisualization.cpp
+        src/perceptive/synchronize/PlanarTerrainReceiver.cpp
 )
 target_include_directories(${PROJECT_NAME}
         PUBLIC

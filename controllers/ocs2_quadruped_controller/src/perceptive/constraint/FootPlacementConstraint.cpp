@@ -1,10 +1,10 @@
 //
-// Created by qiayuan on 23-1-1.
+// Created by biao on 3/21/25.
 //
 
-#include "ocs2_quadruped_controller/perceptive_interface/constraint/FootPlacementConstraint.h"
-#include "ocs2_quadruped_controller/perceptive_interface/PerceptiveLeggedPrecomputation.h"
-#include "ocs2_quadruped_controller/perceptive_interface/PerceptiveLeggedReferenceManager.h"
+#include "ocs2_quadruped_controller/perceptive/constraint/FootPlacementConstraint.h"
+#include "ocs2_quadruped_controller/perceptive/interface/PerceptiveLeggedPrecomputation.h"
+#include "ocs2_quadruped_controller/perceptive/interface/PerceptiveLeggedReferenceManager.h"
 
 namespace ocs2::legged_robot
 {

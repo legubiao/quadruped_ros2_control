@@ -1,0 +1,48 @@
+# Robot.
+elevation_mapping:
+  ros__parameters:
+    map_frame_id: odom
+    robot_base_frame_id: base
+    robot_pose_with_covariance_topic: /pose
+    input_sources:
+      front: # A name to identify the input source
+        type: pointcloud # Supported types: pointcloud
+        topic: /rgbd_d435/points
+        queue_size: 1
+        publish_on_update: true
+        sensor_processor:
+          type: perfect
+      lidar:
+        type: pointcloud
+        topic: /scan/points
+        queue_size: 1
+        publish_on_update: true
+        sensor_processor:
+          type: laser
+          ignore_points_above: 0.5
+          ignore_points_below: -0.5
+
+    track_point_frame_id: base
+    track_point_x: 0.0
+    track_point_y: 0.0
+    track_point_z: 0.0
+    time_tolerance: 1e-3
+    scanning_duration: 0.1
+    visibility_cleanup_rate: 5
+
+    # Map.
+    length_in_x: 5.0
+    length_in_y: 5.0
+    position_x: 0.0
+    position_y: 0.0
+    resolution: 0.03
+    min_variance: 0.0001
+    max_variance: 0.05
+    mahalanobis_distance_threshold: 2.5
+    multi_height_noise: 0.001
+    surface_normal_positive_axis: z
+    initialize_elevation_map: true
+    length_in_x_init_submap: 3.0
+    length_in_y_init_submap: 3.0
+    init_submap_variance: 1e-3
+    target_frame_init_submap: odom

@@ -10,6 +10,8 @@
 #include <controller_common/CtrlInterfaces.h>
 #include <ocs2_mpc/SystemObservation.h>
 #include <ocs2_oc/synchronized_module/ReferenceManagerInterface.h>
+#include <geometry_msgs/msg/twist.hpp>
+#include <realtime_tools/realtime_buffer.hpp>
 
 namespace ocs2::legged_robot
 {
@@ -17,6 +19,7 @@ namespace ocs2::legged_robot
     {
     public:
         TargetManager(CtrlInterfaces& ctrl_component,
+                      rclcpp_lifecycle::LifecycleNode::SharedPtr  node,
                       const std::shared_ptr<ReferenceManagerInterface>& referenceManagerPtr,
                       const std::string& task_file,
                       const std::string& reference_file);
@@ -51,11 +54,16 @@ namespace ocs2::legged_robot
         CtrlInterfaces& ctrl_component_;
         std::shared_ptr<ReferenceManagerInterface> referenceManagerPtr_;
 
+        rclcpp_lifecycle::LifecycleNode::SharedPtr node_;
+        rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr twist_sub_;
+        realtime_tools::RealtimeBuffer<geometry_msgs::msg::Twist> buffer_;
+        int twist_count = 0;
+
         vector_t default_joint_state_{};
         scalar_t command_height_{};
         scalar_t time_to_target_{};
-        scalar_t target_displacement_velocity_;
-        scalar_t target_rotation_velocity_;
+        scalar_t target_displacement_velocity_{};
+        scalar_t target_rotation_velocity_{};
     };
 }
 

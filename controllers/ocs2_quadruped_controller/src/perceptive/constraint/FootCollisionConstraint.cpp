@@ -1,7 +1,7 @@
 //
-// Created by qiayuan on 23-1-26.
+// Created by biao on 3/21/25.
 //
-#include "ocs2_quadruped_controller/perceptive_interface/constraint/FootCollisionConstraint.h"
+#include "ocs2_quadruped_controller/perceptive/constraint/FootCollisionConstraint.h"
 
 namespace ocs2::legged_robot
 {

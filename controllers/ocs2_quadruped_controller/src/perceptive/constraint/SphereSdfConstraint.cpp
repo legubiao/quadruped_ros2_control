@@ -1,9 +1,9 @@
 //
-// Created by qiayuan on 22-12-27.
+// Created by biao on 3/21/25.
 //
 
-#include "ocs2_quadruped_controller/perceptive_interface/constraint/SphereSdfConstraint.h"
-#include "ocs2_quadruped_controller/perceptive_interface/PerceptiveLeggedPrecomputation.h"
+#include "ocs2_quadruped_controller/perceptive/constraint/SphereSdfConstraint.h"
+#include "ocs2_quadruped_controller/perceptive/interface/PerceptiveLeggedPrecomputation.h"
 
 namespace ocs2::legged_robot
 {

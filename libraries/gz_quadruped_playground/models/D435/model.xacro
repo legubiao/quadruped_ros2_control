@@ -80,10 +80,6 @@
         <update_rate>30</update_rate>
         <visualize>true</visualize>
         <topic>rgbd_${name}</topic>
-        <plugin
-            filename="RosGzPointCloud"
-            name="ros_gz_point_cloud::PointCloud">
-        </plugin>
       </sensor>
     </gazebo>
   </xacro:macro>

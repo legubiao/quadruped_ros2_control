@@ -16,6 +16,9 @@
 #include <ocs2_core/thread_support/ExecuteAndSleep.h>
 #include <ocs2_legged_robot_ros/visualization/LeggedRobotVisualizer.h>
 #include <ocs2_quadruped_controller/control/GaitManager.h>
+#include <ocs2_quadruped_controller/perceptive/interface/PerceptiveLeggedInterface.h>
+#include <ocs2_quadruped_controller/perceptive/interface/PerceptiveLeggedReferenceManager.h>
+#include <ocs2_quadruped_controller/perceptive/synchronize/PlanarTerrainReceiver.h>
 #include <ocs2_sqp/SqpMpc.h>
 
 namespace ocs2::legged_robot
@@ -25,10 +28,12 @@ namespace ocs2::legged_robot
     {
         node_->declare_parameter("robot_pkg", robot_pkg_);
         node_->declare_parameter("feet", feet_names_);
+        node_->declare_parameter("enable_perceptive", enable_perceptive_);
 
         robot_pkg_ = node_->get_parameter("robot_pkg").as_string();
         joint_names_ = node_->get_parameter("joints").as_string_array();
         feet_names_ = node_->get_parameter("feet").as_string_array();
+        enable_perceptive_ = node_->get_parameter("enable_perceptive").as_bool();
 
 
         const std::string package_share_directory = ament_index_cpp::get_package_share_directory(robot_pkg_);
@@ -105,6 +110,11 @@ namespace ocs2::legged_robot
         observation_.mode = estimator_->getMode();
 
         visualizer_->update(observation_);
+        if (enable_perceptive_)
+        {
+            footPlacementVisualizationPtr_->update(observation_);
+            sphereVisualizationPtr_->update(observation_);
+        }
 
         // Compute target trajectory
         target_manager_->update(observation_);
@@ -137,9 +147,29 @@ namespace ocs2::legged_robot
 
     void CtrlComponent::setupLeggedInterface()
     {
-        legged_interface_ = std::make_unique<LeggedInterface>(task_file_, urdf_file_, reference_file_);
+        if (enable_perceptive_)
+        {
+            legged_interface_ = std::make_unique<PerceptiveLeggedInterface>(task_file_, urdf_file_, reference_file_);
+        }
+        else
+        {
+            legged_interface_ = std::make_unique<LeggedInterface>(task_file_, urdf_file_, reference_file_);
+        }
+
         legged_interface_->setupJointNames(joint_names_, feet_names_);
         legged_interface_->setupOptimalControlProblem(task_file_, urdf_file_, reference_file_, verbose_);
+
+        if (enable_perceptive_)
+        {
+            footPlacementVisualizationPtr_ = std::make_unique<FootPlacementVisualization>(
+                *dynamic_cast<PerceptiveLeggedReferenceManager&>(*legged_interface_->getReferenceManagerPtr()).
+                getConvexRegionSelectorPtr(),
+                legged_interface_->getCentroidalModelInfo().numThreeDofContacts, node_);
+
+            sphereVisualizationPtr_ = std::make_unique<SphereVisualization>(
+                legged_interface_->getPinocchioInterface(), legged_interface_->getCentroidalModelInfo(),
+                *dynamic_cast<PerceptiveLeggedInterface&>(*legged_interface_).getPinocchioSphereInterfacePtr(), node_);
+        }
     }
 
     /**
@@ -162,9 +192,20 @@ namespace ocs2::legged_robot
         mpc_->getSolverPtr()->setReferenceManager(legged_interface_->getReferenceManagerPtr());
 
         target_manager_ = std::make_unique<TargetManager>(ctrl_interfaces_,
+                                                          node_,
                                                           legged_interface_->getReferenceManagerPtr(),
                                                           task_file_,
                                                           reference_file_);
+
+        if (enable_perceptive_)
+        {
+            const auto planarTerrainReceiver =
+                std::make_shared<PlanarTerrainReceiver>(
+                    node_, dynamic_cast<PerceptiveLeggedInterface&>(*legged_interface_).getPlanarTerrainPtr(),
+                    dynamic_cast<PerceptiveLeggedInterface&>(*legged_interface_).getSignedDistanceFieldPtr(),
+                    "/convex_plane_decomposition_ros/planar_terrain", "elevation");
+            mpc_->getSolverPtr()->addSynchronizedModule(planarTerrainReceiver);
+        }
     }
 
     void CtrlComponent::setupMrt()

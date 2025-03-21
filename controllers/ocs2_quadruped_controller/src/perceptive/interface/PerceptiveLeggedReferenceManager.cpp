@@ -1,11 +1,11 @@
 //
-// Created by qiayuan on 23-1-3.
+// Created by biao on 3/21/25.
 //
 
 #include <utility>
 #include <ocs2_core/misc/Lookup.h>
 #include <ocs2_centroidal_model/AccessHelperFunctions.h>
-#include "ocs2_quadruped_controller/perceptive_interface/PerceptiveLeggedReferenceManager.h"
+#include "ocs2_quadruped_controller/perceptive/interface/PerceptiveLeggedReferenceManager.h"
 
 namespace ocs2::legged_robot
 {

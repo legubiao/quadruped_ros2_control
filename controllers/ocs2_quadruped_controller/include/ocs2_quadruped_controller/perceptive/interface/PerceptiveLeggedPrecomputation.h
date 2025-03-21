@@ -1,5 +1,5 @@
 //
-// Created by qiayuan on 23-1-1.
+// Created by biao on 3/21/25.
 //
 
 #pragma once
@@ -9,8 +9,8 @@
 #include <convex_plane_decomposition/PlanarRegion.h>
 #include <convex_plane_decomposition/PolygonTypes.h>
 
-#include "ocs2_quadruped_controller/perceptive_interface/ConvexRegionSelector.h"
-#include "ocs2_quadruped_controller/perceptive_interface/constraint/FootPlacementConstraint.h"
+#include "ocs2_quadruped_controller/perceptive/interface/ConvexRegionSelector.h"
+#include "ocs2_quadruped_controller/perceptive/constraint/FootPlacementConstraint.h"
 
 namespace ocs2::legged_robot
 {
