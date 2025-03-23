@@ -24,7 +24,6 @@ imu_sensor_broadcaster:
     sensor_name: "imu_sensor"
     frame_id: "imu_link"
     
-    
 unitree_guide_controller:
   ros__parameters:
     update_rate: 200  # Hz

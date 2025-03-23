@@ -23,6 +23,7 @@ imu_sensor_broadcaster:
   ros__parameters:
     sensor_name: "imu_sensor"
     frame_id: "imu_link"
+    update_rate: 200
 
 ocs2_quadruped_controller:
   ros__parameters:

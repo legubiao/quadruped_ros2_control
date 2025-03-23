@@ -39,7 +39,7 @@ namespace ocs2::legged_robot
     void TargetManager::update(SystemObservation& observation)
     {
         vector_t cmdGoal = vector_t::Zero(6);
-        if (buffer_.readFromRT() == nullptr)
+        if (buffer_.readFromRT() == nullptr || twist_count <= 0)
         {
             cmdGoal[0] = ctrl_component_.control_inputs_.ly * target_displacement_velocity_;
             cmdGoal[1] = -ctrl_component_.control_inputs_.lx * target_displacement_velocity_;
