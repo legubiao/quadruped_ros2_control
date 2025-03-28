@@ -23,15 +23,15 @@ void BaseFixedStand::enter()
 {
     for (int i = 0; i < 12; i++)
     {
-        start_pos_[i] = ctrl_interfaces_.joint_position_state_interface_[i].get().get_optional().value();
+        start_pos_[i] = ctrl_interfaces_.joint_position_state_interface_[i].get().get_value();
     }
     for (int i = 0; i < 12; i++)
     {
-        std::ignore = ctrl_interfaces_.joint_position_command_interface_[i].get().set_value(start_pos_[i]);
-        std::ignore = ctrl_interfaces_.joint_velocity_command_interface_[i].get().set_value(0);
-        std::ignore = ctrl_interfaces_.joint_torque_command_interface_[i].get().set_value(0);
-        std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(kp_);
-        std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(kd_);
+        ctrl_interfaces_.joint_position_command_interface_[i].get().set_value(start_pos_[i]);
+        ctrl_interfaces_.joint_velocity_command_interface_[i].get().set_value(0);
+        ctrl_interfaces_.joint_torque_command_interface_[i].get().set_value(0);
+        ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(kp_);
+        ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(kd_);
     }
     ctrl_interfaces_.control_inputs_.command = 0;
 }
@@ -42,7 +42,7 @@ void BaseFixedStand::run(const rclcpp::Time&/*time*/, const rclcpp::Duration&/*p
     phase = std::tanh(percent_);
     for (int i = 0; i < 12; i++)
     {
-        std::ignore = ctrl_interfaces_.joint_position_command_interface_[i].get().set_value(
+        ctrl_interfaces_.joint_position_command_interface_[i].get().set_value(
             phase * target_pos_[i] + (1 - phase) * start_pos_[i]);
     }
 }

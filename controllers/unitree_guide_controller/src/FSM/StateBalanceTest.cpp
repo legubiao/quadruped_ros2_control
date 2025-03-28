@@ -51,8 +51,8 @@ void StateBalanceTest::run(const rclcpp::Time &/*time*/, const rclcpp::Duration 
     Rd_ = rotz(yaw) * init_rotation_;
 
     for (int i = 0; i < 12; i++) {
-        std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(0.8);
-        std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(0.8);
+        ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(0.8);
+        ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(0.8);
     }
 
     calcTorque();
@@ -97,8 +97,8 @@ void StateBalanceTest::calcTorque() {
     for (int i = 0; i < 4; i++) {
         KDL::JntArray torque = robot_model_->getTorque(force_feet_body.col(i), i);
         for (int j = 0; j < 3; j++) {
-            std::ignore = ctrl_interfaces_.joint_torque_command_interface_[i * 3 + j].get().set_value(torque(j));
-            std::ignore = ctrl_interfaces_.joint_position_command_interface_[i * 3 + j].get().set_value(
+            ctrl_interfaces_.joint_torque_command_interface_[i * 3 + j].get().set_value(torque(j));
+            ctrl_interfaces_.joint_position_command_interface_[i * 3 + j].get().set_value(
                 current_joints[i](j));
         }
     }

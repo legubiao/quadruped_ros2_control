@@ -79,11 +79,11 @@ namespace ocs2::legged_robot
 
         for (int i = 0; i < 12; i++)
         {
-            std::ignore = ctrl_interfaces_.joint_torque_command_interface_[i].get().set_value(torque(i));
-            std::ignore = ctrl_interfaces_.joint_position_command_interface_[i].get().set_value(pos_des(i));
-            std::ignore = ctrl_interfaces_.joint_velocity_command_interface_[i].get().set_value(vel_des(i));
-            std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(default_kp_);
-            std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(default_kd_);
+            ctrl_interfaces_.joint_torque_command_interface_[i].get().set_value(torque(i));
+            ctrl_interfaces_.joint_position_command_interface_[i].get().set_value(pos_des(i));
+            ctrl_interfaces_.joint_velocity_command_interface_[i].get().set_value(vel_des(i));
+            ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(default_kp_);
+            ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(default_kd_);
         }
 
         // Visualization

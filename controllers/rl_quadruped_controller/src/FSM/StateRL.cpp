@@ -391,16 +391,16 @@ void StateRL::setCommand() const
 {
     for (int i = 0; i < 12; i++)
     {
-        std::ignore = ctrl_interfaces_.joint_position_command_interface_[i].get().
+        ctrl_interfaces_.joint_position_command_interface_[i].get().
                                                                             set_value(
                                                                                 robot_command_.motor_command.q[i]);
-        std::ignore = ctrl_interfaces_.joint_velocity_command_interface_[i].get().set_value(
+        ctrl_interfaces_.joint_velocity_command_interface_[i].get().set_value(
             robot_command_.motor_command.dq[i]);
-        std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(
+        ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(
             robot_command_.motor_command.kp[i]);
-        std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(
+        ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(
             robot_command_.motor_command.kd[i]);
-        std::ignore = ctrl_interfaces_.joint_torque_command_interface_[i].get().
+        ctrl_interfaces_.joint_torque_command_interface_[i].get().
                                                                           set_value(
                                                                               robot_command_.motor_command.tau[i]);
     }

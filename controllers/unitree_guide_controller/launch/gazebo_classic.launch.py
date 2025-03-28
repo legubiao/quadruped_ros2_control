@@ -102,7 +102,7 @@ def launch_setup(context, *args, **kwargs):
 def generate_launch_description():
     pkg_description = DeclareLaunchArgument(
         'pkg_description',
-        default_value='go2_description',
+        default_value='go1_description',
         description='package for robot description'
     )
 

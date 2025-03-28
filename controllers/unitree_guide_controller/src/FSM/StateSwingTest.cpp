@@ -25,12 +25,12 @@ StateSwingTest::StateSwingTest(CtrlInterfaces &ctrl_interfaces,
 
 void StateSwingTest::enter() {
     for (int i = 0; i < 3; i++) {
-        std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(3);
-        std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(2);
+        ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(3);
+        ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(2);
     }
     for (int i = 3; i < 12; i++) {
-        std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(180);
-        std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(5);
+        ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(180);
+        ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(5);
     }
 
     Kp = KDL::Vector(20, 20, 50);
@@ -89,9 +89,9 @@ void StateSwingTest::positionCtrl() {
     target_foot_pos_[0] = fr_goal_pos_;
     target_joint_pos_ = robot_model_->getQ(target_foot_pos_);
     for (int i = 0; i < 4; i++) {
-        std::ignore = ctrl_interfaces_.joint_position_command_interface_[i * 3].get().set_value(target_joint_pos_[i](0));
-        std::ignore = ctrl_interfaces_.joint_position_command_interface_[i * 3 + 1].get().set_value(target_joint_pos_[i](1));
-        std::ignore = ctrl_interfaces_.joint_position_command_interface_[i * 3 + 2].get().set_value(target_joint_pos_[i](2));
+        ctrl_interfaces_.joint_position_command_interface_[i * 3].get().set_value(target_joint_pos_[i](0));
+        ctrl_interfaces_.joint_position_command_interface_[i * 3 + 1].get().set_value(target_joint_pos_[i](1));
+        ctrl_interfaces_.joint_position_command_interface_[i * 3 + 2].get().set_value(target_joint_pos_[i](2));
     }
 }
 
@@ -106,6 +106,6 @@ void StateSwingTest::torqueCtrl() const {
     KDL::JntArray torque0 = robot_model_->getTorque(force0, 0);
 
     for (int i = 0; i < 3; i++) {
-        std::ignore = ctrl_interfaces_.joint_torque_command_interface_[i].get().set_value(torque0(i));
+        ctrl_interfaces_.joint_torque_command_interface_[i].get().set_value(torque0(i));
     }
 }

@@ -26,8 +26,8 @@ StateFreeStand::StateFreeStand(CtrlInterfaces &ctrl_interfaces,
 
 void StateFreeStand::enter() {
     for (int i = 0; i < 12; i++) {
-        std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(100);
-        std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(5);
+        ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(100);
+        ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(5);
     }
 
     init_joint_pos_ = robot_model_->current_joint_pos_;
@@ -78,11 +78,11 @@ void StateFreeStand::calc_body_target(const float row, const float pitch,
     target_joint_pos_ = robot_model_->getQ(goal_pos);
 
     for (int i = 0; i < 4; i++) {
-        std::ignore = ctrl_interfaces_.joint_position_command_interface_[i * 3].get().set_value(
+        ctrl_interfaces_.joint_position_command_interface_[i * 3].get().set_value(
             target_joint_pos_[i](0));
-        std::ignore = ctrl_interfaces_.joint_position_command_interface_[i * 3 + 1].get().set_value(
+        ctrl_interfaces_.joint_position_command_interface_[i * 3 + 1].get().set_value(
             target_joint_pos_[i](1));
-        std::ignore = ctrl_interfaces_.joint_position_command_interface_[i * 3 + 2].get().set_value(
+        ctrl_interfaces_.joint_position_command_interface_[i * 3 + 2].get().set_value(
             target_joint_pos_[i](2));
     }
 }

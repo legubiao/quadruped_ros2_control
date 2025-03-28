@@ -155,7 +155,7 @@ void StateTrotting::calcTau() {
     for (int i = 0; i < 4; i++) {
         KDL::JntArray torque = robot_model_->getTorque(force_feet_body_.col(i), i);
         for (int j = 0; j < 3; j++) {
-            std::ignore = ctrl_interfaces_.joint_torque_command_interface_[i * 3 + j].get().set_value(torque(j));
+            ctrl_interfaces_.joint_torque_command_interface_[i * 3 + j].get().set_value(torque(j));
         }
     }
 }
@@ -172,8 +172,8 @@ void StateTrotting::calcQQd() {
     Vec12 q_goal = robot_model_->getQ(pos_feet_target);
     Vec12 qd_goal = robot_model_->getQd(pos_feet_body, vel_feet_target);
     for (int i = 0; i < 12; i++) {
-        std::ignore = ctrl_interfaces_.joint_position_command_interface_[i].get().set_value(q_goal(i));
-        std::ignore = ctrl_interfaces_.joint_velocity_command_interface_[i].get().set_value(qd_goal(i));
+        ctrl_interfaces_.joint_position_command_interface_[i].get().set_value(q_goal(i));
+        ctrl_interfaces_.joint_velocity_command_interface_[i].get().set_value(qd_goal(i));
     }
 }
 
@@ -182,14 +182,14 @@ void StateTrotting::calcGain() const {
         if (wave_generator_->contact_(i) == 0) {
             // swing gain
             for (int j = 0; j < 3; j++) {
-                std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i * 3 + j].get().set_value(3);
-                std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i * 3 + j].get().set_value(2);
+                ctrl_interfaces_.joint_kp_command_interface_[i * 3 + j].get().set_value(3);
+                ctrl_interfaces_.joint_kd_command_interface_[i * 3 + j].get().set_value(2);
             }
         } else {
             // stable gain
             for (int j = 0; j < 3; j++) {
-                std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i * 3 + j].get().set_value(0.8);
-                std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i * 3 + j].get().set_value(0.8);
+                ctrl_interfaces_.joint_kp_command_interface_[i * 3 + j].get().set_value(0.8);
+                ctrl_interfaces_.joint_kd_command_interface_[i * 3 + j].get().set_value(0.8);
             }
         }
     }
