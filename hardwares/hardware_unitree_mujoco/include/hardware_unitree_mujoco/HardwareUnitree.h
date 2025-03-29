@@ -58,6 +58,8 @@ protected:
     unitree_go::msg::dds_::LowState_ low_state_{}; // default init
     unitree_go::msg::dds_::SportModeState_ high_state_{}; // default init
 
+    std::string network_interface_ = "lo";
+    int domain_ = 1;
     /*publisher*/
     unitree::robot::ChannelPublisherPtr<unitree_go::msg::dds_::LowCmd_> low_cmd_publisher_;
     /*subscriber*/

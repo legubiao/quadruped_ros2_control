@@ -3,7 +3,6 @@
 //
 
 #include "hardware_unitree_mujoco/HardwareUnitree.h"
-#include <rclcpp/logging.hpp>
 #include "crc32.h"
 
 #define TOPIC_LOWCMD "rt/lowcmd"
@@ -39,7 +38,16 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Hardwa
         }
     }
 
-    ChannelFactory::Instance()->Init(1, "lo");
+
+    if (const auto network_interface_param = info.hardware_parameters.find("network_interface"); network_interface_param != info.hardware_parameters.end()) {
+        network_interface_ = network_interface_param->second;
+    }
+    if (const auto domain_param = info.hardware_parameters.find("domain"); domain_param != info.hardware_parameters.end()) {
+        domain_ = std::stoi(domain_param->second);
+    }
+
+    RCLCPP_INFO(get_logger()," network_interface: %s, domain: %d", network_interface_.c_str(), domain_);
+    ChannelFactory::Instance()->Init(domain_, network_interface_);
 
     low_cmd_publisher_ =
             std::make_shared<ChannelPublisher<unitree_go::msg::dds_::LowCmd_> >(
