@@ -3,7 +3,7 @@
 //
 
 #include "rl_quadruped_controller/FSM/StateRL.h"
-
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include <rclcpp/logging.hpp>
 #include <yaml-cpp/yaml.h>
 
@@ -48,29 +48,40 @@ std::vector<T> ReadVectorFromYaml(const YAML::Node& node, const std::string& fra
 }
 
 StateRL::StateRL(CtrlInterfaces& ctrl_interfaces,
-                 CtrlComponent& ctrl_component, const std::string& config_path,
-                 const std::vector<double>& target_pos) : FSMState(
-                                                              FSMStateName::RL, "rl", ctrl_interfaces),
-                                                          estimator_(ctrl_component.estimator_),
-                                                          enable_estimator_(ctrl_component.enable_estimator_)
+                 CtrlComponent& ctrl_component,
+                 const std::vector<double>& target_pos) :
+    FSMState(FSMStateName::RL, "rl", ctrl_interfaces),
+    node_(ctrl_component.node_),
+    enable_estimator_(ctrl_component.enable_estimator_),
+    estimator_(ctrl_component.estimator_)
 {
+    node_->declare_parameter("robot_pkg", robot_pkg_);
+    node_->declare_parameter("model_folder", model_folder_);
+    node_->declare_parameter("use_rl_thread", use_rl_thread_);
+    robot_pkg_ = node_->get_parameter("robot_pkg").as_string();
+    model_folder_ = node_->get_parameter("model_folder").as_string();
+    use_rl_thread_ = node_->get_parameter("use_rl_thread").as_bool();
+
+    RCLCPP_INFO(node_->get_logger(), "Using robot model from %s", robot_pkg_.c_str());
+    const std::string package_share_directory = ament_index_cpp::get_package_share_directory(robot_pkg_);
+    const std::string model_path = package_share_directory + "/config/" + model_folder_;
+
     for (int i = 0; i < 12; i++)
     {
         init_pos_[i] = target_pos[i];
     }
 
     // read params from yaml
-    loadYaml(config_path);
+    loadYaml(model_path);
 
-    // history
     if (!params_.observations_history.empty())
     {
         history_obs_buf_ = std::make_shared<ObservationBuffer>(1, params_.num_observations,
                                                                params_.observations_history.size());
     }
 
-    std::cout << "Model loading: " << config_path + "/" + params_.model_name << std::endl;
-    model_ = torch::jit::load(config_path + "/" + params_.model_name);
+    RCLCPP_INFO(node_->get_logger(), "Model loading: %s", params_.model_name.c_str());
+    model_ = torch::jit::load(model_path + "/" + params_.model_name);
 
 
     // for (const auto &param: model_.parameters()) {
@@ -78,30 +89,32 @@ StateRL::StateRL(CtrlInterfaces& ctrl_interfaces,
     // }
 
 
-    rl_thread_ = std::thread([&]
+    if (use_rl_thread_)
     {
-        while (true)
-        {
-            try
+        rl_thread_ = std::thread([&]{
+            while (true)
             {
-                executeAndSleep(
-                    [&]
-                    {
-                        if (running_)
+                try
+                {
+                    executeAndSleep(
+                        [&]
                         {
-                            runModel();
-                        }
-                    },
-                    ctrl_interfaces_.frequency_ / params_.decimation);
+                            if (running_)
+                            {
+                                runModel();
+                            }
+                        },
+                        ctrl_interfaces_.frequency_ / params_.decimation);
+                }
+                catch (const std::exception& e)
+                {
+                    running_ = false;
+                    RCLCPP_ERROR(rclcpp::get_logger("StateRL"), "Error in RL thread: %s", e.what());
+                }
             }
-            catch (const std::exception& e)
-            {
-                running_ = false;
-                RCLCPP_ERROR(rclcpp::get_logger("StateRL"), "Error in RL thread: %s", e.what());
-            }
-        }
-    });
-    setThreadPriority(50, rl_thread_);
+        });
+        setThreadPriority(60, rl_thread_);
+    }
 }
 
 void StateRL::enter()
@@ -125,12 +138,19 @@ void StateRL::enter()
     control_.y = 0.0;
     control_.yaw = 0.0;
 
+    // history
+    history_obs_buf_->clear();
+
     running_ = true;
 }
 
 void StateRL::run(const rclcpp::Time&/*time*/, const rclcpp::Duration&/*period*/)
 {
     getState();
+    if (!use_rl_thread_)
+    {
+        runModel();
+    }
     setCommand();
 }
 
@@ -141,6 +161,10 @@ void StateRL::exit()
 
 FSMStateName StateRL::checkChange()
 {
+    if (!estimator_->safety())
+    {
+        return FSMStateName::PASSIVE;
+    }
     switch (ctrl_interfaces_.control_inputs_.command)
     {
     case 1:
@@ -314,32 +338,35 @@ void StateRL::getState()
 {
     if (params_.framework == "isaacgym")
     {
-        robot_state_.imu.quaternion[3] = ctrl_interfaces_.imu_state_interface_[0].get().get_value();
-        robot_state_.imu.quaternion[0] = ctrl_interfaces_.imu_state_interface_[1].get().get_value();
-        robot_state_.imu.quaternion[1] = ctrl_interfaces_.imu_state_interface_[2].get().get_value();
-        robot_state_.imu.quaternion[2] = ctrl_interfaces_.imu_state_interface_[3].get().get_value();
+        robot_state_.imu.quaternion[3] = ctrl_interfaces_.imu_state_interface_[0].get().get_optional().value();
+        robot_state_.imu.quaternion[0] = ctrl_interfaces_.imu_state_interface_[1].get().get_optional().value();
+        robot_state_.imu.quaternion[1] = ctrl_interfaces_.imu_state_interface_[2].get().get_optional().value();
+        robot_state_.imu.quaternion[2] = ctrl_interfaces_.imu_state_interface_[3].get().get_optional().value();
     }
     else if (params_.framework == "isaacsim")
     {
-        robot_state_.imu.quaternion[0] = ctrl_interfaces_.imu_state_interface_[0].get().get_value();
-        robot_state_.imu.quaternion[1] = ctrl_interfaces_.imu_state_interface_[1].get().get_value();
-        robot_state_.imu.quaternion[2] = ctrl_interfaces_.imu_state_interface_[2].get().get_value();
-        robot_state_.imu.quaternion[3] = ctrl_interfaces_.imu_state_interface_[3].get().get_value();
+        robot_state_.imu.quaternion[0] = ctrl_interfaces_.imu_state_interface_[0].get().get_optional().value();
+        robot_state_.imu.quaternion[1] = ctrl_interfaces_.imu_state_interface_[1].get().get_optional().value();
+        robot_state_.imu.quaternion[2] = ctrl_interfaces_.imu_state_interface_[2].get().get_optional().value();
+        robot_state_.imu.quaternion[3] = ctrl_interfaces_.imu_state_interface_[3].get().get_optional().value();
     }
 
-    robot_state_.imu.gyroscope[0] = ctrl_interfaces_.imu_state_interface_[4].get().get_value();
-    robot_state_.imu.gyroscope[1] = ctrl_interfaces_.imu_state_interface_[5].get().get_value();
-    robot_state_.imu.gyroscope[2] = ctrl_interfaces_.imu_state_interface_[6].get().get_value();
+    robot_state_.imu.gyroscope[0] = ctrl_interfaces_.imu_state_interface_[4].get().get_optional().value();
+    robot_state_.imu.gyroscope[1] = ctrl_interfaces_.imu_state_interface_[5].get().get_optional().value();
+    robot_state_.imu.gyroscope[2] = ctrl_interfaces_.imu_state_interface_[6].get().get_optional().value();
 
-    robot_state_.imu.accelerometer[0] = ctrl_interfaces_.imu_state_interface_[7].get().get_value();
-    robot_state_.imu.accelerometer[1] = ctrl_interfaces_.imu_state_interface_[8].get().get_value();
-    robot_state_.imu.accelerometer[2] = ctrl_interfaces_.imu_state_interface_[9].get().get_value();
+    robot_state_.imu.accelerometer[0] = ctrl_interfaces_.imu_state_interface_[7].get().get_optional().value();
+    robot_state_.imu.accelerometer[1] = ctrl_interfaces_.imu_state_interface_[8].get().get_optional().value();
+    robot_state_.imu.accelerometer[2] = ctrl_interfaces_.imu_state_interface_[9].get().get_optional().value();
 
     for (int i = 0; i < 12; i++)
     {
-        robot_state_.motor_state.q[i] = ctrl_interfaces_.joint_position_state_interface_[i].get().get_value();
-        robot_state_.motor_state.dq[i] = ctrl_interfaces_.joint_velocity_state_interface_[i].get().get_value();
-        robot_state_.motor_state.tauEst[i] = ctrl_interfaces_.joint_effort_state_interface_[i].get().get_value();
+        robot_state_.motor_state.q[i] = ctrl_interfaces_.joint_position_state_interface_[i].get().get_optional().
+            value();
+        robot_state_.motor_state.dq[i] = ctrl_interfaces_.joint_velocity_state_interface_[i].get().get_optional().
+            value();
+        robot_state_.motor_state.tauEst[i] = ctrl_interfaces_.joint_effort_state_interface_[i].get().get_optional().
+            value();
     }
 
     control_.x = ctrl_interfaces_.control_inputs_.ly;

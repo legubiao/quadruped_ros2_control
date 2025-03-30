@@ -12,16 +12,11 @@ Todo List:
 - [x] **[2025-02-23]** Add Gazebo Playground
   - [x] OCS2 controller for Gazebo Simulation
   - [x] Refactor FSM and Unitree Guide Controller
+- [x] **[2025-03-30]** Add Real Go2 Robot Support
 - [ ] OCS2 Perceptive locomotion demo
 
-Video for Unitree Guide Controller:
-[![](http://i1.hdslb.com/bfs/archive/310e6208920985ac43015b2da31c01ec15e2c5f9.jpg)](https://www.bilibili.com/video/BV1aJbAeZEuo/)
-
-Video for OCS2 Quadruped Controller:
-[![](http://i0.hdslb.com/bfs/archive/e758ce019587032449a153cf897a543443b64bba.jpg)](https://www.bilibili.com/video/BV1UcxieuEmH/)
-
-Video for RL Quadruped Controller:
-[![](http://i0.hdslb.com/bfs/archive/9886e7f9ed06d7f880b5614cb2f4c3ec1d7bf85f.jpg)](https://www.bilibili.com/video/BV1QP1pYBE47/)
+Video on Real Unitree Go2 Robot:
+[![](http://i0.hdslb.com/bfs/archive/7d3856b3c5e5040f24990d3eab760cf8ba4cf80d.jpg)](https://www.bilibili.com/video/BV1QpZaY8EYV/)
 
 ## 1. Quick Start
 
@@ -35,18 +30,11 @@ Video for RL Quadruped Controller:
     colcon build --packages-up-to unitree_guide_controller go2_description keyboard_input --symlink-install
     ```
 
-### 1.1 Mujoco Simulator
-
-Please use **C++ Simulation** in this [Mujoco Simulation](https://github.com/legubiao/unitree_mujoco) for more robot
-models and contact sensor.
-
-* **Python Simulation** is also supported, but you still need to
-  install [unitree_sdk2](https://github.com/unitreerobotics/unitree_sdk2)
-
+### 1.1 Mujoco Simulator or Real Unitree Robot
 > **Warning:** CycloneDDS ROS2 RMW may conflict with unitree_sdk2. If you cannot launch unitree mujoco simulation
 > without `sudo`, then you cannot used `unitree_mujoco_hardware`. This conflict could be solved by one of below two
 > methods:
-> 1. Uninstall CycloneDDS ROS2 RMW, or
+> 1. Uninstall CycloneDDS ROS2 RMW, used another ROS2 RMW, such as FastDDS **[Recommended]**.
 > 2. Follow the guide in [unitree_ros2](https://github.com/unitreerobotics/unitree_ros2) to configure the ROS2 RMW by
      compiling cyclone dds.
 
@@ -128,6 +116,8 @@ Congratulations! You have successfully launched the quadruped robot in the simul
   * [RL Quadruped Controller](controllers/rl_quadruped_controller): Reinforcement learning controller for quadruped robot
 * **Simulate with more sensors**
   * [Gazebo Quadruped Playground](libraries/gz_quadruped_playground): Provide gazebo simulation with lidar or depth camera.
+* **Real Robot Deploy**
+  * [Unitree Go2 Robot](descriptions/unitree/go2_description): Check here about how to deploy on go2 robot.
 
 ## Reference
 

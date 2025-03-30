@@ -8,17 +8,20 @@
 #include <torch/torch.h>
 #include <vector>
 
-class ObservationBuffer {
+class ObservationBuffer
+{
 public:
     ObservationBuffer(int num_envs, int num_obs, int include_history_steps);
 
     ~ObservationBuffer() = default;
 
-    void reset(const std::vector<int>& reset_index, const torch::Tensor &new_obs);
+    void reset(const std::vector<int>& reset_index, const torch::Tensor& new_obs);
 
-    void insert(const torch::Tensor &new_obs);
+    void clear();
 
-    [[nodiscard]] torch::Tensor getObsVec(const std::vector<int> &obs_ids) const;
+    void insert(const torch::Tensor& new_obs);
+
+    [[nodiscard]] torch::Tensor getObsVec(const std::vector<int>& obs_ids) const;
 
 private:
     int num_envs_;

@@ -132,7 +132,7 @@ class StateRL final : public FSMState
 {
 public:
     explicit StateRL(CtrlInterfaces& ctrl_interfaces,
-                     CtrlComponent& ctrl_component, const std::string& config_path,
+                     CtrlComponent& ctrl_component,
                      const std::vector<double>& target_pos);
 
     void enter() override;
@@ -163,6 +163,10 @@ private:
 
     void setCommand() const;
 
+    std::shared_ptr<rclcpp_lifecycle::LifecycleNode> node_;
+    std::string robot_pkg_ = "go2_description";
+    std::string model_folder_ = "legged_gym";
+
     bool enable_estimator_;
     std::shared_ptr<Estimator>& estimator_;
 
@@ -181,6 +185,7 @@ private:
 
     // rl module
     torch::jit::script::Module model_;
+    bool use_rl_thread_ = true;
     std::thread rl_thread_;
     bool running_ = false;
     bool updated_ = false;

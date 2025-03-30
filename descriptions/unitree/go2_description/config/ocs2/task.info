@@ -85,16 +85,16 @@ initialState
    (11,0) 0.0     ; theta_base_x
 
    ;; Leg Joint Positions: [FL, RL, FR, RR] ;;
-   (12,0) -0.20   ; FL_hip_joint
+   (12,0) -0.0   ; FL_hip_joint
    (13,0)  0.72   ; FL_thigh_joint
    (14,0) -1.44   ; FL_calf_joint
-   (15,0) -0.20   ; RL_hip_joint
+   (15,0) -0.0   ; RL_hip_joint
    (16,0)  0.72   ; RL_thigh_joint
    (17,0) -1.44   ; RL_calf_joint
-   (18,0)  0.20   ; FR_hip_joint
+   (18,0)  0.0   ; FR_hip_joint
    (19,0)  0.72   ; FR_thigh_joint
    (20,0) -1.44   ; FR_calf_joint
-   (21,0)  0.20   ; RR_hip_joint
+   (21,0)  0.0   ; RR_hip_joint
    (22,0)  0.72   ; RR_thigh_joint
    (23,0) -1.44   ; RR_calf_joint
 }
@@ -220,8 +220,8 @@ frictionConeTask
 
 swingLegTask
 {
-    kp                   250
-    kd                   25
+    kp                   350
+    kd                   37
 }
 
 weight
