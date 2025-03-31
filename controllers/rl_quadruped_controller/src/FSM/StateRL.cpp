@@ -139,7 +139,9 @@ void StateRL::enter()
     control_.yaw = 0.0;
 
     // history
-    history_obs_buf_->clear();
+    if (!params_.observations_history.empty()) {
+        history_obs_buf_->clear();
+    }
 
     running_ = true;
 }
@@ -161,7 +163,7 @@ void StateRL::exit()
 
 FSMStateName StateRL::checkChange()
 {
-    if (!estimator_->safety())
+    if (enable_estimator_ and !estimator_->safety())
     {
         return FSMStateName::PASSIVE;
     }

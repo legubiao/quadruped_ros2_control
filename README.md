@@ -85,7 +85,7 @@ Video on Real Unitree Go2 Robot:
 
 * Install Gazebo
   ```bash
-  sudo apt-get install ros-jazzy-ros-gz ros-jazzy-gz-ros2-control
+  sudo apt-get install ros-jazzy-ros-gz
   ```
 
 * Compile Gazebo Playground

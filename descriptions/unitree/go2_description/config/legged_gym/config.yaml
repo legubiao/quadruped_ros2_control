@@ -2,7 +2,7 @@ model_name: "policy.pt"
 framework: "isaacgym"
 rows: 4
 cols: 3
-decimation: 1
+decimation: 4
 num_observations: 45
 observations: [ "commands", "ang_vel", "gravity_vec",  "dof_pos", "dof_vel", "actions" ]
 #observations_history: [6, 5, 4, 3, 2, 1, 0]
