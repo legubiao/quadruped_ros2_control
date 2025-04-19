@@ -16,7 +16,7 @@ struct CtrlComponent;
 
 class Estimator {
 public:
-    explicit Estimator(CtrlInterfaces &ctrl_interfaces, CtrlComponent &ctrl_component);
+    explicit Estimator(CtrlInterfaces &ctrl_interfaces, CtrlComponent &ctrl_component, int feet_force_threshold = 1);
 
     ~Estimator() = default;
 
@@ -103,9 +103,12 @@ public:
 
     void update();
 
+    bool safety() const;
+
 private:
     CtrlInterfaces &ctrl_interfaces_;
     std::shared_ptr<QuadrupedRobot> &robot_model_;
+    double feet_force_threshold_;
 
     Eigen::Matrix<double, 18, 1> x_hat_; // The state of estimator, position(3)+velocity(3)+feet position(3x4)
 

@@ -7,7 +7,7 @@
 #define HARDWAREUNITREE_H
 
 #include "hardware_interface/system_interface.hpp"
-
+#include <unitree/idl/go2/WirelessController_.hpp>
 #include <unitree/idl/go2/LowState_.hpp>
 #include <unitree/idl/go2/LowCmd_.hpp>
 #include <unitree/idl/go2/SportModeState_.hpp>
@@ -54,9 +54,15 @@ protected:
 
     void highStateMessageHandle(const void *messages);
 
+    void remoteWirelessHandle(const void *messages);
+
     unitree_go::msg::dds_::LowCmd_ low_cmd_{}; // default init
     unitree_go::msg::dds_::LowState_ low_state_{}; // default init
     unitree_go::msg::dds_::SportModeState_ high_state_{}; // default init
+
+    std::string network_interface_ = "lo";
+    int domain_ = 1;
+    bool show_foot_force_ = false;
 
     /*publisher*/
     unitree::robot::ChannelPublisherPtr<unitree_go::msg::dds_::LowCmd_> low_cmd_publisher_;
@@ -64,6 +70,5 @@ protected:
     unitree::robot::ChannelSubscriberPtr<unitree_go::msg::dds_::LowState_> lows_tate_subscriber_;
     unitree::robot::ChannelSubscriberPtr<unitree_go::msg::dds_::SportModeState_> high_state_subscriber_;
 };
-
 
 #endif //HARDWAREUNITREE_H

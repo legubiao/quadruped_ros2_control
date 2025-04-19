@@ -27,6 +27,19 @@ imu_sensor_broadcaster:
 unitree_guide_controller:
   ros__parameters:
     update_rate: 200  # Hz
+    down_pos:
+      - -0.01
+      - 1.27
+      - -2.8
+      - 0.01
+      - 1.27
+      - -2.8
+      - -0.3
+      - 1.31
+      - -2.8
+      - 0.3
+      - 1.31
+      - -2.8
     joints:
       - FR_hip_joint
       - FR_thigh_joint
@@ -76,8 +89,10 @@ unitree_guide_controller:
 
 ocs2_quadruped_controller:
   ros__parameters:
-    update_rate: 100  # Hz
+    update_rate: 500  # Hz
     robot_pkg: "go2_description"
+    feet_force_threshold: 20.0
+#    default_kd: 3.5
     joints:
       - FL_hip_joint
       - FL_thigh_joint
@@ -136,7 +151,8 @@ rl_quadruped_controller:
   ros__parameters:
     update_rate: 200  # Hz
     robot_pkg: "go2_description"
-    model_folder: "legged_gym"
+#    use_rl_thread: false
+    model_folder: "himloco"
     joints:
       - FL_hip_joint
       - FL_thigh_joint
@@ -164,6 +180,20 @@ rl_quadruped_controller:
       - -0.1000
       - 0.8000
       - -1.5000
+
+    down_pos:
+      - 0.01
+      - 1.27
+      - -2.8
+      - -0.01
+      - 1.27
+      - -2.8
+      - 0.3
+      - 1.31
+      - -2.8
+      - -0.3
+      - 1.31
+      - -2.8
 
     command_interfaces:
       - effort

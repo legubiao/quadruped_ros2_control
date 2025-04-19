@@ -13,8 +13,10 @@
 #include "rl_quadruped_controller/FSM/StateFixedStand.h"
 #include "controller_common//FSM/StatePassive.h"
 
-namespace rl_quadruped_controller {
-    struct FSMStateList {
+namespace rl_quadruped_controller
+{
+    struct FSMStateList
+    {
         std::shared_ptr<FSMState> invalid;
         std::shared_ptr<StatePassive> passive;
         std::shared_ptr<StateFixedDown> fixedDown;
@@ -22,7 +24,8 @@ namespace rl_quadruped_controller {
         std::shared_ptr<StateRL> rl;
     };
 
-    class LeggedGymController final : public controller_interface::ControllerInterface {
+    class LeggedGymController final : public controller_interface::ControllerInterface
+    {
     public:
         LeggedGymController() = default;
 
@@ -31,27 +34,27 @@ namespace rl_quadruped_controller {
         controller_interface::InterfaceConfiguration state_interface_configuration() const override;
 
         controller_interface::return_type update(
-            const rclcpp::Time &time, const rclcpp::Duration &period) override;
+            const rclcpp::Time& time, const rclcpp::Duration& period) override;
 
         controller_interface::CallbackReturn on_init() override;
 
         controller_interface::CallbackReturn on_configure(
-            const rclcpp_lifecycle::State &previous_state) override;
+            const rclcpp_lifecycle::State& previous_state) override;
 
         controller_interface::CallbackReturn on_activate(
-            const rclcpp_lifecycle::State &previous_state) override;
+            const rclcpp_lifecycle::State& previous_state) override;
 
         controller_interface::CallbackReturn on_deactivate(
-            const rclcpp_lifecycle::State &previous_state) override;
+            const rclcpp_lifecycle::State& previous_state) override;
 
         controller_interface::CallbackReturn on_cleanup(
-            const rclcpp_lifecycle::State &previous_state) override;
+            const rclcpp_lifecycle::State& previous_state) override;
 
         controller_interface::CallbackReturn on_shutdown(
-            const rclcpp_lifecycle::State &previous_state) override;
-            
+            const rclcpp_lifecycle::State& previous_state) override;
+
         controller_interface::CallbackReturn on_error(
-            const rclcpp_lifecycle::State &previous_state) override;
+            const rclcpp_lifecycle::State& previous_state) override;
 
     private:
         std::shared_ptr<FSMState> getNextState(FSMStateName stateName) const;
@@ -90,12 +93,10 @@ namespace rl_quadruped_controller {
 
         double stand_kp_ = 80.0;
         double stand_kd_ = 3.5;
-
-        std::string robot_pkg_;
-        std::string model_folder_;
+        double feet_force_threshold_ = 20.0;
 
         std::unordered_map<
-            std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface> > *>
+            std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>*>
         command_interface_map_ = {
             {"effort", &ctrl_interfaces_.joint_torque_command_interface_},
             {"position", &ctrl_interfaces_.joint_position_command_interface_},
@@ -105,7 +106,7 @@ namespace rl_quadruped_controller {
         };
 
         std::unordered_map<
-            std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface> > *>
+            std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedStateInterface>>*>
         state_interface_map_ = {
             {"position", &ctrl_interfaces_.joint_position_state_interface_},
             {"effort", &ctrl_interfaces_.joint_effort_state_interface_},

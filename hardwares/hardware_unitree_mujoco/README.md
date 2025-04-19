@@ -37,5 +37,21 @@ Tested environment:
 Build Command:
 ```bash
 cd ~/ros2_ws
-colcon build --packages-up-to hardware_unitree_mujoco
+colcon build --packages-up-to hardware_unitree_mujoco --symlink-install
+```
+
+## 3. Config network and domain
+Since the real unitree robot has different network and domain name, you need to set the network and domain name in the xacro file.
+```xml
+<hardware>
+    <plugin>hardware_unitree_mujoco/HardwareUnitree</plugin>
+    <param name="domain">1</param>
+    <param name="network_interface">lo</param>
+</hardware>
+```
+
+After modified the config, you can tried to visualize the robot info from real robot by following command:
+```bash
+source ~/ros2_ws/install/setup.bash
+ros2 launch hardware_unitree_mujoco visualize.launch.py
 ```

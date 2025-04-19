@@ -8,11 +8,13 @@ Tested environment:
 * Ubuntu 22.04
   * ROS2 Humble
 
+### Build Command
 ```bash
 cd ~/ros2_ws
 colcon build --packages-up-to keyboard_input
 ```
 
+### Launch Command
 ```bash
 source ~/ros2_ws/install/setup.bash
 ros2 run keyboard_input keyboard_input

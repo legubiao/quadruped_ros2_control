@@ -10,8 +10,8 @@ ObservationBuffer::ObservationBuffer(int num_envs,
     : num_envs_(num_envs),
       num_obs_(num_obs),
       include_history_steps_(include_history_steps) {
-    num_obs_total_ = num_obs * include_history_steps;
-    obs_buffer_ = torch::zeros({num_envs, num_obs_total_}, dtype(torch::kFloat32));
+    num_obs_total_ = num_obs_ * include_history_steps_;
+    obs_buffer_ = torch::zeros({num_envs_, num_obs_total_}, dtype(torch::kFloat32));
 }
 
 void ObservationBuffer::reset(const std::vector<int> &reset_index, const torch::Tensor &new_obs) {
@@ -20,6 +20,11 @@ void ObservationBuffer::reset(const std::vector<int> &reset_index, const torch::
         indices.emplace_back(torch::indexing::Slice(index));
     }
     obs_buffer_.index_put_(indices, new_obs.repeat({1, include_history_steps_}));
+}
+
+void ObservationBuffer::clear()
+{
+    obs_buffer_ = torch::zeros_like(obs_buffer_);
 }
 
 void ObservationBuffer::insert(const torch::Tensor &new_obs) {

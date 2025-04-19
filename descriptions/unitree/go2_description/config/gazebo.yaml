@@ -164,6 +164,20 @@ rl_quadruped_controller:
       - effort
       - position
       - velocity
+    
+    down_pos:
+      - 0.01
+      - 1.27
+      - -2.8
+      - -0.01
+      - 1.27
+      - -2.8
+      - 0.3
+      - 1.31
+      - -2.8
+      - -0.3
+      - 1.31
+      - -2.8
 
     imu_name: "imu_sensor"
     imu_interfaces:
