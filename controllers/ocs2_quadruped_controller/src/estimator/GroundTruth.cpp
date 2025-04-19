@@ -21,15 +21,15 @@ namespace ocs2::legged_robot
         updateImu();
 
         position_ = {
-            ctrl_component_.odom_state_interface_[0].get().get_optional().value(),
-            ctrl_component_.odom_state_interface_[1].get().get_optional().value(),
-            ctrl_component_.odom_state_interface_[2].get().get_optional().value()
+            ctrl_component_.odom_state_interface_[0].get().get_value(),
+            ctrl_component_.odom_state_interface_[1].get().get_value(),
+            ctrl_component_.odom_state_interface_[2].get().get_value()
         };
 
         linear_velocity_ = {
-            ctrl_component_.odom_state_interface_[3].get().get_optional().value(),
-            ctrl_component_.odom_state_interface_[4].get().get_optional().value(),
-            ctrl_component_.odom_state_interface_[5].get().get_optional().value()
+            ctrl_component_.odom_state_interface_[3].get().get_value(),
+            ctrl_component_.odom_state_interface_[4].get().get_value(),
+            ctrl_component_.odom_state_interface_[5].get().get_value()
         };
 
         updateLinear(position_, linear_velocity_);

@@ -7,6 +7,7 @@
 #include "ocs2_quadruped_controller/control/GaitManager.h"
 
 #include <ocs2_core/misc/LoadData.h>
+#include <rclcpp/logging.hpp>
 
 namespace ocs2::legged_robot
 {

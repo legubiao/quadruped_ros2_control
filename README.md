@@ -1,5 +1,7 @@
 # Quadruped ROS2 Control
 
+**ROS2 Humble Branch**
+
 This repository contains the ros2-control based controllers for the quadruped robot.
 
 * [Controllers](controllers): contains the ros2-control controllers

@@ -20,7 +20,9 @@ namespace ocs2::legged_robot
           info_(std::move(info)),
           rbd_state_(vector_t::Zero(2 * info_.generalizedCoordinatesNum)), node_(std::move(node))
     {
-        node_->declare_parameter("feet_force_threshold", feet_force_threshold_);
+        if (!node_->has_parameter("feet_force_threshold")) {
+            node_->declare_parameter("feet_force_threshold", feet_force_threshold_);
+        }
         feet_force_threshold_ = node_->get_parameter("feet_force_threshold").as_double();
     }
 
@@ -31,8 +33,8 @@ namespace ocs2::legged_robot
 
         for (int i = 0; i < size; i++)
         {
-            joint_pos(i) = ctrl_component_.joint_position_state_interface_[i].get().get_optional().value();
-            joint_vel(i) = ctrl_component_.joint_velocity_state_interface_[i].get().get_optional().value();
+            joint_pos(i) = ctrl_component_.joint_position_state_interface_[i].get().get_value();
+            joint_vel(i) = ctrl_component_.joint_velocity_state_interface_[i].get().get_value();
         }
 
         rbd_state_.segment(6, info_.actuatedDofNum) = joint_pos;
@@ -44,7 +46,7 @@ namespace ocs2::legged_robot
         const size_t size = ctrl_component_.foot_force_state_interface_.size();
         for (int i = 0; i < size; i++)
         {
-            contact_flag_[i] = ctrl_component_.foot_force_state_interface_[i].get().get_optional().value() >
+            contact_flag_[i] = ctrl_component_.foot_force_state_interface_[i].get().get_value() >
                 feet_force_threshold_;
         }
     }
@@ -52,22 +54,22 @@ namespace ocs2::legged_robot
     void StateEstimateBase::updateImu()
     {
         quat_ = {
-            ctrl_component_.imu_state_interface_[0].get().get_optional().value(),
-            ctrl_component_.imu_state_interface_[1].get().get_optional().value(),
-            ctrl_component_.imu_state_interface_[2].get().get_optional().value(),
-            ctrl_component_.imu_state_interface_[3].get().get_optional().value()
+            ctrl_component_.imu_state_interface_[0].get().get_value(),
+            ctrl_component_.imu_state_interface_[1].get().get_value(),
+            ctrl_component_.imu_state_interface_[2].get().get_value(),
+            ctrl_component_.imu_state_interface_[3].get().get_value()
         };
 
         angular_vel_local_ = {
-            ctrl_component_.imu_state_interface_[4].get().get_optional().value(),
-            ctrl_component_.imu_state_interface_[5].get().get_optional().value(),
-            ctrl_component_.imu_state_interface_[6].get().get_optional().value()
+            ctrl_component_.imu_state_interface_[4].get().get_value(),
+            ctrl_component_.imu_state_interface_[5].get().get_value(),
+            ctrl_component_.imu_state_interface_[6].get().get_value()
         };
 
         linear_accel_local_ = {
-            ctrl_component_.imu_state_interface_[7].get().get_optional().value(),
-            ctrl_component_.imu_state_interface_[8].get().get_optional().value(),
-            ctrl_component_.imu_state_interface_[9].get().get_optional().value()
+            ctrl_component_.imu_state_interface_[7].get().get_value(),
+            ctrl_component_.imu_state_interface_[8].get().get_value(),
+            ctrl_component_.imu_state_interface_[9].get().get_value()
         };
 
         // orientationCovariance_ = orientationCovariance;

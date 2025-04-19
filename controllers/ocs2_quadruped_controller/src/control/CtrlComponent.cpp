@@ -26,13 +26,13 @@ namespace ocs2::legged_robot
     CtrlComponent::CtrlComponent(const std::shared_ptr<rclcpp_lifecycle::LifecycleNode>& node,
                                  CtrlInterfaces& ctrl_interfaces) : node_(node), ctrl_interfaces_(ctrl_interfaces)
     {
-        node_->declare_parameter("robot_pkg", robot_pkg_);
-        node_->declare_parameter("feet", feet_names_);
-        node_->declare_parameter("enable_perceptive", enable_perceptive_);
-
         robot_pkg_ = node_->get_parameter("robot_pkg").as_string();
         joint_names_ = node_->get_parameter("joints").as_string_array();
         feet_names_ = node_->get_parameter("feet").as_string_array();
+
+        if (!node_->has_parameter("enable_perceptive")) {
+            node_->declare_parameter("enable_perceptive", enable_perceptive_);
+        }
         enable_perceptive_ = node_->get_parameter("enable_perceptive").as_bool();
 
 

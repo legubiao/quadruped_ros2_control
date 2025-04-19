@@ -182,19 +182,19 @@ void Estimator::update() {
     }
 
     Quat quat;
-    quat << ctrl_interfaces_.imu_state_interface_[0].get().get_optional().value(),
-            ctrl_interfaces_.imu_state_interface_[1].get().get_optional().value(),
-            ctrl_interfaces_.imu_state_interface_[2].get().get_optional().value(),
-            ctrl_interfaces_.imu_state_interface_[3].get().get_optional().value();
+    quat << ctrl_interfaces_.imu_state_interface_[0].get().get_value(),
+            ctrl_interfaces_.imu_state_interface_[1].get().get_value(),
+            ctrl_interfaces_.imu_state_interface_[2].get().get_value(),
+            ctrl_interfaces_.imu_state_interface_[3].get().get_value();
     rotation_ = quatToRotMat(quat);
 
-    gyro_ << ctrl_interfaces_.imu_state_interface_[4].get().get_optional().value(),
-            ctrl_interfaces_.imu_state_interface_[5].get().get_optional().value(),
-            ctrl_interfaces_.imu_state_interface_[6].get().get_optional().value();
+    gyro_ << ctrl_interfaces_.imu_state_interface_[4].get().get_value(),
+            ctrl_interfaces_.imu_state_interface_[5].get().get_value(),
+            ctrl_interfaces_.imu_state_interface_[6].get().get_value();
 
-    acceleration_ << ctrl_interfaces_.imu_state_interface_[7].get().get_optional().value(),
-            ctrl_interfaces_.imu_state_interface_[8].get().get_optional().value(),
-            ctrl_interfaces_.imu_state_interface_[9].get().get_optional().value();
+    acceleration_ << ctrl_interfaces_.imu_state_interface_[7].get().get_value(),
+            ctrl_interfaces_.imu_state_interface_[8].get().get_value(),
+            ctrl_interfaces_.imu_state_interface_[9].get().get_value();
 
     u_ = rotation_ * acceleration_ + g_;
     x_hat_ = A * x_hat_ + B * u_;

@@ -3,6 +3,10 @@
 //
 
 #include "hardware_unitree_mujoco/HardwareUnitree.h"
+
+#include <rclcpp/logger.hpp>
+#include <rclcpp/logging.hpp>
+
 #include "crc32.h"
 
 #define TOPIC_LOWCMD "rt/lowcmd"
@@ -59,7 +63,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Hardwa
         show_foot_force_ = show_foot_force_param->second == "true";
     }
 
-    RCLCPP_INFO(get_logger(), " network_interface: %s, domain: %d", network_interface_.c_str(), domain_);
+    RCLCPP_INFO(rclcpp::get_logger("unitree_hardware"), " network_interface: %s, domain: %d", network_interface_.c_str(), domain_);
     ChannelFactory::Instance()->Init(domain_, network_interface_);
 
     low_cmd_publisher_ =
@@ -204,7 +208,7 @@ return_type HardwareUnitree::read(const rclcpp::Time& /*time*/, const rclcpp::Du
 
     if (show_foot_force_)
     {
-        RCLCPP_INFO(get_logger(), "foot_force(): %f, %f, %f, %f", foot_force_[0], foot_force_[1], foot_force_[2],
+        RCLCPP_INFO(rclcpp::get_logger("unitree_hardware"), "foot_force(): %f, %f, %f, %f", foot_force_[0], foot_force_[1], foot_force_[2],
                     foot_force_[3]);
     }
 
