@@ -45,7 +45,6 @@
 
 #include <hardware_interface/resource_manager.hpp>
 #include <hardware_interface/component_parser.hpp>
-#include <hardware_interface/types/hardware_interface_type_values.hpp>
 
 #include <pluginlib/class_loader.hpp>
 
@@ -90,8 +89,7 @@ namespace gz_quadruped_hardware
         rclcpp::Duration control_period_ = rclcpp::Duration(1, 0);
 
         /// \brief Interface loader
-        std::shared_ptr<pluginlib::ClassLoader<
-            GazeboSimSystemInterface>>
+        std::shared_ptr<pluginlib::ClassLoader<GazeboSimSystemInterface>>
         robot_hw_sim_loader_{nullptr};
 
         /// \brief Controller manager
@@ -106,7 +104,7 @@ namespace gz_quadruped_hardware
 
         /// \brief Last time the update method was called
         rclcpp::Time last_update_sim_time_ros_ =
-            rclcpp::Time((int64_t)0, RCL_ROS_TIME);
+            rclcpp::Time(static_cast<int64_t>(0), RCL_ROS_TIME);
 
         /// \brief ECM pointer
         sim::EntityComponentManager* ecm{nullptr};
@@ -220,7 +218,7 @@ namespace gz_quadruped_hardware
             {
                 auto f = parameters_client->get_parameters({this->robot_description_});
                 f.wait();
-                std::vector<rclcpp::Parameter> values = f.get();
+                const std::vector<rclcpp::Parameter>& values = f.get();
                 urdf_string = values[0].as_string();
             }
             catch (const std::exception& e)
@@ -286,7 +284,7 @@ namespace gz_quadruped_hardware
         }
 
         // Get params from SDF
-        std::string paramFileName = _sdf->Get<std::string>("parameters");
+        auto paramFileName = _sdf->Get<std::string>("parameters");
 
         if (paramFileName.empty())
         {
@@ -297,7 +295,7 @@ namespace gz_quadruped_hardware
         }
 
         // Get params from SDF
-        std::string robot_param_node = _sdf->Get<std::string>("robot_param_node");
+        auto robot_param_node = _sdf->Get<std::string>("robot_param_node");
         if (!robot_param_node.empty())
         {
             this->dataPtr->robot_description_node_ = robot_param_node;
@@ -306,7 +304,7 @@ namespace gz_quadruped_hardware
             logger,
             "robot_param_node is %s", this->dataPtr->robot_description_node_.c_str());
 
-        std::string robot_description = _sdf->Get<std::string>("robot_param");
+        auto robot_description = _sdf->Get<std::string>("robot_param");
         if (!robot_description.empty())
         {
             this->dataPtr->robot_description_ = robot_description;
@@ -322,8 +320,8 @@ namespace gz_quadruped_hardware
         sdf::ElementPtr argument_sdf = sdfPtr->GetElement("parameters");
         while (argument_sdf)
         {
-            std::string argument = argument_sdf->Get<std::string>();
-            arguments.push_back(RCL_PARAM_FILE_FLAG);
+            auto argument = argument_sdf->Get<std::string>();
+            arguments.emplace_back(RCL_PARAM_FILE_FLAG);
             arguments.push_back(argument);
             argument_sdf = argument_sdf->GetNextElement("parameters");
         }
@@ -361,11 +359,11 @@ namespace gz_quadruped_hardware
             {
                 sdf::ElementPtr argument_sdf = sdfRos->GetElement("remapping");
 
-                arguments.push_back(RCL_ROS_ARGS_FLAG);
+                arguments.emplace_back(RCL_ROS_ARGS_FLAG);
                 while (argument_sdf)
                 {
                     auto argument = argument_sdf->Get<std::string>();
-                    arguments.push_back(RCL_REMAP_FLAG);
+                    arguments.emplace_back(RCL_REMAP_FLAG);
                     arguments.push_back(argument);
                     argument_sdf = argument_sdf->GetNextElement("remapping");
                 }
@@ -406,13 +404,14 @@ namespace gz_quadruped_hardware
         const auto rb_arg = std::string("robot_description:=") + std::regex_replace(
             urdf_string,
             comment_pattern, "");
-        arguments.push_back(RCL_PARAM_FLAG);
+        arguments.emplace_back(RCL_PARAM_FLAG);
         arguments.push_back(rb_arg);
 
         std::vector<const char*> argv;
+        argv.reserve(arguments.size());
         for (const auto& arg : arguments)
         {
-            argv.push_back(reinterpret_cast<const char*>(arg.data()));
+            argv.push_back(arg.data());
         }
 
         // set the arguments into rcl context
@@ -445,7 +444,7 @@ namespace gz_quadruped_hardware
             _entity,
             _ecm);
 
-        if (enabledJoints.size() == 0)
+        if (enabledJoints.empty())
         {
             RCLCPP_DEBUG_STREAM(
                 this->dataPtr->node_->get_logger(),
@@ -483,10 +482,9 @@ namespace gz_quadruped_hardware
         }
         try
         {
-            this->dataPtr->robot_hw_sim_loader_.reset(
-                new pluginlib::ClassLoader<GazeboSimSystemInterface>(
-                    "gz_quadruped_hardware",
-                    "gz_quadruped_hardware::GazeboSimSystemInterface"));
+            this->dataPtr->robot_hw_sim_loader_ = std::make_shared<pluginlib::ClassLoader<GazeboSimSystemInterface>>(
+                "gz_quadruped_hardware",
+                "gz_quadruped_hardware::GazeboSimSystemInterface");
         }
         catch (pluginlib::LibraryLoadException& ex)
         {
@@ -496,9 +494,9 @@ namespace gz_quadruped_hardware
             return;
         }
 
-        for (unsigned int i = 0; i < control_hardware_info.size(); ++i)
+        for (auto& i : control_hardware_info)
         {
-            std::string robot_hw_sim_type_str_ = control_hardware_info[i].hardware_class_type;
+            std::string robot_hw_sim_type_str_ = i.hardware_class_type;
             std::unique_ptr<GazeboSimSystemInterface> gzSimSystem;
             RCLCPP_DEBUG(
                 this->dataPtr->node_->get_logger(), "Load hardware interface %s ...",
@@ -520,7 +518,7 @@ namespace gz_quadruped_hardware
             if (!gzSimSystem->initSim(
                 this->dataPtr->node_,
                 enabledJoints,
-                control_hardware_info[i],
+                i,
                 _ecm,
                 this->dataPtr->update_rate))
             {
@@ -532,28 +530,27 @@ namespace gz_quadruped_hardware
                 this->dataPtr->node_->get_logger(), "Initialized robot simulation interface %s!",
                 robot_hw_sim_type_str_.c_str());
 
-            resource_manager_->import_component(std::move(gzSimSystem), control_hardware_info[i]);
+            resource_manager_->import_component(std::move(gzSimSystem), i);
 
             rclcpp_lifecycle::State state(
                 lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE,
                 hardware_interface::lifecycle_state_names::ACTIVE);
-            resource_manager_->set_component_state(control_hardware_info[i].name, state);
+            resource_manager_->set_component_state(i.name, state);
         }
 
         // Create the controller manager
         RCLCPP_INFO(this->dataPtr->node_->get_logger(), "Loading controller_manager");
         rclcpp::NodeOptions options = controller_manager::get_cm_node_options();
-        arguments.push_back("-r");
+        arguments.emplace_back("-r");
         arguments.push_back("__node:=" + controllerManagerNodeName);
-        arguments.push_back("-r");
+        arguments.emplace_back("-r");
         arguments.push_back("__ns:=" + ns);
         options.arguments(arguments);
-        this->dataPtr->controller_manager_.reset(
-            new controller_manager::ControllerManager(
-                std::move(resource_manager_),
-                this->dataPtr->executor_,
-                controllerManagerNodeName,
-                this->dataPtr->node_->get_namespace()));
+        this->dataPtr->controller_manager_ = std::make_shared<controller_manager::ControllerManager>(
+            std::move(resource_manager_),
+            this->dataPtr->executor_,
+            controllerManagerNodeName,
+            this->dataPtr->node_->get_namespace());
         this->dataPtr->executor_->add_node(this->dataPtr->controller_manager_);
 
         if (!this->dataPtr->controller_manager_->has_parameter("update_rate"))

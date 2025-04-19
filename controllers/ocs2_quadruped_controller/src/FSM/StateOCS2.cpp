@@ -18,8 +18,14 @@ namespace ocs2::legged_robot
           ctrl_component_(ctrl_component),
           node_(ctrl_component->node_)
     {
-        node_->declare_parameter("default_kp", default_kp_);
-        node_->declare_parameter("default_kd", default_kd_);
+        if (!node_->has_parameter("default_kp"))
+        {
+            node_->declare_parameter("default_kp", default_kp_);
+        }
+        if (!node_->has_parameter("default_kd"))
+        {
+            node_->declare_parameter("default_kd", default_kd_);
+        }
         default_kp_ = node_->get_parameter("default_kp").as_double();
         default_kd_ = node_->get_parameter("default_kd").as_double();
 

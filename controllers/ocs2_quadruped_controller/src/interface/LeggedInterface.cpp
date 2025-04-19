@@ -160,7 +160,8 @@ namespace ocs2::legged_robot
         // Self-collision avoidance constraint
         problem_ptr_->stateSoftConstraintPtr->add("selfCollision",
                                                   getSelfCollisionConstraint(
-                                                      *pinocchio_interface_ptr_, task_file, "selfCollision", verbose));
+                                                      *pinocchio_interface_ptr_, task_file, urdf_file, "selfCollision",
+                                                      verbose));
 
         // Setup Problem PreComputation
         problem_ptr_->preComputationPtr = std::make_unique<LeggedRobotPreComputation>(
@@ -390,6 +391,7 @@ namespace ocs2::legged_robot
 
     std::unique_ptr<StateCost> LeggedInterface::getSelfCollisionConstraint(const PinocchioInterface& pinocchioInterface,
                                                                            const std::string& taskFile,
+                                                                           const std::string& urdf_file,
                                                                            const std::string& prefix,
                                                                            bool verbose)
     {
@@ -413,7 +415,7 @@ namespace ocs2::legged_robot
         loadData::loadStdVectorOfPair(taskFile, prefix + ".collisionLinkPairs", collisionLinkPairs, verbose);
 
         geometry_interface_ptr_ = std::make_unique<PinocchioGeometryInterface>(
-            pinocchioInterface, collisionLinkPairs, collisionObjectPairs);
+            pinocchioInterface, urdf_file, collisionLinkPairs, collisionObjectPairs);
         if (verbose)
         {
             std::cerr << " #### =============================================================================\n";

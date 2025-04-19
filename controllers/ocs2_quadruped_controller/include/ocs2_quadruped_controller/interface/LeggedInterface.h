@@ -97,6 +97,7 @@ namespace ocs2::legged_robot
 
         std::unique_ptr<StateCost> getSelfCollisionConstraint(const PinocchioInterface& pinocchioInterface,
                                                               const std::string& taskFile,
+                                                              const std::string& urdf_file,
                                                               const std::string& prefix, bool verbose);
 
         ModelSettings model_settings_;
