@@ -15,18 +15,25 @@
 
 #include <memory>
 
+#ifdef GZ_HEADERS
 #include <gz/sim/System.hh>
 namespace sim = gz::sim;
+#else
+#include <ignition/gazebo/System.hh>
+namespace sim = ignition::gazebo;
+#endif
 
-namespace gz_quadruped_hardware {
+namespace gz_quadruped_hardware
+{
     // Forward declarations.
     class GazeboSimQuadrupedPluginPrivate;
 
     class GazeboSimQuadrupedPlugin
-            : public sim::System,
-              public sim::ISystemConfigure,
-              public sim::ISystemPreUpdate,
-              public sim::ISystemPostUpdate {
+        : public sim::System,
+          public sim::ISystemConfigure,
+          public sim::ISystemPreUpdate,
+          public sim::ISystemPostUpdate
+    {
     public:
         /// \brief Constructor
         GazeboSimQuadrupedPlugin();
@@ -36,22 +43,22 @@ namespace gz_quadruped_hardware {
 
         // Documentation inherited
         void Configure(
-            const sim::Entity &_entity,
-            const std::shared_ptr<const sdf::Element> &_sdf,
-            sim::EntityComponentManager &_ecm,
-            sim::EventManager &_eventMgr) override;
+            const sim::Entity& _entity,
+            const std::shared_ptr<const sdf::Element>& _sdf,
+            sim::EntityComponentManager& _ecm,
+            sim::EventManager& _eventMgr) override;
 
         // Documentation inherited
         void PreUpdate(
-            const sim::UpdateInfo &_info,
-            sim::EntityComponentManager &_ecm) override;
+            const sim::UpdateInfo& _info,
+            sim::EntityComponentManager& _ecm) override;
 
         void PostUpdate(
-            const sim::UpdateInfo &_info,
-            const sim::EntityComponentManager &_ecm) override;
+            const sim::UpdateInfo& _info,
+            const sim::EntityComponentManager& _ecm) override;
 
     private:
         /// \brief Private data pointer.
         std::unique_ptr<GazeboSimQuadrupedPluginPrivate> dataPtr;
     };
-} // namespace gz_ros2_control
+}

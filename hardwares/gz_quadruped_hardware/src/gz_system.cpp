@@ -202,7 +202,7 @@ namespace gz_quadruped_hardware
         std::map<std::string, sim::Entity>& enableJoints,
         const hardware_interface::HardwareInfo& hardware_info,
         sim::EntityComponentManager& _ecm,
-        unsigned int update_rate)
+        int& update_rate)
     {
         this->dataPtr = std::make_unique<GazeboSimSystemPrivate>();
         this->dataPtr->last_update_sim_time_ros_ = rclcpp::Time();
@@ -271,24 +271,6 @@ namespace gz_quadruped_hardware
 
             // Accept this joint and continue configuration
             RCLCPP_INFO_STREAM(this->nh_->get_logger(), "Loading joint: " << joint_name);
-
-            // check if joint is mimicked
-            auto it = std::find_if(
-                hardware_info.mimic_joints.begin(),
-                hardware_info.mimic_joints.end(),
-                [j](const hardware_interface::MimicJoint& mj)
-                {
-                    return mj.joint_index == j;
-                });
-
-            if (it != hardware_info.mimic_joints.end())
-            {
-                RCLCPP_INFO_STREAM(
-                    this->nh_->get_logger(),
-                    "Joint '" << joint_name << "'is mimicking joint '" <<
-                    this->dataPtr->joints_[it->mimicked_joint_index].name <<
-                    "' with multiplier: " << it->multiplier << " and offset: " << it->offset);
-            }
 
             RCLCPP_INFO_STREAM(this->nh_->get_logger(), "\tState:");
 
@@ -536,9 +518,9 @@ namespace gz_quadruped_hardware
                 ftData->name = _name->Data();
                 ftData->sim_ft_sensors_ = _entity;
                 this->dataPtr->state_interfaces_.emplace_back(
-                        "foot_force",
-                        ftData->name,
-                        &ftData->foot_effort);
+                    "foot_force",
+                    ftData->name,
+                    &ftData->foot_effort);
                 this->dataPtr->ft_sensors_.push_back(ftData);
                 return true;
             });
@@ -673,6 +655,60 @@ namespace gz_quadruped_hardware
                     this->dataPtr->node.Subscribe(
                         this->dataPtr->ft_sensors_[i]->topicName, &ForceTorqueData::OnForceTorque,
                         this->dataPtr->ft_sensors_[i].get());
+                }
+            }
+        }
+
+        return hardware_interface::return_type::OK;
+    }
+
+    hardware_interface::return_type
+    GazeboSimSystem::perform_command_mode_switch(
+        const std::vector<std::string>& start_interfaces,
+        const std::vector<std::string>& stop_interfaces)
+    {
+        for (unsigned int j = 0; j < this->dataPtr->joints_.size(); j++)
+        {
+            for (const std::string& interface_name : stop_interfaces)
+            {
+                // Clear joint control method bits corresponding to stop interfaces
+                if (interface_name == (this->dataPtr->joints_[j].name + "/" +
+                    hardware_interface::HW_IF_POSITION))
+                {
+                    this->dataPtr->joints_[j].joint_control_method &=
+                        static_cast<ControlMethod_>(VELOCITY & EFFORT);
+                }
+                else if (interface_name == (this->dataPtr->joints_[j].name + "/" + // NOLINT
+                    hardware_interface::HW_IF_VELOCITY))
+                {
+                    this->dataPtr->joints_[j].joint_control_method &=
+                        static_cast<ControlMethod_>(POSITION & EFFORT);
+                }
+                else if (interface_name == (this->dataPtr->joints_[j].name + "/" + // NOLINT
+                    hardware_interface::HW_IF_EFFORT))
+                {
+                    this->dataPtr->joints_[j].joint_control_method &=
+                        static_cast<ControlMethod_>(POSITION & VELOCITY);
+                }
+            }
+
+            // Set joint control method bits corresponding to start interfaces
+            for (const std::string& interface_name : start_interfaces)
+            {
+                if (interface_name == (this->dataPtr->joints_[j].name + "/" +
+                    hardware_interface::HW_IF_POSITION))
+                {
+                    this->dataPtr->joints_[j].joint_control_method |= POSITION;
+                }
+                else if (interface_name == (this->dataPtr->joints_[j].name + "/" + // NOLINT
+                    hardware_interface::HW_IF_VELOCITY))
+                {
+                    this->dataPtr->joints_[j].joint_control_method |= VELOCITY;
+                }
+                else if (interface_name == (this->dataPtr->joints_[j].name + "/" + // NOLINT
+                    hardware_interface::HW_IF_EFFORT))
+                {
+                    this->dataPtr->joints_[j].joint_control_method |= EFFORT;
                 }
             }
         }

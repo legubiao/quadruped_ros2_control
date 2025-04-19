@@ -194,7 +194,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go2_description/share/go2_description/meshes/trunk.dae" scale="1 1 1"/>
+        <mesh filename="../meshes/trunk.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -247,7 +247,7 @@
     <visual>
       <origin rpy="3.141592653589793 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go2_description/share/go2_description/meshes/hip.dae" scale="1 1 1"/>
+        <mesh filename="../meshes/hip.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -275,7 +275,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go2_description/share/go2_description/meshes/thigh_mirror.dae" scale="1 1 1"/>
+        <mesh filename="../meshes/thigh_mirror.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -303,7 +303,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go2_description/share/go2_description/meshes/calf.dae" scale="1 1 1"/>
+        <mesh filename="../meshes/calf.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -387,7 +387,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go2_description/share/go2_description/meshes/hip.dae" scale="1 1 1"/>
+        <mesh filename="../meshes/hip.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -415,7 +415,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go2_description/share/go2_description/meshes/thigh.dae" scale="1 1 1"/>
+        <mesh filename="../meshes/thigh.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -443,7 +443,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go2_description/share/go2_description/meshes/calf.dae" scale="1 1 1"/>
+        <mesh filename="../meshes/calf.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -527,7 +527,7 @@
     <visual>
       <origin rpy="3.141592653589793 3.141592653589793 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go2_description/share/go2_description/meshes/hip.dae" scale="1 1 1"/>
+        <mesh filename="../meshes/hip.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -555,7 +555,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go2_description/share/go2_description/meshes/thigh_mirror.dae" scale="1 1 1"/>
+        <mesh filename="../meshes/thigh_mirror.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -583,7 +583,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go2_description/share/go2_description/meshes/calf.dae" scale="1 1 1"/>
+        <mesh filename="../meshes/calf.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -667,7 +667,7 @@
     <visual>
       <origin rpy="0 3.141592653589793 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go2_description/share/go2_description/meshes/hip.dae" scale="1 1 1"/>
+        <mesh filename="../meshes/hip.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -695,7 +695,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go2_description/share/go2_description/meshes/thigh.dae" scale="1 1 1"/>
+        <mesh filename="../meshes/thigh.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
@@ -723,7 +723,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/tlab-uav/ros2_ws/install/go2_description/share/go2_description/meshes/calf.dae" scale="1 1 1"/>
+        <mesh filename="../meshes/calf.dae" scale="1 1 1"/>
       </geometry>
       <!-- <material name="orange"/> -->
     </visual>
