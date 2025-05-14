@@ -83,8 +83,8 @@ Video on Real Unitree Go2 Robot:
 
 ![gazebo classic](.images/gazebo_classic.png)
 
-### 1.3 Gazebo Harmonic Simulator (ROS2 Jazzy)
-
+### 1.3 Gazebo Harmonic Simulator (ROS2 Jazzy&Humble)
+> For ROS2 Humble User, please check [Here](hardwares/gz_quadruped_hardware)
 * Install Gazebo
   ```bash
   sudo apt-get install ros-jazzy-ros-gz

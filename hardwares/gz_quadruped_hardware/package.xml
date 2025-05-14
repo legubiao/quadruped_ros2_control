@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>gz_quadruped_hardware</name>
-  <version>2.0.6</version>
+  <version>1.0.0</version>
   <description>Gazebo ros2_control package for quadruped robot.</description>
-  <maintainer email="alejandro@openrobotics.com">Alejandro Hernández</maintainer>
-  <maintainer email="bence.magyar.robotics@gmail.com">Bence Magyar</maintainer>
-  <author>Alejandro Hernández</author>
+  <maintainer email="biao876990970@hotmail.com">Huang Zhenbiao</maintainer>
+  <author>Huang Zhenbiao</author>
   <license>Apache 2</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
