@@ -18,35 +18,6 @@ std::vector<T> ReadVectorFromYaml(const YAML::Node& node)
     return values;
 }
 
-template <typename T>
-std::vector<T> ReadVectorFromYaml(const YAML::Node& node, const std::string& framework, const int& rows,
-                                  const int& cols)
-{
-    std::vector<T> values;
-    for (const auto& val : node)
-    {
-        values.push_back(val.as<T>());
-    }
-
-    if (framework == "isaacsim")
-    {
-        std::vector<T> transposed_values(cols * rows);
-        for (int r = 0; r < rows; ++r)
-        {
-            for (int c = 0; c < cols; ++c)
-            {
-                transposed_values[c * rows + r] = values[r * cols + c];
-            }
-        }
-        return transposed_values;
-    }
-    if (framework == "isaacgym")
-    {
-        return values;
-    }
-    throw std::invalid_argument("Unsupported framework: " + framework);
-}
-
 StateRL::StateRL(CtrlInterfaces& ctrl_interfaces,
                  CtrlComponent& ctrl_component,
                  const std::vector<double>& target_pos) :
@@ -190,8 +161,7 @@ torch::Tensor StateRL::computeObservation()
         }
         else if (observation == "ang_vel")
         {
-            obs_list.push_back(
-                quatRotateInverse(obs_.base_quat, obs_.ang_vel, params_.framework) * params_.ang_vel_scale);
+            obs_list.push_back(obs_.ang_vel * params_.ang_vel_scale);
         }
         else if (observation == "gravity_vec")
         {
@@ -239,8 +209,6 @@ void StateRL::loadYaml(const std::string& config_path)
 
     params_.model_name = config["model_name"].as<std::string>();
     params_.framework = config["framework"].as<std::string>();
-    const int rows = config["rows"].as<int>();
-    const int cols = config["cols"].as<int>();
     if (config["observations_history"].IsNull())
     {
         params_.observations_history = {};
@@ -261,9 +229,9 @@ void StateRL::loadYaml(const std::string& config_path)
     else
     {
         params_.clip_actions_upper = torch::tensor(
-            ReadVectorFromYaml<double>(config["clip_actions_upper"], params_.framework, rows, cols)).view({1, -1});
+            ReadVectorFromYaml<double>(config["clip_actions_upper"])).view({1, -1});
         params_.clip_actions_lower = torch::tensor(
-            ReadVectorFromYaml<double>(config["clip_actions_lower"], params_.framework, rows, cols)).view({1, -1});
+            ReadVectorFromYaml<double>(config["clip_actions_lower"])).view({1, -1});
     }
     params_.action_scale = config["action_scale"].as<double>();
     params_.hip_scale_reduction = config["hip_scale_reduction"].as<double>();
@@ -275,19 +243,15 @@ void StateRL::loadYaml(const std::string& config_path)
     params_.dof_vel_scale = config["dof_vel_scale"].as<double>();
     // params_.commands_scale = torch::tensor(ReadVectorFromYaml<double>(config["commands_scale"])).view({1, -1});
     params_.commands_scale = torch::tensor({params_.lin_vel_scale, params_.lin_vel_scale, params_.ang_vel_scale});
-    params_.rl_kp = torch::tensor(ReadVectorFromYaml<double>(config["rl_kp"], params_.framework, rows, cols)).view({
+    params_.rl_kp = torch::tensor(ReadVectorFromYaml<double>(config["rl_kp"])).view({
         1, -1
     });
-    params_.rl_kd = torch::tensor(ReadVectorFromYaml<double>(config["rl_kd"], params_.framework, rows, cols)).view({
+    params_.rl_kd = torch::tensor(ReadVectorFromYaml<double>(config["rl_kd"])).view({
         1, -1
     });
-    params_.torque_limits = torch::tensor(
-        ReadVectorFromYaml<double>(config["torque_limits"], params_.framework, rows, cols)).view({1, -1});
+    params_.torque_limits = torch::tensor(ReadVectorFromYaml<double>(config["torque_limits"])).view({1, -1});
 
     params_.default_dof_pos = torch::from_blob(init_pos_, {12}, torch::kDouble).clone().to(torch::kFloat).unsqueeze(0);
-
-    // params_.default_dof_pos = torch::tensor(
-    //     ReadVectorFromYaml<double>(config["default_dof_pos"], params_.framework, rows, cols)).view({1, -1});
 }
 
 torch::Tensor StateRL::quatRotateInverse(const torch::Tensor& q, const torch::Tensor& v, const std::string& framework)

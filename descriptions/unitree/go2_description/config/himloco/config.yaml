@@ -1,7 +1,5 @@
 model_name: "himloco.pt"
 framework: "isaacgym"
-rows: 4
-cols: 3
 decimation: 4
 num_observations: 45
 observations: ["commands", "ang_vel", "gravity_vec", "dof_pos", "dof_vel", "actions"]

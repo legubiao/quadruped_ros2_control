@@ -7,12 +7,15 @@ This repository contains the ros2-control based controllers for the quadruped ro
 * [Descriptions](descriptions): contains the urdf model of the robot
 * [Hardwares](hardwares): contains the ros2-control hardware interface for the robot
 
+> **Warning:** Default branch was developed under ROS2 Jazzy. For ROS2 Humble, please check out **humble** branch.
+
 Todo List:
 
 - [x] **[2025-02-23]** Add Gazebo Playground
   - [x] OCS2 controller for Gazebo Simulation
   - [x] Refactor FSM and Unitree Guide Controller
 - [x] **[2025-03-30]** Add Real Go2 Robot Support
+- [x] **[2025-05-20]** Isaac Sim Support
 - [ ] OCS2 Perceptive locomotion demo
 
 Video on Real Unitree Go2 Robot:
@@ -58,30 +61,7 @@ Video on Real Unitree Go2 Robot:
 
 ![mujoco](.images/mujoco.png)
 
-### 1.2 Gazebo Classic Simulator (ROS2 Humble)
-
-* Install Gazebo Classic
-  ```bash
-  sudo apt-get install ros-humble-gazebo-ros ros-humble-gazebo-ros2-control
-  ```
-* Compile Leg PD Controller
-    ```bash
-    colcon build --packages-up-to leg_pd_controller
-    ```
-* Launch the ros2-control
-    ```bash
-    source ~/ros2_ws/install/setup.bash
-    ros2 launch unitree_guide_controller gazebo_classic.launch.py
-    ```
-* Run the keyboard control node
-    ```bash
-    source ~/ros2_ws/install/setup.bash
-    ros2 run keyboard_input keyboard_input
-    ```
-
-![gazebo classic](.images/gazebo_classic.png)
-
-### 1.3 Gazebo Harmonic Simulator (ROS2 Jazzy)
+### 1.3 Gazebo Harmonic Simulator
 
 * Install Gazebo
   ```bash

@@ -54,7 +54,8 @@ def launch_setup(context, *args, **kwargs):
         executable='rviz2',
         name='rviz',
         output='screen',
-        arguments=["-d", rviz_config_file]
+        arguments=["-d", rviz_config_file],
+        parameters=[{'use_sim_time': True}]
     )
 
     joint_state_publisher = Node(

@@ -182,8 +182,8 @@ void StateTrotting::calcGain() const {
         if (wave_generator_->contact_(i) == 0) {
             // swing gain
             for (int j = 0; j < 3; j++) {
-                std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i * 3 + j].get().set_value(3);
-                std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i * 3 + j].get().set_value(2);
+                std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i * 3 + j].get().set_value(3.0);
+                std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i * 3 + j].get().set_value(2.0);
             }
         } else {
             // stable gain

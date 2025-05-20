@@ -44,33 +44,38 @@
 #include "gz_quadruped_hardware/gz_quadruped_plugin.hpp"
 #include "gz_quadruped_hardware/gz_system.hpp"
 
-namespace gz_quadruped_hardware {
-    class GZResourceManager : public hardware_interface::ResourceManager {
+namespace gz_quadruped_hardware
+{
+    class GZResourceManager : public hardware_interface::ResourceManager
+    {
     public:
         GZResourceManager(
-            rclcpp::Node::SharedPtr &node,
-            sim::EntityComponentManager &ecm,
+            rclcpp::Node::SharedPtr& node,
+            sim::EntityComponentManager& ecm,
             std::map<std::string, sim::Entity> enabledJoints)
             : ResourceManager(
                   node->get_node_clock_interface(), node->get_node_logging_interface()),
               gz_system_loader_("gz_quadruped_hardware", "gz_quadruped_hardware::GazeboSimSystemInterface"),
-              logger_(node->get_logger().get_child("GZResourceManager")) {
+              logger_(node->get_logger().get_child("GZResourceManager"))
+        {
             node_ = node;
             ecm_ = &ecm;
-            enabledJoints_ = enabledJoints;
+            enabledJoints_ = std::move(enabledJoints);
         }
 
-        GZResourceManager(const GZResourceManager &) = delete;
+        GZResourceManager(const GZResourceManager&) = delete;
 
         // Called from Controller Manager when robot description is initialized from callback
         bool load_and_initialize_components(
-            const std::string &urdf,
-            unsigned int update_rate) override {
+            const std::string& urdf,
+            unsigned int update_rate) override
+        {
             components_are_loaded_and_initialized_ = true;
 
             const auto hardware_info = hardware_interface::parse_control_resources_from_urdf(urdf);
 
-            for (const auto &individual_hardware_info: hardware_info) {
+            for (const auto& individual_hardware_info : hardware_info)
+            {
                 std::string robot_hw_sim_type_str_ = individual_hardware_info.hardware_plugin_name;
                 RCLCPP_DEBUG(
                     logger_, "Load hardware interface %s ...",
@@ -79,10 +84,13 @@ namespace gz_quadruped_hardware {
                 // Load hardware
                 std::unique_ptr<GazeboSimSystemInterface> gzSimSystem;
                 std::scoped_lock guard(resource_interfaces_lock_, claimed_command_interfaces_lock_);
-                try {
+                try
+                {
                     gzSimSystem = std::unique_ptr<GazeboSimSystemInterface>(
                         gz_system_loader_.createUnmanagedInstance(robot_hw_sim_type_str_));
-                } catch (pluginlib::PluginlibException &ex) {
+                }
+                catch (pluginlib::PluginlibException& ex)
+                {
                     RCLCPP_ERROR(
                         logger_,
                         "The plugin failed to load for some reason. Error: %s\n",
@@ -96,7 +104,8 @@ namespace gz_quadruped_hardware {
                     enabledJoints_,
                     individual_hardware_info,
                     *ecm_,
-                    update_rate)) {
+                    update_rate))
+                {
                     RCLCPP_FATAL(
                         logger_, "Could not initialize robot simulation interface");
                     components_are_loaded_and_initialized_ = false;
@@ -115,7 +124,7 @@ namespace gz_quadruped_hardware {
 
     private:
         std::shared_ptr<rclcpp::Node> node_;
-        sim::EntityComponentManager *ecm_;
+        sim::EntityComponentManager* ecm_;
         std::map<std::string, sim::Entity> enabledJoints_;
 
         /// \brief Interface loader
@@ -125,7 +134,8 @@ namespace gz_quadruped_hardware {
     };
 
     //////////////////////////////////////////////////
-    class GazeboSimQuadrupedPluginPrivate {
+    class GazeboSimQuadrupedPluginPrivate
+    {
     public:
         /// \brief Get a list of enabled, unique, 1-axis joints of the model. If no
         /// joint names are specified in the plugin configuration, all valid 1-axis
@@ -135,8 +145,8 @@ namespace gz_quadruped_hardware {
         /// \param[in] _ecm Gazebo Entity Component Manager
         /// \return List of entities containing all enabled joints
         std::map<std::string, sim::Entity> GetEnabledJoints(
-            const sim::Entity &_entity,
-            sim::EntityComponentManager &_ecm) const;
+            const sim::Entity& _entity,
+            sim::EntityComponentManager& _ecm) const;
 
         /// \brief Entity ID for sensor within Gazebo.
         sim::Entity entity_;
@@ -159,10 +169,10 @@ namespace gz_quadruped_hardware {
 
         /// \brief Last time the update method was called
         rclcpp::Time last_update_sim_time_ros_ =
-                rclcpp::Time(static_cast<int64_t>(0), RCL_ROS_TIME);
+            rclcpp::Time(static_cast<int64_t>(0), RCL_ROS_TIME);
 
         /// \brief ECM pointer
-        sim::EntityComponentManager *ecm{nullptr};
+        sim::EntityComponentManager* ecm{nullptr};
 
         /// \brief controller update rate
         int update_rate;
@@ -171,8 +181,9 @@ namespace gz_quadruped_hardware {
     //////////////////////////////////////////////////
     std::map<std::string, sim::Entity>
     GazeboSimQuadrupedPluginPrivate::GetEnabledJoints(
-        const sim::Entity &_entity,
-        sim::EntityComponentManager &_ecm) const {
+        const sim::Entity& _entity,
+        sim::EntityComponentManager& _ecm) const
+    {
         std::map<std::string, sim::Entity> output;
 
         std::vector<std::string> enabledJoints;
@@ -181,32 +192,37 @@ namespace gz_quadruped_hardware {
         auto jointEntities = _ecm.ChildrenByComponents(_entity, sim::components::Joint());
 
         // Iterate over all joints and verify whether they can be enabled or not
-        for (const auto &jointEntity: jointEntities) {
+        for (const auto& jointEntity : jointEntities)
+        {
             const auto jointName = _ecm.Component<sim::components::Name>(
                 jointEntity)->Data();
 
             // Make sure the joint type is supported, i.e. it has exactly one
             // actuated axis
-            const auto *jointType = _ecm.Component<sim::components::JointType>(jointEntity);
-            switch (jointType->Data()) {
-                case sdf::JointType::PRISMATIC:
-                case sdf::JointType::REVOLUTE:
-                case sdf::JointType::CONTINUOUS:
-                case sdf::JointType::GEARBOX: {
+            const auto* jointType = _ecm.Component<sim::components::JointType>(jointEntity);
+            switch (jointType->Data())
+            {
+            case sdf::JointType::PRISMATIC:
+            case sdf::JointType::REVOLUTE:
+            case sdf::JointType::CONTINUOUS:
+            case sdf::JointType::GEARBOX:
+                {
                     // Supported joint type
                     break;
                 }
-                case sdf::JointType::FIXED: {
+            case sdf::JointType::FIXED:
+                {
                     RCLCPP_INFO(
                         node_->get_logger(),
                         "[gz_quadruped_hardware] Fixed joint [%s] (Entity=%lu)] is skipped",
                         jointName.c_str(), jointEntity);
                     continue;
                 }
-                case sdf::JointType::REVOLUTE2:
-                case sdf::JointType::SCREW:
-                case sdf::JointType::BALL:
-                case sdf::JointType::UNIVERSAL: {
+            case sdf::JointType::REVOLUTE2:
+            case sdf::JointType::SCREW:
+            case sdf::JointType::BALL:
+            case sdf::JointType::UNIVERSAL:
+                {
                     RCLCPP_WARN(
                         node_->get_logger(),
                         "[gz_quadruped_hardware] Joint [%s] (Entity=%lu)] is of unsupported type."
@@ -214,7 +230,8 @@ namespace gz_quadruped_hardware {
                         jointName.c_str(), jointEntity);
                     continue;
                 }
-                default: {
+            default:
+                {
                     RCLCPP_WARN(
                         node_->get_logger(),
                         "[gz_quadruped_hardware] Joint [%s] (Entity=%lu)] is of unknown type",
@@ -230,13 +247,16 @@ namespace gz_quadruped_hardware {
 
     //////////////////////////////////////////////////
     GazeboSimQuadrupedPlugin::GazeboSimQuadrupedPlugin()
-        : dataPtr(std::make_unique<GazeboSimQuadrupedPluginPrivate>()) {
+        : dataPtr(std::make_unique<GazeboSimQuadrupedPluginPrivate>())
+    {
     }
 
     //////////////////////////////////////////////////
-    GazeboSimQuadrupedPlugin::~GazeboSimQuadrupedPlugin() {
+    GazeboSimQuadrupedPlugin::~GazeboSimQuadrupedPlugin()
+    {
         // Stop controller manager thread
-        if (!this->dataPtr->controller_manager_) {
+        if (!this->dataPtr->controller_manager_)
+        {
             return;
         }
         this->dataPtr->executor_->remove_node(this->dataPtr->controller_manager_);
@@ -246,14 +266,16 @@ namespace gz_quadruped_hardware {
 
     //////////////////////////////////////////////////
     void GazeboSimQuadrupedPlugin::Configure(
-        const sim::Entity &_entity,
-        const std::shared_ptr<const sdf::Element> &_sdf,
-        sim::EntityComponentManager &_ecm,
-        sim::EventManager &) {
+        const sim::Entity& _entity,
+        const std::shared_ptr<const sdf::Element>& _sdf,
+        sim::EntityComponentManager& _ecm,
+        sim::EventManager&)
+    {
         rclcpp::Logger logger = rclcpp::get_logger("GazeboSimROS2ControlPlugin");
         // Make sure the controller is attached to a valid model
         const auto model = sim::Model(_entity);
-        if (!model.Valid(_ecm)) {
+        if (!model.Valid(_ecm))
+        {
             RCLCPP_ERROR(
                 logger,
                 "[Gazebo ROS 2 Control] Failed to initialize because [%s] (Entity=%lu)] is not a model."
@@ -265,7 +287,8 @@ namespace gz_quadruped_hardware {
         // Get params from SDF
         auto param_file_name = _sdf->Get<std::string>("parameters");
 
-        if (param_file_name.empty()) {
+        if (param_file_name.empty())
+        {
             RCLCPP_ERROR(
                 logger,
                 "Gazebo quadruped ros2 control found an empty parameters file. Failed to initialize.");
@@ -275,12 +298,13 @@ namespace gz_quadruped_hardware {
         // Get params from SDF
         std::vector<std::string> arguments = {"--ros-args"};
 
-        auto sdfPtr = const_cast<sdf::Element *>(_sdf.get());
+        auto sdfPtr = const_cast<sdf::Element*>(_sdf.get());
 
         sdf::ElementPtr argument_sdf = sdfPtr->GetElement("parameters");
-        while (argument_sdf) {
+        while (argument_sdf)
+        {
             std::string argument = argument_sdf->Get<std::string>();
-            arguments.push_back(RCL_PARAM_FILE_FLAG);
+            arguments.emplace_back(RCL_PARAM_FILE_FLAG);
             arguments.push_back(argument);
             argument_sdf = argument_sdf->GetNextElement("parameters");
         }
@@ -288,44 +312,52 @@ namespace gz_quadruped_hardware {
         // Get controller manager node name
         std::string controllerManagerNodeName{"controller_manager"};
 
-        if (sdfPtr->HasElement("controller_manager_name")) {
+        if (sdfPtr->HasElement("controller_manager_name"))
+        {
             controllerManagerNodeName = sdfPtr->GetElement("controller_manager_name")->Get<std::string>();
         }
 
         std::string ns = "/";
 
-        if (sdfPtr->HasElement("ros")) {
+        if (sdfPtr->HasElement("ros"))
+        {
             sdf::ElementPtr sdfRos = sdfPtr->GetElement("ros");
 
             // Set namespace if tag is present
-            if (sdfRos->HasElement("namespace")) {
+            if (sdfRos->HasElement("namespace"))
+            {
                 ns = sdfRos->GetElement("namespace")->Get<std::string>();
                 // prevent exception: namespace must be absolute, it must lead with a '/'
-                if (ns.empty() || ns[0] != '/') {
+                if (ns.empty() || ns[0] != '/')
+                {
                     ns = '/' + ns;
                 }
             }
 
             // Get list of remapping rules from SDF
-            if (sdfRos->HasElement("remapping")) {
+            if (sdfRos->HasElement("remapping"))
+            {
                 sdf::ElementPtr argument_sdf = sdfRos->GetElement("remapping");
 
-                arguments.push_back(RCL_ROS_ARGS_FLAG);
-                while (argument_sdf) {
+                arguments.emplace_back(RCL_ROS_ARGS_FLAG);
+                while (argument_sdf)
+                {
                     auto argument = argument_sdf->Get<std::string>();
-                    arguments.push_back(RCL_REMAP_FLAG);
+                    arguments.emplace_back(RCL_REMAP_FLAG);
                     arguments.push_back(argument);
                     argument_sdf = argument_sdf->GetNextElement("remapping");
                 }
             }
         }
 
-        std::vector<const char *> argv;
-        for (const auto &arg: arguments) {
+        std::vector<const char*> argv;
+        for (const auto& arg : arguments)
+        {
             argv.push_back(arg.data());
         }
         // Create a default context, if not already
-        if (!rclcpp::ok()) {
+        if (!rclcpp::ok())
+        {
             init(
                 static_cast<int>(argv.size()), argv.data(), rclcpp::InitOptions(),
                 rclcpp::SignalHandlerOptions::None);
@@ -351,7 +383,8 @@ namespace gz_quadruped_hardware {
             _entity,
             _ecm);
 
-        if (enabledJoints.size() == 0) {
+        if (enabledJoints.size() == 0)
+        {
             RCLCPP_DEBUG_STREAM(
                 this->dataPtr->node_->get_logger(),
                 "[Gazebo Quadruped ROS2 Control] There are no available Joints.");
@@ -359,22 +392,25 @@ namespace gz_quadruped_hardware {
         }
 
         std::unique_ptr<hardware_interface::ResourceManager> resource_manager_ =
-                std::make_unique<GZResourceManager>(this->dataPtr->node_, _ecm, enabledJoints);
+            std::make_unique<GZResourceManager>(this->dataPtr->node_, _ecm, enabledJoints);
 
         // Create the controller manager
         RCLCPP_INFO(this->dataPtr->node_->get_logger(), "Loading controller_manager");
         rclcpp::NodeOptions options = controller_manager::get_cm_node_options();
-        arguments.push_back("-r");
+        arguments.emplace_back("-r");
         arguments.push_back("__node:=" + controllerManagerNodeName);
-        arguments.push_back("-r");
+        arguments.emplace_back("-r");
         arguments.push_back("__ns:=" + ns);
         options.arguments(arguments);
-        this->dataPtr->controller_manager_.reset(
-            new controller_manager::ControllerManager(
-                std::move(resource_manager_),
-                this->dataPtr->executor_,
-                controllerManagerNodeName,
-                this->dataPtr->node_->get_namespace(), options));
+        options.append_parameter_override("use_sim_time", true);  // enable sim time for controller manager
+
+        this->dataPtr->controller_manager_ = std::make_shared<controller_manager::ControllerManager>(
+            std::move(resource_manager_),
+            this->dataPtr->executor_,
+            controllerManagerNodeName,
+            this->dataPtr->node_->get_namespace(),
+            options);
+
         this->dataPtr->executor_->add_node(this->dataPtr->controller_manager_);
 
         this->dataPtr->update_rate = this->dataPtr->controller_manager_->get_update_rate();
@@ -387,7 +423,8 @@ namespace gz_quadruped_hardware {
             rclcpp::Parameter("use_sim_time", rclcpp::ParameterValue(true)));
 
         // Wait for CM to receive robot description from the topic and then initialize Resource Manager
-        while (!this->dataPtr->controller_manager_->is_resource_manager_initialized()) {
+        while (!this->dataPtr->controller_manager_->is_resource_manager_initialized())
+        {
             RCLCPP_WARN(
                 this->dataPtr->node_->get_logger(),
                 "Waiting RM to load and initialize hardware...");
@@ -399,23 +436,29 @@ namespace gz_quadruped_hardware {
 
     //////////////////////////////////////////////////
     void GazeboSimQuadrupedPlugin::PreUpdate(
-        const sim::UpdateInfo &_info,
-        sim::EntityComponentManager & /*_ecm*/) {
-        if (!this->dataPtr->controller_manager_) {
+        const sim::UpdateInfo& _info,
+        sim::EntityComponentManager& /*_ecm*/)
+    {
+        if (!this->dataPtr->controller_manager_)
+        {
             return;
         }
         static bool warned{false};
-        if (!warned) {
+        if (!warned)
+        {
             rclcpp::Duration gazebo_period(_info.dt);
 
             // Check the period against the simulation period
-            if (this->dataPtr->control_period_ < _info.dt) {
+            if (this->dataPtr->control_period_ < _info.dt)
+            {
                 RCLCPP_ERROR_STREAM(
                     this->dataPtr->node_->get_logger(),
                     "Desired controller update period (" << this->dataPtr->control_period_.seconds() <<
                     " s) is faster than the gazebo simulation period (" <<
                     gazebo_period.seconds() << " s).");
-            } else if (this->dataPtr->control_period_ > gazebo_period) {
+            }
+            else if (this->dataPtr->control_period_ > gazebo_period)
+            {
                 RCLCPP_WARN_STREAM(
                     this->dataPtr->node_->get_logger(),
                     " Desired controller update period (" << this->dataPtr->control_period_.seconds() <<
@@ -435,21 +478,25 @@ namespace gz_quadruped_hardware {
 
     //////////////////////////////////////////////////
     void GazeboSimQuadrupedPlugin::PostUpdate(
-        const sim::UpdateInfo &_info,
-        const sim::EntityComponentManager & /*_ecm*/) {
-        if (!this->dataPtr->controller_manager_) {
+        const sim::UpdateInfo& _info,
+        const sim::EntityComponentManager& /*_ecm*/)
+    {
+        if (!this->dataPtr->controller_manager_)
+        {
             return;
         }
         // Get the simulation time and period
         const rclcpp::Time sim_time_ros(std::chrono::duration_cast<std::chrono::nanoseconds>(
                                             _info.simTime).count(), RCL_ROS_TIME);
-        const rclcpp::Duration sim_period = sim_time_ros - this->dataPtr->last_update_sim_time_ros_;
 
-        if (sim_period >= this->dataPtr->control_period_) {
+        const rclcpp::Duration sim_period = sim_time_ros - this->dataPtr->last_update_sim_time_ros_;
+        if (sim_period >=
+            this->dataPtr->control_period_)
+        {
             this->dataPtr->last_update_sim_time_ros_ = sim_time_ros;
             auto gz_controller_manager =
-                    std::dynamic_pointer_cast<GazeboSimSystemInterface>(
-                        this->dataPtr->controller_manager_);
+                std::dynamic_pointer_cast<GazeboSimSystemInterface>(
+                    this->dataPtr->controller_manager_);
             this->dataPtr->controller_manager_->read(sim_time_ros, sim_period);
             this->dataPtr->controller_manager_->update(sim_time_ros, sim_period);
         }

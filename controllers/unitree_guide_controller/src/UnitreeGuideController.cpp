@@ -65,7 +65,6 @@ namespace unitree_guide_controller
         // // Calculate the frequency
         // update_frequency_ = 1.0 / time_diff.count();
         // RCLCPP_INFO(get_node()->get_logger(), "Update frequency: %f Hz", update_frequency_);
-
         if (ctrl_component_.robot_model_ == nullptr)
         {
             return controller_interface::return_type::OK;

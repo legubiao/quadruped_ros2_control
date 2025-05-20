@@ -48,13 +48,7 @@ source ~/ros2_ws/install/setup.bash
 ros2 launch unitree_guide_controller mujoco.launch.py pkg_description:=go2_description
 ```
 
-### 3.2 Gazebo Classic 11 (ROS2 Humble)
-```bash
-source ~/ros2_ws/install/setup.bash
-ros2 launch unitree_guide_controller gazebo_classic.launch.py pkg_description:=go2_description
-```
-
-### 3.3 Gazebo Harmonic (ROS2 Jazzy)
+### 3.2 Gazebo Harmonic
 ```bash
 source ~/ros2_ws/install/setup.bash
 ros2 launch unitree_guide_controller gazebo.launch.py pkg_description:=go2_description

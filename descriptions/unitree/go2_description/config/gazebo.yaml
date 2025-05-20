@@ -138,20 +138,20 @@ rl_quadruped_controller:
   ros__parameters:
     update_rate: 200  # Hz
     robot_pkg: "go2_description"
-    model_folder: "legged_gym"
+    model_folder: "robot_lab"
     joints:
-      - FL_hip_joint
-      - FL_thigh_joint
-      - FL_calf_joint
       - FR_hip_joint
       - FR_thigh_joint
       - FR_calf_joint
-      - RL_hip_joint
-      - RL_thigh_joint
-      - RL_calf_joint
+      - FL_hip_joint
+      - FL_thigh_joint
+      - FL_calf_joint
       - RR_hip_joint
       - RR_thigh_joint
       - RR_calf_joint
+      - RL_hip_joint
+      - RL_thigh_joint
+      - RL_calf_joint
 
     command_interfaces:
       - effort
@@ -178,6 +178,20 @@ rl_quadruped_controller:
       - -0.3
       - 1.31
       - -2.8
+
+    stand_pos:
+      - 0.0
+      - 0.8
+      - -1.5
+      - 0.0
+      - 0.8
+      - -1.5
+      - 0.0
+      - 0.8
+      - -1.5
+      - 0.0
+      - 0.8
+      - -1.5
 
     imu_name: "imu_sensor"
     imu_interfaces:

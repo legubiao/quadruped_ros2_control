@@ -25,12 +25,12 @@ StateSwingTest::StateSwingTest(CtrlInterfaces &ctrl_interfaces,
 
 void StateSwingTest::enter() {
     for (int i = 0; i < 3; i++) {
-        std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(3);
-        std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(2);
+        std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(3.0);
+        std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(2.0);
     }
     for (int i = 3; i < 12; i++) {
-        std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(180);
-        std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(5);
+        std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(180.0);
+        std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(5.0);
     }
 
     Kp = KDL::Vector(20, 20, 50);
