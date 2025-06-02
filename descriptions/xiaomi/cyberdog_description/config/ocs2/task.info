@@ -12,14 +12,14 @@ model_settings
 
   verboseCppAd                  true
   recompileLibrariesCppAd       false
-  modelFolderCppAd              /tmp/ocs2_quadruped_controller/cyberdog
+  modelFolderCppAd              ocs2_cpp_ad/cyberdog
 }
 
 swing_trajectory_config
 {
-  liftOffVelocity               0.05
-  touchDownVelocity            -0.1
-  swingHeight                   0.08
+  liftOffVelocity               0.04
+  touchDownVelocity            -0.08
+  swingHeight                   0.085
   swingTimeScale                0.15
 }
 
@@ -69,7 +69,7 @@ ddp
 sqp
 {
   nThreads                              3
-  dt                                    0.015
+  dt                                    0.01
   sqpIteration                          1
   deltaTol                              1e-4
   g_max                                 1e-2
@@ -118,17 +118,6 @@ ipm
   initialDualMarginRate                 1e-2
 }
 
-; Rollout settings
-rollout
-{
-  AbsTolODE                       1e-5
-  RelTolODE                       1e-3
-  timeStep                        0.015
-  integratorType                  ODE45
-  maxNumStepsPerSecond            10000
-  checkNumericalStability         false
-}
-
 mpc
 {
   timeHorizon                     1.0  ; [s]
@@ -154,22 +143,22 @@ initialState
    ;; Base Pose: [position, orientation] ;;
    (6,0)  0.0     ; p_base_x
    (7,0)  0.0     ; p_base_y
-   (8,0)  0.3     ; p_base_z
+   (8,0)  0.28     ; p_base_z
    (9,0)  0.0     ; theta_base_z
    (10,0) 0.0     ; theta_base_y
    (11,0) 0.0     ; theta_base_x
 
    ;; Leg Joint Positions: [FL, RL, FR, RR] ;;
-   (12,0) -0.20   ; FL_hip_joint
+   (12,0) -0.10   ; FL_hip_joint
    (13,0)  0.72   ; FL_thigh_joint
    (14,0) -1.44   ; FL_calf_joint
-   (15,0) -0.20   ; RL_hip_joint
+   (15,0) -0.10   ; RL_hip_joint
    (16,0)  0.72   ; RL_thigh_joint
    (17,0) -1.44   ; RL_calf_joint
-   (18,0)  0.20   ; FR_hip_joint
+   (18,0)  0.10   ; FR_hip_joint
    (19,0)  0.72   ; FR_thigh_joint
    (20,0) -1.44   ; FR_calf_joint
-   (21,0)  0.20   ; RR_hip_joint
+   (21,0)  0.10   ; RR_hip_joint
    (22,0)  0.72   ; RR_thigh_joint
    (23,0) -1.44   ; RR_calf_joint
 }
@@ -273,7 +262,7 @@ selfCollision
     [7] "FR_foot, RR_foot"
   }
 
-  minimumDistance  0.05
+  minimumDistance  0.01
 
   ; relaxed log barrier parameters
   mu      1e-2
@@ -290,26 +279,26 @@ torqueLimitsTask
 
 frictionConeTask
 {
-  frictionCoefficient    0.3
+  frictionCoefficient    0.2
 }
 
 swingLegTask
 {
-    kp                   350
-    kd                   37
+    kp                   200
+    kd                   25
 }
 
 weight
 {
-    swingLeg        100
-    baseAccel       1
-    contactForce    0.01
+    swingLeg        150
+    baseAccel       2
+    contactForce    0.005
 }
 
 ; State Estimation
 kalmanFilter
 {
-    footRadius                  0.02
+    footRadius                  0.019
     imuProcessNoisePosition     0.02
     imuProcessNoiseVelocity     0.02
     footProcessNoisePosition    0.002

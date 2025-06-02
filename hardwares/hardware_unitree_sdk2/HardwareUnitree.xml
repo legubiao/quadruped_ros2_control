@@ -1,5 +1,5 @@
-<library path="hardware_unitree_mujoco">
-  <class name="hardware_unitree_mujoco/HardwareUnitree"
+<library path="hardware_unitree_sdk2">
+  <class name="hardware_unitree_sdk2/HardwareUnitree"
          type="HardwareUnitree"
          base_class_type="hardware_interface::SystemInterface">
     <description>

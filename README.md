@@ -44,7 +44,7 @@ Video on Real Unitree Go2 Robot:
 * Compile Unitree Hardware Interfaces
     ```bash
     cd ~/ros2_ws
-    colcon build --packages-up-to hardware_unitree_mujoco
+    colcon build --packages-up-to hardware_unitree_sdk2
     ```
 * Follow the guide in [unitree_mujoco](https://github.com/legubiao/unitree_mujoco) to launch the unitree mujoco go2
   simulation

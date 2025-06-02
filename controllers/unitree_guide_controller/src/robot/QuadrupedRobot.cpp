@@ -114,15 +114,15 @@ void QuadrupedRobot::update() {
     if (mass_ == 0) return;
     for (int i = 0; i < 4; i++) {
         KDL::JntArray pos_array(3);
-        pos_array(0) = ctrl_interfaces_.joint_position_state_interface_[i * 3].get().get_value();
-        pos_array(1) = ctrl_interfaces_.joint_position_state_interface_[i * 3 + 1].get().get_value();
-        pos_array(2) = ctrl_interfaces_.joint_position_state_interface_[i * 3 + 2].get().get_value();
+        pos_array(0) = ctrl_interfaces_.joint_position_state_interface_[i * 3].get().get_optional().value();
+        pos_array(1) = ctrl_interfaces_.joint_position_state_interface_[i * 3 + 1].get().get_optional().value();
+        pos_array(2) = ctrl_interfaces_.joint_position_state_interface_[i * 3 + 2].get().get_optional().value();
         current_joint_pos_[i] = pos_array;
 
         KDL::JntArray vel_array(3);
-        vel_array(0) = ctrl_interfaces_.joint_velocity_state_interface_[i * 3].get().get_value();
-        vel_array(1) = ctrl_interfaces_.joint_velocity_state_interface_[i * 3 + 1].get().get_value();
-        vel_array(2) = ctrl_interfaces_.joint_velocity_state_interface_[i * 3 + 2].get().get_value();
+        vel_array(0) = ctrl_interfaces_.joint_velocity_state_interface_[i * 3].get().get_optional().value();
+        vel_array(1) = ctrl_interfaces_.joint_velocity_state_interface_[i * 3 + 1].get().get_optional().value();
+        vel_array(2) = ctrl_interfaces_.joint_velocity_state_interface_[i * 3 + 2].get().get_optional().value();
         current_joint_vel_[i] = vel_array;
     }
 }

@@ -165,9 +165,7 @@
     <plugin filename="gz_quadruped_hardware-system" name="gz_quadruped_hardware::GazeboSimQuadrupedPlugin">
       <parameters>$(find go2_description)/config/gazebo.yaml</parameters>
     </plugin>
-    <plugin filename="gz-sim-imu-system"
-            name="gz::sim::systems::Imu">
-    </plugin>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
     <plugin filename="gz-sim-forcetorque-system" name="gz::sim::systems::ForceTorque"/>
   </gazebo>
 

@@ -3,88 +3,137 @@
 
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
-      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+      <plugin>gz_quadruped_hardware/GazeboSimSystem</plugin>
     </hardware>
 
     <joint name="FR_hip_joint">
-      <command_interface name="effort" initial_value="0.0"/>
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <command_interface name="kp"/>
+      <command_interface name="kd"/>
+
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
 
     <joint name="FR_thigh_joint">
-      <command_interface name="effort" initial_value="0.0"/>
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <command_interface name="kp"/>
+      <command_interface name="kd"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
 
     <joint name="FR_calf_joint">
-      <command_interface name="effort" initial_value="0.0"/>
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <command_interface name="kp"/>
+      <command_interface name="kd"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
 
     <joint name="FL_hip_joint">
-      <command_interface name="effort" initial_value="0.0"/>
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <command_interface name="kp"/>
+      <command_interface name="kd"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
 
     <joint name="FL_thigh_joint">
-      <command_interface name="effort" initial_value="0.0"/>
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <command_interface name="kp"/>
+      <command_interface name="kd"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
 
     <joint name="FL_calf_joint">
-      <command_interface name="effort" initial_value="0.0"/>
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <command_interface name="kp"/>
+      <command_interface name="kd"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
 
     <joint name="RR_hip_joint">
-      <command_interface name="effort" initial_value="0.0"/>
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <command_interface name="kp"/>
+      <command_interface name="kd"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
 
     <joint name="RR_thigh_joint">
-      <command_interface name="effort" initial_value="0.0"/>
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <command_interface name="kp"/>
+      <command_interface name="kd"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
 
     <joint name="RR_calf_joint">
-      <command_interface name="effort" initial_value="0.0"/>
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <command_interface name="kp"/>
+      <command_interface name="kd"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
 
     <joint name="RL_hip_joint">
-      <command_interface name="effort" initial_value="0.0"/>
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <command_interface name="kp"/>
+      <command_interface name="kd"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
 
     <joint name="RL_thigh_joint">
-      <command_interface name="effort" initial_value="0.0"/>
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <command_interface name="kp"/>
+      <command_interface name="kd"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
 
     <joint name="RL_calf_joint">
-      <command_interface name="effort" initial_value="0.0"/>
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <command_interface name="kp"/>
+      <command_interface name="kd"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
@@ -103,46 +152,21 @@
       <state_interface name="linear_acceleration.z"/>
     </sensor>
 
-    <sensor name="LF_foot_end">
-      <state_interface name="force.x"/>
-      <state_interface name="force.y"/>
-      <state_interface name="force.z"/>
-      <param name="frame_id">LF_FOOT</param>
-    </sensor>
-    <sensor name="RF_foot_end">
-      <state_interface name="force.x"/>
-      <state_interface name="force.y"/>
-      <state_interface name="force.z"/>
-      <param name="frame_id">RF_FOOT</param>
-    </sensor>
-    <sensor name="LH_foot_end">
-      <state_interface name="force.x"/>
-      <state_interface name="force.y"/>
-      <state_interface name="force.z"/>
-      <param name="frame_id">LH_FOOT</param>
-    </sensor>
-    <sensor name="RH_foot_end">
-      <state_interface name="force.x"/>
-      <state_interface name="force.y"/>
-      <state_interface name="force.z"/>
-      <param name="frame_id">LH_FOOT</param>
+    <sensor name="foot_force">
+      <state_interface name="FR_foot_force"/>
+      <state_interface name="FL_foot_force"/>
+      <state_interface name="RR_foot_force"/>
+      <state_interface name="RL_foot_force"/>
     </sensor>
   </ros2_control>
 
   <!-- Gazebo's ros2_control plugin  -->
   <gazebo>
-    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+    <plugin filename="gz_quadruped_hardware-system" name="gz_quadruped_hardware::GazeboSimQuadrupedPlugin">
       <parameters>$(find cyberdog_description)/config/gazebo.yaml</parameters>
     </plugin>
-    <plugin filename="gz-sim-imu-system"
-            name="gz::sim::systems::Imu">
-    </plugin>
-    <plugin filename="gz-sim-contact-system"
-            name="gz::sim::systems::Contact">
-    </plugin>
-    <plugin filename="gz-sim-forcetorque-system"
-            name="gz::sim::systems::ForceTorque">
-    </plugin>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+    <plugin filename="gz-sim-forcetorque-system" name="gz::sim::systems::ForceTorque"/>
   </gazebo>
 
   <gazebo reference="imu_link">
@@ -210,5 +234,11 @@
   <gazebo reference="imu_joint">
     <disableFixedJointLumping>true</disableFixedJointLumping>
   </gazebo>
+
+  <xacro:include filename="$(find gz_quadruped_hardware)/xacro/foot_force_sensor.xacro"/>
+  <xacro:foot_force_sensor name="FL" suffix="foot_fixed"/>
+  <xacro:foot_force_sensor name="RL" suffix="foot_fixed"/>
+  <xacro:foot_force_sensor name="FR" suffix="foot_fixed"/>
+  <xacro:foot_force_sensor name="RR" suffix="foot_fixed"/>
 
 </robot>

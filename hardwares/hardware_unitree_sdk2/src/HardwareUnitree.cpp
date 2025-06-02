@@ -2,7 +2,7 @@
 // Created by biao on 24-9-9.
 //
 
-#include "hardware_unitree_mujoco/HardwareUnitree.h"
+#include "hardware_unitree_sdk2/HardwareUnitree.h"
 #include "crc32.h"
 
 #define TOPIC_LOWCMD "rt/lowcmd"

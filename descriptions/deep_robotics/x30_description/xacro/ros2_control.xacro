@@ -4,7 +4,7 @@
   <ros2_control name="UnitreeSystem" type="system">
 
     <hardware>
-      <plugin>hardware_unitree_mujoco/HardwareUnitree</plugin>
+      <plugin>hardware_unitree_sdk2/HardwareUnitree</plugin>
     </hardware>
 
     <joint name="FR_HipX">

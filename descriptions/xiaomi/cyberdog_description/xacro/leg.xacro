@@ -230,15 +230,14 @@
         <geometry>
           <sphere radius="${foot_radius}"/>
         </geometry>
-        <surface>
-          <contact>
-            <ode>
-              <max_vel>0.001</max_vel>
-              <min_depth>0.0</min_depth>
-            </ode>
-          </contact>
-        </surface>
       </collision>
+      <inertial>
+        <mass value="${foot_mass}"/>
+        <inertia
+            ixx="${(2*foot_mass)/5.0*(foot_radius*foot_radius)}" ixy="0.0" ixz="0.0"
+            iyy="${(2*foot_mass)/5.0*(foot_radius*foot_radius)}" iyz="0.0"
+            izz="${(2*foot_mass)/5.0*(foot_radius*foot_radius)}"/>
+      </inertial>
     </link>
 
     <xacro:leg_transmission name="${name}"/>
@@ -246,49 +245,28 @@
     <gazebo reference="${name}_abad">
       <mu1>0.2</mu1>
       <mu2>0.2</mu2>
-      <visual>
-        <material>
-          <ambient>.5 .5 .5 1.0</ambient>
-          <diffuse>.5 .5 .5 1.0</diffuse>
-          <specular>.5 .5 .5 1.0</specular>
-        </material>
-      </visual>
     </gazebo>
+
     <gazebo reference="${name}_hip">
       <mu1>0.2</mu1>
       <mu2>0.2</mu2>
       <self_collide>1</self_collide>
-      <visual>
-        <material>
-          <ambient>.05 .05 .05 1.0</ambient>
-          <diffuse>.05 .05 .05 1.0</diffuse>
-          <specular>.05 .05 .05 1.0</specular>
-        </material>
-      </visual>
+      <kp value="1000000.0"/>
+      <kd value="100.0"/>
     </gazebo>
+
     <gazebo reference="${name}_knee">
       <mu1>0.7</mu1>
       <mu2>0.7</mu2>
       <self_collide>1</self_collide>
-      <visual>
-        <material>
-          <ambient>.5 .5 .5 1.0</ambient>
-          <diffuse>.5 .5 .5 1.0</diffuse>
-          <specular>.5 .5 .5 1.0</specular>
-        </material>
-      </visual>
     </gazebo>
+
     <gazebo reference="${name}_foot">
       <mu1>0.7</mu1>
       <mu2>0.7</mu2>
       <self_collide>1</self_collide>
-      <visual>
-        <material>
-          <ambient>.5 .5 .5 1.0</ambient>
-          <diffuse>.5 .5 .5 1.0</diffuse>
-          <specular>.5 .5 .5 1.0</specular>
-        </material>
-      </visual>
+      <kp value="1000000.0"/>
+      <kd value="100.0"/>
     </gazebo>
 
   </xacro:macro>
