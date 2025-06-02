@@ -9,7 +9,7 @@ This folder contains the URDF and SRDF files for the quadruped robot.
     * [Aliengo](unitree/aliengo_description/)
     * [B2](unitree/b2_description/)
 * Xiaomi
-    * [Cyberdog](xiaomi/cyberdog_description/)
+    * [Cyberdog](magiclab&xiaomi/cyberdog_description/)
 * Deep Robotics
     * [Lite 3](deep_robotics/lite3_description/)
     * [X30](deep_robotics/x30_description/)
