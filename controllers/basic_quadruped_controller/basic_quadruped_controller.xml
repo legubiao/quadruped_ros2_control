@@ -1,0 +1,9 @@
+<library path="basic_quadruped_controller">
+    <class name="basic_quadruped_controller/BasicQuadrupedController"
+           type="basic_quadruped_controller::BasicQuadrupedController"
+           base_class_type="controller_interface::ControllerInterface">
+        <description>
+            Quadruped Controller based on Unitree Guide.
+        </description>
+    </class>
+</library>
