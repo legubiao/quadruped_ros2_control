@@ -6,12 +6,16 @@
 
 #include <basic_quadruped_controller/common/mathTools.h>
 #include <basic_quadruped_controller/control/CtrlComponent.h>
+#include <pinocchio/spatial/se3.hpp>
 
 #include "controller_common/CtrlInterfaces.h"
 
-Estimator::Estimator(CtrlInterfaces &ctrl_interfaces, CtrlComponent &ctrl_component) : ctrl_interfaces_(ctrl_interfaces),
-                                                      robot_model_(ctrl_component.robot_model_),
-                                                      wave_generator_(ctrl_component.wave_generator_) {
+Estimator::Estimator(CtrlInterfaces &ctrl_interfaces, CtrlComponent &ctrl_component,
+                     std::shared_ptr<rclcpp_lifecycle::LifecycleNode> node) 
+    : ctrl_interfaces_(ctrl_interfaces),
+      robot_model_(ctrl_component.robot_model_),
+      wave_generator_(ctrl_component.wave_generator_),
+      node_(node) {
     g_ << 0, 0, -9.81;
     dt_ = 1.0 / ctrl_interfaces.frequency_;
 
@@ -25,23 +29,23 @@ Estimator::Estimator(CtrlInterfaces &ctrl_interfaces, CtrlComponent &ctrl_compon
     u_.setZero();
 
     A.setZero();
-    A.block(0, 0, 3, 3) = I3;
-    A.block(0, 3, 3, 3) = I3 * dt_;
-    A.block(3, 3, 3, 3) = I3;
+    A.block(0, 0, 3, 3) = I3();
+    A.block(0, 3, 3, 3) = I3() * dt_;
+    A.block(3, 3, 3, 3) = I3();
     A.block(6, 6, 12, 12) = I12;
 
     B.setZero();
-    B.block(3, 0, 3, 3) = I3 * dt_;
+    B.block(3, 0, 3, 3) = I3() * dt_;
 
     C.setZero();
-    C.block(0, 0, 3, 3) = -I3;
-    C.block(3, 0, 3, 3) = -I3;
-    C.block(6, 0, 3, 3) = -I3;
-    C.block(9, 0, 3, 3) = -I3;
-    C.block(12, 3, 3, 3) = -I3;
-    C.block(15, 3, 3, 3) = -I3;
-    C.block(18, 3, 3, 3) = -I3;
-    C.block(21, 3, 3, 3) = -I3;
+    C.block(0, 0, 3, 3) = -I3();
+    C.block(3, 0, 3, 3) = -I3();
+    C.block(6, 0, 3, 3) = -I3();
+    C.block(9, 0, 3, 3) = -I3();
+    C.block(12, 3, 3, 3) = -I3();
+    C.block(15, 3, 3, 3) = -I3();
+    C.block(18, 3, 3, 3) = -I3();
+    C.block(21, 3, 3, 3) = -I3();
     C.block(0, 6, 12, 12) = I12;
     C(24, 8) = 1;
     C(25, 11) = 1;
@@ -142,20 +146,80 @@ Estimator::Estimator(CtrlInterfaces &ctrl_interfaces, CtrlComponent &ctrl_compon
     low_pass_filters_[0] = std::make_shared<LowPassFilter>(dt_, 3.0);
     low_pass_filters_[1] = std::make_shared<LowPassFilter>(dt_, 3.0);
     low_pass_filters_[2] = std::make_shared<LowPassFilter>(dt_, 3.0);
+
+    // Initialize ROS2 components
+    odom_frame_id_ = "leg_odom";
+    base_frame_id_ = "base";
+    
+    // Create odometry publisher
+    odom_publisher_ = node_->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
+    
+    // Create tf broadcaster
+    tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(node_);
 }
 
 double Estimator::getYaw() const {
     return rotMatToRPY(rotation_)(2);
 }
 
+Vec34 Estimator::getFeetVel() {
+    const std::vector<Eigen::Vector3d> feet_vel = robot_model_->getFeet2BVelocities();
+    Vec34 result;
+    for (int i(0); i < 4; ++i) {
+        result.col(i) = feet_vel[i] + getVelocity();
+    }
+    return result;
+}
+
 void Estimator::update() {
-    if (robot_model_->mass_ == 0) return;
+
+    if (robot_model_->mass_ == 0) {
+        RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(), 1000, 
+                            "Robot mass is 0, skipping estimation update");
+        return;
+    }
+
+    // Check if we have valid sensor data before proceeding
+    if (!ctrl_interfaces_.imu_state_interface_.empty()) {
+        // Check if IMU data is valid (not NaN or extremely large)
+        double imu_accel_x = ctrl_interfaces_.imu_state_interface_[0].get().get_optional().value_or(0.0);
+        double imu_accel_y = ctrl_interfaces_.imu_state_interface_[1].get().get_optional().value_or(0.0);
+        double imu_accel_z = ctrl_interfaces_.imu_state_interface_[2].get().get_optional().value_or(0.0);
+        
+        if (!std::isfinite(imu_accel_x) || !std::isfinite(imu_accel_y) || !std::isfinite(imu_accel_z) ||
+            std::abs(imu_accel_x) > 1000 || std::abs(imu_accel_y) > 1000 || std::abs(imu_accel_z) > 1000) {
+            RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(), 1000, 
+                                "Invalid IMU data detected, skipping estimation update");
+            return;
+        }
+    } else {
+        RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(), 1000, 
+                            "No IMU data available, skipping estimation update");
+        return;
+    }
+
+    // Check if joint data is available
+    if (ctrl_interfaces_.joint_position_state_interface_.empty()) {
+        RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(), 1000, 
+                            "No joint data available, skipping estimation update");
+        return;
+    }
+
+
 
     Q = QInit_;
     R = RInit_;
 
     foot_poses_ = robot_model_->getFeet2BPositions();
     foot_vels_ = robot_model_->getFeet2BVelocities();
+    
+    // In SWING_ALL mode, set foot velocities to zero to avoid numerical issues
+    if (wave_generator_->status_ == WaveStatus::SWING_ALL) {
+        for (int i = 0; i < 4; ++i) {
+            foot_vels_[i].setZero();
+        }
+    }
+    
     feet_h_.setZero();
 
     // Adjust the covariance based on foot contact and phase.
@@ -165,20 +229,27 @@ void Estimator::update() {
             Q.block(6 + 3 * i, 6 + 3 * i, 3, 3) = large_variance_ * Eigen::MatrixXd::Identity(3, 3);
             R.block(12 + 3 * i, 12 + 3 * i, 3, 3) = large_variance_ * Eigen::MatrixXd::Identity(3, 3);
             R(24 + i, 24 + i) = large_variance_;
+            
+
         } else {
             // foot contact
             const double trust = windowFunc(wave_generator_->phase_[i], 0.2);
-            Q.block(6 + 3 * i, 6 + 3 * i, 3, 3) =
-                    (1 + (1 - trust) * large_variance_) *
-                    QInit_.block(6 + 3 * i, 6 + 3 * i, 3, 3);
-            R.block(12 + 3 * i, 12 + 3 * i, 3, 3) =
-                    (1 + (1 - trust) * large_variance_) *
-                    RInit_.block(12 + 3 * i, 12 + 3 * i, 3, 3);
-            R(24 + i, 24 + i) =
-                    (1 + (1 - trust) * large_variance_) * RInit_(24 + i, 24 + i);
+            double pos_variance_factor = (1 + (1 - trust) * large_variance_);
+            double vel_variance_factor = (1 + (1 - trust) * large_variance_);
+            double height_variance_factor = (1 + (1 - trust) * large_variance_);
+            
+            Q.block(6 + 3 * i, 6 + 3 * i, 3, 3) = pos_variance_factor * QInit_.block(6 + 3 * i, 6 + 3 * i, 3, 3);
+            R.block(12 + 3 * i, 12 + 3 * i, 3, 3) = vel_variance_factor * RInit_.block(12 + 3 * i, 12 + 3 * i, 3, 3);
+            R(24 + i, 24 + i) = height_variance_factor * RInit_(24 + i, 24 + i);
         }
-        feet_pos_body_.segment(3 * i, 3) = Vec3(foot_poses_[i].p.data);
-        feet_vel_body_.segment(3 * i, 3) = Vec3(foot_vels_[i].data);
+        // For non-contact feet, set observation to zero to avoid numerical issues
+        if (wave_generator_->contact_[i] == 0) {
+            feet_pos_body_.segment(3 * i, 3).setZero();
+            feet_vel_body_.segment(3 * i, 3).setZero();
+        } else {
+            feet_pos_body_.segment(3 * i, 3) = foot_poses_[i].translation();
+            feet_vel_body_.segment(3 * i, 3) = foot_vels_[i];
+        }
     }
 
     Quat quat;
@@ -219,10 +290,118 @@ void Estimator::update() {
         Ppriori * C.transpose() * SR * STC * Ppriori.transpose();
 
     // // Using low pass filter to smooth the velocity
+    // Apply low-pass filter to velocity estimates (for external use, not modifying x_hat_)
     low_pass_filters_[0]->addValue(x_hat_(3));
     low_pass_filters_[1]->addValue(x_hat_(4));
     low_pass_filters_[2]->addValue(x_hat_(5));
-    x_hat_(3) = low_pass_filters_[0]->getValue();
-    x_hat_(4) = low_pass_filters_[1]->getValue();
-    x_hat_(5) = low_pass_filters_[2]->getValue();
+    // Note: Do NOT write filtered values back to x_hat_ as it breaks Kalman filter consistency!
+    
+    // Check for numerical divergence and reset if necessary
+    bool diverged = false;
+    for (int i = 0; i < 6; ++i) {
+        if (!std::isfinite(x_hat_(i)) || std::abs(x_hat_(i)) > 1e6) {
+            diverged = true;
+            break;
+        }
+    }
+    
+    if (diverged) {
+        RCLCPP_WARN(node_->get_logger(), "Estimator state diverged - resetting to zero");
+        
+        x_hat_.setZero();
+        P.setIdentity();
+        P = large_variance_ * P;
+        // Reset low pass filters
+        for (auto& filter : low_pass_filters_) {
+            filter->clear();
+        }
+        return; // Skip publishing this invalid state
+    }
+    
+    // Publish odometry and tf
+    publishOdometryAndTf();
+}
+
+void Estimator::publishOdometryAndTf() {
+    // Get current time
+    rclcpp::Time current_time = node_->get_clock()->now();
+    
+    // Get estimated position and velocity
+    Vec3 position = getPosition();
+    Vec3 velocity = getVelocity();
+    
+    // Get rotation matrix and convert to quaternion
+    RotMat rot_mat = getRotation();
+    
+    // Convert rotation matrix to quaternion
+    Eigen::Quaterniond quat(rot_mat);
+    quat.normalize();
+    
+    // Create and populate odometry message
+    auto odom_msg = std::make_unique<nav_msgs::msg::Odometry>();
+    odom_msg->header.stamp = current_time;
+    odom_msg->header.frame_id = odom_frame_id_;
+    odom_msg->child_frame_id = base_frame_id_;
+    
+    // Position
+    odom_msg->pose.pose.position.x = position(0);
+    odom_msg->pose.pose.position.y = position(1);
+    odom_msg->pose.pose.position.z = position(2);
+    
+    // Orientation
+    odom_msg->pose.pose.orientation.x = quat.x();
+    odom_msg->pose.pose.orientation.y = quat.y();
+    odom_msg->pose.pose.orientation.z = quat.z();
+    odom_msg->pose.pose.orientation.w = quat.w();
+    
+    // Velocity (in world frame, which is what odometry typically expects)
+    odom_msg->twist.twist.linear.x = velocity(0);
+    odom_msg->twist.twist.linear.y = velocity(1);
+    odom_msg->twist.twist.linear.z = velocity(2);
+    
+    // Angular velocity (in base_link frame)
+    Vec3 angular_velocity = getGyro();
+    odom_msg->twist.twist.angular.x = angular_velocity(0);
+    odom_msg->twist.twist.angular.y = angular_velocity(1);
+    odom_msg->twist.twist.angular.z = angular_velocity(2);
+    
+    // Set covariance matrices (you can adjust these values based on your estimation accuracy)
+    // Position covariance
+    odom_msg->pose.covariance[0] = 0.1;   // x
+    odom_msg->pose.covariance[7] = 0.1;   // y  
+    odom_msg->pose.covariance[14] = 0.1;  // z
+    odom_msg->pose.covariance[21] = 0.05; // roll
+    odom_msg->pose.covariance[28] = 0.05; // pitch
+    odom_msg->pose.covariance[35] = 0.05; // yaw
+    
+    // Velocity covariance
+    odom_msg->twist.covariance[0] = 0.1;   // vx
+    odom_msg->twist.covariance[7] = 0.1;   // vy
+    odom_msg->twist.covariance[14] = 0.1;  // vz
+    odom_msg->twist.covariance[21] = 0.05; // wx
+    odom_msg->twist.covariance[28] = 0.05; // wy
+    odom_msg->twist.covariance[35] = 0.05; // wz
+    
+    // Publish odometry
+    odom_publisher_->publish(std::move(odom_msg));
+    
+    // Create and publish transform
+    geometry_msgs::msg::TransformStamped transform_stamped;
+    transform_stamped.header.stamp = current_time;
+    transform_stamped.header.frame_id = odom_frame_id_;
+    transform_stamped.child_frame_id = base_frame_id_;
+    
+    // Position
+    transform_stamped.transform.translation.x = position(0);
+    transform_stamped.transform.translation.y = position(1);
+    transform_stamped.transform.translation.z = position(2);
+    
+    // Orientation
+    transform_stamped.transform.rotation.x = quat.x();
+    transform_stamped.transform.rotation.y = quat.y();
+    transform_stamped.transform.rotation.z = quat.z();
+    transform_stamped.transform.rotation.w = quat.w();
+    
+    // Send transform
+    tf_broadcaster_->sendTransform(transform_stamped);
 }

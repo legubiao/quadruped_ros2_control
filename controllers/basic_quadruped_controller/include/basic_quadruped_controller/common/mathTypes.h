@@ -52,7 +52,7 @@ using Mat2 = Eigen::Matrix<double, 2, 2>;
 using Mat3 = Eigen::Matrix<double, 3, 3>;
 
 // 3x3 Identity Matrix
-#define I3 Eigen::MatrixXd::Identity(3, 3)
+inline Mat3 I3() { return Eigen::Matrix3d::Identity(); }
 
 // 3x4 Matrix, each column is a 3x1 vector
 using Vec34 = Eigen::Matrix<double, 3, 4>;

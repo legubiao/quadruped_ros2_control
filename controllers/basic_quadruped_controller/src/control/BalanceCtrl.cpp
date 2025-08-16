@@ -5,11 +5,11 @@
 #include "basic_quadruped_controller/control/BalanceCtrl.h"
 
 #include <basic_quadruped_controller/common/mathTools.h>
-#include <basic_quadruped_controller/robot/QuadrupedRobot.h>
+#include <basic_quadruped_controller/control/QuadrupedKinematic.h>
 
 #include "quadProgpp/QuadProg++.hh"
 
-BalanceCtrl::BalanceCtrl(const std::shared_ptr<QuadrupedRobot> &robot) {
+BalanceCtrl::BalanceCtrl(const std::shared_ptr<QuadrupedKinematic> &robot) {
     mass_ = robot->mass_;
 
     alpha_ = 0.001;
@@ -52,7 +52,7 @@ Vec34 BalanceCtrl::calF(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rot_m
 
 void BalanceCtrl::calMatrixA(const Vec34 &feet_pos_2_body, const RotMat &rotM) {
     for (int i = 0; i < 4; ++i) {
-        A_.block(0, 3 * i, 3, 3) = I3;
+        A_.block(0, 3 * i, 3, 3) = I3();
         A_.block(3, 3 * i, 3, 3) = skew(Vec3(feet_pos_2_body.col(i)) - rotM * pcb_);
     }
 }
@@ -87,7 +87,7 @@ void BalanceCtrl::calConstraints(const VecInt4 &contact) {
             CI_.block(5 * ciID, 3 * i, 5, 3) = friction_mat_;
             ++ciID;
         } else {
-            CE_.block(3 * ceID, 3 * i, 3, 3) = I3;
+            CE_.block(3 * ceID, 3 * i, 3, 3) = I3();
             ++ceID;
         }
     }

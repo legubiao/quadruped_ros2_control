@@ -9,6 +9,9 @@
 #include <controller_common/common/enumClass.h>
 #include <basic_quadruped_controller/common/mathTypes.h>
 
+// Forward declaration
+enum class FSMStateName;
+
 inline long long getSystemTime() {
     const auto now = std::chrono::system_clock::now();
     const auto duration = now.time_since_epoch();
@@ -22,6 +25,24 @@ public:
     ~WaveGenerator() = default;
 
     void update();
+
+    /**
+     * Set wave generator status
+     * @param status new wave status
+     */
+    void setStatus(WaveStatus status) { status_ = status; }
+
+    /**
+     * Set wave generator status based on FSM state
+     * @param fsm_state FSM state name
+     */
+    void setStatusFromFSM(FSMStateName fsm_state);
+
+    /**
+     * Get current wave status
+     * @return current wave status
+     */
+    [[nodiscard]] WaveStatus getStatus() const { return status_; }
 
     [[nodiscard]] double get_t_stance() const { return period_ * st_ratio_; }
     [[nodiscard]] double get_t_swing() const { return period_ * (1 - st_ratio_); }

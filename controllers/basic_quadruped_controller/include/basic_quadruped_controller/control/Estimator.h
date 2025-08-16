@@ -6,18 +6,30 @@
 #define ESTIMATOR_H
 #include <memory>
 #include <kdl/frames.hpp>
+#include <pinocchio/spatial/se3.hpp>
+#include <Eigen/Dense>
 #include <basic_quadruped_controller/common/mathTypes.h>
-#include <basic_quadruped_controller/robot/QuadrupedRobot.h>
 #include "LowPassFilter.h"
+
+#include <rclcpp/rclcpp.hpp>
+#include <nav_msgs/msg/odometry.hpp>
+#include <tf2_ros/transform_broadcaster.h>
+#include <geometry_msgs/msg/transform_stamped.hpp>
 
 struct CtrlInterfaces;
 class WaveGenerator;
-class QuadrupedRobot;
+class QuadrupedKinematic;
 struct CtrlComponent;
+
+// Forward declarations for ROS2 types
+namespace rclcpp_lifecycle {
+    class LifecycleNode;
+}
 
 class Estimator {
 public:
-    explicit Estimator(CtrlInterfaces &ctrl_interfaces, CtrlComponent &ctrl_component);
+    explicit Estimator(CtrlInterfaces &ctrl_interfaces, CtrlComponent &ctrl_component, 
+                      std::shared_ptr<rclcpp_lifecycle::LifecycleNode> node);
 
     ~Estimator() = default;
 
@@ -34,7 +46,12 @@ public:
      * @return robot central velocity
      */
     Vec3 getVelocity() {
-        return x_hat_.segment(3, 3);
+        // Return filtered velocity for stability (as per original unitree implementation)
+        Vec3 filtered_vel;
+        filtered_vel(0) = low_pass_filters_[0]->getValue();
+        filtered_vel(1) = low_pass_filters_[1]->getValue(); 
+        filtered_vel(2) = low_pass_filters_[2]->getValue();
+        return filtered_vel;
     }
 
     /**
@@ -43,7 +60,7 @@ public:
      * @return foot position in world frame
      */
     Vec3 getFootPos(const int index) {
-        return getPosition() + rotation_ * Vec3(foot_poses_[index].p.data);
+        return getPosition() + rotation_ * foot_poses_[index].translation();
     }
 
     /**
@@ -62,14 +79,7 @@ public:
      * Get the estimated feet velocity in world frame
      * @return feet velocity in world frame
      */
-    Vec34 getFeetVel() {
-        const std::vector<KDL::Vector> feet_vel = robot_model_->getFeet2BVelocities();
-        Vec34 result;
-        for (int i(0); i < 4; ++i) {
-            result.col(i) = Vec3(feet_vel[i].data) + getVelocity();
-        }
-        return result;
-    }
+    Vec34 getFeetVel();
 
     /**
      * Get the estimated foot position in body frame
@@ -104,9 +114,14 @@ public:
 
     void update();
 
+    /**
+     * Publish odometry and tf data
+     */
+    void publishOdometryAndTf();
+
 private:
     CtrlInterfaces &ctrl_interfaces_;
-    std::shared_ptr<QuadrupedRobot> &robot_model_;
+    std::shared_ptr<QuadrupedKinematic> &robot_model_;
     std::shared_ptr<WaveGenerator> &wave_generator_;
 
     Eigen::Matrix<double, 18, 1> x_hat_; // The state of estimator, position(3)+velocity(3)+feet position(3x4)
@@ -149,11 +164,20 @@ private:
     Vec3 acceleration_;
     Vec3 gyro_;
 
-    std::vector<KDL::Frame> foot_poses_;
-    std::vector<KDL::Vector> foot_vels_;
+    std::vector<pinocchio::SE3> foot_poses_;
+    std::vector<Eigen::Vector3d> foot_vels_;
     std::vector<std::shared_ptr<LowPassFilter> > low_pass_filters_;
 
     double large_variance_;
+
+    // ROS2 components for odometry and tf publishing
+    std::shared_ptr<rclcpp_lifecycle::LifecycleNode> node_;
+    rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_publisher_;
+    std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+    
+    // Frame names
+    std::string odom_frame_id_;
+    std::string base_frame_id_;
 };
 
 

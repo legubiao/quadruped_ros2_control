@@ -8,11 +8,11 @@
 #include <memory>
 
 #include "basic_quadruped_controller/common/mathTypes.h"
-class QuadrupedRobot;
+class QuadrupedKinematic;
 
 class BalanceCtrl {
 public:
-    explicit BalanceCtrl(const std::shared_ptr<QuadrupedRobot>& robot);
+    explicit BalanceCtrl(const std::shared_ptr<QuadrupedKinematic>& robot);
 
     ~BalanceCtrl() = default;
 

@@ -11,7 +11,7 @@
 
 class Estimator;
 struct CtrlComponent;
-class QuadrupedRobot;
+class QuadrupedKinematic;
 
 class FeetEndCalc {
 public:
@@ -25,7 +25,7 @@ public:
 
 private:
     CtrlComponent &ctrl_component_;
-    std::shared_ptr<QuadrupedRobot> &robot_model_;
+    std::shared_ptr<QuadrupedKinematic> &robot_model_;
     std::shared_ptr<Estimator> &estimator_;
 
     Vec4 feet_radius_, feet_init_angle_;

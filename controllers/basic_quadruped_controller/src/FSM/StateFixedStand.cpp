@@ -3,12 +3,21 @@
 //
 
 #include "basic_quadruped_controller/FSM/StateFixedStand.h"
+#include "basic_quadruped_controller/control/CtrlComponent.h"
 
-StateFixedStand::StateFixedStand(CtrlInterfaces& ctrl_interfaces, const std::vector<double>& target_pos,
+StateFixedStand::StateFixedStand(CtrlInterfaces& ctrl_interfaces, 
+                                 CtrlComponent& ctrl_component,
+                                 const std::vector<double>& target_pos,
                                  const double kp,
                                  const double kd)
-    : BaseFixedStand(ctrl_interfaces, target_pos, kp, kd)
+    : BaseFixedStand(ctrl_interfaces, target_pos, kp, kd),
+      ctrl_component_(ctrl_component)
 {
+}
+
+void StateFixedStand::enter() {
+    // Call parent enter method
+    BaseFixedStand::enter();
 }
 
 FSMStateName StateFixedStand::checkChange()

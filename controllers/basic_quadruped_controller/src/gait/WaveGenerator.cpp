@@ -3,6 +3,7 @@
 //
 
 #include "basic_quadruped_controller/gait/WaveGenerator.h"
+#include "controller_common/FSM/FSMState.h"
 
 #include <iostream>
 
@@ -91,5 +92,25 @@ void WaveGenerator::calcWave(Vec4 &phase, VecInt4 &contact, const WaveStatus sta
             phase << 0.5, 0.5, 0.5, 0.5;
             break;
         }
+    }
+}
+
+void WaveGenerator::setStatusFromFSM(FSMStateName fsm_state) {
+    switch (fsm_state) {
+        case FSMStateName::FIXEDDOWN:
+        case FSMStateName::FIXEDSTAND:
+        case FSMStateName::FREESTAND:
+        case FSMStateName::BALANCETEST:
+            setStatus(WaveStatus::STANCE_ALL);
+            break;
+            
+        case FSMStateName::TROTTING:
+            setStatus(WaveStatus::WAVE_ALL);
+            break;
+            
+        default:
+            // Default to SWING_ALL for safety (PASSIVE, INVALID, and unknown states)
+            setStatus(WaveStatus::SWING_ALL);
+            break;
     }
 }

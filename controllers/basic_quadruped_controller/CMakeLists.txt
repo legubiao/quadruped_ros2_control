@@ -17,6 +17,9 @@ set(CONTROLLER_INCLUDE_DEPENDS
         control_input_msgs
         controller_common
         pinocchio
+        nav_msgs
+        tf2_ros
+        geometry_msgs
 )
 
 # find dependencies
@@ -38,16 +41,16 @@ add_library(${PROJECT_NAME} SHARED
 
         src/control/QuadrupedKinematic.cpp
 
-#        src/control/Estimator.cpp
-#        src/control/LowPassFilter.cpp
-#        src/control/BalanceCtrl.cpp
-#
-#        src/quadProgpp/Array.cc
-#        src/quadProgpp/QuadProg++.cc
-#
-#        src/gait/WaveGenerator.cpp
-#        src/gait/FeetEndCalc.cpp
-#        src/gait/GaitGenerator.cpp
+        src/control/Estimator.cpp
+        src/control/LowPassFilter.cpp
+        src/control/BalanceCtrl.cpp
+
+        src/quadProgpp/Array.cc
+        src/quadProgpp/QuadProg++.cc
+
+        src/gait/WaveGenerator.cpp
+        src/gait/FeetEndCalc.cpp
+        src/gait/GaitGenerator.cpp
 
 )
 target_include_directories(${PROJECT_NAME}

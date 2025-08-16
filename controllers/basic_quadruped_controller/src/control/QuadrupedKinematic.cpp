@@ -66,6 +66,7 @@ void QuadrupedKinematic::initializeModel(const std::string& urdf_path,
             mass_ += joint.mass();
         }
 
+
         // 获取关节限制
         joint_lower_limits_ = model_.lowerPositionLimit;
         joint_upper_limits_ = model_.upperPositionLimit;
@@ -147,9 +148,19 @@ Vec12 QuadrupedKinematic::getQd(const std::vector<pinocchio::SE3>& pos, const Ve
         pinocchio::computeFrameJacobian(model_, data_, q_target, foot_frame_ids_[i], jacobian);
         Eigen::MatrixXd pos_jacobian = jacobian.topRows(3);
 
-        // 计算关节速度
+        // 计算关节速度 (使用伪逆以提高数值稳定性)
         Eigen::Vector3d foot_velocity = vel.col(i);
-        Eigen::Vector3d joint_velocity = pos_jacobian.inverse() * foot_velocity;
+        
+        // 使用SVD求伪逆，避免数值不稳定
+        Eigen::JacobiSVD<Eigen::MatrixXd> svd(pos_jacobian, Eigen::ComputeFullU | Eigen::ComputeFullV);
+        double tolerance = 1e-6;
+        Eigen::Vector3d joint_velocity = svd.solve(foot_velocity);
+        
+        // 检查求解结果的有效性
+        if ((pos_jacobian * joint_velocity - foot_velocity).norm() > tolerance * 10) {
+            // 如果求解误差太大，设为零
+            joint_velocity.setZero();
+        }
 
         qd.segment(3 * i, 3) = joint_velocity;
     }
@@ -168,9 +179,19 @@ Vec12 QuadrupedKinematic::getQd(const Vec12& q, const Vec34& vel) const
         pinocchio::computeFrameJacobian(model_, data_, q, foot_frame_ids_[i], jacobian);
         Eigen::MatrixXd pos_jacobian = jacobian.topRows(3);
 
-        // 计算关节速度
+        // 计算关节速度 (使用伪逆以提高数值稳定性)
         Eigen::Vector3d foot_velocity = vel.col(i);
-        Eigen::Vector3d joint_velocity = pos_jacobian.inverse() * foot_velocity;
+        
+        // 使用SVD求伪逆，避免数值不稳定
+        Eigen::JacobiSVD<Eigen::MatrixXd> svd(pos_jacobian, Eigen::ComputeFullU | Eigen::ComputeFullV);
+        double tolerance = 1e-6;
+        Eigen::Vector3d joint_velocity = svd.solve(foot_velocity);
+        
+        // 检查求解结果的有效性
+        if ((pos_jacobian * joint_velocity - foot_velocity).norm() > tolerance * 10) {
+            // 如果求解误差太大，设为零
+            joint_velocity.setZero();
+        }
 
         qd.segment(3 * i, 3) = joint_velocity;
     }
@@ -223,17 +244,8 @@ Eigen::VectorXd QuadrupedKinematic::getTorque(const Vec3& force, int index) cons
 
 Eigen::Vector3d QuadrupedKinematic::getFeet2BVelocities(const int index) const
 {
-    if (index < 0 || index >= 4)
-    {
-        throw std::out_of_range("Foot index out of range");
-    }
-
-    Eigen::MatrixXd jacobian = getJacobian(index);
-    Eigen::MatrixXd pos_jacobian = jacobian.topRows(3);
-
-    // 计算足端速度
-    Eigen::Vector3d foot_velocity = pos_jacobian * current_joint_vel_.segment(3 * index, 3);
-    return foot_velocity;
+    // 使用解析雅可比方法，更稳定且高效
+    return getFeet2BVelocitiesAnalytical(index);
 }
 
 std::vector<Eigen::Vector3d> QuadrupedKinematic::getFeet2BVelocities() const
@@ -247,6 +259,79 @@ std::vector<Eigen::Vector3d> QuadrupedKinematic::getFeet2BVelocities() const
     }
 
     return result;
+}
+
+Eigen::Vector3d QuadrupedKinematic::getFeet2BVelocitiesAnalytical(const int index) const
+{
+    if (index < 0 || index >= 4)
+    {
+        throw std::out_of_range("Foot index out of range");
+    }
+
+    // 获取关节角度和角速度
+    Eigen::Vector3d q = current_joint_pos_.segment(3 * index, 3);
+    Eigen::Vector3d qd = current_joint_vel_.segment(3 * index, 3);
+    
+    // 检查输入有效性
+    for (int i = 0; i < 3; ++i) {
+        if (!std::isfinite(q(i)) || !std::isfinite(qd(i)) || std::abs(qd(i)) > 100.0) {
+            return Eigen::Vector3d::Zero();
+        }
+    }
+
+    // 使用动态缓存的几何参数
+    if (cached_link_lengths_.empty() || cached_hip_offsets_.empty()) {
+        // 如果几何参数尚未初始化，返回零速度
+        return Eigen::Vector3d::Zero();
+    }
+    
+    // 获取当前腿的几何参数
+    double hip_offset = cached_hip_offsets_[index](1);      // Y方向的偏移（side direction）
+    double thigh_length = cached_link_lengths_[index][1];   // 大腿长度
+    double calf_length = cached_link_lengths_[index][2];    // 小腿长度
+    
+    // 根据腿部索引确定side sign
+    int side_sign = (index == 0 || index == 2) ? -1 : 1;  // FL/RL为-1, FR/RR为+1
+    
+    // 解析雅可比计算（基于原始Unitree算法）
+    double l1 = side_sign * hip_offset;
+    double l2 = -thigh_length;
+    double l3 = -calf_length;
+
+    double s1 = std::sin(q(0));
+    double s2 = std::sin(q(1));
+    double s3 = std::sin(q(2));
+
+    double c1 = std::cos(q(0));
+    double c2 = std::cos(q(1));
+    double c3 = std::cos(q(2));
+
+    double c23 = c2 * c3 - s2 * s3;
+    double s23 = s2 * c3 + c2 * s3;
+
+    // 构建雅可比矩阵
+    Eigen::Matrix3d jacobian;
+    jacobian(0, 0) = 0;
+    jacobian(1, 0) = -l3 * c1 * c23 - l2 * c1 * c2 - l1 * s1;
+    jacobian(2, 0) = -l3 * s1 * c23 - l2 * c2 * s1 + l1 * c1;
+    jacobian(0, 1) = l3 * c23 + l2 * c2;
+    jacobian(1, 1) = l3 * s1 * s23 + l2 * s1 * s2;
+    jacobian(2, 1) = -l3 * c1 * s23 - l2 * c1 * s2;
+    jacobian(0, 2) = l3 * c23;
+    jacobian(1, 2) = l3 * s1 * s23;
+    jacobian(2, 2) = -l3 * c1 * s23;
+
+    // 计算足端速度
+    Eigen::Vector3d foot_velocity = jacobian * qd;
+    
+    // 最终检查：确保输出是有限的
+    for (int i = 0; i < 3; ++i) {
+        if (!std::isfinite(foot_velocity(i))) {
+            return Eigen::Vector3d::Zero();
+        }
+    }
+    
+    return foot_velocity;
 }
 
 void QuadrupedKinematic::update()

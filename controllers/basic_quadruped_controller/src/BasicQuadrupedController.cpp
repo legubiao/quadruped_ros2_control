@@ -74,8 +74,8 @@ namespace basic_quadruped_controller
         // }
 
         ctrl_component_.robot_model_->update();
-        // ctrl_component_.wave_generator_->update();
-        // ctrl_component_.estimator_->update();
+        ctrl_component_.wave_generator_->update();
+        ctrl_component_.estimator_->update();
 
         if (mode_ == FSMMode::NORMAL)
         {
@@ -94,6 +94,11 @@ namespace basic_quadruped_controller
             current_state_->exit();
             current_state_ = next_state_;
 
+            // Set WaveGenerator status based on FSM state
+            if (ctrl_component_.wave_generator_) {
+                ctrl_component_.wave_generator_->setStatusFromFSM(next_state_name_);
+            }
+            
             current_state_->enter();
             mode_ = FSMMode::NORMAL;
         }
@@ -133,7 +138,8 @@ namespace basic_quadruped_controller
             // Initialize robot model with auto-generated URDF path
             initializeRobotModel();
 
-            // ctrl_component_.estimator_ = std::make_shared<Estimator>(ctrl_interfaces_, ctrl_component_);
+            ctrl_component_.estimator_ = std::make_shared<Estimator>(ctrl_interfaces_, ctrl_component_, get_node());
+            ctrl_component_.wave_generator_ = std::make_shared<WaveGenerator>(0.45, 0.5, Vec4(0, 0.5, 0.5, 0));
         }
         catch (const std::exception& e)
         {
@@ -189,8 +195,6 @@ namespace basic_quadruped_controller
                 ctrl_interfaces_.control_inputs_.ry = msg->ry;
             });
 
-        // ctrl_component_.wave_generator_ = std::make_shared<WaveGenerator>(0.45, 0.5, Vec4(0, 0.5, 0.5, 0));
-
         return CallbackReturn::SUCCESS;
     }
 
@@ -230,7 +234,7 @@ namespace basic_quadruped_controller
         // Create FSM List
         state_list_.passive = std::make_shared<StatePassive>(ctrl_interfaces_);
         state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_interfaces_, down_pos_, stand_kp_, stand_kd_);
-        state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_interfaces_, stand_pos_, stand_kp_, stand_kd_);
+        state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_interfaces_, ctrl_component_, stand_pos_, stand_kp_, stand_kd_);
         state_list_.freeStand = std::make_shared<StateFreeStand>(ctrl_interfaces_, ctrl_component_, stand_kp_,
                                                                  stand_kd_);
         // state_list_.balanceTest = std::make_shared<StateBalanceTest>(ctrl_interfaces_, ctrl_component_);
@@ -294,6 +298,8 @@ namespace basic_quadruped_controller
             return state_list_.invalid;
         }
     }
+
+
 }
 
 #include "pluginlib/class_list_macros.hpp"

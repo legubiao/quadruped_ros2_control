@@ -93,6 +93,13 @@ public:
      */
     [[nodiscard]] Vec34 getAllFootVelocitiesMatrix() const;
 
+    /**
+     * 使用解析方法计算单足端速度（更稳定的替代方案）
+     * @param index 足端索引
+     * @return 足端速度
+     */
+    Eigen::Vector3d getFeet2BVelocitiesAnalytical(const int index) const;
+
     // ========== 公共成员变量（保持兼容性）==========
     double mass_ = 0;
     Vec34 feet_pos_normal_stand_;
@@ -118,9 +125,9 @@ private:
     mutable std::vector<Eigen::MatrixXd> cached_jacobians_;
     mutable bool cache_valid_ = false;
     
-    // 几何参数缓存（连杆长度和髋关节偏移量）
-    std::vector<std::array<double, 3>> cached_link_lengths_;  // [leg_index][hip, thigh, calf]
-    std::vector<Vec3> cached_hip_offsets_;                   // [leg_index]
+    // 几何参数缓存（初始化时计算一次）
+    std::vector<Vec3> cached_hip_offsets_;                   // 4个腿的髋关节偏移 [leg_index]
+    std::vector<std::array<double, 3>> cached_link_lengths_;  // 4个腿x3个连杆长度 [leg_index][hip, thigh, calf]
     
     // 关节限制
     Vec12 joint_lower_limits_;
