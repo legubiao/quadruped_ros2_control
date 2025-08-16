@@ -113,10 +113,9 @@ namespace basic_quadruped_controller
 
             // Robot parameters - use robot_name to auto-generate package names
             robot_name_ = auto_declare<std::string>("robot_name", "unitree_go2");
-            
+
             // imu sensor
             imu_name_ = auto_declare<std::string>("imu_name", imu_name_);
-            base_name_ = auto_declare<std::string>("base_name", base_name_);
             imu_interface_types_ = auto_declare<std::vector<std::string>>("imu_interfaces", state_interface_types_);
             command_prefix_ = auto_declare<std::string>("command_prefix", command_prefix_);
             feet_names_ =
@@ -156,15 +155,17 @@ namespace basic_quadruped_controller
             std::string urdf_file = config_path + "/urdf/" + robot_name_ + ".urdf";
             // 准备默认站立关节角度
             Vec12 stand_joint_positions;
-            for (int i = 0; i < 4; ++i) {
+            for (int i = 0; i < 4; ++i)
+            {
                 stand_joint_positions.segment(3 * i, 3) = Eigen::Map<const Vec3>(&stand_pos_[3 * i]);
             }
-            
+
             // Initialize robot model with default stand joint positions
             ctrl_component_.robot_model_ = std::make_shared<QuadrupedKinematic>(
                 ctrl_interfaces_, urdf_file, feet_names_, joint_names_, stand_joint_positions);
 
-            RCLCPP_INFO(get_node()->get_logger(), "Robot model initialized successfully for robot: %s", robot_name_.c_str());
+            RCLCPP_INFO(get_node()->get_logger(), "Robot model initialized successfully for robot: %s",
+                        robot_name_.c_str());
             RCLCPP_INFO(get_node()->get_logger(), "URDF file: %s", urdf_file.c_str());
         }
         catch (const std::exception& e)
@@ -230,7 +231,8 @@ namespace basic_quadruped_controller
         state_list_.passive = std::make_shared<StatePassive>(ctrl_interfaces_);
         state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_interfaces_, down_pos_, stand_kp_, stand_kd_);
         state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_interfaces_, stand_pos_, stand_kp_, stand_kd_);
-        state_list_.freeStand = std::make_shared<StateFreeStand>(ctrl_interfaces_, ctrl_component_, stand_kp_, stand_kd_);
+        state_list_.freeStand = std::make_shared<StateFreeStand>(ctrl_interfaces_, ctrl_component_, stand_kp_,
+                                                                 stand_kd_);
         // state_list_.balanceTest = std::make_shared<StateBalanceTest>(ctrl_interfaces_, ctrl_component_);
         // state_list_.trotting = std::make_shared<StateTrotting>(ctrl_interfaces_, ctrl_component_);
 
