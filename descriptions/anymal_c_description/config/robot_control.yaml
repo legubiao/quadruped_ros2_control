@@ -1,0 +1,249 @@
+# Controller Manager configuration
+controller_manager:
+  ros__parameters:
+    update_rate: 200  # Hz
+
+    # Define the available controllers
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    imu_sensor_broadcaster:
+      type: imu_sensor_broadcaster/IMUSensorBroadcaster
+
+    unitree_guide_controller:
+      type: unitree_guide_controller/UnitreeGuideController
+
+    ocs2_quadruped_controller:
+      type: ocs2_quadruped_controller/Ocs2QuadrupedController
+
+    rl_quadruped_controller:
+      type: rl_quadruped_controller/LeggedGymController
+
+imu_sensor_broadcaster:
+  ros__parameters:
+    sensor_name: "imu_sensor"
+    frame_id: "imu_link"
+
+unitree_guide_controller:
+  ros__parameters:
+    update_rate: 200  # Hz
+    joints:
+      - RF_HAA
+      - RF_HFE
+      - RF_KFE
+      - LF_HAA
+      - LF_HFE
+      - LF_KFE
+      - RH_HAA
+      - RH_HFE
+      - RH_KFE
+      - LH_HAA
+      - LH_HFE
+      - LH_KFE
+
+    down_pos:
+      - -0.0
+      - 1.41
+      - -2.58
+      - 0.0
+      - 1.41
+      - -2.58
+      - -0.0
+      - -1.41
+      - 2.58
+      - 0.0
+      - -1.41
+      - 2.58
+
+    stand_pos:
+      - 0.2
+      - 0.6
+      - -0.85
+      - -0.2
+      - 0.6
+      - -0.85
+      - 0.2
+      - -0.6
+      - 0.85
+      - -0.2
+      - -0.6
+      - 0.85
+
+    command_interfaces:
+      - effort
+      - position
+      - velocity
+      - kp
+      - kd
+
+    state_interfaces:
+      - effort
+      - position
+      - velocity
+
+    feet_names:
+      - LF_FOOT
+      - RF_FOOT
+      - LH_FOOT
+      - RH_FOOT
+
+    imu_name: "imu_sensor"
+    base_name: "base"
+
+    imu_interfaces:
+      - orientation.w
+      - orientation.x
+      - orientation.y
+      - orientation.z
+      - angular_velocity.x
+      - angular_velocity.y
+      - angular_velocity.z
+      - linear_acceleration.x
+      - linear_acceleration.y
+      - linear_acceleration.z
+
+ocs2_quadruped_controller:
+  ros__parameters:
+    update_rate: 100  # Hz
+    default_kd: 1.5
+    joints:
+      - LF_HAA
+      - LF_HFE
+      - LF_KFE
+      - LH_HAA
+      - LH_HFE
+      - LH_KFE
+      - RF_HAA
+      - RF_HFE
+      - RF_KFE
+      - RH_HAA
+      - RH_HFE
+      - RH_KFE
+
+    command_interfaces:
+      - effort
+      - position
+      - velocity
+      - kp
+      - kd
+
+    state_interfaces:
+      - effort
+      - position
+      - velocity
+
+    feet:
+      - LF_FOOT
+      - RF_FOOT
+      - LH_FOOT
+      - RH_FOOT
+
+
+    imu_name: "imu_sensor"
+    base_name: "base"
+
+    imu_interfaces:
+      - orientation.w
+      - orientation.x
+      - orientation.y
+      - orientation.z
+      - angular_velocity.x
+      - angular_velocity.y
+      - angular_velocity.z
+      - linear_acceleration.x
+      - linear_acceleration.y
+      - linear_acceleration.z
+
+    foot_force_name: "foot_force"
+    foot_force_interfaces:
+      - LF
+      - RF
+      - LH
+      - RH
+
+rl_quadruped_controller:
+  ros__parameters:
+    update_rate: 200  # Hz
+    robot_pkg: "anymal_c_description"
+    model_folder: "legged_gym"
+    joints:
+      - LF_HAA
+      - LF_HFE
+      - LF_KFE
+      - RF_HAA
+      - RF_HFE
+      - RF_KFE
+      - LH_HAA
+      - LH_HFE
+      - LH_KFE
+      - RH_HAA
+      - RH_HFE
+      - RH_KFE
+
+    down_pos:
+      - -0.0
+      - 1.41
+      - -2.58
+      - 0.0
+      - 1.41
+      - -2.58
+      - -0.0
+      - -1.41
+      - 2.58
+      - 0.0
+      - -1.41
+      - 2.58
+
+    stand_pos:
+      - 0.2
+      - 0.6
+      - -0.85
+      - -0.2
+      - 0.6
+      - -0.85
+      - 0.2
+      - -0.6
+      - 0.85
+      - -0.2
+      - -0.6
+      - 0.85
+
+    command_interfaces:
+      - effort
+      - position
+      - velocity
+      - kp
+      - kd
+
+    state_interfaces:
+      - effort
+      - position
+      - velocity
+
+    feet_names:
+      - LF_FOOT
+      - RF_FOOT
+      - LH_FOOT
+      - RH_FOOT
+
+    foot_force_name: "foot_force"
+    foot_force_interfaces:
+      - LF
+      - RF
+      - LH
+      - RH
+
+    imu_name: "imu_sensor"
+    base_name: "base"
+
+    imu_interfaces:
+      - orientation.w
+      - orientation.x
+      - orientation.y
+      - orientation.z
+      - angular_velocity.x
+      - angular_velocity.y
+      - angular_velocity.z
+      - linear_acceleration.x
+      - linear_acceleration.y
+      - linear_acceleration.z

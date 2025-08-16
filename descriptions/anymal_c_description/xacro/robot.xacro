@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<robot name="x30" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find anymal_c_description)/xacro/body.xacro"/>
+  <xacro:include filename="$(find anymal_c_description)/xacro/materials.xacro"/>
+
+  <xacro:arg name="GAZEBO" default="false"/>
+  <xacro:if value="$(arg GAZEBO)">
+    <xacro:include filename="$(find anymal_c_description)/xacro/gazebo.xacro"/>
+  </xacro:if>
+  <xacro:unless value="$(arg GAZEBO)">
+    <xacro:include filename="$(find anymal_c_description)/xacro/ros2_control.xacro"/>
+  </xacro:unless>
+
+</robot>

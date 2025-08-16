@@ -1,0 +1,22 @@
+<package format="2">
+    <name>go2_description</name>
+    <version>1.0.0</version>
+    <description>
+        <p>URDF Description package for go2_description</p>
+        <p>This package contains configuration data, 3D models and launch files
+            for go2_description robot
+        </p>
+    </description>
+    <author>TODO</author>
+    <maintainer email="TODO@email.com"/>
+    <license>BSD</license>
+
+    <exec_depend>xacro</exec_depend>
+    <exec_depend>joint_state_publisher</exec_depend>
+    <exec_depend>robot_state_publisher</exec_depend>
+    <exec_depend>imu_sensor_broadcaster</exec_depend>
+    <exec_depend>joint_state_publisher_gui</exec_depend>
+    <export>
+        <build_type>ament_cmake</build_type>
+    </export>
+</package>

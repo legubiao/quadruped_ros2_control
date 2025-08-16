@@ -1,9 +1,0 @@
-<library path="leg_pd_controller">
-    <class name="leg_pd_controller/LegPdController"
-           type="leg_pd_controller::LegPdController"
-           base_class_type="controller_interface::ChainableControllerInterface">
-        <description>
-            PD controller for simulation which only support effort command input
-        </description>
-    </class>
-</library>

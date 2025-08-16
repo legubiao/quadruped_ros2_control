@@ -86,7 +86,7 @@ Video on Real Unitree Go2 Robot:
 ![gazebo](.images/gazebo.png)
 
 For more details, please refer to the [unitree guide controller](controllers/unitree_guide_controller/)
-and [go2 description](descriptions/unitree/go2_description/).
+and [go2 description](descriptions/go2_description/).
 
 ## What's Next
 Congratulations! You have successfully launched the quadruped robot in the simulation. Here are some suggestions for you to have a try:
@@ -97,7 +97,7 @@ Congratulations! You have successfully launched the quadruped robot in the simul
 * **Simulate with more sensors**
   * [Gazebo Quadruped Playground](libraries/gz_quadruped_playground): Provide gazebo simulation with lidar or depth camera.
 * **Real Robot Deploy**
-  * [Unitree Go2 Robot](descriptions/unitree/go2_description): Check here about how to deploy on go2 robot.
+  * [Go2 Robot](descriptions/go2_description): Check here about how to deploy on go2 robot.
 
 ## Reference
 
