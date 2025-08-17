@@ -112,8 +112,10 @@ namespace basic_quadruped_controller
             // pose parameters
             down_pos_ = auto_declare<std::vector<double>>("down_pos", down_pos_);
             stand_pos_ = auto_declare<std::vector<double>>("stand_pos", stand_pos_);
-            stand_kp_ = auto_declare<double>("stand_kp", stand_kp_);
-            stand_kd_ = auto_declare<double>("stand_kd", stand_kd_);
+            stand_gains_ = auto_declare<std::vector<double>>("stand_gains", stand_gains_);
+            swing_gains_ = auto_declare<std::vector<double>>("swing_gains", swing_gains_);
+            stable_gains_ = auto_declare<std::vector<double>>("stable_gains", stable_gains_);
+            gait_height_ = auto_declare<double>("gait_height", gait_height_);
 
             get_node()->get_parameter("update_rate", ctrl_interfaces_.frequency_);
             RCLCPP_INFO(get_node()->get_logger(), "Controller Manager Update Rate: %d Hz", ctrl_interfaces_.frequency_);
@@ -219,13 +221,13 @@ namespace basic_quadruped_controller
 
         // Create FSM List
         state_list_.passive = std::make_shared<StatePassive>(ctrl_interfaces_);
-        state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_interfaces_, down_pos_, stand_kp_, stand_kd_);
+        state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_interfaces_, down_pos_, stand_gains_[0], stand_gains_[1]);
         state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_interfaces_, ctrl_component_, stand_pos_,
-                                                                   stand_kp_, stand_kd_);
-        state_list_.freeStand = std::make_shared<StateFreeStand>(ctrl_interfaces_, ctrl_component_, stand_kp_,
-                                                                 stand_kd_);
-        state_list_.balanceTest = std::make_shared<StateBalanceTest>(ctrl_interfaces_, ctrl_component_);
-        state_list_.trotting = std::make_shared<StateTrotting>(ctrl_interfaces_, ctrl_component_);
+                                                                   stand_gains_[0], stand_gains_[1]);
+        state_list_.freeStand = std::make_shared<StateFreeStand>(ctrl_interfaces_, ctrl_component_, stand_gains_[0],
+                                                                 stand_gains_[1]);
+        state_list_.balanceTest = std::make_shared<StateBalanceTest>(ctrl_interfaces_, ctrl_component_, stable_gains_);
+        state_list_.trotting = std::make_shared<StateTrotting>(ctrl_interfaces_, ctrl_component_, swing_gains_, stable_gains_);
 
         // Initialize FSM
         current_state_ = state_list_.passive;

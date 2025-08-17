@@ -1,13 +1,11 @@
 //
 // Created by biao on 24-9-16.
 //
+#pragma once
 
 
-#ifndef LOWPASSFILTER_H
-#define LOWPASSFILTER_H
-
-
-class LowPassFilter {
+class LowPassFilter
+{
 public:
     LowPassFilter(double samplePeriod, double cutFrequency);
 
@@ -24,6 +22,3 @@ private:
     double pass_value_{};
     bool start_;
 };
-
-
-#endif //LOWPASSFILTER_H

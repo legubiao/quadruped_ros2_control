@@ -1,9 +1,8 @@
 //
 // Created by tlab-uav on 24-9-16.
 //
+#pragma once
 
-#ifndef BALANCECTRL_H
-#define BALANCECTRL_H
 
 #include <memory>
 
@@ -50,6 +49,3 @@ private:
     Eigen::Matrix<double, 6, 12> A_;
     Eigen::Matrix<double, 5, 3> friction_mat_;
 };
-
-
-#endif //BALANCECTRL_H

@@ -19,7 +19,8 @@ struct CtrlComponent;
 class StateBalanceTest final : public FSMState {
 public:
     explicit StateBalanceTest(CtrlInterfaces &ctrl_interfaces,
-                              CtrlComponent &ctrl_component);
+                              CtrlComponent &ctrl_component,
+                              const std::vector<double>& stable_gains);
 
     void enter() override;
 
@@ -51,6 +52,9 @@ private:
     float _yMax, _yMin;
     float _zMax, _zMin;
     float _yawMax, _yawMin;
+
+    // Stable gain parameters
+    std::vector<double> stable_gains_;
 };
 
 

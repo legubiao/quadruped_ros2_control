@@ -10,7 +10,8 @@
 #include "basic_quadruped_controller/gait/WaveGenerator.h"
 
 StateBalanceTest::StateBalanceTest(CtrlInterfaces& ctrl_interfaces,
-                                   CtrlComponent& ctrl_component)
+                                   CtrlComponent& ctrl_component,
+                                   const std::vector<double>& stable_gains)
     : FSMState(FSMStateName::BALANCETEST,
                "balance test",
                ctrl_interfaces),
@@ -18,7 +19,8 @@ StateBalanceTest::StateBalanceTest(CtrlInterfaces& ctrl_interfaces,
       robot_model_(ctrl_component.robot_model_),
       balance_ctrl_(ctrl_component.balance_ctrl_),
       wave_generator_(
-          ctrl_component.wave_generator_)
+          ctrl_component.wave_generator_),
+      stable_gains_(stable_gains)
 {
     _xMax = 0.05;
     _xMin = -_xMax;
@@ -118,9 +120,7 @@ void StateBalanceTest::setStableGain() const
 {
     for (int i = 0; i < 12; i++)
     {
-        constexpr double kd_stable = 0.8;
-        constexpr double kp_stable = 0.8;
-        std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(kp_stable);
-        std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(kd_stable);
+        std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i].get().set_value(stable_gains_[0]);
+        std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i].get().set_value(stable_gains_[1]);
     }
 }

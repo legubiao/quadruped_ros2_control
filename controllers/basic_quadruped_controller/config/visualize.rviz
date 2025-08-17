@@ -9,7 +9,7 @@ Panels:
         - /Grid1
         - /RobotModel1
       Splitter Ratio: 0.5
-    Tree Height: 1270
+    Tree Height: 268
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -212,7 +212,55 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        head_Link:
+        camera_chin:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_face:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_laserscan_link_left:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_laserscan_link_right:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_left:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_optical_chin:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_optical_face:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_optical_left:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_optical_rearDown:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_optical_right:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_rearDown:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_right:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -222,17 +270,22 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        lidar_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        tail_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         trunk:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ultraSound_face:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ultraSound_left:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ultraSound_right:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -291,7 +344,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 2.295936107635498
+      Distance: 2.8800220489501953
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -306,10 +359,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5253977179527283
+      Pitch: 0.47539782524108887
       Target Frame: base
       Value: Orbit (rviz)
-      Yaw: 3.1203978061676025
+      Yaw: 3.1353988647460938
     Saved: ~
 Window Geometry:
   Displays:

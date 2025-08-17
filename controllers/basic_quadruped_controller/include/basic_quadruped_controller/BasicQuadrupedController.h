@@ -97,8 +97,17 @@ namespace basic_quadruped_controller
             0.0, 1.3, -2.4
         };
 
-        double stand_kp_ = 80.0;
-        double stand_kd_ = 3.5;
+        // stand_gains_[0] = kp, stand_gains_[1] = kd
+        std::vector<double> stand_gains_ = {80.0, 3.5};
+
+        // swing_gains_[0] = kp, swing_gains_[1] = kd
+        std::vector<double> swing_gains_ = {3.0, 2.0};
+
+        // stable_gains_[0] = kp, stable_gains_[1] = kd
+        std::vector<double> stable_gains_ = {0.8, 0.8};
+
+        // Gait parameters
+        double gait_height_ = 0.08;
 
         rclcpp::Subscription<control_input_msgs::msg::Inputs>::SharedPtr control_input_subscription_;
 

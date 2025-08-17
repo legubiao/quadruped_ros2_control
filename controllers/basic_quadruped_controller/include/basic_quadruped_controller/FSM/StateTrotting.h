@@ -12,7 +12,9 @@
 class StateTrotting final : public FSMState {
 public:
     explicit StateTrotting(CtrlInterfaces &ctrl_interfaces,
-                           CtrlComponent &ctrl_component);
+                           CtrlComponent &ctrl_component,
+                           const std::vector<double>& swing_gains,
+                           const std::vector<double>& stable_gains);
 
     void enter() override;
 
@@ -76,6 +78,10 @@ private:
     double kp_w_;
     Mat3 Kp_swing_, Kd_swing_;
     Vec2 v_x_limit_, v_y_limit_, w_yaw_limit_;
+
+    // Gain parameters
+    std::vector<double> swing_gains_;
+    std::vector<double> stable_gains_;
 };
 
 

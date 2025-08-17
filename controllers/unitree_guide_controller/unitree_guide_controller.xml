@@ -1,9 +1,0 @@
-<library path="unitree_guide_controller">
-    <class name="unitree_guide_controller/UnitreeGuideController"
-           type="unitree_guide_controller::UnitreeGuideController"
-           base_class_type="controller_interface::ControllerInterface">
-        <description>
-            Quadruped Controller based on Unitree Guide.
-        </description>
-    </class>
-</library>

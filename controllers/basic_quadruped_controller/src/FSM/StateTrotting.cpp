@@ -9,15 +9,19 @@
 #include <basic_quadruped_controller/control/Estimator.h>
 #include <basic_quadruped_controller/gait/WaveGenerator.h>
 
-StateTrotting::StateTrotting(CtrlInterfaces &ctrl_interfaces,
-                             CtrlComponent &ctrl_component) : FSMState(FSMStateName::TROTTING, "trotting",
-                                                                       ctrl_interfaces),
-                                                              estimator_(ctrl_component.estimator_),
-                                                              robot_model_(ctrl_component.robot_model_),
-                                                              balance_ctrl_(ctrl_component.balance_ctrl_),
-                                                              wave_generator_(ctrl_component.wave_generator_),
-                                                              gait_generator_(ctrl_component) {
-    gait_height_ = 0.08;
+StateTrotting::StateTrotting(CtrlInterfaces& ctrl_interfaces,
+                             CtrlComponent& ctrl_component,
+                             const std::vector<double>& swing_gains,
+                             const std::vector<double>& stable_gains) : FSMState(FSMStateName::TROTTING, "trotting",
+                                                                             ctrl_interfaces),
+                                                                         estimator_(ctrl_component.estimator_),
+                                                                         robot_model_(ctrl_component.robot_model_),
+                                                                         balance_ctrl_(ctrl_component.balance_ctrl_),
+                                                                         wave_generator_(ctrl_component.wave_generator_),
+                                                                         gait_generator_(ctrl_component),
+                                                                         swing_gains_(swing_gains),
+                                                                         stable_gains_(stable_gains)
+{
     Kpp = Vec3(70, 70, 70).asDiagonal();
     Kdp = Vec3(20, 20, 20).asDiagonal();
     kp_w_ = 780;
@@ -31,7 +35,8 @@ StateTrotting::StateTrotting(CtrlInterfaces &ctrl_interfaces,
     dt_ = 1.0 / ctrl_interfaces_.frequency_;
 }
 
-void StateTrotting::enter() {
+void StateTrotting::enter()
+{
     pcd_ = estimator_->getPosition();
     pcd_(2) = -estimator_->getFeetPos2Body()(2, 0);
     v_cmd_body_.setZero();
@@ -43,7 +48,8 @@ void StateTrotting::enter() {
     gait_generator_.restart();
 }
 
-void StateTrotting::run(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/) {
+void StateTrotting::run(const rclcpp::Time&/*time*/, const rclcpp::Duration&/*period*/)
+{
     pos_body_ = estimator_->getPosition();
     vel_body_ = estimator_->getVelocity();
 
@@ -56,9 +62,12 @@ void StateTrotting::run(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*
     gait_generator_.setGait(vel_target_.segment(0, 2), w_cmd_global_(2), gait_height_);
     gait_generator_.generate(pos_feet_global_goal_, vel_feet_global_goal_);
 
-    if (checkStepOrNot()) {
+    if (checkStepOrNot())
+    {
         wave_generator_->status_ = WaveStatus::WAVE_ALL;
-    } else {
+    }
+    else
+    {
         wave_generator_->status_ = WaveStatus::STANCE_ALL;
     }
 
@@ -67,22 +76,26 @@ void StateTrotting::run(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*
     calcGain();
 }
 
-void StateTrotting::exit() {
+void StateTrotting::exit()
+{
     wave_generator_->status_ = WaveStatus::SWING_ALL;
 }
 
-FSMStateName StateTrotting::checkChange() {
-    switch (ctrl_interfaces_.control_inputs_.command) {
-        case 1:
-            return FSMStateName::PASSIVE;
-        case 2:
-            return FSMStateName::FIXEDSTAND;
-        default:
-            return FSMStateName::TROTTING;
+FSMStateName StateTrotting::checkChange()
+{
+    switch (ctrl_interfaces_.control_inputs_.command)
+    {
+    case 1:
+        return FSMStateName::PASSIVE;
+    case 2:
+        return FSMStateName::FIXEDSTAND;
+    default:
+        return FSMStateName::TROTTING;
     }
 }
 
-void StateTrotting::getUserCmd() {
+void StateTrotting::getUserCmd()
+{
     /* Movement */
     v_cmd_body_(0) = invNormalize(ctrl_interfaces_.control_inputs_.ly, v_x_limit_(0), v_x_limit_(1));
     v_cmd_body_(1) = -invNormalize(ctrl_interfaces_.control_inputs_.lx, v_y_limit_(0), v_y_limit_(1));
@@ -94,14 +107,15 @@ void StateTrotting::getUserCmd() {
     d_yaw_cmd_past_ = d_yaw_cmd_;
 }
 
-void StateTrotting::calcCmd() {
+void StateTrotting::calcCmd()
+{
     /* Movement */
     vel_target_ = B2G_RotMat * v_cmd_body_;
 
     vel_target_(0) =
-            saturation(vel_target_(0), Vec2(vel_body_(0) - 0.2, vel_body_(0) + 0.2));
+        saturation(vel_target_(0), Vec2(vel_body_(0) - 0.2, vel_body_(0) + 0.2));
     vel_target_(1) =
-            saturation(vel_target_(1), Vec2(vel_body_(1) - 0.2, vel_body_(1) + 0.2));
+        saturation(vel_target_(1), Vec2(vel_body_(1) - 0.2, vel_body_(1) + 0.2));
 
     pcd_(0) = saturation(pcd_(0) + vel_target_(0) * dt_,
                          Vec2(pos_body_(0) - 0.05, pos_body_(0) + 0.05));
@@ -116,13 +130,14 @@ void StateTrotting::calcCmd() {
     w_cmd_global_(2) = d_yaw_cmd_;
 }
 
-void StateTrotting::calcTau() {
+void StateTrotting::calcTau()
+{
     pos_error_ = pcd_ - pos_body_;
     vel_error_ = vel_target_ - vel_body_;
 
     Vec3 dd_pcd = Kpp * pos_error_ + Kdp * vel_error_;
     Vec3 d_wbd = kp_w_ * rotMatToExp(Rd * G2B_RotMat) +
-                 Kd_w_ * (w_cmd_global_ - estimator_->getGyroGlobal());
+        Kd_w_ * (w_cmd_global_ - estimator_->getGyroGlobal());
 
     dd_pcd(0) = saturation(dd_pcd(0), Vec2(-3, 3));
     dd_pcd(1) = saturation(dd_pcd(1), Vec2(-3, 3));
@@ -133,35 +148,41 @@ void StateTrotting::calcTau() {
     d_wbd(2) = saturation(d_wbd(2), Vec2(-10, 10));
 
     Vec34 force_feet_global =
-            -balance_ctrl_->calF(dd_pcd, d_wbd, B2G_RotMat, estimator_->getFeetPos2Body(), wave_generator_->contact_);
+        -balance_ctrl_->calF(dd_pcd, d_wbd, B2G_RotMat, estimator_->getFeetPos2Body(), wave_generator_->contact_);
 
 
     Vec34 pos_feet_global = estimator_->getFeetPos();
     Vec34 vel_feet_global = estimator_->getFeetVel();
 
-    for (int i(0); i < 4; ++i) {
-        if (wave_generator_->contact_(i) == 0) {
+    for (int i(0); i < 4; ++i)
+    {
+        if (wave_generator_->contact_(i) == 0)
+        {
             force_feet_global.col(i) =
-                    Kp_swing_ * (pos_feet_global_goal_.col(i) - pos_feet_global.col(i)) +
-                    Kd_swing_ * (vel_feet_global_goal_.col(i) - vel_feet_global.col(i));
+                Kp_swing_ * (pos_feet_global_goal_.col(i) - pos_feet_global.col(i)) +
+                Kd_swing_ * (vel_feet_global_goal_.col(i) - vel_feet_global.col(i));
         }
     }
 
     Vec34 force_feet_body_ = G2B_RotMat * force_feet_global;
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++)
+    {
         Vec3 torque = robot_model_->getTorque(force_feet_body_.col(i), i);
-        for (int j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++)
+        {
             std::ignore = ctrl_interfaces_.joint_torque_command_interface_[i * 3 + j].get().set_value(torque(j));
         }
     }
 }
 
-void StateTrotting::calcQQd() {
+void StateTrotting::calcQQd()
+{
     const Vec34 pos_feet_body = robot_model_->getFeet2BPositions();
 
     Vec34 pos_feet_target, vel_feet_target;
-    for (int i(0); i < 4; ++i) {
+    for (int i(0); i < 4; ++i)
+    {
         pos_feet_target.col(i) = G2B_RotMat * (pos_feet_global_goal_.col(i) - pos_body_);
         vel_feet_target.col(i) = G2B_RotMat * (vel_feet_global_goal_.col(i) - vel_body_);
     }
@@ -169,35 +190,45 @@ void StateTrotting::calcQQd() {
     Vec12 q_goal = robot_model_->getQ(pos_feet_target, FrameType::BODY);
     Vec12 qd_goal = robot_model_->getQd(pos_feet_body, vel_feet_target, FrameType::BODY);
 
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 12; i++)
+    {
         std::ignore = ctrl_interfaces_.joint_position_command_interface_[i].get().set_value(q_goal(i));
         std::ignore = ctrl_interfaces_.joint_velocity_command_interface_[i].get().set_value(qd_goal(i));
     }
 }
 
-void StateTrotting::calcGain() const {
-    for (int i(0); i < 4; ++i) {
-        if (wave_generator_->contact_(i) == 0) {
+void StateTrotting::calcGain() const
+{
+    for (int i(0); i < 4; ++i)
+    {
+        if (wave_generator_->contact_(i) == 0)
+        {
             // swing gain
-            for (int j = 0; j < 3; j++) {
-                std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i * 3 + j].get().set_value(3.0);
-                std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i * 3 + j].get().set_value(2.0);
+            for (int j = 0; j < 3; j++)
+            {
+                std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i * 3 + j].get().set_value(swing_gains_[0]);
+                std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i * 3 + j].get().set_value(swing_gains_[1]);
             }
-        } else {
+        }
+        else
+        {
             // stable gain
-            for (int j = 0; j < 3; j++) {
-                std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i * 3 + j].get().set_value(0.8);
-                std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i * 3 + j].get().set_value(0.8);
+            for (int j = 0; j < 3; j++)
+            {
+                std::ignore = ctrl_interfaces_.joint_kp_command_interface_[i * 3 + j].get().set_value(stable_gains_[0]);
+                std::ignore = ctrl_interfaces_.joint_kd_command_interface_[i * 3 + j].get().set_value(stable_gains_[1]);
             }
         }
     }
 }
 
-bool StateTrotting::checkStepOrNot() {
+bool StateTrotting::checkStepOrNot()
+{
     if (fabs(v_cmd_body_(0)) > 0.03 || fabs(v_cmd_body_(1)) > 0.03 ||
         fabs(pos_error_(0)) > 0.08 || fabs(pos_error_(1)) > 0.08 ||
         fabs(vel_error_(0)) > 0.05 || fabs(vel_error_(1)) > 0.05 ||
-        fabs(d_yaw_cmd_) > 0.20) {
+        fabs(d_yaw_cmd_) > 0.20)
+    {
         return true;
     }
     return false;

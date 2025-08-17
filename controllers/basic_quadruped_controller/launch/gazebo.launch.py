@@ -125,7 +125,7 @@ def launch_setup(context, *args, **kwargs):
 def generate_launch_description():
     robot_name = DeclareLaunchArgument(
         'robot',
-        default_value='unitree_go2',
+        default_value='go2',
         description='Robot name (will automatically append _description to find the description package)'
     )
 

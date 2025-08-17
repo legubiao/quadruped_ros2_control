@@ -16,7 +16,7 @@ GaitGenerator::GaitGenerator(CtrlComponent &ctrl_component)
     first_run_ = true;
 }
 
-void GaitGenerator::setGait(Vec2 vxy_goal_global, const double d_yaw_goal, const double gait_height) {
+void GaitGenerator::setGait(Vec2 vxy_goal_global, double d_yaw_goal, double gait_height) {
     vxy_goal_ = std::move(vxy_goal_global);
     d_yaw_goal_ = d_yaw_goal;
     gait_height_ = gait_height;

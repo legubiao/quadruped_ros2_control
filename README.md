@@ -4,16 +4,19 @@ This repository contains the ros2-control based controllers for the quadruped ro
 
 * [Controllers](controllers): contains the ros2-control controllers
 * [Commands](commands): contains command node used to send command to the controller
-* [Descriptions](descriptions): contains the urdf model of the robot
 * [Hardwares](hardwares): contains the ros2-control hardware interface for the robot
 
+> **Note:** This repository only contains `go2_description` as a sample robot model to keep the package size minimal for deployment on real robots. For more robot configurations and models, please refer to [fiveages-sim/robot_descriptions](https://github.com/fiveages-sim/robot_descriptions).
+
 > **Warning:** Default branch was developed under ROS2 Jazzy. For ROS2 Humble, please check out **humble** branch.
+
+> **Note:** The `unitree_guide_controller` has been replaced by `basic_quadruped_controller` which provides the same functionality with improved architecture and parameter management.
 
 Todo List:
 
 - [x] **[2025-02-23]** Add Gazebo Playground
   - [x] OCS2 controller for Gazebo Simulation
-  - [x] Refactor FSM and Unitree Guide Controller
+  - [x] Refactor FSM and Basic Quadruped Controller
 - [x] **[2025-03-30]** Add Real Go2 Robot Support
 - [x] **[2025-05-20]** Isaac Sim Support
 - [ ] OCS2 Perceptive locomotion demo
@@ -23,17 +26,28 @@ Video on Real Unitree Go2 Robot:
 
 ## 1. Quick Start
 
+### 1.1 Prerequisites
+
+#### Install Pinocchio
+Pinocchio is required for the basic quadruped controller. 
+
+* [Pinocchio Official Page](https://stack-of-tasks.github.io/pinocchio/download.html)
+
+> **Warm Reminder**: Please follow the guide in the link to install Pinocchio before building the project
+
+#### Install other dependencies
 * rosdep
     ```bash
     cd ~/ros2_ws
     rosdep install --from-paths src --ignore-src -r -y
     ```
-* Compile the package
-    ```bash
-    colcon build --packages-up-to unitree_guide_controller go2_description keyboard_input --symlink-install
-    ```
 
-### 1.1 Mujoco Simulator or Real Unitree Robot
+### 1.2 Compile the package
+```bash
+colcon build --packages-up-to basic_quadruped_controller go2_description keyboard_input --symlink-install
+```
+
+### 1.3 Mujoco Simulator or Real Unitree Robot
 > **Warning:** CycloneDDS ROS2 RMW may conflict with unitree_sdk2. If you cannot launch unitree mujoco simulation
 > without `sudo`, then you cannot used `unitree_mujoco_hardware`. This conflict could be solved by one of below two
 > methods:
@@ -51,7 +65,7 @@ Video on Real Unitree Go2 Robot:
 * Launch the ros2-control
     ```bash
     source ~/ros2_ws/install/setup.bash
-    ros2 launch unitree_guide_controller mujoco.launch.py
+    ros2 launch basic_quadruped_controller mujoco.launch.py
     ```
 * Run the keyboard control node
     ```bash
@@ -61,7 +75,7 @@ Video on Real Unitree Go2 Robot:
 
 ![mujoco](.images/mujoco.png)
 
-### 1.3 Gazebo Harmonic Simulator
+### 1.4 Gazebo Harmonic Simulator
 
 * Install Gazebo
   ```bash
@@ -75,7 +89,7 @@ Video on Real Unitree Go2 Robot:
 * Launch the ros2-control
   ```bash
   source ~/ros2_ws/install/setup.bash
-  ros2 launch unitree_guide_controller gazebo.launch.py
+  ros2 launch basic_quadruped_controller gazebo.launch.py
   ```
 * Run the keyboard control node
     ```bash
@@ -85,8 +99,8 @@ Video on Real Unitree Go2 Robot:
 
 ![gazebo](.images/gazebo.png)
 
-For more details, please refer to the [unitree guide controller](controllers/unitree_guide_controller/)
-and [go2 description](descriptions/go2_description/).
+For more details, please refer to the [basic quadruped controller](controllers/basic_quadruped_controller/)
+and [go2 description](go2_description/).
 
 ## What's Next
 Congratulations! You have successfully launched the quadruped robot in the simulation. Here are some suggestions for you to have a try:
@@ -97,7 +111,7 @@ Congratulations! You have successfully launched the quadruped robot in the simul
 * **Simulate with more sensors**
   * [Gazebo Quadruped Playground](libraries/gz_quadruped_playground): Provide gazebo simulation with lidar or depth camera.
 * **Real Robot Deploy**
-  * [Go2 Robot](descriptions/go2_description): Check here about how to deploy on go2 robot.
+  * [Go2 Robot](go2_description): Check here about how to deploy on go2 robot.
 
 ## Reference
 

@@ -1,10 +1,9 @@
 //
 // Created by biao on 24-9-18.
 //
+#pragma once
 
 
-#ifndef GAITGENERATOR_H
-#define GAITGENERATOR_H
 #include <memory>
 #include <basic_quadruped_controller/common/mathTypes.h>
 
@@ -77,6 +76,3 @@ private:
     Vec34 start_p_, end_p_, ideal_p_, past_p_;
     bool first_run_;
 };
-
-
-#endif //GAITGENERATOR_H

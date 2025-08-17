@@ -6,6 +6,8 @@
 
 #include <iostream>
 #include <Eigen/Dense>
+#include <algorithm>
+#include <cctype>
 #include "controller_common/CtrlInterfaces.h"
 #include "basic_quadruped_controller/control/QuadrupedKinematic.h"
 
@@ -59,10 +61,10 @@ void QuadrupedKinematic::initializeFromURDF(const std::string& urdf_path)
 
         // 计算整体重心
         pcb_ = pinocchio::centerOfMass(model_, data_, q_zero);
-                                // 使用CCRBA算法计算重心处的惯性张量
-                                const Vec12 v_zero = Vec12::Zero();
-                                pinocchio::ccrba(model_, data_, q_zero, v_zero);
-                                inertia_tensor_ = data_.Ig.inertia().matrix();
+        // 使用CCRBA算法计算重心处的惯性张量
+        const Vec12 v_zero = Vec12::Zero();
+        pinocchio::ccrba(model_, data_, q_zero, v_zero);
+        inertia_tensor_ = data_.Ig.inertia().matrix();
 
         // 计算并缓存几何参数
         initializeGeometryParameters();
@@ -125,10 +127,23 @@ void QuadrupedKinematic::initializeGeometryParameters()
                 }
             }
 
-            // 如果找到了Frame，最后一个就是末端
+            // 如果找到了Frame，优先选择名称中包含"foot"的帧，否则选择最后一个
             if (!first_leg_frames.empty())
             {
-                const pinocchio::FrameIndex end_frame_id = first_leg_frames.back();
+                pinocchio::FrameIndex end_frame_id = first_leg_frames.back(); // 默认选择最后一个
+                
+                // 优先选择名称中包含"foot"的帧（不区分大小写）
+                for (const auto& frame_idx : first_leg_frames)
+                {
+                    std::string frame_name = model_.frames[frame_idx].name;
+                    std::transform(frame_name.begin(), frame_name.end(), frame_name.begin(), ::tolower);
+                    if (frame_name.find("foot") != std::string::npos)
+                    {
+                        end_frame_id = frame_idx;
+                        break;
+                    }
+                }
+                
                 pinocchio::SE3 end_pose = data_.oMf[end_frame_id];
 
                 // 计算从小腿关节到末端的距离
@@ -188,8 +203,8 @@ void QuadrupedKinematic::computeStandFootPositions(const Vec12& default_stand_jo
     for (int leg_index = 0; leg_index < 4; leg_index++)
     {
         Vec3 q_leg = default_stand_joint_positions.segment(3 * leg_index, 3);
-        Vec3 foot_pos = calcLegFK(q_leg, leg_index);
-        feet_pos_normal_stand_.col(leg_index) = foot_pos;
+        // Vec3 foot_pos = calcLegFK(q_leg, leg_index);
+        feet_pos_normal_stand_.col(leg_index) = calcLegFK(q_leg, leg_index) + hip_offsets_[leg_index];
     }
 
     std::cout << "=== 站立足端位置 ===" << std::endl;
@@ -218,9 +233,10 @@ Vec12 QuadrupedKinematic::getQ(const Vec34& feet_positions, FrameType frame) con
 Vec12 QuadrupedKinematic::getQd(const Vec34& pos, const Vec34& vel, FrameType frame) const
 {
     Vec12 qd;
-    for(int i(0); i < 4; ++i){
+    for (int i(0); i < 4; ++i)
+    {
         // 直接调用原版的 calcQd 逻辑
-        qd.segment(3*i, 3) = calcLegQd(pos.col(i), vel.col(i), frame, i);
+        qd.segment(3 * i, 3) = calcLegQd(pos.col(i), vel.col(i), frame, i);
     }
     return qd;
 }
@@ -228,7 +244,8 @@ Vec12 QuadrupedKinematic::getQd(const Vec34& pos, const Vec34& vel, FrameType fr
 Vec34 QuadrupedKinematic::getFeet2BPositions() const
 {
     Vec34 feetPos;
-    for(int i(0); i<4; ++i){
+    for (int i(0); i < 4; ++i)
+    {
         feetPos.col(i) = getFootPosition(i, FrameType::BODY);
     }
     return feetPos;
@@ -238,11 +255,13 @@ Vec3 QuadrupedKinematic::getFootPosition(int leg_id, FrameType frame) const
 {
     Vec3 q_leg = current_joint_pos_.segment(3 * leg_id, 3);
 
-    if(frame == FrameType::BODY){
+    if (frame == FrameType::BODY)
+    {
         // 髋关节坐标系 + 偏移量 = 机体坐标系
         return calcLegFK(q_leg, leg_id) + hip_offsets_[leg_id];
     }
-    if(frame == FrameType::HIP){
+    if (frame == FrameType::HIP)
+    {
         // 直接返回髋关节坐标系位置
         return calcLegFK(q_leg, leg_id);
     }
@@ -278,7 +297,6 @@ Vec3 QuadrupedKinematic::getTorque(const Vec3& foot_force, int leg_index) const
 }
 
 
-
 Vec34 QuadrupedKinematic::getFeet2BVelocities() const
 {
     Vec34 feet_velocities;
@@ -297,7 +315,6 @@ Mat3 QuadrupedKinematic::getJacobian(const Vec3& q_leg, int leg_index) const
 }
 
 // ========== 核心运动学算法（基于Unitree原版）==========
-
 
 
 Vec3 QuadrupedKinematic::calcLegFK(const Vec3& q_leg, int leg_index) const
@@ -322,7 +339,7 @@ Vec3 QuadrupedKinematic::calcLegFK(const Vec3& q_leg, int leg_index) const
     p_ee_hip(1) = -l3 * s1 * c23 + l1 * c1 - l2 * c2 * s1;
     p_ee_hip(2) = l3 * c1 * c23 + l1 * s1 + l2 * c1 * c2;
 
-    return p_ee_hip;  // 返回髋关节坐标系位置，与 calcPEe2H 保持一致
+    return p_ee_hip; // 返回髋关节坐标系位置，与 calcPEe2H 保持一致
 }
 
 Mat3 QuadrupedKinematic::calcLegJacobian(const Vec3& q_leg, int leg_index) const
@@ -371,13 +388,13 @@ Vec3 QuadrupedKinematic::calcQ(const Vec3& pEe, FrameType frame, int leg_index) 
 {
     // 原版逻辑：支持两种坐标系
     Vec3 pEe2H;
-    if(frame == FrameType::HIP)
+    if (frame == FrameType::HIP)
         pEe2H = pEe;
-    else if(frame == FrameType::BODY)
+    else if (frame == FrameType::BODY)
         pEe2H = pEe - hip_offsets_[leg_index];
     else
         throw std::runtime_error("Frame type must be HIP or BODY");
-    
+
     // 直接使用原版的解析逆运动学算法（和unitreeLeg完全一致）
     double q1, q2, q3;
     Vec3 qResult;
@@ -390,7 +407,7 @@ Vec3 QuadrupedKinematic::calcQ(const Vec3& pEe, FrameType frame, int leg_index) 
 
     // 确定侧向符号（控制器顺序：FR(0) FL(1) RR(2) RL(3)）
     int side_sign = leg_index == 1 || leg_index == 3 ? 1 : -1; // FL,RL为1, FR,RR为-1
-    
+
     b2y = link_lengths_[0] * side_sign;
     b3z = -link_lengths_[1];
     b4z = -link_lengths_[2];
@@ -434,17 +451,17 @@ void QuadrupedKinematic::update()
 double QuadrupedKinematic::q1_ik(double py, double pz, double l1) const
 {
     double q1;
-    double L = sqrt(pow(py,2)+pow(pz,2)-pow(l1,2));
-    q1 = atan2(pz*l1+py*L, py*l1-pz*L);
+    double L = sqrt(pow(py, 2) + pow(pz, 2) - pow(l1, 2));
+    q1 = atan2(pz * l1 + py * L, py * l1 - pz * L);
     return q1;
 }
 
 double QuadrupedKinematic::q3_ik(double b3z, double b4z, double b) const
 {
     double q3, temp;
-    temp = (pow(b3z, 2) + pow(b4z, 2) - pow(b, 2))/(2*fabs(b3z*b4z));
-    if(temp>1) temp = 1;
-    if(temp<-1) temp = -1;
+    temp = (pow(b3z, 2) + pow(b4z, 2) - pow(b, 2)) / (2 * fabs(b3z * b4z));
+    if (temp > 1) temp = 1;
+    if (temp < -1) temp = -1;
     q3 = acos(temp);
     q3 = -(M_PI - q3); //0~180
     return q3;
@@ -453,11 +470,11 @@ double QuadrupedKinematic::q3_ik(double b3z, double b4z, double b) const
 double QuadrupedKinematic::q2_ik(double q1, double q3, double px, double py, double pz, double b3z, double b4z) const
 {
     double q2, a1, a2, m1, m2;
-    
-    a1 = py*sin(q1) - pz*cos(q1);
+
+    a1 = py * sin(q1) - pz * cos(q1);
     a2 = px;
-    m1 = b4z*sin(q3);
-    m2 = b3z + b4z*cos(q3);
-    q2 = atan2(m1*a1+m2*a2, m1*a2-m2*a1);
+    m1 = b4z * sin(q3);
+    m2 = b3z + b4z * cos(q3);
+    q2 = atan2(m1 * a1 + m2 * a2, m1 * a2 - m2 * a1);
     return q2;
 }
