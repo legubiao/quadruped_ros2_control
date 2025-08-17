@@ -88,6 +88,7 @@ def launch_setup(context, *args, **kwargs):
         package="controller_manager",
         executable="spawner",
         arguments=["basic_quadruped_controller", "--controller-manager", "/controller_manager"],
+        parameters=[{'use_sim_time': True}],
     )
 
     return [

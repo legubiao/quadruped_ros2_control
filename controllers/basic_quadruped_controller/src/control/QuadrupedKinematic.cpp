@@ -201,70 +201,58 @@ void QuadrupedKinematic::computeStandFootPositions(const Vec12& default_stand_jo
 
 // ========== 核心运动学接口实现 ==========
 
-Vec12 QuadrupedKinematic::getQ(const Vec34& feet_positions) const
+Vec12 QuadrupedKinematic::getQ(const Vec34& feet_positions, FrameType frame) const
 {
     Vec12 joint_angles = Vec12::Zero();
 
     for (int leg_index = 0; leg_index < 4; ++leg_index)
     {
         Vec3 target_pos = feet_positions.col(leg_index);
-        Vec3 q_leg = solveLegIK(target_pos, leg_index);
+        Vec3 q_leg = calcQ(target_pos, frame, leg_index);
         joint_angles.segment(3 * leg_index, 3) = q_leg;
     }
 
     return joint_angles;
 }
 
-Vec12 QuadrupedKinematic::getQd(const Vec12& q, const Vec34& feet_velocities) const
+Vec12 QuadrupedKinematic::getQd(const Vec34& pos, const Vec34& vel, FrameType frame) const
 {
-    Vec12 joint_velocities = Vec12::Zero();
-
-    for (int leg_index = 0; leg_index < 4; ++leg_index)
-    {
-        Vec3 q_leg = q.segment(3 * leg_index, 3);
-        Vec3 foot_velocity = feet_velocities.col(leg_index);
-
-        Mat3 jacobian = calcLegJacobian(q_leg, leg_index);
-
-        // 计算关节速度：qd = J^(-1) * v
-        double det = jacobian.determinant();
-        if (std::abs(det) > 1e-6)
-        {
-            joint_velocities.segment(3 * leg_index, 3) = jacobian.inverse() * foot_velocity;
-        }
-        else
-        {
-            // 使用SVD伪逆
-            Eigen::JacobiSVD<Mat3> svd(jacobian, Eigen::ComputeFullU | Eigen::ComputeFullV);
-            joint_velocities.segment(3 * leg_index, 3) = svd.solve(foot_velocity);
-        }
+    Vec12 qd;
+    for(int i(0); i < 4; ++i){
+        // 直接调用原版的 calcQd 逻辑
+        qd.segment(3*i, 3) = calcLegQd(pos.col(i), vel.col(i), frame, i);
     }
-
-    return joint_velocities;
+    return qd;
 }
 
 Vec34 QuadrupedKinematic::getFeet2BPositions() const
 {
-    Vec34 feet_positions;
-
-    for (int leg_index = 0; leg_index < 4; ++leg_index)
-    {
-        Vec3 q_leg = current_joint_pos_.segment(3 * leg_index, 3);
-        feet_positions.col(leg_index) = calcLegFK(q_leg, leg_index);
+    Vec34 feetPos;
+    for(int i(0); i<4; ++i){
+        feetPos.col(i) = getFootPosition(i, FrameType::BODY);
     }
-
-    return feet_positions;
+    return feetPos;
 }
 
-Vec3 QuadrupedKinematic::getFeet2BPosition(int leg_index) const
+Vec3 QuadrupedKinematic::getFootPosition(int leg_id, FrameType frame) const
 {
-    if (leg_index < 0 || leg_index >= 4)
+    if (leg_id < 0 || leg_id >= 4)
     {
         throw std::out_of_range("Invalid leg index");
     }
 
-    Vec3 q_leg = current_joint_pos_.segment(3 * leg_index, 3);
-    return calcLegFK(q_leg, leg_index);
+    Vec3 q_leg = current_joint_pos_.segment(3 * leg_id, 3);
+
+    if(frame == FrameType::BODY){
+        return calcLegFK(q_leg, leg_id);
+    }else if(frame == FrameType::HIP){
+        // 相对于髋关节的位置
+        Vec3 hip_offset = hip_offsets_[leg_id];
+        Vec3 p_ee_hip = calcLegFK(q_leg, leg_id) - hip_offset;
+        return p_ee_hip;
+    }else{
+        throw std::runtime_error("The frame of function: getFootPosition can only be BODY or HIP.");
+    }
 }
 
 Vec3 QuadrupedKinematic::getFeet2BVelocity(int leg_index) const
@@ -438,36 +426,26 @@ Vec3 QuadrupedKinematic::getHipOffset(int leg_index) const
     return hip_offsets_[leg_index];
 }
 
-// ========== 索引转换函数 ==========
-
-int QuadrupedKinematic::pinocchioToControllerIndex(int pinocchio_index)
+Vec3 QuadrupedKinematic::calcQ(const Vec3& pEe, FrameType frame, int leg_index) const
 {
-    // Pinocchio顺序: FL(0) FR(1) RL(2) RR(3)
-    // 控制器顺序: FR(0) FL(1) RR(2) RL(3)
-    switch (pinocchio_index)
-    {
-    case 0: return 1; // FL -> 1
-    case 1: return 0; // FR -> 0
-    case 2: return 3; // RL -> 3
-    case 3: return 2; // RR -> 2
-    default:
-        throw std::out_of_range("Invalid pinocchio leg index: " + std::to_string(pinocchio_index));
-    }
+    // 原版逻辑：支持两种坐标系
+    Vec3 pEe2H;
+    if(frame == FrameType::HIP)
+        pEe2H = pEe;
+    else if(frame == FrameType::BODY)
+        pEe2H = pEe - hip_offsets_[leg_index];
+    else
+        throw std::runtime_error("Frame type must be HIP or BODY");
+    
+    // 调用现有的解析逆运动学
+    return solveLegIK(pEe2H + hip_offsets_[leg_index], leg_index);
 }
 
-int QuadrupedKinematic::controllerToPinocchioIndex(int controller_index)
+Vec3 QuadrupedKinematic::calcLegQd(const Vec3& pEe, const Vec3& vEe, FrameType frame, int leg_index) const
 {
-    // 控制器顺序: FR(0) FL(1) RR(2) RL(3)
-    // Pinocchio顺序: FL(0) FR(1) RL(2) RR(3)
-    switch (controller_index)
-    {
-    case 0: return 1; // FR -> 1
-    case 1: return 0; // FL -> 0
-    case 2: return 3; // RR -> 3
-    case 3: return 2; // RL -> 2
-    default:
-        throw std::out_of_range("Invalid controller leg index: " + std::to_string(controller_index));
-    }
+    // 原版逻辑：先计算关节角度，再计算关节速度
+    Vec3 q = calcQ(pEe, frame, leg_index);
+    return calcLegJacobian(q, leg_index).inverse() * vEe;
 }
 
 // ========== 更新接口 ==========

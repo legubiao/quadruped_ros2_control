@@ -30,7 +30,7 @@ public:
                const Vec34& feet_pos_2_body, const VecInt4& contact);
 
 private:
-    void calMatrixA(const Vec34& feet_pos_2_body, const RotMat& rotM, const VecInt4& contact);
+    void calMatrixA(const Vec34& feet_pos_2_body, const RotMat& rotM);
 
     void calVectorBd(const Vec3& ddPcd, const Vec3& dWbd, const RotMat& rotM);
 

@@ -19,7 +19,7 @@ StateTrotting::StateTrotting(CtrlInterfaces &ctrl_interfaces,
                                                               gait_generator_(ctrl_component) {
     gait_height_ = 0.08;
     Kpp = Vec3(70, 70, 70).asDiagonal();
-    Kdp = Vec3(10, 10, 10).asDiagonal();
+    Kdp = Vec3(20, 20, 20).asDiagonal();
     kp_w_ = 780;
     Kd_w_ = Vec3(70, 70, 70).asDiagonal();
     Kp_swing_ = Vec3(400, 400, 400).asDiagonal();
@@ -56,15 +56,14 @@ void StateTrotting::run(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*
     gait_generator_.setGait(vel_target_.segment(0, 2), w_cmd_global_(2), gait_height_);
     gait_generator_.generate(pos_feet_global_goal_, vel_feet_global_goal_);
 
-    calcTau();
-    calcQQd();
-
     if (checkStepOrNot()) {
         wave_generator_->status_ = WaveStatus::WAVE_ALL;
     } else {
         wave_generator_->status_ = WaveStatus::STANCE_ALL;
     }
 
+    calcTau();
+    calcQQd();
     calcGain();
 }
 
@@ -133,9 +132,8 @@ void StateTrotting::calcTau() {
     d_wbd(1) = saturation(d_wbd(1), Vec2(-40, 40));
     d_wbd(2) = saturation(d_wbd(2), Vec2(-10, 10));
 
-    const Vec34 pos_feet_body_global = estimator_->getFeetPos2Body();
     Vec34 force_feet_global =
-            -balance_ctrl_->calF(dd_pcd, d_wbd, B2G_RotMat, pos_feet_body_global, wave_generator_->contact_);
+            -balance_ctrl_->calF(dd_pcd, d_wbd, B2G_RotMat, estimator_->getFeetPos2Body(), wave_generator_->contact_);
 
 
     Vec34 pos_feet_global = estimator_->getFeetPos();
@@ -151,9 +149,8 @@ void StateTrotting::calcTau() {
 
     Vec34 force_feet_body_ = G2B_RotMat * force_feet_global;
 
-    std::vector<KDL::JntArray> current_joints = robot_model_->current_joint_pos_;
     for (int i = 0; i < 4; i++) {
-        KDL::JntArray torque = robot_model_->getTorque(force_feet_body_.col(i), i);
+        Vec3 torque = robot_model_->getTorque(force_feet_body_.col(i), i);
         for (int j = 0; j < 3; j++) {
             std::ignore = ctrl_interfaces_.joint_torque_command_interface_[i * 3 + j].get().set_value(torque(j));
         }
@@ -161,7 +158,7 @@ void StateTrotting::calcTau() {
 }
 
 void StateTrotting::calcQQd() {
-    const std::vector<KDL::Frame> pos_feet_body = robot_model_->getFeet2BPositions();
+    const Vec34 pos_feet_body = robot_model_->getFeet2BPositions();
 
     Vec34 pos_feet_target, vel_feet_target;
     for (int i(0); i < 4; ++i) {
@@ -169,8 +166,9 @@ void StateTrotting::calcQQd() {
         vel_feet_target.col(i) = G2B_RotMat * (vel_feet_global_goal_.col(i) - vel_body_);
     }
 
-    Vec12 q_goal = robot_model_->getQ(pos_feet_target);
-    Vec12 qd_goal = robot_model_->getQd(pos_feet_body, vel_feet_target);
+    Vec12 q_goal = robot_model_->getQ(pos_feet_target, FrameType::BODY);
+    Vec12 qd_goal = robot_model_->getQd(pos_feet_body, vel_feet_target, FrameType::BODY);
+
     for (int i = 0; i < 12; i++) {
         std::ignore = ctrl_interfaces_.joint_position_command_interface_[i].get().set_value(q_goal(i));
         std::ignore = ctrl_interfaces_.joint_velocity_command_interface_[i].get().set_value(qd_goal(i));

@@ -56,20 +56,8 @@ namespace basic_quadruped_controller
     controller_interface::return_type BasicQuadrupedController::
     update(const rclcpp::Time& time, const rclcpp::Duration& period)
     {
-        // auto now = std::chrono::steady_clock::now();
-        // std::chrono::duration<double> time_diff = now - last_update_time_;
-        // last_update_time_ = now;
-        //
-        // // Calculate the frequency
-        // update_frequency_ = 1.0 / time_diff.count();
-        // RCLCPP_INFO(get_node()->get_logger(), "Update frequency: %f Hz", update_frequency_);
-        // if (ctrl_component_.robot_model_ == nullptr)
-        // {
-        //     return controller_interface::return_type::OK;
-        // }
-
         ctrl_component_.robot_model_->update();
-        ctrl_component_.wave_generator_->update();
+        ctrl_component_.wave_generator_->update(time);
         ctrl_component_.estimator_->update();
 
         if (mode_ == FSMMode::NORMAL)
@@ -135,7 +123,9 @@ namespace basic_quadruped_controller
 
             ctrl_component_.estimator_ = std::make_shared<Estimator>(ctrl_interfaces_, ctrl_component_, get_node());
             ctrl_component_.balance_ctrl_ = std::make_shared<BalanceCtrl>(ctrl_component_.robot_model_);
-            ctrl_component_.wave_generator_ = std::make_shared<WaveGenerator>(0.45, 0.5, Vec4(0, 0.5, 0.5, 0));
+            // 使用当前时间作为启动时间
+            ctrl_component_.wave_generator_ = std::make_shared<WaveGenerator>(
+                0.45, 0.5, Vec4(0, 0.5, 0.5, 0), get_node()->now());
         }
         catch (const std::exception& e)
         {
@@ -235,7 +225,7 @@ namespace basic_quadruped_controller
         state_list_.freeStand = std::make_shared<StateFreeStand>(ctrl_interfaces_, ctrl_component_, stand_kp_,
                                                                  stand_kd_);
         state_list_.balanceTest = std::make_shared<StateBalanceTest>(ctrl_interfaces_, ctrl_component_);
-        // state_list_.trotting = std::make_shared<StateTrotting>(ctrl_interfaces_, ctrl_component_);
+        state_list_.trotting = std::make_shared<StateTrotting>(ctrl_interfaces_, ctrl_component_);
 
         // Initialize FSM
         current_state_ = state_list_.passive;
@@ -286,9 +276,8 @@ namespace basic_quadruped_controller
             return state_list_.fixedStand;
         case FSMStateName::FREESTAND:
             return state_list_.freeStand;
-        // case FSMStateName::TROTTING:
-        //     return state_list_.trotting;
-
+        case FSMStateName::TROTTING:
+            return state_list_.trotting;
         case FSMStateName::BALANCETEST:
             return state_list_.balanceTest;
         default:

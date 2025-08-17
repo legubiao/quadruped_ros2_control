@@ -1,30 +1,23 @@
 //
 // Created by biao on 24-9-18.
 //
+#pragma once
 
-
-#ifndef WAVEGENERATOR_H
-#define WAVEGENERATOR_H
 #include <chrono>
+#include <rclcpp/rclcpp.hpp>
 #include <controller_common/common/enumClass.h>
 #include <basic_quadruped_controller/common/mathTypes.h>
 
 // Forward declaration
 enum class FSMStateName;
 
-inline long long getSystemTime() {
-    const auto now = std::chrono::system_clock::now();
-    const auto duration = now.time_since_epoch();
-    return std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
-}
-
 class WaveGenerator {
 public:
-    WaveGenerator(double period, double st_ratio, const Vec4 &bias);
+    WaveGenerator(double period, double st_ratio, const Vec4 &bias, const rclcpp::Time& start_time);
 
     ~WaveGenerator() = default;
 
-    void update();
+    void update(const rclcpp::Time& time);
 
     /**
      * Set wave generator status
@@ -71,8 +64,6 @@ private:
     VecInt4 switch_status_;
     WaveStatus status_past_;
 
-    long start_t_{};
+    rclcpp::Time start_time_;  // 启动时间
+    double accumulated_time_{0.0};  // 累积时间
 };
-
-
-#endif //WAVEGENERATOR_H

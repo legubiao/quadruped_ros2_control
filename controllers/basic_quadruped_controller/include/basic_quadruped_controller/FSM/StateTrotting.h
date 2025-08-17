@@ -5,6 +5,7 @@
 #ifndef STATETROTTING_H
 #define STATETROTTING_H
 #include <basic_quadruped_controller/control/BalanceCtrl.h>
+#include <basic_quadruped_controller/control/QuadrupedKinematic.h>
 #include <basic_quadruped_controller/gait/GaitGenerator.h>
 #include "controller_common/FSM/FSMState.h"
 
@@ -49,7 +50,7 @@ private:
     bool checkStepOrNot();
 
     std::shared_ptr<Estimator> &estimator_;
-    std::shared_ptr<QuadrupedRobot> &robot_model_;
+    std::shared_ptr<QuadrupedKinematic> &robot_model_;
     std::shared_ptr<BalanceCtrl> &balance_ctrl_;
     std::shared_ptr<WaveGenerator> &wave_generator_;
 

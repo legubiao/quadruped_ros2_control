@@ -14,20 +14,20 @@ FeetEndCalc::FeetEndCalc(CtrlComponent &ctrl_component)
     k_x_ = 0.005;
     k_y_ = 0.005;
     k_yaw_ = 0.005;
-}
-
-void FeetEndCalc::init() {
-    t_stance_ = ctrl_component_.wave_generator_->get_t_stance();
-    t_swing_ = ctrl_component_.wave_generator_->get_t_swing();
-
-    Vec34 feet_pos_body = estimator_->getFeetPos2Body();
-    // Vec34 feet_pos_body = robot_model_.feet_pos_normal_stand_;
+    
+    // 立即初始化，使用理想站立位置（与原版一致）
+    Vec34 feet_pos_body = robot_model_->feet_pos_normal_stand_;
     for (int i(0); i < 4; ++i) {
-        feet_radius_(i) =
-                sqrt(pow(feet_pos_body(0, i), 2) + pow(feet_pos_body(1, i), 2));
+        feet_radius_(i) = sqrt(pow(feet_pos_body(0, i), 2) + pow(feet_pos_body(1, i), 2));
         feet_init_angle_(i) = atan2(feet_pos_body(1, i), feet_pos_body(0, i));
     }
+    
+    // 直接设置时序参数
+    t_stance_ = ctrl_component_.wave_generator_->get_t_stance();
+    t_swing_ = ctrl_component_.wave_generator_->get_t_swing();
 }
+
+
 
 Vec3 FeetEndCalc::calcFootPos(const int index, Vec2 vxy_goal_global, const double d_yaw_global, const double phase) {
     Vec3 body_vel_global = estimator_->getVelocity();

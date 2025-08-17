@@ -48,7 +48,6 @@ void GaitGenerator::generate(Vec34 &feet_pos, Vec34 &feet_vel) {
 void GaitGenerator::restart() {
     first_run_ = true;
     vxy_goal_.setZero();
-    feet_end_calc_.init();
 }
 
 

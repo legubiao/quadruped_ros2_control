@@ -40,7 +40,7 @@ BalanceCtrl::BalanceCtrl(const std::shared_ptr<QuadrupedKinematic> &robot) {
 
 Vec34 BalanceCtrl::calF(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rot_matrix,
                         const Vec34 &feet_pos_2_body, const VecInt4 &contact) {
-    calMatrixA(feet_pos_2_body, rot_matrix, contact);
+    calMatrixA(feet_pos_2_body, rot_matrix);
     calVectorBd(ddPcd, dWbd, rot_matrix);
     calConstraints(contact);
 
@@ -53,9 +53,7 @@ Vec34 BalanceCtrl::calF(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rot_m
     return vec12ToVec34(F_);
 }
 
-void BalanceCtrl::calMatrixA(const Vec34 &feet_pos_2_body, const RotMat &rotM, const VecInt4 &contact) {
-    // 注意：contact参数保留以与Unitree原版接口兼容，但在当前实现中暂未使用
-    (void)contact;  // 避免编译器警告
+void BalanceCtrl::calMatrixA(const Vec34& feet_pos_2_body, const RotMat& rotM) {
     
     for (int i = 0; i < 4; ++i) {
         A_.block(0, 3 * i, 3, 3) = I3();
