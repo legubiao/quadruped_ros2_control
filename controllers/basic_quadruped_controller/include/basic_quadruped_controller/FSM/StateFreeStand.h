@@ -41,11 +41,14 @@ private:
     Vec12 init_joint_pos_;
     Vec12 target_joint_pos_;
 
-    pinocchio::SE3 fl_init_pos_;
-    std::vector<pinocchio::SE3> init_foot_pos_; // 4 feet position in fl-foot frame
+    Vec3 fr_init_pos_;           // 初始机身位置（类似_initVecOX）
+    Vec34 init_foot_pos_;    // 初始足端位置（类似_initVecXP）
     
     // 私有方法
-    void calc_body_target(const float row, const float pitch, const float yaw, const float height);
+    void calc_body_target(double row, double pitch, double yaw, double height);
+    Vec34 calcOP(double row, double pitch, double yaw, double height);  // 对应原版_calcOP
+    
+
 };
 
 #endif //STATEFREESTAND_H

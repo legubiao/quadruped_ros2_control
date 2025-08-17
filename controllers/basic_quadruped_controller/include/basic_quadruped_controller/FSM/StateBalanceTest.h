@@ -12,7 +12,7 @@
 
 class WaveGenerator;
 class BalanceCtrl;
-class QuadrupedRobot;
+class QuadrupedKinematic;
 class Estimator;
 struct CtrlComponent;
 
@@ -32,9 +32,10 @@ public:
 
 private:
     void calcTorque();
+    void setStableGain() const;
 
     std::shared_ptr<Estimator> &estimator_;
-    std::shared_ptr<QuadrupedRobot> &robot_model_;
+    std::shared_ptr<QuadrupedKinematic> &robot_model_;
     std::shared_ptr<BalanceCtrl> &balance_ctrl_;
     std::shared_ptr<WaveGenerator> &wave_generator_;
 

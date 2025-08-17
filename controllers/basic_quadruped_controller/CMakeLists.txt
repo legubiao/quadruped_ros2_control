@@ -36,7 +36,7 @@ add_library(${PROJECT_NAME} SHARED
         src/FSM/StateFixedStand.cpp
 
         src/FSM/StateFreeStand.cpp
-#        src/FSM/StateBalanceTest.cpp
+        src/FSM/StateBalanceTest.cpp
 #        src/FSM/StateTrotting.cpp
 
         src/control/QuadrupedKinematic.cpp

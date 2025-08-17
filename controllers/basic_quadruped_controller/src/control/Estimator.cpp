@@ -163,10 +163,10 @@ double Estimator::getYaw() const {
 }
 
 Vec34 Estimator::getFeetVel() {
-    const std::vector<Eigen::Vector3d> feet_vel = robot_model_->getFeet2BVelocities();
+    const Vec34 feet_vel = robot_model_->getFeet2BVelocities();
     Vec34 result;
     for (int i(0); i < 4; ++i) {
-        result.col(i) = feet_vel[i] + getVelocity();
+        result.col(i) = feet_vel.col(i) + getVelocity();
     }
     return result;
 }
@@ -210,8 +210,16 @@ void Estimator::update() {
     Q = QInit_;
     R = RInit_;
 
-    foot_poses_ = robot_model_->getFeet2BPositions();
-    foot_vels_ = robot_model_->getFeet2BVelocities();
+    // 转换Vec34格式到vector格式
+    Vec34 foot_positions_matrix = robot_model_->getFeet2BPositions();
+    Vec34 foot_velocities_matrix = robot_model_->getFeet2BVelocities();
+    
+    foot_poses_.resize(4);
+    foot_vels_.resize(4);
+    for (int i = 0; i < 4; i++) {
+        foot_poses_[i] = foot_positions_matrix.col(i);
+        foot_vels_[i] = foot_velocities_matrix.col(i);
+    }
     
     // In SWING_ALL mode, set foot velocities to zero to avoid numerical issues
     if (wave_generator_->status_ == WaveStatus::SWING_ALL) {
@@ -247,7 +255,7 @@ void Estimator::update() {
             feet_pos_body_.segment(3 * i, 3).setZero();
             feet_vel_body_.segment(3 * i, 3).setZero();
         } else {
-            feet_pos_body_.segment(3 * i, 3) = foot_poses_[i].translation();
+            feet_pos_body_.segment(3 * i, 3) = foot_poses_[i];
             feet_vel_body_.segment(3 * i, 3) = foot_vels_[i];
         }
     }

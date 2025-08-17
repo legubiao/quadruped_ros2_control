@@ -23,7 +23,7 @@ def launch_setup(context, *args, **kwargs):
         print(f"Available packages can be checked with: ros2 pkg list | grep {robot_name}")
         raise e
 
-    xacro_file = os.path.join(pkg_path, 'xacro', 'robot.xacro')
+    xacro_file = os.path.join(pkg_path, 'xacro', 'ros2_control', 'robot.xacro')
     
     if not os.path.exists(xacro_file):
         print(f"Error: Could not find robot description file: {xacro_file}")
@@ -41,7 +41,7 @@ def launch_setup(context, *args, **kwargs):
         ]
     )
 
-    rviz_config_file = os.path.join(get_package_share_directory(package_description), "config", "visualize_urdf.rviz")
+    rviz_config_file = os.path.join(get_package_share_directory("basic_quadruped_controller"), "config", "visualize.rviz")
 
     rviz = Node(
         package='rviz2',

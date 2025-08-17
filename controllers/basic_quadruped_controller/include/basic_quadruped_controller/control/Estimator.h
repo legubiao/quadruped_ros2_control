@@ -5,8 +5,6 @@
 #ifndef ESTIMATOR_H
 #define ESTIMATOR_H
 #include <memory>
-#include <kdl/frames.hpp>
-#include <pinocchio/spatial/se3.hpp>
 #include <Eigen/Dense>
 #include <basic_quadruped_controller/common/mathTypes.h>
 #include "LowPassFilter.h"
@@ -60,7 +58,7 @@ public:
      * @return foot position in world frame
      */
     Vec3 getFootPos(const int index) {
-        return getPosition() + rotation_ * foot_poses_[index].translation();
+        return getPosition() + rotation_ * foot_poses_[index];
     }
 
     /**
@@ -164,7 +162,7 @@ private:
     Vec3 acceleration_;
     Vec3 gyro_;
 
-    std::vector<pinocchio::SE3> foot_poses_;
+    std::vector<Vec3> foot_poses_;
     std::vector<Eigen::Vector3d> foot_vels_;
     std::vector<std::shared_ptr<LowPassFilter> > low_pass_filters_;
 

@@ -10,7 +10,8 @@
 #include "basic_quadruped_controller/common/mathTypes.h"
 class QuadrupedKinematic;
 
-class BalanceCtrl {
+class BalanceCtrl
+{
 public:
     explicit BalanceCtrl(const std::shared_ptr<QuadrupedKinematic>& robot);
 
@@ -25,15 +26,15 @@ public:
      * @param contact feet contact
      * @return
      */
-    Vec34 calF(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rot_matrix,
-               const Vec34 &feet_pos_2_body, const VecInt4 &contact);
+    Vec34 calF(const Vec3& ddPcd, const Vec3& dWbd, const RotMat& rot_matrix,
+               const Vec34& feet_pos_2_body, const VecInt4& contact);
 
 private:
-    void calMatrixA(const Vec34 &feet_pos_2_body, const RotMat &rotM);
+    void calMatrixA(const Vec34& feet_pos_2_body, const RotMat& rotM, const VecInt4& contact);
 
-    void calVectorBd(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rotM);
+    void calVectorBd(const Vec3& ddPcd, const Vec3& dWbd, const RotMat& rotM);
 
-    void calConstraints(const VecInt4 &contact);
+    void calConstraints(const VecInt4& contact);
 
     void solveQP();
 

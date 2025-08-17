@@ -1,178 +1,214 @@
 //
 // Created by biao on 25-8-15.
+// Simplified quadruped kinematics based on Unitree algorithms
+// 保留Pinocchio几何参数计算，使用Unitree解析运动学
 //
 #pragma once
 #include <string>
 #include <vector>
-#include <pinocchio/algorithm/jacobian.hpp>
+#include <cmath>
+#include <pinocchio/parsers/urdf.hpp>
+#include <pinocchio/algorithm/kinematics.hpp>
+#include <pinocchio/algorithm/frames.hpp>
+#include <pinocchio/algorithm/center-of-mass.hpp>
+#include <pinocchio/algorithm/crba.hpp>
 #include <basic_quadruped_controller/common/mathTypes.h>
 
 struct CtrlInterfaces;
 
-class QuadrupedKinematic {
+/**
+ * 简化的四足机器人运动学类
+ * - 使用Pinocchio从URDF自动计算几何参数（连杆长度、髋关节偏移等）
+ * - 使用Unitree原版解析算法进行运动学计算（高效、稳定）
+ */
+class QuadrupedKinematic
+{
 public:
-    explicit QuadrupedKinematic(CtrlInterfaces &ctrl_interfaces, 
-                                const std::string &urdf_path,
-                                const std::vector<std::string> &feet_names, 
-                                const std::vector<std::string> &joint_names,
+    explicit QuadrupedKinematic(CtrlInterfaces& ctrl_interfaces,
+                                const std::string& urdf_path,
+                                const std::vector<std::string>& joint_names,
                                 const Vec12& default_stand_joint_positions);
 
     ~QuadrupedKinematic() = default;
 
-    // ========== 外部接口（保持兼容性）==========
+    // ========== 核心运动学接口（基于Unitree原版设计）==========
+
+    /**
+     * 逆运动学：根据足端位置计算关节角度
+     * @param pEe_list 足端位置列表（控制器顺序：FR FL RR RL）
+     * @return 关节角度（12x1向量）
+     */
+    [[nodiscard]] Vec12 getQ(const Vec34& feet_positions) const;
+
+    /**
+     * 微分逆运动学：根据关节角度和足端速度计算关节速度
+     * @param q 当前关节角度
+     * @param feet_velocities 足端速度矩阵
+     * @return 关节速度（12x1向量）
+     */
+    [[nodiscard]] Vec12 getQd(const Vec12& q, const Vec34& feet_velocities) const;
+
+    /**
+     * 正运动学：计算所有足端位置
+     * @return 足端位置矩阵（3x4，控制器顺序：FR FL RR RL）
+     */
+    [[nodiscard]] Vec34 getFeet2BPositions() const;
+
+    /**
+     * 正运动学：计算单个足端位置
+     * @param leg_index 腿索引（控制器顺序：0=FR, 1=FL, 2=RR, 3=RL）
+     * @return 足端位置（3x1向量）
+     */
+    [[nodiscard]] Vec3 getFeet2BPosition(int leg_index) const;
+
+    /**
+     * 微分正运动学：计算足端速度
+     * @param leg_index 腿索引
+     * @return 足端速度（3x1向量）
+     */
+    [[nodiscard]] Vec3 getFeet2BVelocity(int leg_index) const;
+
+    /**
+     * 微分正运动学：计算所有足端速度
+     * @return 足端速度矩阵（3x4，控制器顺序：FR FL RR RL）
+     */
+    [[nodiscard]] Vec34 getFeet2BVelocities() const;
+
+    /**
+     * 逆动力学：根据足端力计算关节力矩
+     * @param foot_force 足端力
+     * @param leg_index 腿索引
+     * @return 关节力矩（3x1向量）
+     */
+    [[nodiscard]] Vec3 getTorque(const Vec3& foot_force, int leg_index) const;
+
+    /**
+     * 逆动力学：根据足端力计算关节力矩（解析方法，向后兼容）
+     * @param foot_force 足端力
+     * @param leg_index 腿索引
+     * @return 关节力矩（3x1向量）
+     */
+    [[nodiscard]] Vec3 getTorqueAnalytical(const Vec3& foot_force, int leg_index) const;
+
+    /**
+     * 计算雅可比矩阵
+     * @param q_leg 单腿关节角度（3x1向量）
+     * @param leg_index 腿索引
+     * @return 雅可比矩阵（3x3）
+     */
+    [[nodiscard]] Mat3 getJacobian(const Vec3& q_leg, int leg_index) const;
+
+    // ========== 机器人参数接口 ==========
+    /**
+     * 获取机器人质量
+     */
+    [[nodiscard]] double getRobMass() const { return mass_; }
+
+    /**
+     * 获取机器人重心偏移
+     */
+    [[nodiscard]] Vec3 getPcb() const { return pcb_; }
+
+    /**
+     * 获取机器人惯性张量
+     */
+    [[nodiscard]] Mat3 getRobInertial() const { return inertia_tensor_; }
     
-               /**
-            * 根据足端位置计算关节角度 - 外部接口
-            */
-    [[nodiscard]] Vec12 getQ(const std::vector<pinocchio::SE3> &pEe_list) const;
-
     /**
-     * 根据足端位置矩阵计算关节角度 - 外部接口
+     * 打印惯性矩阵的详细信息
      */
-    [[nodiscard]] Vec12 getQ(const Vec34 &vecP) const;
-
-               /**
-            * 根据足端位置和速度计算关节速度 - 外部接口
-            */
-           Vec12 getQd(const std::vector<pinocchio::SE3> &pos, const Vec34 &vel);
-
-           /**
-            * 根据关节角度和足端速度计算关节速度 - 外部接口
-            */
-           Vec12 getQd(const Vec12 &q, const Vec34 &vel) const;
+    void printInertiaMatrix() const;
 
     /**
-     * 计算所有足端位置 - 外部接口
-     */
-    [[nodiscard]] std::vector<pinocchio::SE3> getFeet2BPositions() const;
-
-    /**
-     * 计算指定足端位置 - 外部接口
-     */
-    [[nodiscard]] pinocchio::SE3 getFeet2BPositions(const int index) const;
-
-    /**
-     * 计算指定足端雅可比矩阵 - 外部接口
-     */
-    [[nodiscard]] Eigen::MatrixXd getJacobian(const int index) const;
-
-    /**
-     * 计算关节力矩 - 外部接口
-     */
-    [[nodiscard]] Eigen::VectorXd getTorque(const Vec3 &force, int index) const;
-
-    /**
-     * 计算足端速度 - 外部接口
-     */
-    [[nodiscard]] Eigen::Vector3d getFeet2BVelocities(const int index) const;
-
-    /**
-     * 计算所有足端速度 - 外部接口
-     */
-    [[nodiscard]] std::vector<Eigen::Vector3d> getFeet2BVelocities() const;
-
-    /**
-     * 更新机器人状态 - 外部接口
+     * 更新关节状态（从控制接口读取）
      */
     void update();
 
-    // ========== 新增的高效批量接口 ==========
-    
-    /**
-     * 批量计算所有足端雅可比矩阵 - 新增高效接口
-     */
-    [[nodiscard]] std::vector<Eigen::MatrixXd> getAllFootJacobians() const;
-
-    /**
-     * 批量计算所有足端力矩 - 新增高效接口
-     */
-    [[nodiscard]] Vec12 getJointTorques(const Vec34 &foot_forces) const;
-
-    /**
-     * 批量计算所有足端速度 - 新增高效接口
-     */
-    [[nodiscard]] Vec34 getAllFootVelocitiesMatrix() const;
-
-    /**
-     * 使用解析方法计算单足端速度（更稳定的替代方案）
-     * @param index 足端索引
-     * @return 足端速度
-     */
-    Eigen::Vector3d getFeet2BVelocitiesAnalytical(const int index) const;
-
-    // ========== 公共成员变量（保持兼容性）==========
-    double mass_ = 0;
-    Vec34 feet_pos_normal_stand_;
+public:
+    // 公共成员变量（保持向后兼容）
     Vec12 current_joint_pos_;
     Vec12 current_joint_vel_;
+    Vec34 feet_pos_normal_stand_;
+    double mass_ = 0;
 
 private:
-    CtrlInterfaces &ctrl_interfaces_;
-    
-    // Pinocchio模型和数据
+    // ========== 核心运动学算法（基于Unitree原版）==========
+
+    /**
+     * 单腿解析逆运动学（Unitree原版算法）
+     * @param target_pos 目标足端位置（相对于机身）
+     * @param leg_index 腿索引
+     * @return 关节角度（3x1向量）
+     */
+    [[nodiscard]] Vec3 solveLegIK(const Vec3& target_pos, int leg_index) const;
+
+    /**
+     * 单腿解析正运动学（Unitree原版算法）
+     * @param q_leg 关节角度（3x1向量）
+     * @param leg_index 腿索引
+     * @return 足端位置（相对于机身）
+     */
+    [[nodiscard]] Vec3 calcLegFK(const Vec3& q_leg, int leg_index) const;
+
+    /**
+     * 单腿解析雅可比矩阵（Unitree原版算法）
+     * @param q_leg 关节角度（3x1向量）
+     * @param leg_index 腿索引
+     * @return 雅可比矩阵（3x3）
+     */
+    [[nodiscard]] Mat3 calcLegJacobian(const Vec3& q_leg, int leg_index) const;
+
+
+    // ========== 几何参数计算（使用Pinocchio从URDF获取）==========
+
+    /**
+     * 获取髋关节偏移量
+     * @param leg_index 腿索引
+     * @return 髋关节相对于机身的偏移量
+     */
+    [[nodiscard]] Vec3 getHipOffset(int leg_index) const;
+
+private:
+    // ========== 成员变量 ==========
+    CtrlInterfaces& ctrl_interfaces_;
+
+    // Pinocchio模型（仅用于几何参数计算）
     pinocchio::Model model_;
-    mutable pinocchio::Data data_;
+    pinocchio::Data data_;
+
+    // 几何参数缓存（从URDF动态计算一次）
+    Vec3 link_lengths_; // [abad, hip, knee] - 所有腿使用相同的长度参数
+    std::array<Vec3, 4> hip_offsets_; // [leg_index] 髋关节偏移
     
-    // 足端帧ID和名称
-    std::vector<pinocchio::FrameIndex> foot_frame_ids_;
-    std::vector<std::string> feet_names_;
-    
-    // 关节名称
+    // 关节名称（用于直接获取关节位置）
     std::vector<std::string> joint_names_;
     
-    // 缓存数据（优化性能）
-    mutable std::vector<pinocchio::SE3> cached_foot_positions_;
-    mutable std::vector<Eigen::MatrixXd> cached_jacobians_;
-    mutable bool cache_valid_ = false;
-    
-    // 几何参数缓存（初始化时计算一次）
-    std::vector<Vec3> cached_hip_offsets_;                   // 4个腿的髋关节偏移 [leg_index]
-    std::vector<std::array<double, 3>> cached_link_lengths_;  // 4个腿x3个连杆长度 [leg_index][hip, thigh, calf]
-    
-    // 关节限制
-    Vec12 joint_lower_limits_;
-    Vec12 joint_upper_limits_;
-    
-    /**
-     * 初始化Pinocchio模型
-     */
-    void initializeModel(const std::string &urdf_path,
-                         const std::vector<std::string> &feet_names);
-    
-    /**
-     * 批量计算前向运动学和雅可比矩阵（内部优化方法）
-     */
-    void computeAllFootKinematics() const;
-    
-    /**
-     * 批量计算逆运动学（内部优化方法）
-     */
-    Vec12 solveInverseKinematics(const Vec34 &target_feet_positions) const;
-    
-               /**
-            * 单足端逆运动学求解（内部优化方法）
-            */
-           Vec12 solveInverseKinematics(const Vec3 &target_position, int foot_index) const;
+    // 机器人整体参数
+    Vec3 pcb_;                  // 重心偏移
+    Mat3 inertia_tensor_;       // 惯性张量
 
-           /**
-            * 单腿解析逆运动学求解（基于几何方法）
-            */
-           Vec3 solveLegInverseKinematics(const Vec3 &target_position, int leg_index) const;
-    
-               /**
-            * 验证关节角度是否在限制范围内
-            */
-           bool validateJointLimits(const Vec12 &joint_positions) const;
-
-       private:
-               /**
-     * 初始化几何参数缓存（在模型加载时调用一次）
-     */
-    void initializeGeometryCache();
-    
     /**
-     * 根据默认站立关节角度计算正常站立时的足端位置（内部方法）
-     * @param stand_joint_positions 默认站立关节角度
+     * 从URDF初始化几何参数（使用Pinocchio）
      */
-    void computeNormalStandFootPositionsFromJoints(const Vec12& stand_joint_positions);
+    void initializeFromURDF(const std::string& urdf_path);
+
+    /**
+     * 索引转换：Pinocchio顺序(FL FR RL RR) -> 控制器顺序(FR FL RR RL)
+     */
+    static int pinocchioToControllerIndex(int pinocchio_index);
+
+    /**
+     * 索引转换：控制器顺序(FR FL RR RL) -> Pinocchio顺序(FL FR RL RR)
+     */
+    static int controllerToPinocchioIndex(int controller_index);
+
+    /**
+     * 初始化几何参数（从Pinocchio模型提取）
+     */
+    void initializeGeometryParameters();
+
+    /**
+     * 计算站立时的足端位置
+     */
+    void computeStandFootPositions(const Vec12& default_stand_joint_positions);
 };

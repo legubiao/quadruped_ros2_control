@@ -8,7 +8,7 @@ Panels:
         - /Status1
         - /RobotModel1
       Splitter Ratio: 0.5
-    Tree Height: 390
+    Tree Height: 268
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -223,7 +223,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 5.013275623321533
+      Distance: 2.0488033294677734
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1

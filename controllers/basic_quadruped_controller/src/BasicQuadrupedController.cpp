@@ -4,11 +4,6 @@
 
 #include "basic_quadruped_controller/BasicQuadrupedController.h"
 #include <ament_index_cpp/get_package_share_directory.hpp>
-#include <fstream>
-//
-// #include <basic_quadruped_controller/gait/WaveGenerator.h>
-// #include "basic_quadruped_controller/control/QuadrupedKinematic.h"
-#include "basic_quadruped_controller/FSM/StateFreeStand.h"
 
 namespace basic_quadruped_controller
 {
@@ -95,10 +90,11 @@ namespace basic_quadruped_controller
             current_state_ = next_state_;
 
             // Set WaveGenerator status based on FSM state
-            if (ctrl_component_.wave_generator_) {
+            if (ctrl_component_.wave_generator_)
+            {
                 ctrl_component_.wave_generator_->setStatusFromFSM(next_state_name_);
             }
-            
+
             current_state_->enter();
             mode_ = FSMMode::NORMAL;
         }
@@ -123,8 +119,7 @@ namespace basic_quadruped_controller
             imu_name_ = auto_declare<std::string>("imu_name", imu_name_);
             imu_interface_types_ = auto_declare<std::vector<std::string>>("imu_interfaces", state_interface_types_);
             command_prefix_ = auto_declare<std::string>("command_prefix", command_prefix_);
-            feet_names_ =
-                auto_declare<std::vector<std::string>>("feet_names", feet_names_);
+
 
             // pose parameters
             down_pos_ = auto_declare<std::vector<double>>("down_pos", down_pos_);
@@ -139,6 +134,7 @@ namespace basic_quadruped_controller
             initializeRobotModel();
 
             ctrl_component_.estimator_ = std::make_shared<Estimator>(ctrl_interfaces_, ctrl_component_, get_node());
+            ctrl_component_.balance_ctrl_ = std::make_shared<BalanceCtrl>(ctrl_component_.robot_model_);
             ctrl_component_.wave_generator_ = std::make_shared<WaveGenerator>(0.45, 0.5, Vec4(0, 0.5, 0.5, 0));
         }
         catch (const std::exception& e)
@@ -168,7 +164,7 @@ namespace basic_quadruped_controller
 
             // Initialize robot model with default stand joint positions
             ctrl_component_.robot_model_ = std::make_shared<QuadrupedKinematic>(
-                ctrl_interfaces_, urdf_file, feet_names_, joint_names_, stand_joint_positions);
+                ctrl_interfaces_, urdf_file, joint_names_, stand_joint_positions);
 
             RCLCPP_INFO(get_node()->get_logger(), "Robot model initialized successfully for robot: %s",
                         robot_name_.c_str());
@@ -234,10 +230,11 @@ namespace basic_quadruped_controller
         // Create FSM List
         state_list_.passive = std::make_shared<StatePassive>(ctrl_interfaces_);
         state_list_.fixedDown = std::make_shared<StateFixedDown>(ctrl_interfaces_, down_pos_, stand_kp_, stand_kd_);
-        state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_interfaces_, ctrl_component_, stand_pos_, stand_kp_, stand_kd_);
+        state_list_.fixedStand = std::make_shared<StateFixedStand>(ctrl_interfaces_, ctrl_component_, stand_pos_,
+                                                                   stand_kp_, stand_kd_);
         state_list_.freeStand = std::make_shared<StateFreeStand>(ctrl_interfaces_, ctrl_component_, stand_kp_,
                                                                  stand_kd_);
-        // state_list_.balanceTest = std::make_shared<StateBalanceTest>(ctrl_interfaces_, ctrl_component_);
+        state_list_.balanceTest = std::make_shared<StateBalanceTest>(ctrl_interfaces_, ctrl_component_);
         // state_list_.trotting = std::make_shared<StateTrotting>(ctrl_interfaces_, ctrl_component_);
 
         // Initialize FSM
@@ -292,14 +289,12 @@ namespace basic_quadruped_controller
         // case FSMStateName::TROTTING:
         //     return state_list_.trotting;
 
-        // case FSMStateName::BALANCETEST:
-        //     return state_list_.balanceTest;
+        case FSMStateName::BALANCETEST:
+            return state_list_.balanceTest;
         default:
             return state_list_.invalid;
         }
     }
-
-
 }
 
 #include "pluginlib/class_list_macros.hpp"

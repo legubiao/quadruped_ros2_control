@@ -13,10 +13,9 @@
 #include <controller_common/common/enumClass.h>
 
 #include "control/CtrlComponent.h"
-#include "common/mathTypes.h"
 #include "FSM/StateFixedStand.h"
 #include "FSM/StateFreeStand.h"
-// #include "FSM/StateBalanceTest.h"
+#include "FSM/StateBalanceTest.h"
 // #include "FSM/StateTrotting.h"
 
 namespace basic_quadruped_controller {
@@ -28,7 +27,7 @@ namespace basic_quadruped_controller {
         std::shared_ptr<StateFreeStand> freeStand;
         // std::shared_ptr<StateTrotting> trotting;
         //
-        // std::shared_ptr<StateBalanceTest> balanceTest;
+        std::shared_ptr<StateBalanceTest> balanceTest;
     };
 
     class BasicQuadrupedController final : public controller_interface::ControllerInterface {
@@ -81,7 +80,7 @@ namespace basic_quadruped_controller {
         std::string imu_name_;
         std::string command_prefix_;
         std::vector<std::string> imu_interface_types_;
-        std::vector<std::string> feet_names_;
+    
 
         // FR FL RR RL
         std::vector<double> stand_pos_ = {

@@ -10,22 +10,20 @@
 #include "quadProgpp/QuadProg++.hh"
 
 BalanceCtrl::BalanceCtrl(const std::shared_ptr<QuadrupedKinematic> &robot) {
-    mass_ = robot->mass_;
-
-    alpha_ = 0.001;
-    beta_ = 0.1;
+    // 使用Unitree风格的getter方法
+    mass_ = robot->getRobMass();
+    pcb_ = robot->getPcb();
+    Ib_ = robot->getRobInertial();
     g_ << 0, 0, -9.81;
-    friction_ratio_ = 0.4;
-    friction_mat_ << 1, 0, friction_ratio_, -1, 0, friction_ratio_, 0, 1, friction_ratio_, 0, -1,
-            friction_ratio_, 0, 0, 1;
-
-    pcb_ = Vec3(0.0, 0.0, 0.0);
-    Ib_ = Vec3(0.0792, 0.2085, 0.2265).asDiagonal();
 
     Vec6 s;
     Vec12 w, u;
     w << 10, 10, 4, 10, 10, 4, 10, 10, 4, 10, 10, 4;
     u << 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3;
+    alpha_ = 0.001;
+    beta_ = 0.1;
+    friction_ratio_ = 0.4;
+
     s << 20, 20, 50, 450, 450, 450;
 
     S_ = s.asDiagonal();
@@ -33,11 +31,16 @@ BalanceCtrl::BalanceCtrl(const std::shared_ptr<QuadrupedKinematic> &robot) {
     U_ = u.asDiagonal();
 
     F_prev_.setZero();
+    friction_mat_ << 1, 0, friction_ratio_, 
+                    -1, 0, friction_ratio_, 
+                     0, 1, friction_ratio_, 
+                     0, -1, friction_ratio_, 
+                     0, 0, 1;
 }
 
 Vec34 BalanceCtrl::calF(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rot_matrix,
                         const Vec34 &feet_pos_2_body, const VecInt4 &contact) {
-    calMatrixA(feet_pos_2_body, rot_matrix);
+    calMatrixA(feet_pos_2_body, rot_matrix, contact);
     calVectorBd(ddPcd, dWbd, rot_matrix);
     calConstraints(contact);
 
@@ -50,7 +53,10 @@ Vec34 BalanceCtrl::calF(const Vec3 &ddPcd, const Vec3 &dWbd, const RotMat &rot_m
     return vec12ToVec34(F_);
 }
 
-void BalanceCtrl::calMatrixA(const Vec34 &feet_pos_2_body, const RotMat &rotM) {
+void BalanceCtrl::calMatrixA(const Vec34 &feet_pos_2_body, const RotMat &rotM, const VecInt4 &contact) {
+    // 注意：contact参数保留以与Unitree原版接口兼容，但在当前实现中暂未使用
+    (void)contact;  // 避免编译器警告
+    
     for (int i = 0; i < 4; ++i) {
         A_.block(0, 3 * i, 3, 3) = I3();
         A_.block(3, 3 * i, 3, 3) = skew(Vec3(feet_pos_2_body.col(i)) - rotM * pcb_);
