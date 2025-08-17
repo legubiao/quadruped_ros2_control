@@ -82,14 +82,6 @@ public:
     [[nodiscard]] Vec3 getTorque(const Vec3& foot_force, int leg_index) const;
 
     /**
-     * 逆动力学：根据足端力计算关节力矩（解析方法，向后兼容）
-     * @param foot_force 足端力
-     * @param leg_index 腿索引
-     * @return 关节力矩（3x1向量）
-     */
-    [[nodiscard]] Vec3 getTorqueAnalytical(const Vec3& foot_force, int leg_index) const;
-
-    /**
      * 计算雅可比矩阵
      * @param q_leg 单腿关节角度（3x1向量）
      * @param leg_index 腿索引
@@ -148,18 +140,10 @@ private:
     // ========== 核心运动学算法（基于Unitree原版）==========
 
     /**
-     * 单腿解析逆运动学（Unitree原版算法）
-     * @param target_pos 目标足端位置（相对于机身）
-     * @param leg_index 腿索引
-     * @return 关节角度（3x1向量）
-     */
-    [[nodiscard]] Vec3 solveLegIK(const Vec3& target_pos, int leg_index) const;
-
-    /**
      * 单腿解析正运动学（Unitree原版算法）
      * @param q_leg 关节角度（3x1向量）
      * @param leg_index 腿索引
-     * @return 足端位置（相对于机身）
+     * @return 足端位置（髋关节坐标系，与 calcPEe2H 保持一致）
      */
     [[nodiscard]] Vec3 calcLegFK(const Vec3& q_leg, int leg_index) const;
 
@@ -170,6 +154,39 @@ private:
      * @return 雅可比矩阵（3x3）
      */
     [[nodiscard]] Mat3 calcLegJacobian(const Vec3& q_leg, int leg_index) const;
+
+    // ========== 原版解析逆运动学辅助函数 ==========
+    
+    /**
+     * 计算q1关节角度（Abad关节）- 原版算法
+     * @param py 足端Y坐标（髋关节坐标系）
+     * @param pz 足端Z坐标（髋关节坐标系）
+     * @param l1 Abad连杆长度
+     * @return q1关节角度
+     */
+    [[nodiscard]] double q1_ik(double py, double pz, double l1) const;
+
+    /**
+     * 计算q3关节角度（膝关节）- 原版算法
+     * @param b3z 髋关节Z偏移
+     * @param b4z 膝关节Z偏移
+     * @param b 足端到肩部的距离
+     * @return q3关节角度
+     */
+    [[nodiscard]] double q3_ik(double b3z, double b4z, double b) const;
+
+    /**
+     * 计算q2关节角度（髋关节）- 原版算法
+     * @param q1 q1关节角度
+     * @param q3 q3关节角度
+     * @param px 足端X坐标（髋关节坐标系）
+     * @param py 足端Y坐标（髋关节坐标系）
+     * @param pz 足端Z坐标（髋关节坐标系）
+     * @param b3z 髋关节Z偏移
+     * @param b4z 膝关节Z偏移
+     * @return q2关节角度
+     */
+    [[nodiscard]] double q2_ik(double q1, double q3, double px, double py, double pz, double b3z, double b4z) const;
 
 
     // ========== 几何参数计算（使用Pinocchio从URDF获取）==========

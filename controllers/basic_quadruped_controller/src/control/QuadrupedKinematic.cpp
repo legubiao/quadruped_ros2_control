@@ -236,23 +236,17 @@ Vec34 QuadrupedKinematic::getFeet2BPositions() const
 
 Vec3 QuadrupedKinematic::getFootPosition(int leg_id, FrameType frame) const
 {
-    if (leg_id < 0 || leg_id >= 4)
-    {
-        throw std::out_of_range("Invalid leg index");
-    }
-
     Vec3 q_leg = current_joint_pos_.segment(3 * leg_id, 3);
 
     if(frame == FrameType::BODY){
-        return calcLegFK(q_leg, leg_id);
-    }else if(frame == FrameType::HIP){
-        // 相对于髋关节的位置
-        Vec3 hip_offset = hip_offsets_[leg_id];
-        Vec3 p_ee_hip = calcLegFK(q_leg, leg_id) - hip_offset;
-        return p_ee_hip;
-    }else{
-        throw std::runtime_error("The frame of function: getFootPosition can only be BODY or HIP.");
+        // 髋关节坐标系 + 偏移量 = 机体坐标系
+        return calcLegFK(q_leg, leg_id) + hip_offsets_[leg_id];
     }
+    if(frame == FrameType::HIP){
+        // 直接返回髋关节坐标系位置
+        return calcLegFK(q_leg, leg_id);
+    }
+    throw std::runtime_error("The frame of function: getFootPosition can only be BODY or HIP.");
 }
 
 Vec3 QuadrupedKinematic::getFeet2BVelocity(int leg_index) const
@@ -283,11 +277,7 @@ Vec3 QuadrupedKinematic::getTorque(const Vec3& foot_force, int leg_index) const
     return jacobian.transpose() * foot_force;
 }
 
-Vec3 QuadrupedKinematic::getTorqueAnalytical(const Vec3& foot_force, int leg_index) const
-{
-    // 直接调用getTorque方法，因为已经是解析方法
-    return getTorque(foot_force, leg_index);
-}
+
 
 Vec34 QuadrupedKinematic::getFeet2BVelocities() const
 {
@@ -308,59 +298,10 @@ Mat3 QuadrupedKinematic::getJacobian(const Vec3& q_leg, int leg_index) const
 
 // ========== 核心运动学算法（基于Unitree原版）==========
 
-Vec3 QuadrupedKinematic::solveLegIK(const Vec3& target_pos, int leg_index) const
-{
-    // 基于Unitree原版的解析逆运动学算法
 
-    // 获取腿部几何参数
-    Vec3 hip_offset = hip_offsets_[leg_index];
-
-    // 计算足端相对于髋关节的位置
-    Vec3 p_ee_hip = target_pos - hip_offset;
-
-    double px = p_ee_hip(0);
-    double py = p_ee_hip(1);
-    double pz = p_ee_hip(2);
-
-    // 确定侧向符号（控制器顺序：FR(0) FL(1) RR(2) RL(3)）
-    int side_sign = leg_index == 1 || leg_index == 3 ? 1 : -1; // FL,RL为1, FR,RR为-1
-    double l1 = side_sign * link_lengths_[0];
-
-    // 步骤1：求解q1 (Abad关节) - Unitree原版算法
-    double L_squared = py * py + pz * pz - l1 * l1;
-    if (L_squared < 0)
-    {
-        // 超出工作空间，返回默认姿态
-        return Vec3(0.0, 0.67, -1.3);
-    }
-    double L = sqrt(L_squared);
-    double q1 = atan2(pz * l1 + py * L, py * l1 - pz * L);
-
-    // 步骤2：求解q3 (膝关节) - Unitree原版算法
-    double b3z = -link_lengths_[1];
-    double b4z = -link_lengths_[2];
-    double c = sqrt(px * px + py * py + pz * pz);
-    double b = sqrt(c * c - l1 * l1);
-
-    double temp = (b3z * b3z + b4z * b4z - b * b) / (2 * fabs(b3z * b4z));
-    temp = std::max(-1.0, std::min(1.0, temp)); // 限制在[-1,1]
-    double q3 = acos(temp);
-    q3 = -(M_PI - q3); // 转换到Unitree约定
-
-    // 步骤3：求解q2 (髋关节) - Unitree原版算法
-    double a1 = py * sin(q1) - pz * cos(q1);
-    double a2 = px;
-    double m1 = b4z * sin(q3);
-    double m2 = b3z + b4z * cos(q3);
-    double q2 = atan2(m1 * a1 + m2 * a2, m1 * a2 - m2 * a1);
-
-    return Vec3(q1, q2, q3);
-}
 
 Vec3 QuadrupedKinematic::calcLegFK(const Vec3& q_leg, int leg_index) const
 {
-    Vec3 hip_offset = hip_offsets_[leg_index];
-
     // 确定侧向符号
     int side_sign = leg_index == 1 || leg_index == 3 ? 1 : -1;
     double l1 = side_sign * link_lengths_[0];
@@ -375,13 +316,13 @@ Vec3 QuadrupedKinematic::calcLegFK(const Vec3& q_leg, int leg_index) const
     double c23 = c2 * c3 - s2 * s3;
     double s23 = s2 * c3 + c2 * s3;
 
-    // Unitree原版正运动学公式
+    // Unitree原版正运动学公式（髋关节坐标系）
     Vec3 p_ee_hip;
     p_ee_hip(0) = l3 * s23 + l2 * s2;
     p_ee_hip(1) = -l3 * s1 * c23 + l1 * c1 - l2 * c2 * s1;
     p_ee_hip(2) = l3 * c1 * c23 + l1 * s1 + l2 * c1 * c2;
 
-    return hip_offset + p_ee_hip;
+    return p_ee_hip;  // 返回髋关节坐标系位置，与 calcPEe2H 保持一致
 }
 
 Mat3 QuadrupedKinematic::calcLegJacobian(const Vec3& q_leg, int leg_index) const
@@ -437,8 +378,36 @@ Vec3 QuadrupedKinematic::calcQ(const Vec3& pEe, FrameType frame, int leg_index) 
     else
         throw std::runtime_error("Frame type must be HIP or BODY");
     
-    // 调用现有的解析逆运动学
-    return solveLegIK(pEe2H + hip_offsets_[leg_index], leg_index);
+    // 直接使用原版的解析逆运动学算法（和unitreeLeg完全一致）
+    double q1, q2, q3;
+    Vec3 qResult;
+    double px, py, pz;
+    double b2y, b3z, b4z, a, b, c;
+
+    px = pEe2H(0);
+    py = pEe2H(1);
+    pz = pEe2H(2);
+
+    // 确定侧向符号（控制器顺序：FR(0) FL(1) RR(2) RL(3)）
+    int side_sign = leg_index == 1 || leg_index == 3 ? 1 : -1; // FL,RL为1, FR,RR为-1
+    
+    b2y = link_lengths_[0] * side_sign;
+    b3z = -link_lengths_[1];
+    b4z = -link_lengths_[2];
+    a = link_lengths_[0];
+    c = sqrt(pow(px, 2) + pow(py, 2) + pow(pz, 2)); // whole length
+    b = sqrt(pow(c, 2) - pow(a, 2)); // distance between shoulder and footpoint
+
+    // 使用原版的解析公式
+    q1 = q1_ik(py, pz, b2y);
+    q3 = q3_ik(b3z, b4z, b);
+    q2 = q2_ik(q1, q3, px, py, pz, b3z, b4z);
+
+    qResult(0) = q1;
+    qResult(1) = q2;
+    qResult(2) = q3;
+
+    return qResult;
 }
 
 Vec3 QuadrupedKinematic::calcLegQd(const Vec3& pEe, const Vec3& vEe, FrameType frame, int leg_index) const
@@ -458,4 +427,37 @@ void QuadrupedKinematic::update()
         current_joint_pos_(i) = ctrl_interfaces_.joint_position_state_interface_[i].get().get_optional().value();
         current_joint_vel_(i) = ctrl_interfaces_.joint_velocity_state_interface_[i].get().get_optional().value();
     }
+}
+
+// ========== 原版解析逆运动学辅助函数 ==========
+
+double QuadrupedKinematic::q1_ik(double py, double pz, double l1) const
+{
+    double q1;
+    double L = sqrt(pow(py,2)+pow(pz,2)-pow(l1,2));
+    q1 = atan2(pz*l1+py*L, py*l1-pz*L);
+    return q1;
+}
+
+double QuadrupedKinematic::q3_ik(double b3z, double b4z, double b) const
+{
+    double q3, temp;
+    temp = (pow(b3z, 2) + pow(b4z, 2) - pow(b, 2))/(2*fabs(b3z*b4z));
+    if(temp>1) temp = 1;
+    if(temp<-1) temp = -1;
+    q3 = acos(temp);
+    q3 = -(M_PI - q3); //0~180
+    return q3;
+}
+
+double QuadrupedKinematic::q2_ik(double q1, double q3, double px, double py, double pz, double b3z, double b4z) const
+{
+    double q2, a1, a2, m1, m2;
+    
+    a1 = py*sin(q1) - pz*cos(q1);
+    a2 = px;
+    m1 = b4z*sin(q3);
+    m2 = b3z + b4z*cos(q3);
+    q2 = atan2(m1*a1+m2*a2, m1*a2-m2*a1);
+    return q2;
 }
