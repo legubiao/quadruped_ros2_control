@@ -73,7 +73,7 @@ Required hardware interfaces:
 
 ```bash
 cd ~/ros2_ws
-colcon build --packages-select basic_quadruped_controller --symlink-install
+colcon build --packages-up-to basic_quadruped_controller --symlink-install
 ```
 
 ## 4. Launch

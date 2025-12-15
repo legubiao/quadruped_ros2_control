@@ -8,7 +8,7 @@
 #include <basic_quadruped_controller/control/CtrlComponent.h>
 #include <pinocchio/spatial/se3.hpp>
 
-#include "../../../unitree_guide_controller/include/unitree_guide_controller/common/mathTypes.h"
+#include <basic_quadruped_controller/common/mathTypes.h>
 #include "controller_common/CtrlInterfaces.h"
 
 Estimator::Estimator(CtrlInterfaces& ctrl_interfaces, CtrlComponent& ctrl_component,
