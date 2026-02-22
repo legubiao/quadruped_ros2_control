@@ -79,7 +79,9 @@ colcon build --packages-up-to basic_quadruped_controller go2_description keyboar
   source ~/ros2_ws/install/setup.bash
   ros2 run keyboard_input keyboard_input
   ```
+  
   https://github.com/user-attachments/assets/a24a8309-38a9-451b-86b7-51d19d892ffc
+  
   > **Warning:** Please wait until the gazebo sim frame rate stable before start to control the robot.
 
 For more details, please refer to the [basic quadruped controller](controllers/basic_quadruped_controller/)
