@@ -6,20 +6,11 @@ This repository contains the ros2-control based controllers for the quadruped ro
 * [Commands](commands): contains command node used to send command to the controller
 * [Hardwares](hardwares): contains the ros2-control hardware interface for the robot
 
-> **Note:** This repository only contains `go2_description` as a sample robot model to keep the package size minimal for deployment on real robots. For more robot configurations and models, please refer to [fiveages-sim/robot_descriptions](https://github.com/fiveages-sim/robot_descriptions).
+> **Note:** This repository only contains `go2_description` as a sample robot model to keep the package size minimal for deployment on real robots. For more robot configurations and models, please refer to [fiveages-sim/robot_descriptions-quadruped](https://github.com/fiveages-sim/robot-descriptions-quadruped).
 
 > **Warning:** Default branch was developed under ROS2 Jazzy. For ROS2 Humble, please check out **humble** branch.
 
 > **Note:** The `unitree_guide_controller` has been replaced by `basic_quadruped_controller` which provides the same functionality with improved architecture and parameter management.
-
-Todo List:
-
-- [x] **[2025-02-23]** Add Gazebo Playground
-  - [x] OCS2 controller for Gazebo Simulation
-  - [x] Refactor FSM and Basic Quadruped Controller
-- [x] **[2025-03-30]** Add Real Go2 Robot Support
-- [x] **[2025-05-20]** Isaac Sim Support
-- [ ] OCS2 Perceptive locomotion demo
 
 Video on Real Unitree Go2 Robot:
 [![](http://i0.hdslb.com/bfs/archive/7d3856b3c5e5040f24990d3eab760cf8ba4cf80d.jpg)](https://www.bilibili.com/video/BV1QpZaY8EYV/)
@@ -28,19 +19,12 @@ Video on Real Unitree Go2 Robot:
 
 ### 1.1 Prerequisites
 
-#### Install Pinocchio
-Pinocchio is required for the basic quadruped controller. 
-
-* [Pinocchio Official Page](https://stack-of-tasks.github.io/pinocchio/download.html)
-
-> **Warm Reminder**: Please follow the guide in the link to install Pinocchio before building the project
-
 #### Install other dependencies
 * rosdep
-    ```bash
-    cd ~/ros2_ws
-    rosdep install --from-paths src --ignore-src -r -y
-    ```
+  ```bash
+  cd ~/ros2_ws
+  rosdep install --from-paths src --ignore-src -r -y
+  ```
 
 ### 1.2 Compile the package
 ```bash
@@ -81,7 +65,6 @@ colcon build --packages-up-to basic_quadruped_controller go2_description keyboar
   ```bash
   sudo apt-get install ros-jazzy-ros-gz
   ```
-
 * Compile Gazebo Playground
   ```bash
   colcon build --packages-up-to gz_quadruped_playground --symlink-install
@@ -92,13 +75,12 @@ colcon build --packages-up-to basic_quadruped_controller go2_description keyboar
   ros2 launch basic_quadruped_controller gazebo.launch.py
   ```
 * Run the keyboard control node
-    ```bash
-    source ~/ros2_ws/install/setup.bash
-    ros2 run keyboard_input keyboard_input
-    ```
+  ```bash
+  source ~/ros2_ws/install/setup.bash
+  ros2 run keyboard_input keyboard_input
+  ```
   https://github.com/user-attachments/assets/a24a8309-38a9-451b-86b7-51d19d892ffc
-
-
+  > **Warning:** Please wait until the gazebo sim frame rate stable before start to control the robot.
 
 For more details, please refer to the [basic quadruped controller](controllers/basic_quadruped_controller/)
 and [go2 description](go2_description/).

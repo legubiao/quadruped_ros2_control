@@ -103,15 +103,3 @@ swing_gains = [3.0, 2.0]       # [kp, kd] for swing phase
 stable_gains = [0.8, 0.8]      # [kp, kd] for stable phase
 gait_height = 0.08             # Step height for trotting
 ```
-
-### 5.2 Runtime Parameter Tuning
-Parameters can also be adjusted at runtime using ROS2 parameter tools:
-
-```bash
-# View current parameters
-ros2 param list /basic_quadruped_controller
-
-# Set parameters
-ros2 param set /basic_quadruped_controller stand_gains "[100.0, 5.0]"
-ros2 param set /basic_quadruped_controller gait_height 0.1
-```

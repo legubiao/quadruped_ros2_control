@@ -1,9 +1,8 @@
 //
 // Created by tlab-uav on 24-9-13.
 //
+#pragma once
 
-#ifndef STATEFREESTAND_H
-#define STATEFREESTAND_H
 #include <basic_quadruped_controller/control/QuadrupedKinematic.h>
 
 #include "controller_common/FSM/FSMState.h"
@@ -14,8 +13,8 @@ class StateFreeStand final : public FSMState {
 public:
     StateFreeStand(CtrlInterfaces &ctrl_interfaces,
                    CtrlComponent &ctrl_component,
-                   const double kp,
-                   const double kd);
+                   double kp,
+                   double kd);
 
     void enter() override;
 
@@ -50,5 +49,3 @@ private:
     
 
 };
-
-#endif //STATEFREESTAND_H

@@ -35,7 +35,7 @@ namespace gz_quadruped_hardware {
     class GazeboSimSystem final : public GazeboSimSystemInterface {
     public:
         // Documentation Inherited
-        CallbackReturn on_init(const hardware_interface::HardwareInfo &system_info)
+        CallbackReturn on_init(const hardware_interface::HardwareComponentInterfaceParams &params)
         override;
 
         CallbackReturn on_configure(const rclcpp_lifecycle::State &previous_state) override;

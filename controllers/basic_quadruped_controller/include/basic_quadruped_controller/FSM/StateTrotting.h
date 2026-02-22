@@ -1,25 +1,25 @@
 //
 // Created by tlab-uav on 24-9-18.
 //
+#pragma once
 
-#ifndef STATETROTTING_H
-#define STATETROTTING_H
 #include <basic_quadruped_controller/control/BalanceCtrl.h>
 #include <basic_quadruped_controller/control/QuadrupedKinematic.h>
 #include <basic_quadruped_controller/gait/GaitGenerator.h>
 #include "controller_common/FSM/FSMState.h"
 
-class StateTrotting final : public FSMState {
+class StateTrotting final : public FSMState
+{
 public:
-    explicit StateTrotting(CtrlInterfaces &ctrl_interfaces,
-                           CtrlComponent &ctrl_component,
+    explicit StateTrotting(CtrlInterfaces& ctrl_interfaces,
+                           CtrlComponent& ctrl_component,
                            const std::vector<double>& swing_gains,
                            const std::vector<double>& stable_gains);
 
     void enter() override;
 
-    void run(const rclcpp::Time &time,
-             const rclcpp::Duration &period) override;
+    void run(const rclcpp::Time& time,
+             const rclcpp::Duration& period) override;
 
     void exit() override;
 
@@ -51,10 +51,10 @@ private:
      */
     bool checkStepOrNot();
 
-    std::shared_ptr<Estimator> &estimator_;
-    std::shared_ptr<QuadrupedKinematic> &robot_model_;
-    std::shared_ptr<BalanceCtrl> &balance_ctrl_;
-    std::shared_ptr<WaveGenerator> &wave_generator_;
+    std::shared_ptr<Estimator>& estimator_;
+    std::shared_ptr<QuadrupedKinematic>& robot_model_;
+    std::shared_ptr<BalanceCtrl>& balance_ctrl_;
+    std::shared_ptr<WaveGenerator>& wave_generator_;
 
     GaitGenerator gait_generator_;
 
@@ -83,6 +83,3 @@ private:
     std::vector<double> swing_gains_;
     std::vector<double> stable_gains_;
 };
-
-
-#endif //STATETROTTING_H

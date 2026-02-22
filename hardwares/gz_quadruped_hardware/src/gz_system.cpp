@@ -544,9 +544,9 @@ namespace gz_quadruped_hardware
             });
     }
 
-    CallbackReturn GazeboSimSystem::on_init(const hardware_interface::HardwareInfo& info)
+    CallbackReturn GazeboSimSystem::on_init(const hardware_interface::HardwareComponentInterfaceParams& params)
     {
-        if (SystemInterface::on_init(info) != CallbackReturn::SUCCESS)
+        if (SystemInterface::on_init(params) != CallbackReturn::SUCCESS)
         {
             return CallbackReturn::ERROR;
         }

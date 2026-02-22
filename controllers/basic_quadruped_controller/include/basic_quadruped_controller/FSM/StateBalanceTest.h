@@ -1,12 +1,10 @@
 //
 // Created by tlab-uav on 24-9-16.
 //
+#pragma once
 
-#ifndef STATEBALANCETEST_H
-#define STATEBALANCETEST_H
 
 #include <basic_quadruped_controller/common/mathTypes.h>
-
 #include "controller_common/FSM/FSMState.h"
 
 
@@ -16,16 +14,17 @@ class QuadrupedKinematic;
 class Estimator;
 struct CtrlComponent;
 
-class StateBalanceTest final : public FSMState {
+class StateBalanceTest final : public FSMState
+{
 public:
-    explicit StateBalanceTest(CtrlInterfaces &ctrl_interfaces,
-                              CtrlComponent &ctrl_component,
+    explicit StateBalanceTest(CtrlInterfaces& ctrl_interfaces,
+                              CtrlComponent& ctrl_component,
                               const std::vector<double>& stable_gains);
 
     void enter() override;
 
-    void run(const rclcpp::Time &time,
-             const rclcpp::Duration &period) override;
+    void run(const rclcpp::Time& time,
+             const rclcpp::Duration& period) override;
 
     void exit() override;
 
@@ -35,10 +34,10 @@ private:
     void calcTorque();
     void setStableGain() const;
 
-    std::shared_ptr<Estimator> &estimator_;
-    std::shared_ptr<QuadrupedKinematic> &robot_model_;
-    std::shared_ptr<BalanceCtrl> &balance_ctrl_;
-    std::shared_ptr<WaveGenerator> &wave_generator_;
+    std::shared_ptr<Estimator>& estimator_;
+    std::shared_ptr<QuadrupedKinematic>& robot_model_;
+    std::shared_ptr<BalanceCtrl>& balance_ctrl_;
+    std::shared_ptr<WaveGenerator>& wave_generator_;
 
     Vec3 pcd_, pcd_init_;
     RotMat Rd_;
@@ -56,6 +55,3 @@ private:
     // Stable gain parameters
     std::vector<double> stable_gains_;
 };
-
-
-#endif //STATEBALANCETEST_H

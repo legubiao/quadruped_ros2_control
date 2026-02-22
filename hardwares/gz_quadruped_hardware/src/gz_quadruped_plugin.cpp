@@ -116,7 +116,9 @@ namespace gz_quadruped_hardware
                     robot_hw_sim_type_str_.c_str());
 
                 // initialize hardware
-                import_component(std::move(gzSimSystem), individual_hardware_info);
+                hardware_interface::HardwareComponentParams hw_params;
+                hw_params.hardware_info = individual_hardware_info;
+                import_component(std::move(gzSimSystem), hw_params);
             }
 
             return components_are_loaded_and_initialized_;

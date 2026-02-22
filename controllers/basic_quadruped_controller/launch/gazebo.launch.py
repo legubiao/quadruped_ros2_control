@@ -65,7 +65,8 @@ def launch_setup(context, *args, **kwargs):
                 'publish_frequency': 20.0,
                 'use_tf_static': True,
                 'robot_description': robot_description,
-                'ignore_timestamp': True
+                'ignore_timestamp': True,
+                'use_sim_time': True,
             }
         ],
     )
@@ -75,6 +76,7 @@ def launch_setup(context, *args, **kwargs):
         executable="spawner",
         arguments=["joint_state_broadcaster",
                    "--controller-manager", "/controller_manager"],
+        parameters=[{'use_sim_time': True}],
     )
 
     imu_sensor_broadcaster = Node(
@@ -82,6 +84,7 @@ def launch_setup(context, *args, **kwargs):
         executable="spawner",
         arguments=["imu_sensor_broadcaster",
                    "--controller-manager", "/controller_manager"],
+        parameters=[{'use_sim_time': True}],
     )
 
     basic_quadruped_controller = Node(
