@@ -96,8 +96,9 @@ colcon build --packages-up-to basic_quadruped_controller go2_description keyboar
     source ~/ros2_ws/install/setup.bash
     ros2 run keyboard_input keyboard_input
     ```
+  https://github.com/user-attachments/assets/a24a8309-38a9-451b-86b7-51d19d892ffc
 
-![gazebo](.images/gazebo.png)
+
 
 For more details, please refer to the [basic quadruped controller](controllers/basic_quadruped_controller/)
 and [go2 description](go2_description/).
@@ -132,5 +133,4 @@ Available: [https://github.com/unitreerobotics/unitree_guide](https://github.com
 robots*. [Online]. Available: [https://github.com/qiayuanl/legged_control](https://github.com/qiayuanl/legged_control)
 
 [3] Ziqi Fan. *rl\_sar: Simulation Verification and Physical Deployment of Robot Reinforcement Learning Algorithm.*
-
 2024. Available: [https://github.com/fan-ziqi/rl_sar](https://github.com/fan-ziqi/rl_sar) 
